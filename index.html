@@ -90,7 +90,7 @@
     </div>
     <div class="grid" id="masonryGrid">
     
-        <div class="tile" id="tile01" title="ABC" divid="tile01Data" onclick="openModal(this)">
+        <div class="tile" id="tile01" title="ABC" data-content="def" data-divid="tile01Data" onclick="openModal(this)">
             <h3>Tiles 1abcDe</h3>
             <p> ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
@@ -165,21 +165,36 @@
             let html = '';
             console.log('----html---');
             console.log(html);
+
+            console.log('---title---');
+            console.log(tile.title);
+
+            console.log('---content---');
+            console.log(tile.getAttribute('data-content'));            
             
-            console.log(tile);
-            console.log(tile.divID);
-            console.log('---');
+            // console.log(tile);
+            // console.log(tile.divid);
+            // console.log('---');
+
+            let infoID = tile.getAttribute('data-divid');
+            console.log('---infoID---');
+            console.log(infoID);
+            console.log('-------------------');
+            let infoIDContent = document.getElementById(infoID);
+            console.log(infoIDContent);
+            html += document.getElementById(infoID).innerHTML;
             
-            let divContent = document.getElementById(tile.divID).innerHTML;
-            console.log('\n----divID Content---');
-            console.log(divContent);
+            // let divContent = document.getElementById(tile.divID).innerHTML;
+            // console.log('\n----divID Content---');
+            // console.log(divContent);
             
-            html += divContent;
+            // html += divContent;
             console.log('\n----html---');
             console.log(html);
             
             modalTitle.textContent = tile.title;
-            modalContent.textContent = tile.content;
+            // modalContent.textContent = html;
+            modalContent.innerHTML = html;
             modal.classList.add("active");
         }
         
