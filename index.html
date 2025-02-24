@@ -91,7 +91,7 @@
     <div class="grid" id="masonryGrid">
     
         <div class="tile" id="tile01" title="ABC" divID="tile01Data" onclick="openModal(this)">
-            <h3>Tiles 1abc</h3>
+            <h3>Tiles 1abcD</h3>
             <p> ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
 
@@ -165,7 +165,11 @@
             let html = '';
             console.log('----html---');
             console.log(html);
-
+            
+            console.log(tile);
+            console.log(tile.divID);
+            console.log('---');
+            
             let divContent = document.getElementById(tile.divID).innerHTML;
             console.log('\n----divID Content---');
             console.log(divContent);
