@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>timeLeft</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png">
+    <link rel="icon" type="image/svg+xml"  href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.svg" />
+    <link rel="alternate icon"   href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png"/>
+    <link rel="apple-touch-startup-image" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-192x192.png">
+    
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-24x24.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-57x57.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-60x60.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-70x70.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-72x72.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-76x76.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-114x114.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-120x120.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-144x144.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-150x150.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-152x152.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-310x310.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-500x500.png">
+
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .navbar-title {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .time-input-container {
+            flex: 1;
+        }
+
+        .time-input-pair {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .time-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .time-input.error {
+            border-color: #dc2626;
+            background-color: #fee2e2;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .color-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .time-unit {
+            font-size: 14px;
+            color: #666;
+            width: 40px;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
+        }
+
+        #container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+            padding-top: 60px;
+        }
+
+        #countdown {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 20px;
+        }
+
+        #finalX {
+            color: red;
+            font-size: 200px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 32px;
+            display: flex;
+            gap: 16px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #startBtn {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        #startBtn:hover {
+            background-color: #2563eb;
+        }
+
+        #startBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #resetBtn, #settingsBtn {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        #resetBtn:hover, #settingsBtn:hover {
+            background-color: #4b5563;
+        }
+
+        .save-button {
+            background-color: #3b82f6;
+            color: white;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .save-button:hover {
+            background-color: #2563eb;
+        }
+
+        .save-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #6b7280;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(error => console.log('ServiceWorker error:', error));
+        }
+    </script>    
+    
+    
+    <nav class="navbar">
+        <div class="navbar-title">TimeLeft&trade;</div>
+        <button id="settingsBtn">Settings</button>
+    </nav>
+
+    <div id="container">
+        <div id="countdown"></div>
+        <div id="finalX">X</div>
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Timer Settings</div>
+                <button class="close-button">&times;</button>
+            </div>
+            
+            <div class="settings-group">
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Green Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="greenMin" class="time-input" min="0" value="2">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="greenMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="greenSec" class="time-input" min="0" max="59" value="0">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="greenSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Yellow Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="yellowMin" class="time-input" min="0" value="1">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="yellowMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="0">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="yellowSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Red Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="redMin" class="time-input" min="0" value="0">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="redMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="redSec" class="time-input" min="0" max="59" value="2">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="redSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="save-button">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const container = document.getElementById('container');
+        const countdown = document.getElementById('countdown');
+        const finalX = document.getElementById('finalX');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const modal = document.getElementById('settingsModal');
+        const closeBtn = document.querySelector('.close-button');
+        const saveBtn = document.querySelector('.save-button');
+        
+        // Timer settings
+        let settings = {
+            greenTime: 300,  // 5 minutes
+            yellowTime: 60,  // 1 minute
+            redTime: 30       // 30 seconds
+        };
+        
+        let timeLeft = 0;
+        let timerInterval;
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function updateTimer() {
+            if (timeLeft >= 0) {
+                countdown.textContent = formatTime(timeLeft);
+                
+                const yellowStart = settings.redTime + settings.yellowTime;
+                const greenStart = yellowStart + settings.greenTime;
+                
+                if (timeLeft === yellowStart) {
+                    container.style.backgroundColor = '#facc15';
+                } else if (timeLeft === settings.redTime) {
+                    container.style.backgroundColor = '#dc2626';
+                } else if (timeLeft === 0) {
+                    container.style.backgroundColor = '#ffffff';
+                    countdown.style.display = 'none';
+                    finalX.style.display = 'block';
+                    clearInterval(timerInterval);
+                }
+                
+                timeLeft--;
+            }
+        }
+        
+        function startSequence() {
+            startBtn.disabled = true;
+            finalX.style.display = 'none';
+            countdown.style.display = 'block';
+            container.style.backgroundColor = '#22c55e';
+            
+            timeLeft = settings.greenTime + settings.yellowTime + settings.redTime;
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function reset() {
+            clearInterval(timerInterval);
+            container.style.backgroundColor = '#f3f4f6';
+            countdown.style.display = 'block';
+            countdown.textContent = '';
+            finalX.style.display = 'none';
+            startBtn.disabled = false;
+            timeLeft = 0;
+        }
+
+        function validateTimeInput(input, errorElement) {
+            const value = input.value.trim();
+            const numValue = parseInt(value);
+            let error = '';
+            input.classList.remove('error');
+
+            if (value === '') {
+                error = 'Required';
+                input.classList.add('error');
+            } else if (isNaN(numValue)) {
+                error = 'Must be a number';
+                input.classList.add('error');
+            } else if (numValue < 0) {
+                error = 'Must be positive';
+                input.classList.add('error');
+            } else if (input.hasAttribute('max') && numValue > parseInt(input.max)) {
+                error = `Max ${input.max}`;
+                input.classList.add('error');
+            }
+
+            errorElement.textContent = error;
+            return error === '';
+        }
+
+        function validateAllInputs() {
+            const inputs = {
+                greenMin: document.getElementById('greenMin'),
+                greenSec: document.getElementById('greenSec'),
+                yellowMin: document.getElementById('yellowMin'),
+                yellowSec: document.getElementById('yellowSec'),
+                redMin: document.getElementById('redMin'),
+                redSec: document.getElementById('redSec')
+            };
+
+            const errors = {
+                greenMin: document.getElementById('greenMinError'),
+                greenSec: document.getElementById('greenSecError'),
+                yellowMin: document.getElementById('yellowMinError'),
+                yellowSec: document.getElementById('yellowSecError'),
+                redMin: document.getElementById('redMinError'),
+                redSec: document.getElementById('redSecError')
+            };
+
+            let isValid = true;
+            
+            for (const [key, input] of Object.entries(inputs)) {
+                if (!validateTimeInput(input, errors[key])) {
+                    isValid = false;
+                }
+            }
+
+            // Check if at least one time period is greater than zero
+            const totalTime = (parseInt(inputs.greenMin.value) * 60 + parseInt(inputs.greenSec.value)) +
+                           (parseInt(inputs.yellowMin.value) * 60 + parseInt(inputs.yellowSec.value)) +
+                           (parseInt(inputs.redMin.value) * 60 + parseInt(inputs.redSec.value));
+            
+            if (totalTime === 0) {
+                errors.greenMinError.textContent = 'At least one duration must be greater than zero';
+                isValid = false;
+            }
+
+            saveBtn.disabled = !isValid;
+            return isValid;
+        }
+
+        function showModal() {
+            modal.style.display = 'flex';
+            document.getElementById('greenMin').value = Math.floor(settings.greenTime / 60);
+            document.getElementById('greenSec').value = settings.greenTime % 60;
+            document.getElementById('yellowMin').value = Math.floor(settings.yellowTime / 60);
+            document.getElementById('yellowSec').value = settings.yellowTime % 60;
+            document.getElementById('redMin').value = Math.floor(settings.redTime / 60);
+            document.getElementById('redSec').value = settings.redTime % 60;
+            validateAllInputs();
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+            // Clear all error messages
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.time-input').forEach(input => input.classList.remove('error'));
+        }
+
+        function saveSettings() {
+            if (validateAllInputs()) {
+                const inputs = {
+                    green: [document.getElementById('greenMin'), document.getElementById('greenSec')],
+                    yellow: [document.getElementById('yellowMin'), document.getElementById('yellowSec')],
+                    red: [document.getElementById('redMin'), document.getElementById('redSec')]
+                };
+
+                settings.greenTime = parseInt(inputs.green[0].value) * 60 + parseInt(inputs.green[1].value);
+                settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
+                settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
+
+                hideModal();
+                reset();
+            }
+        }
+
+        // Add input validation on change
+        document.querySelectorAll('.time-input').forEach(input => {
+            input.addEventListener('input', validateAllInputs);
+            
+            // Prevent negative numbers and non-numeric input
+            input.addEventListener('keydown', (e) => {
+                if (e.key === '-' || e.key === 'e') {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Event Listeners for buttons
+        startBtn.addEventListener('click', startSequence);
+        resetBtn.addEventListener('click', reset);
+        settingsBtn.addEventListener('click', showModal);
+        closeBtn.addEventListener('click', hideModal);
+        saveBtn.addEventListener('click', saveSettings);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) hideModal();
+        });
+
+        // Add event listeners for number input validation
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+                if (this.hasAttribute('max') && this.value > parseInt(this.max)) {
+                    this.value = this.max;
+                }
+            });
+        });
+
+    </script>
