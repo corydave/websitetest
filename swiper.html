@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Stack</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            position: relative;
+            min-height: 100vh;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            margin: 2rem auto;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #6f42c1;
+        }
+
+        .game-over {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+
+        .game-over.visible {
+            display: block;
+        }
+
+        .results-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            display: none;
+        }
+
+        .results-container.visible {
+            display: block;
+        }
+
+        .result-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .result-item:hover {
+            transform: scale(1.02);
+        }
+
+        .result-item.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-item.incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease-out;
+            user-select: none;
+            touch-action: none;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: #6f42c1;
+            z-index: 1;
+        }
+
+        .card.dragging {
+            cursor: grabbing;
+            transition: none;
+        }
+
+        .card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .card .card-body {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card .card-body.no-image {
+            font-size: 1.2rem;
+            justify-content: center;
+        }
+
+        .click-zone {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: calc(50% - 200px);
+            z-index: 1001;
+        }
+
+        .click-zone.left {
+            left: 0;
+            cursor: w-resize;
+        }
+
+        .click-zone.right {
+            right: 0;
+            cursor: e-resize;
+        }
+
+        .card:first-child {
+            animation: hover 2s ease-in-out infinite;
+        }
+
+        @keyframes hover {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50% { transform: translateY(-8px) rotate(-4deg); }
+        }
+
+        .swipe-left {
+            transform: translateX(-200%) rotate(-30deg) !important;
+        }
+
+        .swipe-right {
+            transform: translateX(200%) rotate(30deg) !important;
+        }
+
+        #reviewModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #reviewModal.visible {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            position: relative;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6f42c1;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="score-display">Score: <span id="score">0</span></div>
+        <div class="click-zone left"></div>
+        <div class="click-zone right"></div>
+        <div class="card-stack" id="cardStack"></div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>Game Over!</h2>
+            <p class="h4 mb-4">Final Score: <span id="finalScore">0</span></p>
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-lg btn-primary" id="showResults">Show Results</button>
+                <button class="btn btn-lg btn-success" id="playAgain">Play Again</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="results"></div>
+    </div>
+
+    <div id="reviewModal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalCardContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Card data
+        const cardData = [
+            {
+                id: 1,
+                title: "Welcome!",
+                text: "Swipe through these cards to learn more",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 2,
+                title: "Getting Started",
+                text: "Here's your first step in the journey. This card has no image, so the text takes up more space to demonstrate the flexible layout.",
+                image: null,
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 3,
+                title: "Key Features",
+                text: "Discover what makes this special",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 4,
+                title: "Tips & Tricks",
+                text: "Some helpful advice for you. Another example of a card without an image to show how the text expands to fill the space nicely.",
+                image: null,
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 5,
+                title: "Did You Know?",
+                text: "Here's an interesting fact",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 6,
+                title: "Almost There",
+                text: "You're making great progress",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 7,
+                title: "One More Thing",
+                text: "Just a few more cards to go",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            },
+            {
+                id: 8,
+                title: "That's All!",
+                text: "Thanks for going through all the cards",
+                image: "/api/placeholder/400/300",
+                trueOrNot: Math.random() < 0.5
+            }
+        ];
+
+        class CardStack {
+            constructor(container) {
+                this.container = container;
+                this.cards = [];
+                this.score = 0;
+                this.scoreElement = document.getElementById('score');
+                this.gameHistory = [];
+                this.initializeCards();
+                this.setupEventListeners();
+                this.setupModalListeners();
+            }
+
+            setupModalListeners() {
+                const modal = document.getElementById('reviewModal');
+                const closeBtn = modal.querySelector('.modal-close');
+                
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('visible');
+                });
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('visible');
+                    }
+                });
+            }
+
+            initializeCards() {
+                cardData.forEach((data, i) => {
+                    const card = this.createCard(data);
+                    this.cards.push(card);
+                    this.container.appendChild(card);
+                    
+                    const rotation = (i * 2) - 4;
+                    const translateY = i * -1;
+                    card.style.transform = `rotate(${rotation}deg) translateY(${translateY}px)`;
+                    card.style.zIndex = cardData.length - i;  // Ensure z-index starts high and decreases
+                });
+            }
+
+
+            createCard(data) {
+                const card = document.createElement('div');
+                card.className = 'card shadow';
+                card.dataset.trueOrNot = data.trueOrNot;
+                card.dataset.cardId = data.id;
+                
+                let cardContent = '';
+                if (data.image) {
+                    cardContent = `
+                        <img src="${data.image}" class="card-img-top" alt="${data.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${data.title}</h5>
+                            <p class="card-text">${data.text}</p>
+                        </div>
+                    `;
+                } else {
+                    cardContent = `
+                        <div class="card-body no-image">
+                            <h5 class="card-title">${data.title}</h5>
+                            <p class="card-text">${data.text}</p>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = cardContent;
+                return card;
+            }
+
+            updateScore(isCorrect) {
+                if (isCorrect) {
+                    this.score++;
+                    this.scoreElement.textContent = this.score;
+                }
+            }
+
+            showGameOver() {
+                const gameOver = document.getElementById('gameOver');
+                const finalScore = document.getElementById('finalScore');
+                finalScore.textContent = this.score;
+                gameOver.classList.add('visible');
+
+                const showResultsBtn = document.getElementById('showResults');
+                const playAgainBtn = document.getElementById('playAgain');
+
+                showResultsBtn.addEventListener('click', () => this.showResults());
+                playAgainBtn.addEventListener('click', () => this.resetGame());
+            }
+
+            resetGame() {
+                // Clear existing cards and history
+                this.container.innerHTML = '';
+                this.cards = [];
+                this.gameHistory = [];
+                this.score = 0;
+                this.scoreElement.textContent = '0';
+
+                // Hide game over and results
+                document.getElementById('gameOver').classList.remove('visible');
+                document.getElementById('results').classList.remove('visible');
+                document.getElementById('reviewModal').classList.remove('visible');
+
+                // Reinitialize cards
+                this.initializeCards();
+            }
+
+            showCardModal(cardId) {
+                const card = cardData.find(c => c.id === cardId);
+                const modalContent = document.getElementById('modalCardContent');
+                const modal = document.getElementById('reviewModal');
+
+                let cardHTML = '';
+                if (card.image) {
+                    cardHTML = `
+                        <img src="${card.image}" class="card-img-top mb-3" alt="${card.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${card.title}</h5>
+                            <p class="card-text">${card.text}</p>
+                            <p class="mt-3"><strong>This card was ${card.trueOrNot ? 'true' : 'false'}</strong></p>
+                        </div>
+                    `;
+                } else {
+                    cardHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">${card.title}</h5>
+                            <p class="card-text">${card.text}</p>
+                            <p class="mt-3"><strong>This card was ${card.trueOrNot ? 'true' : 'false'}</strong></p>
+                        </div>
+                    `;
+                }
+
+                modalContent.innerHTML = cardHTML;
+                modal.classList.add('visible');
+            }
+
+            showResults() {
+                const resultsContainer = document.getElementById('results');
+                resultsContainer.classList.add('visible');
+                
+                const resultsHTML = this.gameHistory.map(result => `
+                    <div class="result-item ${result.isCorrect ? 'correct' : 'incorrect'}" 
+                         onclick="cardStack.showCardModal(${result.cardId})">
+                        <div>
+                            <strong>${cardData.find(c => c.id === result.cardId).title}</strong>
+                            <span class="ms-2">was ${result.wasTrue ? 'true' : 'false'}</span>
+                        </div>
+                        <div>
+                            You swiped ${result.direction}
+                            <span class="ms-2 badge ${result.isCorrect ? 'bg-success' : 'bg-danger'}">
+                                ${result.isCorrect ? '✓' : '✗'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+
+                resultsContainer.innerHTML = resultsHTML;
+            }
+
+            handleClick(direction) {
+                if (!this.cards.length) return;
+                const topCard = this.cards[0];
+                
+                topCard.style.animation = 'none';
+
+                topCard.style.transition = 'transform 0.3s ease-out';
+                const moveDistance = direction === 'left' ? -50 : 50;
+                topCard.style.transform = `translateX(${moveDistance}px) rotate(${moveDistance * 0.1}deg)`;
+
+                setTimeout(() => {
+                    topCard.style.transition = 'transform 0.5s ease-out';
+                    if (direction === 'left') {
+                        topCard.style.transform = 'translateX(-200%) rotate(-30deg)';
+                    } else {
+                        topCard.style.transform = 'translateX(200%) rotate(30deg)';
+                    }
+                    
+                    const isTrue = topCard.dataset.trueOrNot === 'true';
+                    const isCorrect = (direction === 'right' && isTrue) || (direction === 'left' && !isTrue);
+                    this.updateScore(isCorrect);
+
+                    this.gameHistory.push({
+                        cardId: parseInt(topCard.dataset.cardId),
+                        direction: direction,
+                        wasTrue: isTrue,
+                        isCorrect: isCorrect
+                    });
+
+                    console.log(`Card swiped ${direction}. Was ${isTrue ? 'true' : 'false'}. Guess was ${isCorrect ? 'correct' : 'incorrect'}`);
+
+                    setTimeout(() => {
+                        topCard.remove();
+                        this.cards.shift();
+                        
+                        if (this.cards.length === 0) {
+                            this.showGameOver();
+                        } else {
+                            // Update z-index for remaining cards
+                            this.cards.forEach((card, index) => {
+                                card.style.zIndex = this.cards.length - index;
+                            });
+                            this.cards[0].style.animation = 'hover 2s ease-in-out infinite';
+                        }
+                    }, 500);
+                }, 300);
+            }
+
+            setupEventListeners() {
+                let isDragging = false;
+                let startX = 0;
+                let currentX = 0;
+
+                const leftZone = document.querySelector('.click-zone.left');
+                const rightZone = document.querySelector('.click-zone.right');
+
+                if (leftZone && rightZone) {
+                    leftZone.addEventListener('click', () => this.handleClick('left'));
+                    rightZone.addEventListener('click', () => this.handleClick('right'));
+                }
+
+                const handleStart = (e) => {
+                    if (!this.cards.length) return;
+                    
+                    const topCard = this.cards[0];
+                    isDragging = true;
+                    startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+                    currentX = startX;
+                    
+                    topCard.classList.add('dragging');
+                };
+
+                const handleMove = (e) => {
+                    if (!isDragging || !this.cards.length) return;
+                    
+                    const topCard = this.cards[0];
+                    currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+                    const deltaX = currentX - startX;
+                    
+                    topCard.style.animation = 'none';
+                    topCard.style.transform = `translateX(${deltaX}px) rotate(${deltaX * 0.1}deg)`;
+                };
+
+                const handleEnd = () => {
+                    if (!isDragging || !this.cards.length) return;
+                    
+                    const topCard = this.cards[0];
+                    isDragging = false;
+                    const deltaX = currentX - startX;
+                    
+                    if (Math.abs(deltaX) > 100) {
+                        const direction = deltaX > 0 ? 'right' : 'left';
+                        this.handleClick(direction);
+                    } else {
+                        topCard.style.transition = 'transform 0.3s ease-out';
+                        topCard.style.transform = 'rotate(-4deg)';
+                        topCard.classList.remove('dragging');
+                        
+                        setTimeout(() => {
+                            topCard.style.animation = 'hover 2s ease-in-out infinite';
+                        }, 300);
+                    }
+                };
+
+                this.container.addEventListener('mousedown', handleStart);
+                window.addEventListener('mousemove', handleMove);
+                window.addEventListener('mouseup', handleEnd);
+
+                this.container.addEventListener('touchstart', handleStart);
+                window.addEventListener('touchmove', handleMove);
+                window.addEventListener('touchend', handleEnd);
+            }
+        }
+
+        // Initialize the card stack when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Make cardStack globally accessible for the modal click handler
+            window.cardStack = new CardStack(document.getElementById('cardStack'));
+        });
+    </script>
+</body>
+</html>
