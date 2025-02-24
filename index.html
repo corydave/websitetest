@@ -90,8 +90,8 @@
     </div>
     <div class="grid" id="masonryGrid">
     
-        <div class="tile" id="tile01" title="ABC" content="DEF" onclick="openModal(this)">
-            <h3>Tiles 1ab</h3>
+        <div class="tile" id="tile01" title="ABC" divID="tile01Data" onclick="openModal(this)">
+            <h3>Tiles 1abc</h3>
             <p> ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
 
@@ -117,6 +117,10 @@
     
     
     
+    </div>
+
+    <div id="tile01Data">
+        <b>TEST</b>
     </div>
     
     <div id="modal" class="modal">
@@ -158,6 +162,18 @@
         // });
         
         function openModal(tile) {
+            let html = '';
+            console.log('----html---');
+            console.log(html);
+
+            let divContent = document.getElementById(tile.divID).innerHTML;
+            console.log('\n----divID Content---');
+            console.log(divContent);
+            
+            html += divContent;
+            console.log('\n----html---');
+            console.log(html);
+            
             modalTitle.textContent = tile.title;
             modalContent.textContent = tile.content;
             modal.classList.add("active");
