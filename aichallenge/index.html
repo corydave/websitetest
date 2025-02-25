@@ -1,0 +1,981 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning Journey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">  
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+
+        body {
+          font-family: comfortaa, helvetica, sans-serif;
+        }
+        li {
+            margin-bottom: 0px;
+        }
+        
+        ol li {
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-purple-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background-color: #6f42c1;
+        }
+        .card-category {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+        .gallery-tab-content {
+            display: none;
+        }
+        .gallery-tab-content.active {
+            display: block;
+        }
+        .modal-dialog-scrollable {
+            max-height: 90vh;
+        }
+        .scrolling-wrapper {
+            position: relative;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 20px 0;
+        }
+        .scrolling-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        .challenges-container {
+            position: relative;
+        }
+        .arrows-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .arrow-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6f42c1;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+        .arrow-btn:hover {
+            color: #563d7c;
+        }
+        .arrow-btn:disabled {
+            color: #dee2e6;
+            cursor: not-allowed;
+        }
+        .rounded {
+            border-radius: 15px !important;
+        }
+        
+        
+        /* SAMPLE PROMPTS */
+        
+        .copy-button {
+            color: #111;
+            position: absolute;
+            top: 10px;
+            right: 5px;
+        }
+
+        .textToCopy {
+            width: 600px;
+            background-color: #ededed;
+            color: black;
+            font-family: "courier new", monospace;
+            padding: 10px 30px 10px 10px;
+            font-size: 1.0em;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .sample-prompt {
+            width: 90%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }        
+        
+        
+        
+        
+        
+        .stages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+        }
+
+        .stage {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            position: relative;
+            min-height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .stage-icon {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            position: absolute;
+            left: -40px;    
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .stage-content {
+            flex-grow: 1;
+            /*padding-left: 60px;*/
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 60px;            
+        }
+
+        .stage-title {
+            font-weight: bold;
+            margin: 0;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stage-description {
+            margin: 0;
+            display: block;
+            line-height: 1.5;
+        }
+
+        /* Stage-specific background colors */
+        .recognize { background-color: #F3E8FF; }
+        .investigate { background-color: #FFE4CC; }
+        .supercharge { background-color: #DCFCE7; }
+        .exchange { background-color: #DBEAFE; }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 600px) {
+
+            .stages-container {
+                width: 100%;
+                margin-top: 30px;
+            }
+            
+            .stage {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+                padding-top: 50px; /* Make room for the icon */
+                min-height: auto;
+            }
+
+            .stage-icon {
+                width: 70px;
+                height: 70px;
+                top: -30px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .stage-content {
+                padding-left: 0;
+                text-align: center;
+                width: 100%;
+            }
+
+            .stage-title {
+                text-align: center;
+            }
+
+            .stage-description {
+                text-align: center;
+            }
+
+        }        
+        
+        
+    </style>
+</head>
+<body>
+    <!-- Hero Section with Description -->
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <h1 class="fw-bold">AI Learning Journey</h1>
+                <p class="lead text-muted">Congratulations! Learning about AI can be daunting but you are brave and want to learn more! We have designed 10 unique challenges to acquaint you with AI.<br /><br />They are low stakes. Low risk. We don't track your progress - you can go at your own pace.<br /><br />Each week, you'll receive an email with an activity designed to introduce you to different ways to use AI. We'll start with a brief foundational tour of AI, move into some easy-to-do (and fun!) activities to help you gain exposure to AI, and then move on to more practical ideas!<br /><br />And hopefully you'll have fun along the way.</p>
+                <p class="lead text-muted">We have identified four stages of AI use:</p>
+            <!--    <div class="lead text-muted" style="text-align: left;">-->
+            <!--        <ul>-->
+            <!--            <li><strong>Recognize:</strong> Identify where AI exists in your world and how it can be useful</li>-->
+            <!--            <li><strong>Investigate:</strong> Explore AI tools and their potential</li>-->
+            <!--            <li><strong>Supercharge:</strong> Leverage AI to enhance creativity, productivity, and decision-making <em>potentiating</em> your actions</li>-->
+            <!--            <li><strong>Exchange:</strong> Collaborate with AI in a dynamic, interactive way, blending human expertise with AI’s capabilities</li>-->
+            <!--        </ul>-->
+            <!--    </div>-->
+            <!--</div>-->
+            
+            
+            <!--<img src="https://docs.google.com/drawings/d/e/2PACX-1vRGVeOL-u3SLJihRXSy7OJhYNS-GfJr-4M4JPqtQiH7T5_oDHpM75FWF4efGPhdNIn5jjpZ3I9kug3y/pub?w=1536&amp;h=468" alt="Four icons with words under each one. An eyeball with the word RECOGNIZE. A magnifying glass with the word INVESTIGATE. A lightning bolt with the word SUPERCHARGE. And two curved arrows leading into each other with the word EXCHANGE." title="Four icons with words under each one. An eyeball with the word RECOGNIZE. A magnifying glass with the word INVESTIGATE. A lightning bolt with the word SUPERCHARGE. And two curved arrows leading into each other with the word EXCHANGE." />-->
+
+
+
+    <div class="stages-container">
+        <div class="stage recognize">
+            <img src="images/rise.png" alt="Eye icon" class="stage-icon">
+            <div class="stage-content">
+                <p class="stage-title">Recognize</p>
+                <p class="stage-description">Identify where AI exists in your world and how it can be useful</p>
+            </div>
+        </div>
+
+        <div class="stage investigate">
+            <img src="images/investigate.png" alt="Magnifying glass icon" class="stage-icon">
+            <div class="stage-content">
+                <p class="stage-title">Investigate</p>
+                <p class="stage-description">Explore AI tools and their potential</p>
+            </div>
+        </div>
+
+        <div class="stage supercharge">
+            <img src="images/supercharge.png" alt="Lightning bolt icon" class="stage-icon">
+            <div class="stage-content">
+                <p class="stage-title">Supercharge</p>
+                <p class="stage-description">Leverage AI to enhance creativity, productivity, and decision-making potentiating your actions</p>
+            </div>
+        </div>
+
+        <div class="stage exchange">
+            <img src="images/exchange.png" alt="Refresh icon" class="stage-icon">
+            <div class="stage-content">
+                <p class="stage-title">Exchange</p>
+                <p class="stage-description">Collaborate with AI in a dynamic, interactive way, blending human expertise with AI's capabilities</p>
+            </div>
+        </div>
+    </div>
+
+            
+        </div>
+    </section>
+
+    <!-- Challenge Cards -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Weekly Challenges</h2>
+            <div class="challenges-container">
+                <div class="scrolling-wrapper">
+                    <div class="d-inline-flex gap-4" style="padding: 0 1rem;">
+                    <!-- Challenge 1 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQEC1aaPQ4XKP11UF2ayl1F_2-31bYMOy33n63iX6LWesWARZDHebjd-kvgW0_zbaiP2zmzfvIwECx-/pub?w=400&amp;h=300" class="card-img-top" alt="Challenge 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 1: What <em>IS</em> AI?</h5>
+                            <p class="card-text">Learn about AI and create an account at some popular AI services.</p>
+                            <div class="card-category">recognize</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Challenge 2 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vSy1xyG-qAuefOnjfBad5i8rKeLlyDrRzHkh5R8MEN3iR7drkByRekZNaze4V9p-PC6TAb76zwH0je_/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 2: Upcoming</h5>
+                            <p class="card-text">Let's make some sweet, sweet art and hilarious idioms.</p>
+                            <div class="card-category">recognize</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 3 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <!--<img src="https://docs.google.com/drawings/d/e/2PACX-1vSRARwQ6xEbHfqqo06QQFdmW4o_2rKELnX1tiDxZ2FDKEuSfFmqDmtopMzinwjzBciKcjYuYMuMZcma/pub?w=400&amp;h=300" alt="The words IMAGES & IDIOMS" title="The words IMAGES & IDIOMS" class="card-img-top" alt="Challenge 2">-->
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQTixfAZECcgriHK_ru3q-ilfYzwB7Jdn-Fit3HOMA6axCR69HB_kmsArghGEVNSJETTAoX7DGCwTKw/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 3: Upcoming</h5>
+                            <p class="card-text">Explore AI-powered tools for creating unique artwork and designs.</p>
+                            <div class="card-category">investigate</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 4 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQTixfAZECcgriHK_ru3q-ilfYzwB7Jdn-Fit3HOMA6axCR69HB_kmsArghGEVNSJETTAoX7DGCwTKw/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 4: Upcoming</h5>
+                            <p class="card-text">Harness AI to enhance your writing and content creation process.</p>
+                            <div class="card-category">investigate</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 5 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vSH5KpRIIHlQBDOX6O4kd-Sa2--puHyIs5_BDEKixcg0uNZCJtlMvXWEIybKomhknJCKUWr9gd8aXQ_/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 5: MakeUpcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">investigate</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 6 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQTdgLakRoba9Yqvk_WhQeQ98pM91Yd6_oEqtCQxoR-y1NS9RguU8x2Uy-gxg8S2H7f_H87acoqTubc/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 6: Upcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">supercharge</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 7 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQTdgLakRoba9Yqvk_WhQeQ98pM91Yd6_oEqtCQxoR-y1NS9RguU8x2Uy-gxg8S2H7f_H87acoqTubc/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 7: Upcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">supercharge</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 8 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vQTdgLakRoba9Yqvk_WhQeQ98pM91Yd6_oEqtCQxoR-y1NS9RguU8x2Uy-gxg8S2H7f_H87acoqTubc/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 8: Upcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">supercharge</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 9 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challengeXModal">
+                        <div class="card-purple-strip"></div>
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vSMn5H5ONIH2xKsLa9_khnlGoEx1d4DUPe3vuwNjXTwBbKnKfEShocUYFAgW9eQmWf_bahqy7HloB3b/pub?w=400&amp;h=300" alt="" title="" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 9: Upcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">exchange</div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 10 -->
+                    <div class="card" style="width: 300px; white-space: normal;" data-bs-toggle="modal" data-bs-target="#challenge10Modal">
+                        <div class="card-purple-strip"></div>
+                        <!--<img src="/api/placeholder/400/300" class="card-img-top" alt="Challenge 10">-->
+                        <img src="https://docs.google.com/drawings/d/e/2PACX-1vSMn5H5ONIH2xKsLa9_khnlGoEx1d4DUPe3vuwNjXTwBbKnKfEShocUYFAgW9eQmWf_bahqy7HloB3b/pub?w=400&amp;h=300" alt="" title="" />
+                        <div class="card-body">
+                            <h5 class="card-title">Challenge 10: Upcoming</h5>
+                            <p class="card-text">Aventure coming...</p>
+                            <div class="card-category">exchange</div>
+                        </div>
+                    </div>
+
+ 
+                </div>
+            </div>
+            <div class="arrows-navigation">
+                <button class="arrow-btn" id="prevBtn">←</button>
+                <button class="arrow-btn" id="nextBtn">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sign Up Form -->
+    <section class="py-5" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Sign Up for Weekly Challenges</h3>
+                            <form id="signupForm">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-5 bg-light" style="display:none;">
+        <div class="container">
+            <h2 class="text-center mb-5">Gallery</h2>
+            <ul class="nav nav-tabs justify-content-center mb-4" id="galleryTabs">
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link active" href="#" data-tab="artwork">AI Artwork</a>-->
+                <!--</li>-->
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link" href="#" data-tab="projects">Projects</a>-->
+                <!--</li>-->
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link" href="#" data-tab="experiments">Experiments</a>-->
+                <!--</li>-->
+            </ul>
+            <div class="gallery-content">
+                <div class="gallery-tab-content active" id="artwork">
+                    <div class="row">
+                        <!--<div class="col-md-4 mb-4">-->
+                        <!--    <img src="/api/placeholder/400/300" class="img-fluid rounded" alt="Artwork 1">-->
+                        <!--</div>-->
+                        <!--<div class="col-md-4 mb-4">-->
+                        <!--    <img src="/api/placeholder/400/300" class="img-fluid rounded" alt="Artwork 2">-->
+                        <!--</div>-->
+                        <!--<div class="col-md-4 mb-4">-->
+                        <!--    <img src="/api/placeholder/400/300" class="img-fluid rounded" alt="Artwork 3">-->
+                        <!--</div>-->
+                    </div>
+                </div>
+                <div class="gallery-tab-content" id="projects">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img src="/api/placeholder/400/300" class="card-img-top" alt="Project 1">
+                                <div class="card-body">
+                                    <h5 class="card-title">Project 1</h5>
+                                    <p class="card-text">Description of project 1</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <img src="/api/placeholder/400/300" class="card-img-top" alt="Project 2">
+                                <div class="card-body">
+                                    <h5 class="card-title">Project 2</h5>
+                                    <p class="card-text">Description of project 2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-tab-content" id="experiments">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Experiment 1</h5>
+                                    <p class="card-text">Results of experiment 1</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Add more experiment cards as needed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenge Modals -->
+    <!-- Modal 1: AI Foundations -->
+    <div class="modal fade" id="challenge1Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 1: Introduction to AI</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="https://docs.google.com/drawings/d/e/2PACX-1vR6XXMk7pP5lMvbR0CnprL4onPRZnKXf-AfxXKv0mWo_ZrSALNw0lypVdw3Wafy2UmC0H3mt5TZRXgb/pub?w=800&amp;h=400" class="img-fluid mb-4 rounded" alt="AI Foundations Banner">
+                    <h3>Introduction to AI</h3>
+                    <p>Discover the basic concepts of Artificial Intelligence and how it's shaping our world...</p>
+                    
+                    <h3>Key Concepts</h3>
+                    <ul>
+                        <li>What is AI?</li>
+                        <li>How Large Language Models (LLMs) work</li>
+                        <li>What this means for us</li>
+                        <li>The dark side of AI</li>
+                        <li>Creating accounts</li>
+                    </ul>
+                    
+                    <h3>Video Tutorial</h3>
+                    <div class="ratio ratio-16x9 mb-4">
+                        <!--<img src="/api/placeholder/800/450" alt="Video placeholder">-->
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/LPZh9BOjkQs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="rounded"></iframe>
+                    </div>
+                    
+                    <h3>Weekly Challenge</h3>
+                    <p>Create an account and start kicking the tires! We'll just be doing some fun things right now to see what ChatGPT can do. Later on we will look at ways to get more out of AI.</p>
+                    <ol>
+                        <li>Create an account at <a href="https://chatgpt.com/" target="_blank">ChatGPT</a></li>
+                        <li>Ask ChatGPT to generate 20 made-up idioms.
+                            <div class="sample-prompt">
+                                <div class="textToCopy" id="text01">
+                                    Can you please give me 20 idioms that aren't real?
+                                    <span class="copy-button" onclick="copyText(parentElement.id)"><i class="fa-regular fa-copy fa-xl"></i></span>
+                                </div>        
+        
+                            </div>
+                        </li>
+                        <li>Ask for 10 more!</li>
+                    </ol>
+                    
+                    <h3>Share</h3>
+                    <p>If you find that you've found something that you want to share with others at FLCC, paste it here! We'll showcase the most hilarious idioms!</p>
+                    <textarea style="width: 400px;" placeholder="Paste your idiom here."></textarea><br /><button style="border-radius: 8px; color: white; font-weight: bold; background-color: #b4a7d7; border: 0px;">Submit</button>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Prompt Engineering -->
+    <div class="modal fade" id="challenge2Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 2: Prompt Engineering</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="Prompt Engineering Banner">
+                    <h3>The Art of Prompting</h3>
+                    <p>Learn how to craft effective prompts that get the best results from AI models...</p>
+                    
+                    <h3>Best Practices</h3>
+                    <ul>
+                        <li>Clear and specific instructions</li>
+                        <li>Context setting</li>
+                        <li>Using examples</li>
+                        <li>Iterative refinement</li>
+                    </ul>
+                    
+                    <h3>Practice Exercise</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Try these prompt variations and compare results...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: AI Art Creation -->
+    <div class="modal fade" id="challenge3Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 3: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: AI Art Creation -->
+    <div class="modal fade" id="challenge4Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 4: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Modal 5: AI Art Creation -->
+    <div class="modal fade" id="challenge5Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 5: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Modal 6: AI Art Creation -->
+    <div class="modal fade" id="challenge6Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 6: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Modal 7: AI Art Creation -->
+    <div class="modal fade" id="challenge7Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 7: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>        
+        
+    <!-- Modal 8: AI Art Creation -->
+    <div class="modal fade" id="challenge8Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 8: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Modal 9: AI Art Creation -->
+    <div class="modal fade" id="challenge9Modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Challenge 9: AI Art Creation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">
+                    <h3>Creating with AI</h3>
+                    <p>Explore various AI art tools and learn to create stunning visuals...</p>
+                    
+                    <h3>Featured Tools</h3>
+                    <ul>
+                        <li>Text-to-image generation</li>
+                        <li>Style transfer</li>
+                        <li>Image editing</li>
+                    </ul>
+                    
+                    <h3>Project Ideas</h3>
+                    <div class="bg-light p-3 rounded">
+                        <p>Create a series of themed artworks using different AI tools...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Modal 10: AI Art Creation -->
+    <div class="modal fade" id="challengeXModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upcoming</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!--<img src="/api/placeholder/800/400" class="img-fluid mb-4" alt="AI Art Banner">-->
+                    <h3>This challenge has not yet been released.</h3>
+                    <!--<p>Explore various AI art tools and learn to create stunning visuals...</p>-->
+                    
+                    <!--<h3>Featured Tools</h3>-->
+                    <!--<ul>-->
+                    <!--    <li>Text-to-image generation</li>-->
+                    <!--    <li>Style transfer</li>-->
+                    <!--    <li>Image editing</li>-->
+                    <!--</ul>-->
+                    
+                    <!--<h3>Project Ideas</h3>-->
+                    <!--<div class="bg-light p-3 rounded">-->
+                    <!--    <p>Create a series of themed artworks using different AI tools...</p>-->
+                    <!--</div>-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollWrapper = document.querySelector('.scrolling-wrapper');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const cardWidth = 316; // 300px card + 16px gap
+            
+            // Drag to scroll functionality
+            let isMouseDown = false;
+            let startX;
+            let scrollLeft;
+
+            scrollWrapper.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                scrollWrapper.style.cursor = 'grabbing';
+                startX = e.pageX - scrollWrapper.offsetLeft;
+                scrollLeft = scrollWrapper.scrollLeft;
+            });
+
+            scrollWrapper.addEventListener('mouseleave', () => {
+                isMouseDown = false;
+                scrollWrapper.style.cursor = 'grab';
+            });
+
+            scrollWrapper.addEventListener('mouseup', () => {
+                isMouseDown = false;
+                scrollWrapper.style.cursor = 'grab';
+            });
+
+            scrollWrapper.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                e.preventDefault();
+                const x = e.pageX - scrollWrapper.offsetLeft;
+                const walk = (x - startX) * 2;
+                scrollWrapper.scrollLeft = scrollLeft - walk;
+            });
+
+            // Arrow navigation
+            prevBtn.addEventListener('click', () => {
+                scrollWrapper.scrollBy({
+                    left: -cardWidth,
+                    behavior: 'smooth'
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                scrollWrapper.scrollBy({
+                    left: cardWidth,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Update arrow button states
+            function updateArrowStates() {
+                prevBtn.disabled = scrollWrapper.scrollLeft <= 0;
+                nextBtn.disabled = scrollWrapper.scrollLeft >= scrollWrapper.scrollWidth - scrollWrapper.clientWidth;
+            }
+
+            scrollWrapper.addEventListener('scroll', updateArrowStates);
+            window.addEventListener('resize', updateArrowStates);
+            updateArrowStates(); // Initial state
+
+            // Set initial cursor style
+            scrollWrapper.style.cursor = 'grab';
+        });
+
+        // Gallery tab functionality
+        document.querySelectorAll('#galleryTabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Remove active class from all tabs and content
+                document.querySelectorAll('#galleryTabs .nav-link').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.gallery-tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Form submission handling
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value
+            };
+            console.log('Form submitted:', formData);
+            // Add your form submission logic here
+            alert('Thank you for signing up! We\'ll be in touch soon.');
+            e.target.reset();
+        });
+    </script>
+    
+    
+    <!-- COPY SAMPLE PROMPT -->
+    <script>
+        function copyText(id) {
+            console.log(id);
+            
+            let a = document.getElementById(id).innerText;
+            console.log(a);
+            navigator.clipboard.writeText
+                (a);
+        }
+    </script>    
+    
+</body>
+</html>
