@@ -465,7 +465,7 @@
                         let risk;
                         
                         // Determine risk level based on port and size
-                        if port === 22 && size > 500 {
+                        if (port === 22 && size > 500) {
                             risk = "HIGH RISK: Potential unauthorized remote access detected!";
                         } else if (port === 80 && size > 100) {
                             risk = "MEDIUM RISK: Large unencrypted data transfer detected.";
