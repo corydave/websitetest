@@ -524,6 +524,41 @@
                 }
             ]
         };
+
+
+        const phishingAnalyzerProgram = {
+            steps: [
+                {
+                    prompt: "Enter the email subject line: ",
+                    process: (input, state) => {
+                        const subject = input;
+                        let risk;
+                        
+                        // Convert to lowercase for case-insensitive matching
+                        const lowerSubject = subject.toLowerCase();
+                        
+                        // Check for phishing indicators
+                        if (lowerSubject.includes("urgent") || lowerSubject.includes("immediate action required")) {
+                            risk = "HIGH RISK: Possible phishing attempt.";
+                        } else if (lowerSubject.includes("win") || lowerSubject.includes("free")) {
+                            risk = "MEDIUM RISK: Suspicious offer detected.";
+                        } else if (lowerSubject.includes("password reset")) {
+                            risk = "LOW RISK: Verify legitimacy with sender.";
+                        } else {
+                            risk = "No phishing indicators detected.";
+                        }
+                        
+                        return {
+                            output: `\nSECURITY ASSESSMENT:\n${risk}\n------------------------\nAnalyzed subject: "${subject}"`,
+                            state: { subject, risk },
+                            nextStep: 0 // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };
+
+
         
         // Programs collection - outside the class
         const programs = {
@@ -533,7 +568,8 @@
             inchesToFeet: inchesToFeetProgram,
             login: loginProgram,
             greeting: greetingProgram,
-            firewall: firewallProgram
+            firewall: firewallProgram,
+            phishing: phishingAnalyzerProgram
             // Add more programs here
         };
         
