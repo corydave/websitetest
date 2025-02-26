@@ -446,7 +446,7 @@
                 {
                     prompt: undefined,
                     process: () => ({
-                        output: "=== Network Traffic Security Analyzer ===",
+                        output: "=== Network Traffic Security Analyzer ===\n",
                         nextStep: 1
                     })
                 },
@@ -465,7 +465,7 @@
                         let risk;
                         
                         // Determine risk level based on port and size
-                        if ((port === 22 || port === 3389) && size > 500) {
+                        if port === 22 && size > 500 {
                             risk = "HIGH RISK: Potential unauthorized remote access detected!";
                         } else if (port === 80 && size > 100) {
                             risk = "MEDIUM RISK: Large unencrypted data transfer detected.";
@@ -476,7 +476,7 @@
                         }
                         
                         return {
-                            output: `FIREWALL LOG:\nPort: ${port}, Transfer Size: ${size} MB\nRisk Assessment: ${risk}\n------------------------`,
+                            output: `\nFIREWALL LOG:\nPort: ${port}, Transfer Size: ${size} MB\nRisk Assessment: ${risk}\n------------------------`,
                             state: { ...state, size, risk },
                             nextStep: 0 // Loop back to start
                         };
