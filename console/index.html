@@ -481,7 +481,7 @@
                         return {
                             output: `\nFIREWALL LOG:\nPort: ${port}, Transfer Size: ${size} MB\nRisk Assessment: ${risk}\n------------------------`,
                             state: { ...state, size, risk },
-                            nextStep: 0 // Loop back to start
+                            // nextStep: 0 // Loop back to start
                         };
                     }
                 }
