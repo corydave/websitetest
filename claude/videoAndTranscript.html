@@ -24,6 +24,9 @@
             flex-direction: row;
             height: 100vh;
             overflow: hidden;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid red;
         }
         .video-panel {
             flex: 1;
@@ -354,7 +357,7 @@
         <div class="transcript-panel">
             <div class="transcript-header">
                 <h2 class="transcript-title">Transcript</h2>
-                <div class="language-selector">
+                <div class="language-selector" style="display: hidden;">
                     <select id="language-select">
                         <option value="en">English</option>
                         <option value="es">Español</option>
