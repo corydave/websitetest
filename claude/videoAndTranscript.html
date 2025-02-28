@@ -1,0 +1,1491 @@
+<!--
+?videoId=Xam69FGG4gw&captionUrl=https://corydave.github.io/websitetest/captions/test_captions.vtt
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video with Synchronized Transcript</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .video-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+            background-color: #000;
+        }
+        .transcript-panel {
+            width: 360px;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-left: 1px solid #ddd;
+        }
+        .video-container {
+            flex: 1;
+            position: relative;
+            background-color: #000;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .transcript-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .transcript-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0;
+        }
+        .language-selector {
+            display: flex;
+            align-items: center;
+        }
+        .language-selector select {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        .search-icon {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .search-icon:hover {
+            opacity: 1;
+        }
+        .transcript-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+        .transcript-segment {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .transcript-segment:hover {
+            background-color: #f8f9fa;
+        }
+        .transcript-segment.active {
+            background-color: #f0f7ff;
+            border-left: 3px solid #0d6efd;
+        }
+        .custom-controls {
+            background-color: #111;
+            padding: 8px 12px;
+            color: #fff;
+        }
+        .timestamp {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            display: inline-block;
+            width: 45px;
+        }
+        .search-highlight {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        .search-result-count {
+            font-size: 13px;
+            color: #666;
+        }
+        .progress-container {
+            cursor: pointer;
+            height: 4px;
+            background-color: #333;
+            margin: 8px 0;
+            position: relative;
+        }
+        #progress-bar {
+            height: 100%;
+            background-color: #0d6efd;
+            width: 0;
+        }
+        .controls-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .time-display {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            opacity: 0.8;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+        }
+        .control-btn:hover {
+            opacity: 1;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .search-container {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            display: none;
+        }
+        .search-input-group {
+            display: flex;
+            position: relative;
+        }
+        #search-input {
+            width: 100%;
+            padding: 6px 10px;
+            padding-right: 32px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input-group button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background: none;
+            border: none;
+            width: 36px;
+            cursor: pointer;
+        }
+        #search-results {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .search-nav-btns {
+            display: flex;
+            gap: 4px;
+        }
+        .search-nav-btn {
+            border: none;
+            background-color: #f0f7ff;
+            color: #0d6efd;
+            padding: 2px 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        .search-nav-btn:hover {
+            background-color: #e0edff;
+        }
+        #video-url-container {
+            display: none;
+            padding: 12px;
+            background-color: #111;
+        }
+        #video-url {
+            width: calc(100% - 100px);
+            padding: 6px 10px;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+            margin-right: 8px;
+        }
+        #load-video-btn {
+            padding: 6px 12px;
+            background-color: #0d6efd;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .settings-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .settings-btn:hover {
+            color: #fff;
+        }
+        #load-sample-btn {
+            display: none;
+            margin-top: 8px;
+        }
+        #no-transcript-msg {
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+        
+        /* Playback speed dropdown styles */
+        .speed-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .speed-btn {
+            display: flex;
+            align-items: center;
+        }
+        .speed-btn-text {
+            margin-left: 2px;
+            font-size: 12px;
+        }
+        .speed-dropdown-content {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+            background-color: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 5px 0;
+            z-index: 1000;
+            width: 120px;
+        }
+        .speed-dropdown-content button {
+            display: block;
+            width: 100%;
+            padding: 6px 12px;
+            background: none;
+            border: none;
+            color: #fff;
+            text-align: left;
+            cursor: pointer;
+        }
+        .speed-dropdown-content button:hover {
+            background-color: #333;
+        }
+        .speed-dropdown-content button.active {
+            background-color: #0d6efd;
+        }
+        .speed-dropdown.show .speed-dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Video Panel -->
+        <div class="video-panel">
+            <div class="video-container">
+                <!-- YouTube iframe will be inserted here by JavaScript -->
+                <div id="player"></div>
+            </div>
+            <div class="custom-controls">
+                <div class="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <div class="controls-wrapper">
+                    <div class="time-display">
+                        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button id="play-btn" class="control-btn">
+                            <i class="bi bi-play-fill"></i>
+                        </button>
+                        <button id="pause-btn" class="control-btn">
+                            <i class="bi bi-pause-fill"></i>
+                        </button>
+                        <button id="mute-btn" class="control-btn">
+                            <i class="bi bi-volume-up"></i>
+                        </button>
+                        <div class="speed-dropdown">
+                            <button class="control-btn speed-btn" id="speed-btn">
+                                <i class="bi bi-speedometer2"></i>
+                                <span class="speed-btn-text">1×</span>
+                            </button>
+                            <div class="speed-dropdown-content" id="speed-dropdown">
+                                <button class="speed-option" data-speed="0.5">0.5×</button>
+                                <button class="speed-option" data-speed="1" id="normal-speed">1×</button>
+                                <button class="speed-option" data-speed="1.5">1.5×</button>
+                                <button class="speed-option" data-speed="1.75">1.75×</button>
+                                <button class="speed-option" data-speed="2">2×</button>
+                                <button class="speed-option" data-speed="2.25">2.25×</button>
+                                <button class="speed-option" data-speed="2.5">2.5×</button>
+                                <button class="speed-option" data-speed="3">3×</button>
+                            </div>
+                        </div>
+                        <button id="settings-btn" class="settings-btn">
+                            <i class="bi bi-gear"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="video-url-container">
+                <input type="text" id="video-url" placeholder="YouTube Video URL or ID">
+                <button id="load-video-btn">Load</button>
+                <button id="load-sample-btn">Load Sample</button>
+            </div>
+        </div>
+        
+        <!-- Transcript Panel -->
+        <div class="transcript-panel">
+            <div class="transcript-header">
+                <h2 class="transcript-title">Transcript</h2>
+                <div class="language-selector">
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                    <div class="search-icon" id="toggle-search">
+                        <i class="bi bi-search"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="search-container" id="search-container">
+                <div class="search-input-group">
+                    <input type="text" id="search-input" placeholder="Search transcript...">
+                    <button id="search-btn">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <div id="search-results" style="display: none;">
+                    <span id="result-count" class="search-result-count"></span>
+                    <div class="search-nav-btns">
+                        <button id="prev-result" class="search-nav-btn">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                        <button id="next-result" class="search-nav-btn">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <button id="clear-search" class="search-nav-btn">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transcript-container" id="transcript-container">
+                <div id="transcript-content">
+                    <!-- Transcript will be loaded here -->
+                    <div id="no-transcript-msg">
+                        <p>Load a video to see the transcript</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    
+    <!-- YouTube API and Application Code -->
+    <script>
+        // Global variables
+        let player;
+        let transcriptData = [];
+        let currentSegmentIndex = -1;
+        let searchResults = [];
+        let currentSearchResultIndex = -1;
+        let playerReady = false;
+        let searchVisible = false;
+        
+        // Sample transcript data for testing
+        const sampleTranscriptData = [
+            { start: 0.0, duration: 3.82, text: "Hi everyone, welcome to this video about synchronized transcripts." },
+            { start: 3.82, duration: 4.5, text: "This is a demo of how we can highlight text as the video plays." },
+            { start: 8.32, duration: 5.1, text: "You can also click on any part of the transcript to jump to that point in the video." },
+            { start: 13.42, duration: 4.6, text: "The search functionality allows you to find specific words in the transcript." },
+            { start: 18.02, duration: 3.9, text: "When you search, all matching words will be highlighted in the transcript." },
+            { start: 21.92, duration: 4.8, text: "You can navigate through the search results using the Previous and Next buttons." },
+            { start: 26.72, duration: 5.2, text: "Try clicking on different parts of the transcript to see how the video jumps to that point." },
+            { start: 31.92, duration: 4.3, text: "This kind of interface is great for educational videos and lectures." },
+            { start: 36.22, duration: 5.7, text: "You can easily find and review specific information without watching the entire video." },
+            { start: 41.92, duration: 3.8, text: "The custom controls also make it easy to play, pause, and mute the video." },
+            { start: 45.72, duration: 4.1, text: "You can see the video progress in the progress bar at the bottom." },
+            { start: 49.82, duration: 5.3, text: "And the current time and total duration are displayed as well." },
+            { start: 55.12, duration: 6.2, text: "Building this interface involves working with the YouTube API and JavaScript events." },
+            { start: 61.32, duration: 4.9, text: "The transcript data includes timestamps that sync with the video playback." },
+            { start: 66.22, duration: 5.1, text: "Thanks for watching this demonstration of synchronized video and transcript." }
+        ];
+        
+
+        
+        // Initialize YouTube API
+        function initYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+        
+        // YouTube API will call this function when ready
+        window.onYouTubeIframeAPIReady = function() {
+            // Check for video ID in URL parameters
+            const urlParams = getUrlParams();
+            
+            if (urlParams.videoId) {
+                // Use the video ID from URL
+                createPlayer(urlParams.videoId);
+            } else {
+                // Default video - TED talk about climate change
+                createPlayer('C35-nwVr5Fk');
+            }
+            
+            // Set up load video button event
+            document.getElementById('load-video-btn').addEventListener('click', function() {
+                const videoUrl = document.getElementById('video-url').value.trim();
+                if (videoUrl) {
+                    const videoId = extractVideoId(videoUrl);
+                    if (videoId) {
+                        // Preserve caption URL parameter if present
+                        const currentParams = getUrlParams();
+                        let newUrl = `?videoId=${videoId}`;
+                        if (currentParams.captionUrl) {
+                            newUrl += `&captionUrl=${encodeURIComponent(currentParams.captionUrl)}`;
+                        }
+                        
+                        createPlayer(videoId);
+                        // Update URL without refreshing the page
+                        window.history.replaceState({}, '', newUrl);
+                    } else {
+                        alert('Invalid YouTube URL or ID');
+                    }
+                }
+            });
+        };
+        
+        // Extract YouTube video ID from URL
+        function extractVideoId(url) {
+            // If it's already just an ID (11 characters)
+            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+                return url;
+            }
+            
+            // Try to extract from various YouTube URL formats
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : null;
+        }
+        
+        // Create YouTube player
+        function createPlayer(videoId) {
+            // If player already exists, destroy it first
+            if (player) {
+                player.destroy();
+            }
+            
+            player = new YT.Player('player', {
+                videoId: videoId,
+                playerVars: {
+                    controls: 0,      // Hide default controls
+                    disablekb: 1,     // Disable keyboard controls
+                    modestbranding: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    hl: 'en',         // Set language for captions
+                    cc_lang_pref: 'en' // Set caption language preference
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+            
+            // Show loading indicator for transcript while player loads
+            const transcriptContent = document.getElementById('transcript-content');
+            transcriptContent.innerHTML = '<div id="no-transcript-msg"><p>Loading video and captions...</p></div>';
+        }
+        
+        // When player is ready
+        function onPlayerReady(event) {
+            playerReady = true;
+            updateDurationDisplay();
+            
+            // Set up custom controls
+            document.getElementById('play-btn').addEventListener('click', function() {
+                player.playVideo();
+            });
+            
+            document.getElementById('pause-btn').addEventListener('click', function() {
+                player.pauseVideo();
+            });
+            
+            document.getElementById('mute-btn').addEventListener('click', function() {
+                if (player.isMuted()) {
+                    player.unMute();
+                    this.innerHTML = '<i class="bi bi-volume-up"></i>';
+                } else {
+                    player.mute();
+                    this.innerHTML = '<i class="bi bi-volume-mute"></i>';
+                }
+            });
+            
+            // Set up playback speed control
+            setupPlaybackSpeedControl();
+            
+            // Set up progress bar click
+            document.querySelector('.progress-container').addEventListener('click', function(e) {
+                const percent = e.offsetX / this.offsetWidth;
+                player.seekTo(player.getDuration() * percent);
+            });
+            
+            // Start time updater
+            setInterval(updateTimeDisplay, 1000);
+            
+            // Load the transcript or captions
+            loadTranscriptForVideo(player.getVideoData().video_id);
+        }
+        
+        // Set up playback speed control
+        function setupPlaybackSpeedControl() {
+            const speedBtn = document.getElementById('speed-btn');
+            const speedDropdown = document.getElementById('speed-dropdown');
+            const speedOptions = document.querySelectorAll('.speed-option');
+            
+            // Show/hide speed dropdown
+            speedBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = document.querySelector('.speed-dropdown');
+                dropdown.classList.toggle('show');
+                console.log('Speed button clicked, dropdown visibility:', dropdown.classList.contains('show'));
+            });
+            
+            // Handle speed option selection
+            speedOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    console.log('Speed option clicked:', this.getAttribute('data-speed'));
+                    
+                    const speed = parseFloat(this.getAttribute('data-speed'));
+                    if (player && playerReady) {
+                        console.log('Setting playback rate to', speed);
+                        player.setPlaybackRate(speed);
+                        
+                        // Update button text
+                        document.querySelector('.speed-btn-text').textContent = speed + '×';
+                        
+                        // Update active class
+                        speedOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Close dropdown
+                        document.querySelector('.speed-dropdown').classList.remove('show');
+                    } else {
+                        console.error('Player not ready for speed change');
+                    }
+                });
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                document.querySelector('.speed-dropdown').classList.remove('show');
+            });
+            
+            // Mark normal speed as active initially
+            document.getElementById('normal-speed').classList.add('active');
+        }
+        
+        // When player state changes
+        function onPlayerStateChange(event) {
+            // Update UI based on player state
+            const playBtn = document.getElementById('play-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            
+            if (event.data === YT.PlayerState.PLAYING) {
+                playBtn.style.opacity = '1';
+                pauseBtn.style.opacity = '0.7';
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                playBtn.style.opacity = '0.7';
+                pauseBtn.style.opacity = '1';
+            }
+        }
+        
+        // Update time display and progress bar
+        function updateTimeDisplay() {
+            if (!playerReady || !player) return;
+            
+            const currentTime = player.getCurrentTime();
+            const duration = player.getDuration();
+            
+            document.getElementById('current-time').textContent = formatTime(currentTime);
+            document.getElementById('progress-bar').style.width = (currentTime / duration * 100) + '%';
+            
+            // Update transcript highlighting
+            highlightCurrentSegment(currentTime);
+        }
+        
+        // Update duration display
+        function updateDurationDisplay() {
+            if (!playerReady || !player) return;
+            const duration = player.getDuration();
+            document.getElementById('duration').textContent = formatTime(duration);
+        }
+        
+        // Format time to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            seconds = Math.floor(seconds % 60);
+            return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        }
+        
+        // Highlight the current segment in the transcript
+        function highlightCurrentSegment(currentTime) {
+            if (transcriptData.length === 0) return;
+            
+            let newIndex = -1;
+            for (let i = 0; i < transcriptData.length; i++) {
+                const segment = transcriptData[i];
+                const segmentEnd = segment.start + segment.duration;
+                
+                if (currentTime >= segment.start && currentTime < segmentEnd) {
+                    newIndex = i;
+                    break;
+                }
+            }
+            
+            // If found a new segment to highlight
+            if (newIndex !== -1 && newIndex !== currentSegmentIndex) {
+                // Remove active class from all segments
+                const segments = document.querySelectorAll('.transcript-segment');
+                segments.forEach(segment => segment.classList.remove('active'));
+                
+                // Add active class to current segment
+                const currentSegment = document.getElementById('segment-' + newIndex);
+                if (currentSegment) {
+                    currentSegment.classList.add('active');
+                    
+                    // Scroll to make visible if needed
+                    const container = document.getElementById('transcript-container');
+                    const containerRect = container.getBoundingClientRect();
+                    const segmentRect = currentSegment.getBoundingClientRect();
+                    
+                    if (segmentRect.top < containerRect.top || segmentRect.bottom > containerRect.bottom) {
+                        container.scrollTop = currentSegment.offsetTop - container.offsetTop - 50;
+                    }
+                }
+                
+                currentSegmentIndex = newIndex;
+            }
+        }
+        
+        // Load transcript data and create transcript UI
+        function loadTranscript(data) {
+            transcriptData = data;
+            currentSegmentIndex = -1;
+            
+            const transcriptContent = document.getElementById('transcript-content');
+            transcriptContent.innerHTML = '';
+            
+            if (data.length === 0) {
+                const noData = document.createElement('div');
+                noData.id = 'no-transcript-msg';
+                noData.innerHTML = '<p>No transcript available for this video</p>';
+                transcriptContent.appendChild(noData);
+                return;
+            }
+            
+            data.forEach((segment, index) => {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.className = 'transcript-segment';
+                segmentDiv.id = 'segment-' + index;
+                
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = formatTime(segment.start);
+                
+                const text = document.createElement('span');
+                text.className = 'segment-text';
+                text.textContent = segment.text;
+                
+                segmentDiv.appendChild(timestamp);
+                segmentDiv.appendChild(text);
+                
+                // Add click handler to jump to that part of the video
+                segmentDiv.addEventListener('click', function() {
+                    if (player && playerReady) {
+                        player.seekTo(segment.start);
+                        player.playVideo();
+                    }
+                });
+                
+                transcriptContent.appendChild(segmentDiv);
+            });
+            
+            // Remove no transcript message if it exists
+            const noTranscriptMsg = document.getElementById('no-transcript-msg');
+            if (noTranscriptMsg) {
+                noTranscriptMsg.remove();
+            }
+            
+            // Clear any existing search results
+            clearSearch();
+        }
+        
+        // Set up search functionality
+        function setupSearch() {
+            const searchBtn = document.getElementById('search-btn');
+            const searchInput = document.getElementById('search-input');
+            const clearSearchBtn = document.getElementById('clear-search');
+            const prevResultBtn = document.getElementById('prev-result');
+            const nextResultBtn = document.getElementById('next-result');
+            const toggleSearchBtn = document.getElementById('toggle-search');
+            const searchContainer = document.getElementById('search-container');
+            
+            // Toggle search visibility
+            toggleSearchBtn.addEventListener('click', function() {
+                searchVisible = !searchVisible;
+                searchContainer.style.display = searchVisible ? 'block' : 'none';
+                if (searchVisible) {
+                    searchInput.focus();
+                } else {
+                    clearSearch();
+                }
+            });
+            
+            // Search button click handler
+            searchBtn.addEventListener('click', function() {
+                performSearch();
+            });
+            
+            // Enter key in search input
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Clear search button
+            clearSearchBtn.addEventListener('click', function() {
+                clearSearch();
+            });
+            
+            // Previous result button
+            prevResultBtn.addEventListener('click', function() {
+                navigateSearchResults(-1);
+            });
+            
+            // Next result button
+            nextResultBtn.addEventListener('click', function() {
+                navigateSearchResults(1);
+            });
+            
+            // Settings button to show video URL input
+            document.getElementById('settings-btn').addEventListener('click', function() {
+                const urlContainer = document.getElementById('video-url-container');
+                urlContainer.style.display = urlContainer.style.display === 'none' || !urlContainer.style.display ? 'block' : 'none';
+            });
+        }
+        
+        // Perform search in transcript
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+            if (!searchTerm) return;
+            
+            // Clear previous search
+            clearSearchHighlights();
+            
+            searchResults = [];
+            currentSearchResultIndex = -1;
+            
+            // Find all matches in transcript
+            transcriptData.forEach((segment, segmentIndex) => {
+                const text = segment.text.toLowerCase();
+                let startPos = 0;
+                let pos;
+                
+                while ((pos = text.indexOf(searchTerm, startPos)) !== -1) {
+                    searchResults.push({
+                        segmentIndex: segmentIndex,
+                        position: pos,
+                        length: searchTerm.length
+                    });
+                    startPos = pos + 1;
+                }
+            });
+            
+            // Display search results count
+            const resultCount = document.getElementById('result-count');
+            resultCount.textContent = `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''}`;
+            
+            // Show search results navigation if results found
+            const searchResultsNav = document.getElementById('search-results');
+            if (searchResults.length > 0) {
+                searchResultsNav.style.display = 'flex';
+                // Navigate to first result
+                navigateSearchResults(1);
+            } else {
+                searchResultsNav.style.display = 'none';
+            }
+        }
+        
+        // Navigate between search results
+        function navigateSearchResults(direction) {
+            if (searchResults.length === 0) return;
+            
+            // Update current result index
+            currentSearchResultIndex += direction;
+            
+            // Loop around if needed
+            if (currentSearchResultIndex >= searchResults.length) {
+                currentSearchResultIndex = 0;
+            } else if (currentSearchResultIndex < 0) {
+                currentSearchResultIndex = searchResults.length - 1;
+            }
+            
+            // Clear all highlights and highlight current result
+            clearSearchHighlights();
+            highlightCurrentSearchResult();
+            
+            // Get current search result
+            const result = searchResults[currentSearchResultIndex];
+            
+            // Jump to the segment containing the result
+            if (player && playerReady) {
+                player.seekTo(transcriptData[result.segmentIndex].start);
+            }
+            
+            // Update result count with current position
+            const resultCount = document.getElementById('result-count');
+            resultCount.textContent = `Result ${currentSearchResultIndex + 1} of ${searchResults.length}`;
+        }
+        
+        // Highlight current search result
+        function highlightCurrentSearchResult() {
+            if (currentSearchResultIndex === -1 || searchResults.length === 0) return;
+            
+            const result = searchResults[currentSearchResultIndex];
+            const segmentEl = document.getElementById('segment-' + result.segmentIndex);
+            if (!segmentEl) return;
+            
+            // Get the text node
+            const textEl = segmentEl.querySelector('.segment-text');
+            if (!textEl) return;
+            
+            const text = textEl.textContent;
+            const searchTerm = document.getElementById('search-input').value.trim();
+            
+            // Create highlighted version of the text
+            const beforeMatch = text.substring(0, result.position);
+            const match = text.substring(result.position, result.position + result.length);
+            const afterMatch = text.substring(result.position + result.length);
+            
+            textEl.innerHTML = beforeMatch +
+                              '<span class="search-highlight">' + match + '</span>' +
+                              afterMatch;
+            
+            // Scroll to the segment
+            const container = document.getElementById('transcript-container');
+            segmentEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+        
+        // Clear search highlights
+        function clearSearchHighlights() {
+            // Restore original text to all segments
+            transcriptData.forEach((segment, index) => {
+                const segmentEl = document.getElementById('segment-' + index);
+                if (segmentEl) {
+                    const textEl = segmentEl.querySelector('.segment-text');
+                    if (textEl) {
+                        textEl.textContent = segment.text;
+                    }
+                }
+            });
+        }
+        
+        // Clear search
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('search-results').style.display = 'none';
+            clearSearchHighlights();
+            searchResults = [];
+            currentSearchResultIndex = -1;
+        }
+        
+        // Parse URL parameters
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams.entries()) {
+                params[key] = value;
+            }
+            
+            return params;
+        }
+        
+        // Initialize the application
+        function init() {
+            // Initialize YouTube API
+            initYouTubeAPI();
+            
+            // Set up search functionality
+            setupSearch();
+            
+            // Set up sample data button
+            document.getElementById('load-sample-btn').addEventListener('click', function() {
+                loadTranscript(sampleTranscriptData);
+            });
+            
+            // Hide URL input by default
+            document.getElementById('video-url-container').style.display = 'none';
+            
+            // Initialize language selector (just for UI, not functional in this demo)
+            document.getElementById('language-select').addEventListener('change', function() {
+                // In a real app, this would load transcript in the selected language
+                console.log('Selected language:', this.value);
+            });
+            
+            // Check for video ID in URL parameters
+            const urlParams = getUrlParams();
+            if (urlParams.videoId) {
+                // Update the video URL input field
+                document.getElementById('video-url').value = urlParams.videoId;
+            }
+        }
+
+// Load transcript for a video (using external caption file)
+        function loadTranscriptForVideo(videoId) {
+            console.log('Loading transcript for video:', videoId);
+            
+            // Show loading indicator
+            const transcriptContent = document.getElementById('transcript-content');
+            transcriptContent.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading captions...</p></div>';
+            
+            // Check URL parameters for caption file URL
+            const urlParams = getUrlParams();
+            
+            // Check if we have caption data in localStorage
+            const storedCaptions = localStorage.getItem(`caption_${videoId}`);
+            
+            if (urlParams.captionUrl) {
+                console.log('Found caption URL in parameters:', urlParams.captionUrl);
+                // We have a caption URL in the parameters
+                loadCaptionFile(urlParams.captionUrl, (captions) => {
+                    if (captions && captions.length > 0) {
+                        loadTranscript(captions);
+                    } else {
+                        showCaptionFileUpload(videoId);
+                    }
+                });
+            } else if (storedCaptions) {
+                console.log('Found stored captions for this video');
+                // We have previously stored captions
+                const captions = parseCaptionContent(storedCaptions, 'stored-captions.txt');
+                if (captions && captions.length > 0) {
+                    loadTranscript(captions);
+                } else {
+                    showCaptionFileUpload(videoId);
+                }
+            } else {
+                // No caption URL or stored captions
+                console.log('No caption URL or stored captions found, showing upload interface');
+                showCaptionFileUpload(videoId);
+            }
+        }
+        
+        // Show caption file upload interface
+        function showCaptionFileUpload(videoId) {
+            const transcriptContent = document.getElementById('transcript-content');
+            transcriptContent.innerHTML = `
+                <div id="caption-upload">
+                    <h5>Load Caption File</h5>
+                    <p>Upload a caption file or enter a URL to one:</p>
+                    
+                    <div class="mb-3">
+                        <label for="caption-file" class="form-label">Upload caption file:</label>
+                        <input type="file" class="form-control" id="caption-file" accept=".vtt,.srt,.sbv">
+                        <div class="form-text">Accept VTT, SRT, or SBV formats</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="caption-url" class="form-label">Or enter caption URL:</label>
+                        <input type="text" class="form-control" id="caption-url" placeholder="https://example.com/captions.vtt">
+                        <div class="form-text">Direct link to a caption file</div>
+                    </div>
+                    
+                    <button id="load-captions-btn" class="btn btn-primary mb-3">Load Captions</button>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember-caption-url" checked>
+                            <label class="form-check-label" for="remember-caption-url">
+                                Remember caption URL for this video
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mt-3">
+                        <h6>Paste caption content directly:</h6>
+                        <textarea id="caption-text" class="form-control" rows="6" placeholder="Paste VTT, SRT, or SBV content here..."></textarea>
+                        <button id="parse-caption-text-btn" class="btn btn-primary mt-2">Parse Captions</button>
+                    </div>
+                    
+                    <hr>
+                    
+                    <button id="load-simulated-btn" class="btn btn-secondary mt-2">Use Simulated Transcript</button>
+                </div>
+            `;
+            
+            // Set up file upload button
+            document.getElementById('load-captions-btn').addEventListener('click', function() {
+                const captionFile = document.getElementById('caption-file').files[0];
+                const captionUrl = document.getElementById('caption-url').value.trim();
+                const rememberUrl = document.getElementById('remember-caption-url').checked;
+                
+                if (captionFile) {
+                    // File was uploaded
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        const captions = parseCaptionContent(content, captionFile.name);
+                        
+                        if (captions && captions.length > 0) {
+                            loadTranscript(captions);
+                            
+                            // Optionally save mapping of video ID to caption content
+                            if (rememberUrl) {
+                                localStorage.setItem(`caption_${videoId}`, content);
+                            }
+                        } else {
+                            alert('Could not parse the caption file. Please check the format.');
+                        }
+                    };
+                    reader.readAsText(captionFile);
+                } else if (captionUrl) {
+                    // URL was provided
+                    loadCaptionFile(captionUrl, (captions) => {
+                        if (captions && captions.length > 0) {
+                            loadTranscript(captions);
+                            
+                            // Update URL without refreshing the page
+                            if (rememberUrl) {
+                                const newUrl = new URL(window.location.href);
+                                newUrl.searchParams.set('captionUrl', captionUrl);
+                                window.history.replaceState({}, '', newUrl.toString());
+                            }
+                        } else {
+                            alert('Could not load captions from the URL. Please check the URL and ensure it points to a valid caption file.');
+                        }
+                    });
+                } else {
+                    alert('Please either upload a caption file or enter a caption URL.');
+                }
+            });
+            
+            // Set up paste caption text button
+            document.getElementById('parse-caption-text-btn').addEventListener('click', function() {
+                const captionText = document.getElementById('caption-text').value.trim();
+                if (captionText) {
+                    const captions = parseCaptionContent(captionText, 'pasted-captions.txt');
+                    if (captions && captions.length > 0) {
+                        loadTranscript(captions);
+                        
+                        // Optionally save mapping of video ID to caption content
+                        if (document.getElementById('remember-caption-url').checked) {
+                            localStorage.setItem(`caption_${videoId}`, captionText);
+                        }
+                    } else {
+                        alert('Could not parse the pasted text. Please ensure it\'s in VTT, SRT, or SBV format.');
+                    }
+                } else {
+                    alert('Please paste caption content into the textarea.');
+                }
+            });
+            
+            // Set up simulated captions button
+            document.getElementById('load-simulated-btn').addEventListener('click', function() {
+                const simulatedTranscript = generateTranscriptForVideo(videoId);
+                loadTranscript(simulatedTranscript);
+            });
+            
+            // Check if we have stored captions for this video
+            const storedCaptions = localStorage.getItem(`caption_${videoId}`);
+            if (storedCaptions) {
+                const captionText = document.getElementById('caption-text');
+                captionText.value = storedCaptions;
+                captionText.parentElement.insertAdjacentHTML('beforeend', 
+                    '<div class="alert alert-info mt-2">Found previously saved captions for this video!</div>');
+            }
+        }
+        
+        // Load captions from a URL
+        function loadCaptionFile(url, callback) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch caption file: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(content => {
+                    const captions = parseCaptionContent(content, url);
+                    callback(captions);
+                })
+                .catch(error => {
+                    console.error('Error loading caption file:', error);
+                    callback(null);
+                });
+        }
+        
+        // Parse caption content based on file format
+        function parseCaptionContent(content, filename) {
+            // Determine format based on content or filename
+            let format = '';
+            
+            if (filename.endsWith('.vtt')) {
+                format = 'vtt';
+            } else if (filename.endsWith('.srt')) {
+                format = 'srt';
+            } else if (filename.endsWith('.sbv')) {
+                format = 'sbv';
+            } else {
+                // Try to detect format from content
+                if (content.trim().startsWith('WEBVTT')) {
+                    format = 'vtt';
+                } else if (content.includes('-->') && /^\d+\s*\n/.test(content)) {
+                    format = 'srt';
+                } else if (/\d+:\d+:\d+\.\d+,\d+:\d+:\d+\.\d+/.test(content)) {
+                    format = 'sbv';
+                }
+            }
+            
+            console.log('Detected caption format:', format);
+            
+            // Parse according to format
+            switch (format) {
+                case 'vtt':
+                    return parseVTTCaptions(content);
+                case 'srt':
+                    return parseSRTCaptions(content);
+                case 'sbv':
+                    return parseSBVCaptions(content);
+                default:
+                    // Try all formats as a fallback
+                    let captions = parseVTTCaptions(content);
+                    if (captions.length > 0) return captions;
+                    
+                    captions = parseSRTCaptions(content);
+                    if (captions.length > 0) return captions;
+                    
+                    captions = parseSBVCaptions(content);
+                    return captions;
+            }
+        }
+        
+        // Parse WebVTT format
+        function parseVTTCaptions(content) {
+            const lines = content.trim().split('\n');
+            const captions = [];
+            let currentCaption = null;
+            let captionText = '';
+            
+            // Skip WEBVTT header line and metadata block
+            let i = 0;
+            while (i < lines.length && !lines[i].includes('-->')) {
+                i++;
+            }
+            
+            for (; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.includes('-->')) {
+                    // This is a timestamp line
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                    }
+                    
+                    const timestamps = line.split('-->').map(t => t.trim());
+                    const start = parseTimeVTT(timestamps[0]);
+                    const end = parseTimeVTT(timestamps[1]);
+                    
+                    currentCaption = {
+                        start: start,
+                        duration: end - start,
+                        text: ''
+                    };
+                    
+                    captionText = '';
+                } else if (line === '') {
+                    // Empty line, end of current caption
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                        currentCaption = null;
+                        captionText = '';
+                    }
+                } else if (currentCaption) {
+                    // Caption text content
+                    if (captionText) captionText += ' ';
+                    captionText += line.replace(/&nbsp;/g, ' '); // Replace HTML non-breaking spaces
+                }
+            }
+            
+            // Add the last caption if necessary
+            if (currentCaption && captionText) {
+                currentCaption.text = captionText.trim();
+                captions.push(currentCaption);
+            }
+            
+            return captions;
+        }
+        
+        // Parse SRT format
+        function parseSRTCaptions(content) {
+            const lines = content.trim().split('\n');
+            const captions = [];
+            let currentCaption = null;
+            let captionText = '';
+            let inCaption = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (/^\d+$/.test(line)) {
+                    // This is a caption number, start of a new caption
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                    }
+                    
+                    inCaption = true;
+                    captionText = '';
+                } else if (line.includes('-->') && inCaption) {
+                    // This is a timestamp line
+                    const timestamps = line.split('-->').map(t => t.trim());
+                    const start = parseTimeSRT(timestamps[0]);
+                    const end = parseTimeSRT(timestamps[1]);
+                    
+                    currentCaption = {
+                        start: start,
+                        duration: end - start,
+                        text: ''
+                    };
+                } else if (line === '' && inCaption) {
+                    // Empty line, end of current caption
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                        currentCaption = null;
+                        captionText = '';
+                        inCaption = false;
+                    }
+                } else if (inCaption) {
+                    // Caption text content
+                    if (captionText) captionText += ' ';
+                    captionText += line;
+                }
+            }
+            
+            // Add the last caption if necessary
+            if (currentCaption && captionText) {
+                currentCaption.text = captionText.trim();
+                captions.push(currentCaption);
+            }
+            
+            return captions;
+        }
+        
+        // Parse SBV format
+        function parseSBVCaptions(content) {
+            const lines = content.trim().split('\n');
+            const captions = [];
+            let currentCaption = null;
+            let captionText = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (/^\d+:\d+:\d+\.\d+,\d+:\d+:\d+\.\d+/.test(line)) {
+                    // This is a timestamp line
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                    }
+                    
+                    const timestamps = line.split(',');
+                    const start = parseTimeSBV(timestamps[0]);
+                    const end = parseTimeSBV(timestamps[1]);
+                    
+                    currentCaption = {
+                        start: start,
+                        duration: end - start,
+                        text: ''
+                    };
+                    
+                    captionText = '';
+                } else if (line === '') {
+                    // Empty line, end of current caption
+                    if (currentCaption && captionText) {
+                        currentCaption.text = captionText.trim();
+                        captions.push(currentCaption);
+                        currentCaption = null;
+                        captionText = '';
+                    }
+                } else if (currentCaption) {
+                    // Caption text content
+                    if (captionText) captionText += ' ';
+                    captionText += line;
+                }
+            }
+            
+            // Add the last caption if necessary
+            if (currentCaption && captionText) {
+                currentCaption.text = captionText.trim();
+                captions.push(currentCaption);
+            }
+            
+            return captions;
+        }
+        
+        // Parse VTT timestamp (HH:MM:SS.mmm)
+        function parseTimeVTT(timeString) {
+            const parts = timeString.split(':');
+            let hours = 0, minutes = 0, seconds = 0;
+            
+            if (parts.length === 3) {
+                // Format: HH:MM:SS.mmm
+                hours = parseInt(parts[0], 10);
+                minutes = parseInt(parts[1], 10);
+                seconds = parseFloat(parts[2]);
+            } else if (parts.length === 2) {
+                // Format: MM:SS.mmm
+                minutes = parseInt(parts[0], 10);
+                seconds = parseFloat(parts[1]);
+            }
+            
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+        
+        // Parse SRT timestamp (HH:MM:SS,mmm)
+        function parseTimeSRT(timeString) {
+            // Convert SRT format (HH:MM:SS,mmm) to seconds
+            timeString = timeString.replace(',', '.');
+            return parseTimeVTT(timeString);
+        }
+        
+        // Parse SBV timestamp (H:MM:SS.mmm)
+        function parseTimeSBV(timeString) {
+            // SBV format is similar to VTT
+            return parseTimeVTT(timeString);
+        }
+        
+        // Generate a simulated transcript for demonstration purposes
+        function generateTranscriptForVideo(videoId) {
+            // In a real implementation, this data would come from your server
+            
+            // For known video IDs, return specific sample data
+            if (videoId === 'C35-nwVr5Fk') {
+                return [
+                    { start: 0.0, duration: 5.2, text: "Climate change is the defining issue of our time and we are at a defining moment." },
+                    { start: 5.2, duration: 4.8, text: "From shifting weather patterns that threaten food production," },
+                    { start: 10.0, duration: 6.1, text: "to rising sea levels that increase the risk of catastrophic flooding," },
+                    { start: 16.1, duration: 5.5, text: "the impacts of climate change are global in scope and unprecedented in scale." },
+                    { start: 21.6, duration: 4.9, text: "Without drastic action today, adapting to these impacts in the future will be more difficult and costly." },
+                    { start: 26.5, duration: 6.2, text: "The good news is that we have the knowledge and the tools to make the transition to a low-carbon economy." },
+                    { start: 32.7, duration: 4.8, text: "But we need to accelerate our efforts and scale up our ambition." },
+                    { start: 37.5, duration: 5.5, text: "We need to harness the power of innovation, finance, and collaboration." },
+                    { start: 43.0, duration: 5.3, text: "And we need to ensure that the transition is just and equitable." },
+                    { start: 48.3, duration: 6.0, text: "Together, we can build a sustainable future for generations to come." }
+                ];
+            } else if (videoId === 'dQw4w9WgXcQ') {
+                return [
+                    { start: 0.0, duration: 4.2, text: "We're no strangers to love" },
+                    { start: 4.2, duration: 4.5, text: "You know the rules and so do I" },
+                    { start: 8.7, duration: 4.8, text: "A full commitment's what I'm thinking of" },
+                    { start: 13.5, duration: 4.3, text: "You wouldn't get this from any other guy" },
+                    { start: 17.8, duration: 4.8, text: "I just wanna tell you how I'm feeling" },
+                    { start: 22.6, duration: 4.2, text: "Gotta make you understand" },
+                    { start: 26.8, duration: 3.8, text: "Never gonna give you up" },
+                    { start: 30.6, duration: 3.5, text: "Never gonna let you down" },
+                    { start: 34.1, duration: 4.2, text: "Never gonna run around and desert you" },
+                    { start: 38.3, duration: 3.7, text: "Never gonna make you cry" },
+                    { start: 42.0, duration: 3.6, text: "Never gonna say goodbye" },
+                    { start: 45.6, duration: 4.5, text: "Never gonna tell a lie and hurt you" }
+                ];
+            } else {
+                // For unknown video IDs, generate random transcript
+                // In a real app, this would fetch from a server
+                
+                return generateRandomTranscript(20);  // Generate 20 random segments
+            }
+        }
+        
+        // Generate random transcript segments for demo purposes
+        function generateRandomTranscript(numSegments) {
+            const phrases = [
+                "Welcome to this video about important concepts and ideas.",
+                "Let's explore this topic in greater detail.",
+                "This is a key point that we need to understand.",
+                "Many people ask questions about this particular issue.",
+                "Research has shown some fascinating results in this area.",
+                "The data suggests several important conclusions.",
+                "Let's look at some examples to illustrate this concept.",
+                "This approach has several advantages and disadvantages.",
+                "We need to consider multiple perspectives on this issue.",
+                "The implications of this are far-reaching and significant.",
+                "Let's break this down into simpler components.",
+                "This represents a paradigm shift in how we think about the problem.",
+                "We can apply these principles in various contexts.",
+                "The methodology used here is particularly important.",
+                "Let's examine the underlying assumptions of this model.",
+                "This connects to several other important concepts we've discussed.",
+                "I want to emphasize this point because it's often misunderstood.",
+                "Let's consider a hypothetical scenario to understand this better.",
+                "Many experts in the field have debated this topic extensively.",
+                "There are several schools of thought on this particular issue."
+            ];
+            
+            const transcript = [];
+            let currentTime = 0;
+            
+            for (let i = 0; i < numSegments; i++) {
+                const randomIndex = Math.floor(Math.random() * phrases.length);
+                const duration = 3 + Math.random() * 7; // Random duration between 3 and 10 seconds
+                
+                transcript.push({
+                    start: currentTime,
+                    duration: duration,
+                    text: phrases[randomIndex]
+                });
+                
+                currentTime += duration;
+            }
+            
+            return transcript;
+        }
+        
+        // Start the application when the DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
