@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+    <title>SPA Masonry Night Mode</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background: #111;
+            color: #fff;
+        }
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+        .nav-links a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        .tile {
+            background: #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 200px;
+            overflow: auto;
+            /* width: 100px; */
+        }
+        .dark-mode .tile {
+            background: #444;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            height: 90vh;
+        }
+        .dark-mode .modal {
+            background: #222;
+            color: white;
+        }
+        .modal.active {
+            display: block;
+        }
+
+        .nightMode {
+            border-radius: 50px;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-links">
+            <a href="#section1">Section 1</a>
+            <a href="#section2">Section 2</a>
+            <a href="#section3">Section 3</a>
+        </div>
+        <button id="toggleDarkMode" class="nightMode"><i class="fa-solid fa-moon fa-lg"></i></button>
+        <!-- 🌙 -->
+    </div>
+    <div class="grid" id="masonryGrid"></div>
+    <div id="modal" class="modal">
+        <h2 id="modalTitle"></h2>
+        <p id="modalContent"></p>
+        <button id="closeModal">Close</button>
+    </div>
+    <script>
+        let darkMode = false;
+        
+        document.getElementById("toggleDarkMode").addEventListener("click", function() {
+            document.body.classList.toggle("dark-mode");
+            if (darkMode) {
+                document.getElementById("toggleDarkMode").innerHTML = '<i class="fa-solid fa-moon fa-lg"></i>';
+            } else {
+                document.getElementById("toggleDarkMode").innerHTML = '<i class="fa-solid fa-sun fa-lg"></i>';
+            }
+            darkMode = !darkMode
+        });
+        
+        const masonryGrid = document.getElementById("masonryGrid");
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalContent = document.getElementById("modalContent");
+        const closeModalButton = document.getElementById("closeModal");
+        
+        const tiles = Array.from({ length: 12 }, (_, i) => ({
+            id: i,
+            title: `Tiles ${i + 1}`,
+            html: "<iframe src='https://www.daveghidiu.com/webbapps/swipe' width='80%' height='800'></iframe>",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }));
+        
+        tiles.forEach(tile => {
+            const div = document.createElement("div");
+            div.className = "tile";
+            div.innerHTML = `<h3>${tile.title}</h3><p>${tile.content}</p>`;
+            div.addEventListener("click", () => openModal(tile));
+            masonryGrid.appendChild(div);
+        });
+        
+        function openModal(tile) {
+            modalTitle.textContent = tile.title;
+            // modalContent.HTMLContent = tile.html;
+            document.getElementById('modalContent').innerHTML = tile.html;
+            // modalContent.textContent = '<iframe src="https://www.daveghidiu.com/webbapps/swipe width="80%" height="400"></iframe>';
+            modal.classList.add("active");
+        }
+        
+        closeModalButton.addEventListener("click", () => {
+            modal.classList.remove("active");
+        });
+    </script>
+</body>
+</html>
