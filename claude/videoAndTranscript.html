@@ -25,9 +25,6 @@
             height: 100vh;
             overflow: hidden;
             padding: 10px;
-            margin: 10px;
-            border-radius: 15px;
-            border: 1px solid red;
         }
         .video-panel {
             flex: 1;
@@ -35,7 +32,6 @@
             flex-direction: column;
             border-right: 1px solid #ddd;
             background-color: #000;
-            border-radius: 8px 10px 12px 14px;
         }
         .transcript-panel {
             width: 360px;
@@ -43,6 +39,7 @@
             flex-direction: column;
             background-color: #fff;
             border-left: 1px solid #ddd;
+            border-radius: 0px 15px 15px 0px;
         }
         .video-container {
             flex: 1;
@@ -56,6 +53,7 @@
             width: 100%;
             height: 100%;
             border: none;
+            border-radius: 15px 0px 0px 0px;
         }
         .transcript-header {
             display: flex;
@@ -108,6 +106,7 @@
             background-color: #111;
             padding: 8px 12px;
             color: #fff;
+            border-radius: 0px 0px 0px 15px;            
         }
         .timestamp {
             color: #6c757d;
@@ -342,7 +341,7 @@
                                 <button class="speed-option" data-speed="3">3×</button>
                             </div>
                         </div>
-                        <button id="settings-btn" class="settings-btn">
+                        <button id="settings-btn" class="settings-btn" style="display: none;">
                             <i class="bi bi-gear"></i>
                         </button>
                     </div>
