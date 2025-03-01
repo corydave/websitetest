@@ -14,4 +14,6 @@
 
 > 👍 Google Sheets Apps
 >
-> Are reproducible out of the box
+> Are reproducable out of the box
+
+> **_NOTE:_**  The note content.
