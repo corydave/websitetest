@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .tab-container {
+      max-width: 600px;
+      margin: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 2px;
+      background: #f1f5f9;
+      padding: 8px 8px 0;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #64748b;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
+    }
+    
+    .tab:hover {
+      background: #e2e8f0;
+    }
+    
+    .tab.active {
+      background: white;
+      color: #0f172a;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 24px;
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+
+    .program-input-header {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .program-input {
+        font-family: consolas, courier, monospace;
+        width: 90%;
+        background-color: #ddd;
+        border-radius: 15px;
+        padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tab-container">
+    <div class="tabs">
+      <button class="tab active" onclick="openTab(event, 'tab1')">Test Case 1</button>
+      <button class="tab" onclick="openTab(event, 'tab2')">Test Case 2</button>
+      <button class="tab" onclick="openTab(event, 'tab3')">Test Case 3</button>
+    </div>
+
+    <div id="tab1" class="tab-content active">
+      <!-- <h2>First Tab Content</h2> -->
+      <div class="program-input-header">PROGRAM INPUT</div>
+      <div class="program-input">abc</div>
+      <iframe src="https://daveghidiu.com/webbapps/comparison/?expected=abc" width="100%" height="900px" frameborder="0"></iframe>
+    </div>
+
+    <div id="tab2" class="tab-content">
+      <!-- <h2>Second Tab Content</h2> -->
+      <div class="program-input-header">PROGRAM INPUT</div>
+      <div class="program-input">def</div>        
+      <iframe src="https://daveghidiu.com/webbapps/comparison/?expected=def" width="100%" height="900px" frameborder="0"></iframe>
+    </div>
+
+    <div id="tab3" class="tab-content">
+      <!-- <h2>Third Tab Content</h2> -->
+      <div class="program-input-header">PROGRAM INPUT</div>
+      <div class="program-input">ghi</div>        
+      <iframe src="https://daveghidiu.com/webbapps/comparison/?expected=ghi" width="100%" height="900px" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      const tabContents = document.getElementsByClassName("tab-content");
+      for (let content of tabContents) {
+        content.classList.remove("active");
+      }
+
+      const tabs = document.getElementsByClassName("tab");
+      for (let tab of tabs) {
+        tab.classList.remove("active");
+      }
+
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+  </script>
+</body>
+</html>`
