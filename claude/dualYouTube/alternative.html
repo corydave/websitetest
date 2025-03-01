@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual YouTube Player - v2.0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        /* Version badge */
+        .version-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #0d6efd;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 9999;
+        }
+        
+        /* Main player container */
+        #player-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        /* YouTube iframes */
+        iframe {
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Main player */
+        #main-player-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* PIP player */
+        #pip-player-area {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30%;
+            /* Ensure exact 16:9 aspect ratio */
+            height: calc(30% * 9/16); 
+            border: 3px solid white;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            min-width: 120px; /* Minimum width for PIP */
+            max-width: 70%;   /* Maximum width for PIP */
+        }
+        
+        /* Overlay to block YouTube controls */
+        .controls-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            background-color: transparent;
+        }
+        
+        /* Special drag handle for PIP */
+        #pip-drag-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: move;
+            z-index: 6;
+            background-color: transparent;
+        }
+        
+        /* Resize handle */
+        #pip-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255,255,255,0.7);
+            cursor: nwse-resize;
+            z-index: 15;
+            border-radius: 0 0 5px 0;
+        }
+        
+        /* Resize guide lines */
+        #resize-guide-h, #resize-guide-v {
+            position: absolute;
+            background-color: rgba(255,255,255,0.5);
+            display: none;
+            z-index: 12;
+        }
+        
+        #resize-guide-h {
+            height: 1px;
+            width: 100%;
+        }
+        
+        #resize-guide-v {
+            width: 1px;
+            height: 100%;
+        }
+        
+        /* Custom player controls */
+        #custom-controls {
+            position: absolute;
+            top: 0;  /* Move controls to the top */
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 20;
+            border-radius: 8px 8px 0 0; /* Rounded corners on top only */
+        }
+        
+        .control-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: color 0.2s;
+        }
+        
+        .control-btn:hover {
+            color: #0d6efd;
+        }
+        
+        /* Add tooltip for sync button */
+        #sync-btn {
+            position: relative;
+        }
+        
+        #sync-btn::after {
+            content: "Sync Videos";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 25;
+        }
+        
+        #sync-btn:hover::after {
+            opacity: 1;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        
+        .volume-slider {
+            width: 80px;
+        }
+        
+        /* Styling for dragging state */
+        .dragging {
+            opacity: 0.8;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        
+        /* Status area */
+        #status-area {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            border-left: 5px solid #0d6efd;
+        }
+
+        .drg-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="version-badge drg-hidden">VERSION 2.5</div>
+        <!-- <strong>Note about ads:</strong> The controls have been moved to the top so you can access the "Skip Ad" button when ads play. -->
+        <h1 class="text-center mb-4 drg-hidden">Dual YouTube Player</h1>
+
+        <div class="drg-hidden">
+            <div id="status-area">
+                Loading the player...
+            </div>
+        </div>
+        
+        <!-- Player container -->
+        <div id="player-container">
+            <!-- Main player -->
+            <div id="main-player-area">
+                <div id="main-player"></div>
+                <div class="controls-overlay" id="main-controls-overlay"></div>
+            </div>
+            
+            <!-- PIP player -->
+            <div id="pip-player-area">
+                <div id="pip-player"></div>
+                <div id="pip-drag-handle"></div>
+                <div id="pip-resize-handle"></div>
+                <!-- Guide lines for resizing -->
+                <div id="resize-guide-h"></div>
+                <div id="resize-guide-v"></div>
+            </div>
+            
+            <!-- Custom controls (moved to top) -->
+            <div id="custom-controls">
+                <button id="play-pause-btn" class="control-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-up" id="main-volume-icon"></i>
+                    <input type="range" id="main-volume" class="volume-slider" min="0" max="100" value="100">
+                    <span class="text-white">Main</span>
+                </div>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-down" id="pip-volume-icon"></i>
+                    <input type="range" id="pip-volume" class="volume-slider" min="0" max="100" value="10">
+                    <span class="text-white">PIP</span>
+                </div>
+                
+                <button id="sync-btn" class="control-btn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                
+                <button id="switch-btn" class="control-btn ms-auto">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Video ID inputs -->
+        <div class="row g-3 mb-4 drg-hidden">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text">Main Video ID</span>
+                    <input type="text" id="main-video-id" class="form-control" value="dQw4w9WgXcQ">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text">PIP Video ID</span>
+                    <input type="text" id="pip-video-id" class="form-control" value="jNQXAC9IVRw">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button id="load-btn" class="btn btn-primary w-100">Load Videos</button>
+            </div>
+        </div>
+        
+        <div class="alert alert-info drg-hidden">
+            <strong>Instructions:</strong>
+            <ul>
+                <li>Click and drag the PIP video to move it anywhere over the main video</li>
+                <li>Drag the small handle in the bottom-right corner of the PIP video to resize it</li>
+                <li>Click the play/pause button to control both videos</li>
+                <li>Use the sync button <i class="fas fa-sync-alt"></i> to resynchronize videos if they drift</li>
+                <li>Adjust volume sliders to control each video's audio</li>
+                <li>Click the volume icons to quickly mute/unmute each video</li>
+                <li>Click the switch button to swap the videos (volumes swap too)</li>
+                <li>Enter new YouTube video IDs and click "Load Videos" to change content</li>
+                <li>Add <code>?main=VIDEO_ID1&pip=VIDEO_ID2</code> to the URL to load specific videos</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Version
+        console.log("Dual YouTube Player - VERSION 2.5");
+        
+        // DOM Elements
+        const statusArea = document.getElementById('status-area');
+        const mainVideoIdInput = document.getElementById('main-video-id');
+        const pipVideoIdInput = document.getElementById('pip-video-id');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const switchBtn = document.getElementById('switch-btn');
+        const mainVolumeSlider = document.getElementById('main-volume');
+        const pipVolumeSlider = document.getElementById('pip-volume');
+        const mainVolumeIcon = document.getElementById('main-volume-icon');
+        const pipVolumeIcon = document.getElementById('pip-volume-icon');
+        const loadBtn = document.getElementById('load-btn');
+        const pipPlayerArea = document.getElementById('pip-player-area');
+        const pipDragHandle = document.getElementById('pip-drag-handle');
+        const mainControlsOverlay = document.getElementById('main-controls-overlay');
+        const pipResizeHandle = document.getElementById('pip-resize-handle');
+        const resizeGuideH = document.getElementById('resize-guide-h');
+        const resizeGuideV = document.getElementById('resize-guide-v');
+        const syncBtn = document.getElementById('sync-btn');
+        
+        // Player variables
+        let mainPlayer = null;
+        let pipPlayer = null;
+        let isPlaying = false;
+        let playersReady = 0;
+        
+        // Volume memory for mute/unmute feature
+        let mainVolumeMemory = 100; // Default volume memory
+        let pipVolumeMemory = 10;   // Default volume memory
+        
+        // Update status function
+        function updateStatus(message) {
+            statusArea.textContent = message;
+            console.log(message);
+        }
+        
+        // Parse URL parameters
+        function getUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mainId = urlParams.get('main');
+            const pipId = urlParams.get('pip');
+            
+            if (mainId) mainVideoIdInput.value = mainId;
+            if (pipId) pipVideoIdInput.value = pipId;
+            
+            return {
+                main: mainId || mainVideoIdInput.value,
+                pip: pipId || pipVideoIdInput.value
+            };
+        }
+        
+        // Update URL with current video IDs
+        function updateUrlParameters(mainId, pipId) {
+            const url = new URL(window.location);
+            url.searchParams.set('main', mainId);
+            url.searchParams.set('pip', pipId);
+            window.history.pushState({}, '', url);
+        }
+        
+        // Load YouTube API
+        function loadYouTubeApi() {
+            updateStatus("Loading YouTube API...");
+            
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+        
+        // YouTube API Ready callback
+        window.onYouTubeIframeAPIReady = function() {
+            updateStatus("YouTube API loaded. Creating players...");
+            
+            const videoIds = getUrlParameters();
+            
+            // Create main player
+            mainPlayer = new YT.Player('main-player', {
+                videoId: videoIds.main,
+                playerVars: {
+                    controls: 0,           // Hide controls
+                    showinfo: 0,           // Hide video info
+                    rel: 0,                // Hide related videos
+                    modestbranding: 1,     // Hide YouTube logo
+                    iv_load_policy: 3,     // Hide annotations
+                    fs: 0,                 // Disable fullscreen
+                    disablekb: 1,          // Disable keyboard controls
+                    autohide: 1            // Hide controls when playing
+                },
+                events: {
+                    'onReady': onMainPlayerReady,
+                    'onStateChange': onMainPlayerStateChange
+                }
+            });
+            
+            // Create PIP player
+            pipPlayer = new YT.Player('pip-player', {
+                videoId: videoIds.pip,
+                playerVars: {
+                    controls: 0,
+                    showinfo: 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    iv_load_policy: 3,
+                    fs: 0,
+                    disablekb: 1,
+                    autohide: 1
+                },
+                events: {
+                    'onReady': onPipPlayerReady,
+                    'onStateChange': onPipPlayerStateChange
+                }
+            });
+        };
+        
+        // Main player ready handler
+        function onMainPlayerReady(event) {
+            updateStatus("Main player ready. Setting up controls...");
+            
+            // Set initial volume
+            try {
+                mainPlayer.setVolume(parseInt(mainVolumeSlider.value));
+                updateStatus("Main volume set to " + mainVolumeSlider.value + "%");
+            } catch (error) {
+                console.error("Error setting main volume:", error);
+            }
+            
+            playersReady++;
+            if (playersReady === 2) {
+                finalizeSetup();
+            }
+        }
+        
+        // PIP player ready handler
+        function onPipPlayerReady(event) {
+            updateStatus("PIP player ready. Setting up dragging...");
+            
+            // Set initial volume to low (10%)
+            try {
+                pipPlayer.setVolume(parseInt(pipVolumeSlider.value)); // Should be 10 from the HTML
+                updateStatus("PIP volume set to 10% (low)");
+            } catch (error) {
+                console.error("Error setting PIP volume:", error);
+            }
+            
+            // Initialize drag functionality
+            setupPipDragging();
+            
+            playersReady++;
+            if (playersReady === 2) {
+                finalizeSetup();
+            }
+        }
+        
+        // Force aspect ratio on initial load
+        function forceInitialAspectRatio() {
+            // Wait for elements to be rendered
+            setTimeout(() => {
+                // Set initial PIP position
+                const controlsHeight = document.getElementById('custom-controls').offsetHeight;
+                pipPlayerArea.style.top = (controlsHeight + 20) + 'px'; // Position below controls
+                
+                // Correct aspect ratio
+                const pipWidth = pipPlayerArea.offsetWidth;
+                const correctHeight = pipWidth * (9/16);
+                pipPlayerArea.style.height = correctHeight + 'px';
+                updateStatus("Aspect ratio corrected to 16:9");
+            }, 500);
+        }
+        
+        // Final setup after both players are ready
+        function finalizeSetup() {
+            updateStatus("Both players ready! You can now play the videos.");
+            
+            // Apply overlay to block YouTube controls
+            setupOverlays();
+            
+            // Set event listeners
+            setupEventListeners();
+            
+            // Force correct aspect ratio
+            forceInitialAspectRatio();
+        }
+        
+        // Set up overlays to block YouTube controls
+        function setupOverlays() {
+            // Ensure all iframes have pointer-events: none
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.style.pointerEvents = 'none';
+            });
+            
+            // Add click handler to main overlay for play/pause
+            mainControlsOverlay.addEventListener('click', () => {
+                togglePlayPause();
+            });
+        }
+        
+        // Set up PIP dragging
+        function setupPipDragging() {
+            let isDragging = false;
+            let isResizing = false;
+            let startX, startY, startLeft, startTop;
+            let startWidth, startHeight;
+            
+            // Start dragging
+            pipDragHandle.addEventListener('mousedown', function(e) {
+                // Don't start drag if clicking resize handle
+                if (e.target === pipResizeHandle) return;
+                
+                e.preventDefault();
+                isDragging = true;
+                
+                // Get current position
+                const rect = pipPlayerArea.getBoundingClientRect();
+                const containerRect = document.getElementById('player-container').getBoundingClientRect();
+                
+                // Calculate position relative to container
+                startLeft = rect.left - containerRect.left;
+                startTop = rect.top - containerRect.top;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                // Add visual feedback
+                pipPlayerArea.classList.add('dragging');
+                
+                // Update status
+                updateStatus("Dragging PIP video...");
+            });
+            
+            // Start resizing
+            pipResizeHandle.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                isResizing = true;
+                
+                // Get current size
+                startWidth = pipPlayerArea.offsetWidth;
+                startHeight = pipPlayerArea.offsetHeight;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                // Add visual feedback
+                pipPlayerArea.classList.add('dragging');
+                
+                // Show resize guides
+                showResizeGuides();
+                
+                // Update status
+                updateStatus("Resizing PIP video...");
+            });
+            
+            // Show resize guide lines
+            function showResizeGuides() {
+                const rect = pipPlayerArea.getBoundingClientRect();
+                
+                // Horizontal guide at bottom of PIP
+                resizeGuideH.style.display = 'block';
+                resizeGuideH.style.top = (rect.bottom - 1) + 'px';
+                
+                // Vertical guide at right of PIP
+                resizeGuideV.style.display = 'block';
+                resizeGuideV.style.left = (rect.right - 1) + 'px';
+            }
+            
+            // Hide resize guide lines
+            function hideResizeGuides() {
+                resizeGuideH.style.display = 'none';
+                resizeGuideV.style.display = 'none';
+            }
+            
+            // Dragging or resizing
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    handleDrag(e);
+                } else if (isResizing) {
+                    handleResize(e);
+                }
+            });
+            
+            // Handle drag movement
+            function handleDrag(e) {
+                // Calculate new position
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                const newLeft = startLeft + deltaX;
+                const newTop = startTop + deltaY;
+                
+                // Get container bounds
+                const containerRect = document.getElementById('player-container').getBoundingClientRect();
+                
+                // Constrain within container
+                const maxLeft = containerRect.width - pipPlayerArea.offsetWidth;
+                const maxTop = containerRect.height - pipPlayerArea.offsetHeight;
+                
+                const constrainedLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                const constrainedTop = Math.max(0, Math.min(newTop, maxTop));
+                
+                // Apply new position
+                pipPlayerArea.style.left = constrainedLeft + 'px';
+                pipPlayerArea.style.top = constrainedTop + 'px';
+                pipPlayerArea.style.right = 'auto';
+            }
+            
+            // Handle resize
+            function handleResize(e) {
+                // Calculate new size
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                // Calculate new size, maintaining aspect ratio based on width
+                let newWidth = Math.max(120, startWidth + deltaX); // Minimum 120px width
+                
+                // Get container
+                const container = document.getElementById('player-container');
+                const containerRect = container.getBoundingClientRect();
+                
+                // Don't allow PIP to be wider than 70% of container
+                newWidth = Math.min(newWidth, containerRect.width * 0.7);
+                
+                // Calculate height based on 16:9 aspect ratio
+                const newHeight = newWidth * (9/16);
+                
+                // Make sure it doesn't go below the controls
+                if (pipPlayerArea.getBoundingClientRect().top + newHeight > 
+                    containerRect.bottom - document.getElementById('custom-controls').offsetHeight) {
+                    return;
+                }
+                
+                // Apply new size
+                pipPlayerArea.style.width = newWidth + 'px';
+                pipPlayerArea.style.height = newHeight + 'px';
+                
+                // Update guides
+                showResizeGuides();
+            }
+            
+            // End dragging or resizing
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    pipPlayerArea.classList.remove('dragging');
+                    updateStatus("PIP video moved.");
+                }
+                
+                if (isResizing) {
+                    isResizing = false;
+                    pipPlayerArea.classList.remove('dragging');
+                    hideResizeGuides();
+                    updateStatus("PIP video resized.");
+                }
+            });
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Play/Pause button
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            
+            // Volume controls
+            mainVolumeSlider.addEventListener('input', updateMainVolume);
+            pipVolumeSlider.addEventListener('input', updatePipVolume);
+            
+            // Volume icon mute/unmute
+            mainVolumeIcon.addEventListener('click', toggleMainMute);
+            pipVolumeIcon.addEventListener('click', togglePipMute);
+            
+            // Sync button
+            syncBtn.addEventListener('click', syncVideos);
+            
+            // Switch button
+            switchBtn.addEventListener('click', switchVideos);
+            
+            // Load button
+            loadBtn.addEventListener('click', loadCustomVideos);
+        }
+        
+        // Sync videos to earlier timestamp
+        function syncVideos() {
+            if (!mainPlayer || !pipPlayer) {
+                updateStatus("Players not ready yet");
+                return;
+            }
+            
+            try {
+                // Get current timestamps
+                const mainTime = mainPlayer.getCurrentTime();
+                const pipTime = pipPlayer.getCurrentTime();
+                
+                // Remember if videos were playing
+                const wasPlaying = isPlaying;
+                
+                // Pause both videos
+                mainPlayer.pauseVideo();
+                pipPlayer.pauseVideo();
+                
+                // Determine which timestamp is earlier
+                const syncTime = Math.min(mainTime, pipTime);
+                
+                // Log what we're doing
+                updateStatus(`Syncing videos to ${syncTime.toFixed(2)} seconds`);
+                
+                // Set both videos to the earlier timestamp
+                mainPlayer.seekTo(syncTime, true);
+                pipPlayer.seekTo(syncTime, true);
+                
+                // Resume playback if videos were playing
+                setTimeout(() => {
+                    if (wasPlaying) {
+                        mainPlayer.playVideo();
+                        pipPlayer.playVideo();
+                        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        isPlaying = true;
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error("Error syncing videos:", error);
+                updateStatus("Error syncing videos");
+            }
+        }
+        
+        // Toggle main volume mute/unmute
+        function toggleMainMute() {
+            if (!mainPlayer) return;
+            
+            if (parseInt(mainVolumeSlider.value) > 0) {
+                // Store current volume before muting
+                mainVolumeMemory = parseInt(mainVolumeSlider.value);
+                
+                // Set to 0 (mute)
+                mainVolumeSlider.value = 0;
+                mainPlayer.setVolume(0);
+                mainVolumeIcon.className = 'fas fa-volume-mute';
+                
+                updateStatus("Main video muted");
+            } else {
+                // Restore to previous volume
+                mainVolumeSlider.value = mainVolumeMemory;
+                mainPlayer.setVolume(mainVolumeMemory);
+                
+                // Update icon based on restored volume
+                if (mainVolumeMemory < 50) {
+                    mainVolumeIcon.className = 'fas fa-volume-down';
+                } else {
+                    mainVolumeIcon.className = 'fas fa-volume-up';
+                }
+                
+                updateStatus(`Main volume restored to ${mainVolumeMemory}%`);
+            }
+        }
+        
+        // Toggle PIP volume mute/unmute
+        function togglePipMute() {
+            if (!pipPlayer) return;
+            
+            if (parseInt(pipVolumeSlider.value) > 0) {
+                // Store current volume before muting
+                pipVolumeMemory = parseInt(pipVolumeSlider.value);
+                
+                // Set to 0 (mute)
+                pipVolumeSlider.value = 0;
+                pipPlayer.setVolume(0);
+                pipVolumeIcon.className = 'fas fa-volume-mute';
+                
+                updateStatus("PIP video muted");
+            } else {
+                // Restore to previous volume
+                pipVolumeSlider.value = pipVolumeMemory;
+                pipPlayer.setVolume(pipVolumeMemory);
+                
+                // Update icon based on restored volume
+                if (pipVolumeMemory < 50) {
+                    pipVolumeIcon.className = 'fas fa-volume-down';
+                } else {
+                    pipVolumeIcon.className = 'fas fa-volume-up';
+                }
+                
+                updateStatus(`PIP volume restored to ${pipVolumeMemory}%`);
+            }
+        }
+        
+        // Main player state change handler
+        function onMainPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                // If main video ended but PIP is still playing, don't change UI
+                if (pipPlayer && pipPlayer.getPlayerState() !== YT.PlayerState.ENDED) {
+                    return;
+                }
+                
+                // Both videos ended
+                isPlaying = false;
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                updateStatus("Videos ended.");
+            }
+        }
+        
+        // PIP player state change handler
+        function onPipPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                // If PIP video ended but main is still playing, don't change UI
+                if (mainPlayer && mainPlayer.getPlayerState() !== YT.PlayerState.ENDED) {
+                    return;
+                }
+                
+                // Both videos ended
+                isPlaying = false;
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                updateStatus("Videos ended.");
+            }
+        }
+        
+        // Toggle play/pause
+        function togglePlayPause() {
+            if (!mainPlayer || !pipPlayer) {
+                updateStatus("Players not ready yet");
+                return;
+            }
+            
+            if (isPlaying) {
+                // Pause both videos
+                try {
+                    mainPlayer.pauseVideo();
+                    pipPlayer.pauseVideo();
+                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    updateStatus("Videos paused");
+                } catch (error) {
+                    console.error("Error pausing videos:", error);
+                }
+            } else {
+                // Play both videos
+                try {
+                    mainPlayer.playVideo();
+                    pipPlayer.playVideo();
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    updateStatus("Videos playing");
+                } catch (error) {
+                    console.error("Error playing videos:", error);
+                }
+            }
+            
+            isPlaying = !isPlaying;
+        }
+        
+        // Update main volume
+        function updateMainVolume() {
+            if (!mainPlayer) return;
+            
+            const volume = parseInt(mainVolumeSlider.value);
+            try {
+                mainPlayer.setVolume(volume);
+                updateStatus(`Main volume set to ${volume}%`);
+                
+                // Store non-zero volume for mute memory
+                if (volume > 0) {
+                    mainVolumeMemory = volume;
+                }
+                
+                // Update icon
+                if (volume === 0) {
+                    mainVolumeIcon.className = 'fas fa-volume-mute';
+                } else if (volume < 50) {
+                    mainVolumeIcon.className = 'fas fa-volume-down';
+                } else {
+                    mainVolumeIcon.className = 'fas fa-volume-up';
+                }
+            } catch (error) {
+                console.error("Error setting main volume:", error);
+            }
+        }
+        
+        // Update PIP volume
+        function updatePipVolume() {
+            if (!pipPlayer) return;
+            
+            const volume = parseInt(pipVolumeSlider.value);
+            try {
+                pipPlayer.setVolume(volume);
+                updateStatus(`PIP volume set to ${volume}%`);
+                
+                // Store non-zero volume for mute memory
+                if (volume > 0) {
+                    pipVolumeMemory = volume;
+                }
+                
+                // Update icon
+                if (volume === 0) {
+                    pipVolumeIcon.className = 'fas fa-volume-mute';
+                } else if (volume < 50) {
+                    pipVolumeIcon.className = 'fas fa-volume-down';
+                } else {
+                    pipVolumeIcon.className = 'fas fa-volume-up';
+                }
+            } catch (error) {
+                console.error("Error setting PIP volume:", error);
+            }
+        }
+        
+        // Switch videos
+        function switchVideos() {
+            if (!mainPlayer || !pipPlayer) {
+                updateStatus("Players not ready yet");
+                return;
+            }
+            
+            try {
+                // Get current states
+                const mainId = mainPlayer.getVideoData().video_id;
+                const pipId = pipPlayer.getVideoData().video_id;
+                const mainTime = mainPlayer.getCurrentTime();
+                const pipTime = pipPlayer.getCurrentTime();
+                const wasPlaying = isPlaying;
+                
+                // Get current volumes
+                const mainVol = parseInt(mainVolumeSlider.value);
+                const pipVol = parseInt(pipVolumeSlider.value);
+                
+                // Pause videos
+                mainPlayer.pauseVideo();
+                pipPlayer.pauseVideo();
+                
+                // Update video IDs in the form
+                mainVideoIdInput.value = pipId;
+                pipVideoIdInput.value = mainId;
+                
+                // Load swapped videos
+                mainPlayer.loadVideoById(pipId, pipTime);
+                pipPlayer.loadVideoById(mainId, mainTime);
+                
+                // Swap volumes
+                mainVolumeSlider.value = pipVol;
+                pipVolumeSlider.value = mainVol;
+                mainPlayer.setVolume(pipVol);
+                pipPlayer.setVolume(mainVol);
+                
+                // Swap volume memory
+                const tempMemory = mainVolumeMemory;
+                mainVolumeMemory = pipVolumeMemory;
+                pipVolumeMemory = tempMemory;
+                
+                // Update volume icons
+                updateVolumeIcons();
+                
+                // Update URL parameters
+                updateUrlParameters(pipId, mainId);
+                
+                // Restore play state
+                setTimeout(() => {
+                    if (wasPlaying) {
+                        mainPlayer.playVideo();
+                        pipPlayer.playVideo();
+                    }
+                }, 500);
+                
+                updateStatus("Videos and volumes switched");
+            } catch (error) {
+                console.error("Error switching videos:", error);
+            }
+        }
+        
+        // Update volume icons based on current slider values
+        function updateVolumeIcons() {
+            const mainVol = parseInt(mainVolumeSlider.value);
+            const pipVol = parseInt(pipVolumeSlider.value);
+            
+            // Update main icon
+            if (mainVol === 0) {
+                mainVolumeIcon.className = 'fas fa-volume-mute';
+            } else if (mainVol < 50) {
+                mainVolumeIcon.className = 'fas fa-volume-down';
+            } else {
+                mainVolumeIcon.className = 'fas fa-volume-up';
+            }
+            
+            // Update PIP icon
+            if (pipVol === 0) {
+                pipVolumeIcon.className = 'fas fa-volume-mute';
+            } else if (pipVol < 50) {
+                pipVolumeIcon.className = 'fas fa-volume-down';
+            } else {
+                pipVolumeIcon.className = 'fas fa-volume-up';
+            }
+        }
+        
+        // Load custom videos
+        function loadCustomVideos() {
+            if (!mainPlayer || !pipPlayer) {
+                updateStatus("Players not ready yet");
+                return;
+            }
+            
+            const mainId = mainVideoIdInput.value.trim();
+            const pipId = pipVideoIdInput.value.trim();
+            
+            if (!mainId || !pipId) {
+                alert("Please enter both video IDs");
+                return;
+            }
+            
+            try {
+                // Pause current videos
+                mainPlayer.pauseVideo();
+                pipPlayer.pauseVideo();
+                
+                // Load new videos
+                mainPlayer.loadVideoById(mainId);
+                pipPlayer.loadVideoById(pipId);
+                
+                // Update URL parameters
+                updateUrlParameters(mainId, pipId);
+                
+                // Reset play state
+                isPlaying = false;
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                
+                updateStatus("New videos loaded");
+            } catch (error) {
+                console.error("Error loading custom videos:", error);
+            }
+        }
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus("Initializing application (VERSION 2.5)...");
+            
+            // Force initial aspect ratio on load
+            forceInitialAspectRatio();
+            
+            // Add cursor pointer to volume icons to indicate they are clickable
+            mainVolumeIcon.style.cursor = 'pointer';
+            pipVolumeIcon.style.cursor = 'pointer';
+            
+            // Load YouTube API
+            loadYouTubeApi();
+        });
+        
+        // Additional fix for mobile
+        window.addEventListener('touchstart', function(e) {
+            if (e.target === pipDragHandle) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
