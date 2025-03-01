@@ -92,6 +92,10 @@
             border-radius: 5px;
             width: 300px;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -111,7 +115,7 @@
 
                 <div class="phase-text">Press Start to begin</div>
                 
-                <div class="debug-panel mb-4 p-3 bg-light border rounded text-start">
+                <div class="debug-panel mb-4 p-3 bg-light border rounded text-start hidden">
                     <div><strong>Debug Info:</strong></div>
                     <div>Total Time: <span id="debugTime">0.0s</span></div>
                     <div>Current Phase: <span id="debugPhase">-</span></div>
