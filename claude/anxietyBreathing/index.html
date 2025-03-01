@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+
+<!--
+index.html?inhale=4&hold=4&exhale=8&cycles=10 for the default 4-4-8 pattern
+index.html?inhale=4&hold=7&exhale=8&cycles=5 for a 4-7-8 pattern with 5 cycles
+-->
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Comfortaa', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      width: min(90vw, 400px);
+    }
+
+    .circle {
+      width: min(80vw, 300px);
+      height: min(80vw, 300px);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 2rem auto;
+      transition: background-color 1.2s, opacity 1.2s;
+      position: relative;
+    }
+
+    .phase {
+      font-size: 2.5rem;
+      color: white;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .timer {
+      font-size: 3rem;
+      color: white;
+      font-family: 'Comfortaa', sans-serif;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      background: #e0e0e0;
+      font-family: 'Comfortaa', sans-serif;
+    }
+
+    button:hover {
+      background: #d0d0d0;
+    }
+
+    .settings {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .settings-panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .settings-panel input {
+      width: 4rem;
+      margin: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-family: 'Comfortaa', sans-serif;
+    }
+
+    .settings-panel button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: #4A90E2;
+      color: white;
+    }
+
+    .share-url {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f5f5f5;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .copy-button {
+      margin-top: 0.5rem !important;
+      background: #10B981 !important;
+    }
+
+    .settings-panel button:hover {
+      background: #357ABD;
+    }
+
+    .copy-button:hover {
+      background: #059669 !important;
+    }
+
+    .breathe-again {
+      display: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #666;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin: 0.5rem 0;
+      }
+
+      .circle {
+        width: min(85vw, 280px);
+        height: min(85vw, 280px);
+        margin: 1rem auto;
+      }
+
+      .phase {
+        font-size: 2rem;
+      }
+
+      .timer {
+        font-size: 2.5rem;
+      }
+
+      .settings-panel {
+        padding: 1rem;
+        width: 90%;
+      }
+
+      .settings-panel input {
+        width: 3rem;
+        margin: 0.25rem;
+      }
+
+      button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .breathe-again {
+        font-size: 1.75rem;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .circle {
+        width: min(90vw, 250px);
+        height: min(90vw, 250px);
+      }
+
+      .phase {
+        font-size: 1.75rem;
+      }
+
+      .timer {
+        font-size: 2.25rem;
+      }
+
+      button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="settings">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </div>
+    
+    <h2>Breathing Exercise</h2>
+    <div class="pattern"></div>
+    <div class="cycle-count"></div>
+    
+    <div class="circle">
+      <div>
+        <div class="phase">ready</div>
+        <div class="timer"></div>
+      </div>
+    </div>
+
+    <div class="breathe-again">breathe again</div>
+    
+    <div class="controls">
+      <button class="start">Start</button>
+      <button class="reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay">
+    <div class="settings-panel">
+      <div>
+        <label>Inhale: <input type="number" id="inhaleTime" value="4" min="1"></label>
+      </div>
+      <div>
+        <label>Hold: <input type="number" id="holdTime" value="4" min="1"></label>
+      </div>
+      <div>
+        <label>Exhale: <input type="number" id="exhaleTime" value="8" min="1"></label>
+      </div>
+      <div>
+        <label>Cycles: <input type="number" id="totalCycles" value="10" min="1"></label>
+      </div>
+      <div class="share-url"></div>
+      <button class="copy-button">Copy Shareable URL</button>
+      <button id="saveSettings">Save</button>
+    </div>
+  </div>
+
+  <script>
+    const circle = document.querySelector('.circle');
+    const phase = document.querySelector('.phase');
+    const timer = document.querySelector('.timer');
+    const cycleCount = document.querySelector('.cycle-count');
+    const pattern = document.querySelector('.pattern');
+    const startBtn = document.querySelector('.start');
+    const resetBtn = document.querySelector('.reset');
+    const settings = document.querySelector('.settings');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const saveSettings = document.getElementById('saveSettings');
+    const breatheAgain = document.querySelector('.breathe-again');
+    const shareUrl = document.querySelector('.share-url');
+    const copyButton = document.querySelector('.copy-button');
+
+    function generateShareableUrl() {
+      const settings = getSettings();
+      const url = new URL(window.location.href.split('?')[0]); // Get base URL without parameters
+      url.searchParams.set('inhale', settings.inhale);
+      url.searchParams.set('hold', settings.hold);
+      url.searchParams.set('exhale', settings.exhale);
+      url.searchParams.set('cycles', settings.totalCycles);
+      return url.href;
+    }
+
+    function updateShareableUrl() {
+      const url = generateShareableUrl();
+      shareUrl.textContent = url;
+      shareUrl.style.display = 'block';
+      copyButton.style.display = 'block';
+    }
+
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl.textContent);
+        const originalText = copyButton.textContent;
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyButton.textContent = originalText;
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy URL:', err);
+      }
+    });
+
+    // Update shareable URL whenever settings change
+    document.querySelectorAll('.settings-panel input').forEach(input => {
+      input.addEventListener('input', updateShareableUrl);
+    });
+
+    let isRunning = false;
+    let currentPhase = 'ready';
+    let secondsLeft = 0;
+    let cycle = 0;
+    let intervalId = null;
+
+    const colors = {
+      inhale: '#3B82F6',
+      hold: '#10B981',
+      exhale: '#8B5CF6',
+      ready: '#E5E7EB'
+    };
+
+    function getSettings() {
+      // Get URL parameters
+      const params = new URLSearchParams(window.location.search);
+      
+      // Set default values or use URL parameters if available
+      const settings = {
+        inhale: parseInt(params.get('inhale')) || parseInt(document.getElementById('inhaleTime').value),
+        hold: parseInt(params.get('hold')) || parseInt(document.getElementById('holdTime').value),
+        exhale: parseInt(params.get('exhale')) || parseInt(document.getElementById('exhaleTime').value),
+        totalCycles: parseInt(params.get('cycles')) || parseInt(document.getElementById('totalCycles').value)
+      };
+
+      // Update input fields with URL parameters if they exist
+      if (params.get('inhale')) document.getElementById('inhaleTime').value = settings.inhale;
+      if (params.get('hold')) document.getElementById('holdTime').value = settings.hold;
+      if (params.get('exhale')) document.getElementById('exhaleTime').value = settings.exhale;
+      if (params.get('cycles')) document.getElementById('totalCycles').value = settings.totalCycles;
+
+      return settings;
+    }
+
+    function updateDisplay() {
+      const settings = getSettings();
+      pattern.textContent = `${settings.inhale}-${settings.hold}-${settings.exhale}`;
+      circle.style.backgroundColor = colors[currentPhase];
+      phase.textContent = currentPhase;
+      timer.textContent = currentPhase === 'ready' ? '' : secondsLeft.toString();
+      cycleCount.textContent = currentPhase === 'ready' ? '' : 
+        `Cycle ${cycle + 1} of ${settings.totalCycles}`;
+    }
+
+    function nextPhase() {
+      const settings = getSettings();
+      
+      if (currentPhase === 'ready') {
+        currentPhase = 'inhale';
+        secondsLeft = settings.inhale;
+      } else if (currentPhase === 'inhale') {
+        currentPhase = 'hold';
+        secondsLeft = settings.hold;
+      } else if (currentPhase === 'hold') {
+        currentPhase = 'exhale';
+        secondsLeft = settings.exhale;
+      } else {
+        cycle++;
+        if (cycle >= settings.totalCycles) {
+          endExercise();
+          return;
+        }
+        currentPhase = 'inhale';
+        secondsLeft = settings.inhale;
+      }
+      
+      // Generate initial shareable URL
+    updateShareableUrl();
+    }
+
+    function startTimer() {
+      updateDisplay();
+      intervalId = setInterval(() => {
+        secondsLeft--;
+        updateDisplay();
+        if (secondsLeft < 0) {  // We've shown 0 for one second
+          clearInterval(intervalId);
+          nextPhase();
+          if (isRunning) {
+            startTimer();
+          }
+        }
+      }, 1000);
+    }
+
+    function endExercise() {
+      isRunning = false;
+      clearInterval(intervalId);
+      startBtn.textContent = 'Start';
+      circle.style.opacity = 0;
+      breatheAgain.style.display = 'block';
+    }
+
+    function reset() {
+      isRunning = false;
+      clearInterval(intervalId);
+      currentPhase = 'ready';
+      secondsLeft = 0;
+      cycle = 0;
+      startBtn.textContent = 'Start';
+      circle.style.opacity = 1;
+      breatheAgain.style.display = 'none';
+      updateDisplay();
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(intervalId);
+        startBtn.textContent = 'Start';
+      } else {
+        isRunning = true;
+        startBtn.textContent = 'Pause';
+        if (currentPhase === 'ready') {
+          nextPhase();
+        }
+        startTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', reset);
+    settings.addEventListener('click', () => {
+      modalOverlay.classList.add('visible');
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('visible');
+      }
+    });
+
+    saveSettings.addEventListener('click', () => {
+      modalOverlay.classList.remove('visible');
+      updateDisplay();
+    });
+
+    breatheAgain.addEventListener('click', reset);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
