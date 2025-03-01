@@ -8,3 +8,5 @@
 5. Talk about patience, what you don't know you don't know
 6. Demo Claude
 7. Talk about "Programming for One"
+8. HTML, vanilla JavaScript (vs. React), CSS/JavaScript
+9. Investigate hosting installable apps?
