@@ -29,6 +29,7 @@
 26. backgrounds like atoms
 27. 60+ iterations isn't abnormal
 28. the closer you get to perfection, the more robust and extensible it is
+29. Setting up the environment (.html files)
 
 
 
