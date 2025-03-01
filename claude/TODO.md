@@ -10,3 +10,8 @@
 7. Talk about "Programming for One"
 8. HTML, vanilla JavaScript (vs. React), CSS/JavaScript
 9. Investigate hosting installable apps?
+10. Acknowledge Creator+
+
+> 👍 Google Sheets Apps
+>
+> Are reproducible out of the box
