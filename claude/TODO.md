@@ -17,6 +17,8 @@
 14. Understand limitations (it's customized for YOU and your learners - is NOT enterprise level)
 15. Understanding index.html
 16. Understanding JSON
+17. bootstrap is ok
+18. responsive
 
 
 > 👍 Google Sheets Apps
