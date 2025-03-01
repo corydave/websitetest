@@ -19,6 +19,17 @@
 16. Understanding JSON
 17. bootstrap is ok
 18. responsive
+19. JS on top sometimes
+20. Try to pick up some code!
+21. Vernacular definitely helps
+22. You might have to discover the issue and ask Claude if that's the issue
+23. Canvas
+24. CharGPT and Gemini as well
+25. paid version still has limits
+26. backgrounds like atoms
+27. 60+ iterations isn't abnormal
+28. the closer you get to perfection, the more robust and extensible it is
+
 
 
 > 👍 Google Sheets Apps
