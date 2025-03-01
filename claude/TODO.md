@@ -1,4 +1,4 @@
-#TODO
+# TODO
 
 1. Video on how to navigate GitHub
 2. Video on how to use Google Sheets
