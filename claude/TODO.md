@@ -16,6 +16,7 @@
 13. Hosting images in GitHub
 14. Understand limitations (it's customized for YOU and your learners - is NOT enterprise level)
 15. Understanding index.html
+16. Understanding JSON
 
 
 > 👍 Google Sheets Apps
