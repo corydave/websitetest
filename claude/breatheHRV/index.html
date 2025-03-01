@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Comfortaa', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f0f0f0;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      width: min(90vw, 400px);
+    }
+
+    .circle {
+      width: min(80vw, 300px);
+      height: min(80vw, 300px);
+      border-radius: 50%;
+      position: relative;
+      grid-template-rows: auto 1fr;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem auto;
+      transition: background-color 1.2s, opacity 1.2s;
+    }
+
+    .phase {
+      font-family: 'Comfortaa', sans-serif;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .timer {
+      font-size: 3rem;
+      color: white;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      background: #e0e0e0;
+    }
+
+    button:hover {
+      background: #d0d0d0;
+    }
+
+    .settings {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .settings-panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .settings-panel input {
+      width: 4rem;
+      margin: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-family: 'Comfortaa', sans-serif;
+    }
+
+    .settings-panel button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: #4A90E2;
+      color: white;
+    }
+
+    .settings-panel button:hover {
+      background: #357ABD;
+    }
+
+    .breathe-again {
+      display: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #666;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .breathe-again:hover {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="settings">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </div>
+    <div class="modal-overlay">
+      <div class="settings-panel">
+        <div>
+          <label>Inhale: <input type="number" id="inhaleTime" value="4" min="1"></label>
+        </div>
+        <div>
+          <label>Hold: <input type="number" id="holdTime" value="4" min="1"></label>
+        </div>
+        <div>
+          <label>Exhale: <input type="number" id="exhaleTime" value="8" min="1"></label>
+        </div>
+        <div>
+          <label>Cycles: <input type="number" id="totalCycles" value="10" min="1"></label>
+        </div>
+        <button id="saveSettings">Save</button>
+      </div>
+    </div>
+    
+    <h2>Breathing Exercise</h2>
+    <div class="pattern"></div>
+    <div class="cycle-count"></div>
+    
+    <div class="circle">
+      <div class="phase">ready</div>
+      <div class="timer"></div>
+    </div>
+
+    <div class="breathe-again">breathe again</div>
+    
+    <div class="controls">
+      <button class="start">Start</button>
+      <button class="reset">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    const circle = document.querySelector('.circle');
+    const phase = document.querySelector('.phase');
+    const timer = document.querySelector('.timer');
+    const cycleCount = document.querySelector('.cycle-count');
+    const pattern = document.querySelector('.pattern');
+    const startBtn = document.querySelector('.start');
+    const resetBtn = document.querySelector('.reset');
+    const settings = document.querySelector('.settings');
+    const settingsPanel = document.querySelector('.settings-panel');
+    const breatheAgain = document.querySelector('.breathe-again');
+
+    let isRunning = false;
+    let currentPhase = 'ready';
+    let secondsLeft = 0;
+    let cycle = 0;
+    let intervalId = null;
+
+    const colors = {
+      inhale: '#3B82F6',
+      hold: '#10B981',
+      exhale: '#8B5CF6',
+      ready: '#E5E7EB'
+    };
+
+    function getSettings() {
+      return {
+        inhale: parseInt(document.getElementById('inhaleTime').value),
+        hold: parseInt(document.getElementById('holdTime').value),
+        exhale: parseInt(document.getElementById('exhaleTime').value),
+        totalCycles: parseInt(document.getElementById('totalCycles').value)
+      };
+    }
+
+    function updateDisplay() {
+      const settings = getSettings();
+      pattern.textContent = `${settings.inhale}-${settings.hold}-${settings.exhale}`;
+      circle.style.backgroundColor = colors[currentPhase];
+      phase.textContent = currentPhase;
+      timer.textContent = secondsLeft || '';
+      cycleCount.textContent = currentPhase === 'ready' ? '' : 
+        `Cycle ${cycle + 1} of ${getSettings().totalCycles}`;
+    }
+
+    function nextPhase() {
+      const settings = getSettings();
+      
+      if (currentPhase === 'ready') {
+        currentPhase = 'inhale';
+        secondsLeft = settings.inhale;
+      } else if (currentPhase === 'inhale') {
+        currentPhase = 'hold';
+        secondsLeft = settings.hold;
+      } else if (currentPhase === 'hold') {
+        currentPhase = 'exhale';
+        secondsLeft = settings.exhale;
+      } else {
+        cycle++;
+        if (cycle >= settings.totalCycles) {
+          endExercise();
+          return;
+        }
+        currentPhase = 'inhale';
+        secondsLeft = settings.inhale;
+      }
+      
+      updateDisplay();
+    }
+
+    function endExercise() {
+      isRunning = false;
+      clearInterval(intervalId);
+      startBtn.textContent = 'Start';
+      circle.style.opacity = 0;
+      breatheAgain.style.display = 'block';
+    }
+
+    function reset() {
+      isRunning = false;
+      clearInterval(intervalId);
+      currentPhase = 'ready';
+      secondsLeft = 0;
+      cycle = 0;
+      startBtn.textContent = 'Start';
+      circle.style.opacity = 1;
+      breatheAgain.style.display = 'none';
+      updateDisplay();
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(intervalId);
+        startBtn.textContent = 'Start';
+      } else {
+        isRunning = true;
+        startBtn.textContent = 'Pause';
+        if (currentPhase === 'ready') {
+          nextPhase();
+        }
+        intervalId = setInterval(() => {
+          if (secondsLeft > 0) {
+            secondsLeft--;
+            updateDisplay();
+          } else {
+            nextPhase();
+          }
+        }, 1000);
+      }
+    });
+
+    resetBtn.addEventListener('click', reset);
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const saveSettings = document.getElementById('saveSettings');
+
+    settings.addEventListener('click', () => {
+      modalOverlay.classList.add('visible');
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('visible');
+      }
+    });
+
+    saveSettings.addEventListener('click', () => {
+      modalOverlay.classList.remove('visible');
+      updateDisplay();
+    });
+    breatheAgain.addEventListener('click', reset);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
