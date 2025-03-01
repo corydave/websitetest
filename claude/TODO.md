@@ -30,6 +30,8 @@
 27. 60+ iterations isn't abnormal
 28. the closer you get to perfection, the more robust and extensible it is
 29. Setting up the environment (.html files)
+30. `<center><iframe src="https://corydave.github.io/websitetest/claude/boxBreathing/" width="80%" height="600" frameborder="0"></iframe></center>`
+    1. center, iframe, width, height, frameborder
 
 
 
