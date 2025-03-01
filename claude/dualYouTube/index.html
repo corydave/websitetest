@@ -129,7 +129,7 @@
         /* Custom player controls */
         #custom-controls {
             position: absolute;
-            bottom: 0;
+            top: 0;  /* Move controls to the top */
             left: 0;
             width: 100%;
             padding: 15px;
@@ -138,6 +138,7 @@
             align-items: center;
             gap: 15px;
             z-index: 20;
+            border-radius: 8px 8px 0 0; /* Rounded corners on top only */
         }
         
         .control-btn {
@@ -152,6 +153,33 @@
         
         .control-btn:hover {
             color: #0d6efd;
+        }
+        
+        /* Add tooltip for sync button */
+        #sync-btn {
+            position: relative;
+        }
+        
+        #sync-btn::after {
+            content: "Sync Videos";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 25;
+        }
+        
+        #sync-btn:hover::after {
+            opacity: 1;
         }
         
         .volume-control {
@@ -179,16 +207,22 @@
             border-radius: 5px;
             border-left: 5px solid #0d6efd;
         }
+
+        .drg-hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- <div class="version-badge">VERSION 2.3</div> -->
-        
-        <!-- <h1 class="text-center mb-4">Dual YouTube Player</h1> -->
-        
-        <div id="status-area" style="display:none;">
-            Loading the player...
+        <div class="version-badge drg-hidden">VERSION 2.5</div>
+        <!-- <strong>Note about ads:</strong> The controls have been moved to the top so you can access the "Skip Ad" button when ads play. -->
+        <h1 class="text-center mb-4 drg-hidden">Dual YouTube Player</h1>
+
+        <div class="drg-hidden">
+            <div id="status-area">
+                Loading the player...
+            </div>
         </div>
         
         <!-- Player container -->
@@ -209,7 +243,7 @@
                 <div id="resize-guide-v"></div>
             </div>
             
-            <!-- Custom controls -->
+            <!-- Custom controls (moved to top) -->
             <div id="custom-controls">
                 <button id="play-pause-btn" class="control-btn">
                     <i class="fas fa-play"></i>
@@ -227,6 +261,10 @@
                     <span class="text-white">PIP</span>
                 </div>
                 
+                <button id="sync-btn" class="control-btn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                
                 <button id="switch-btn" class="control-btn ms-auto">
                     <i class="fas fa-exchange-alt"></i>
                 </button>
@@ -234,7 +272,7 @@
         </div>
         
         <!-- Video ID inputs -->
-        <div class="row g-3 mb-4" style="display:none;">
+        <div class="row g-3 mb-4 drg-hidden">
             <div class="col-md-5">
                 <div class="input-group">
                     <span class="input-group-text">Main Video ID</span>
@@ -252,14 +290,16 @@
             </div>
         </div>
         
-        <div class="alert alert-info" style="display:none;">
+        <div class="alert alert-info drg-hidden">
             <strong>Instructions:</strong>
             <ul>
                 <li>Click and drag the PIP video to move it anywhere over the main video</li>
                 <li>Drag the small handle in the bottom-right corner of the PIP video to resize it</li>
                 <li>Click the play/pause button to control both videos</li>
+                <li>Use the sync button <i class="fas fa-sync-alt"></i> to resynchronize videos if they drift</li>
                 <li>Adjust volume sliders to control each video's audio</li>
-                <li>Click the switch button to swap the videos</li>
+                <li>Click the volume icons to quickly mute/unmute each video</li>
+                <li>Click the switch button to swap the videos (volumes swap too)</li>
                 <li>Enter new YouTube video IDs and click "Load Videos" to change content</li>
                 <li>Add <code>?main=VIDEO_ID1&pip=VIDEO_ID2</code> to the URL to load specific videos</li>
             </ul>
@@ -268,7 +308,7 @@
 
     <script>
         // Version
-        console.log("Dual YouTube Player - VERSION 2.3");
+        console.log("Dual YouTube Player - VERSION 2.5");
         
         // DOM Elements
         const statusArea = document.getElementById('status-area');
@@ -287,6 +327,7 @@
         const pipResizeHandle = document.getElementById('pip-resize-handle');
         const resizeGuideH = document.getElementById('resize-guide-h');
         const resizeGuideV = document.getElementById('resize-guide-v');
+        const syncBtn = document.getElementById('sync-btn');
         
         // Player variables
         let mainPlayer = null;
@@ -425,6 +466,11 @@
         function forceInitialAspectRatio() {
             // Wait for elements to be rendered
             setTimeout(() => {
+                // Set initial PIP position
+                const controlsHeight = document.getElementById('custom-controls').offsetHeight;
+                pipPlayerArea.style.top = (controlsHeight + 20) + 'px'; // Position below controls
+                
+                // Correct aspect ratio
                 const pipWidth = pipPlayerArea.offsetWidth;
                 const correctHeight = pipWidth * (9/16);
                 pipPlayerArea.style.height = correctHeight + 'px';
@@ -631,11 +677,59 @@
             mainVolumeIcon.addEventListener('click', toggleMainMute);
             pipVolumeIcon.addEventListener('click', togglePipMute);
             
+            // Sync button
+            syncBtn.addEventListener('click', syncVideos);
+            
             // Switch button
             switchBtn.addEventListener('click', switchVideos);
             
             // Load button
             loadBtn.addEventListener('click', loadCustomVideos);
+        }
+        
+        // Sync videos to earlier timestamp
+        function syncVideos() {
+            if (!mainPlayer || !pipPlayer) {
+                updateStatus("Players not ready yet");
+                return;
+            }
+            
+            try {
+                // Get current timestamps
+                const mainTime = mainPlayer.getCurrentTime();
+                const pipTime = pipPlayer.getCurrentTime();
+                
+                // Remember if videos were playing
+                const wasPlaying = isPlaying;
+                
+                // Pause both videos
+                mainPlayer.pauseVideo();
+                pipPlayer.pauseVideo();
+                
+                // Determine which timestamp is earlier
+                const syncTime = Math.min(mainTime, pipTime);
+                
+                // Log what we're doing
+                updateStatus(`Syncing videos to ${syncTime.toFixed(2)} seconds`);
+                
+                // Set both videos to the earlier timestamp
+                mainPlayer.seekTo(syncTime, true);
+                pipPlayer.seekTo(syncTime, true);
+                
+                // Resume playback if videos were playing
+                setTimeout(() => {
+                    if (wasPlaying) {
+                        mainPlayer.playVideo();
+                        pipPlayer.playVideo();
+                        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        isPlaying = true;
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error("Error syncing videos:", error);
+                updateStatus("Error syncing videos");
+            }
         }
         
         // Toggle main volume mute/unmute
@@ -939,7 +1033,7 @@
         
         // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
-            updateStatus("Initializing application (VERSION 2.3)...");
+            updateStatus("Initializing application (VERSION 2.5)...");
             
             // Force initial aspect ratio on load
             forceInitialAspectRatio();
