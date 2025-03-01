@@ -32,6 +32,7 @@
 29. Setting up the environment (.html files)
 30. `<center><iframe src="https://corydave.github.io/websitetest/claude/boxBreathing/" width="80%" height="600" frameborder="0"></iframe></center>`
     1. center, iframe, width, height, frameborder
+31. These are for me, not you. but some are generalized (specifically the Sheets ones). difference between building an app and building a platform. some apps can be platformized. 
 
 
 
