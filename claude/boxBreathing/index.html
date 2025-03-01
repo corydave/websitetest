@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Breathing Exercise</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .breathing-container {
+            width: 250px;
+            height: 250px;
+            margin: 2rem auto;
+            position: relative;
+            border: 10px solid #999;
+            border-radius: 5px;
+            box-sizing: content-box;
+        }
+
+        .progress-bar {
+            position: absolute;
+            background: #999;
+            transition: width 0.1s linear, height 0.1s linear, background-color 2s ease;
+        }
+
+        .top {
+            top: -10px;
+            left: 0;
+            height: 10px;
+            width: 0;
+        }
+
+        .right {
+            top: 0;
+            right: -10px;
+            width: 10px;
+            height: 0;
+        }
+
+        .bottom {
+            bottom: -10px;
+            right: 0;
+            height: 10px;
+            width: 0;
+        }
+
+        .left {
+            bottom: 0;
+            left: -10px;
+            width: 10px;
+            height: 0;
+        }
+
+        .phase-text {
+            font-size: 1.5rem;
+            margin: 1rem;
+            text-align: center;
+            min-height: 2.5rem;
+        }
+
+        .settings-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .settings-icon:hover {
+            color: #007bff;
+        }
+
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .settings-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 5px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center position-relative">
+                <i class="fas fa-cog settings-icon" id="settingsIcon"></i>
+                <h1 class="mb-4">Box Breathing</h1>
+                <p class="mb-4">A simple technique to reduce stress and increase focus</p>
+                
+                <div class="breathing-container">
+                    <div class="progress-bar top"></div>
+                    <div class="progress-bar right"></div>
+                    <div class="progress-bar bottom"></div>
+                    <div class="progress-bar left"></div>
+                </div>
+
+                <div class="phase-text">Press Start to begin</div>
+                
+                <div class="debug-panel mb-4 p-3 bg-light border rounded text-start">
+                    <div><strong>Debug Info:</strong></div>
+                    <div>Total Time: <span id="debugTime">0.0s</span></div>
+                    <div>Current Phase: <span id="debugPhase">-</span></div>
+                    <div>Phase Progress: <span id="debugProgress">0%</span></div>
+                    <div>Is Running: <span id="debugRunning">false</span></div>
+                    <div>Animation Frame: <span id="debugFrame">-</span></div>
+                </div>
+                
+                <button id="startButton" class="btn btn-primary btn-lg">Start</button>
+                <button id="resetButton" class="btn btn-secondary btn-lg ms-2">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h3 class="mb-4">Settings</h3>
+            <div class="mb-3">
+                <label for="secondsPerPhase" class="form-label">Seconds per phase:</label>
+                <input type="number" class="form-control" id="secondsPerPhase" min="1" max="10" value="4">
+            </div>
+            <button class="btn btn-primary" id="saveSettings">Save</button>
+            <button class="btn btn-secondary ms-2" id="closeSettings">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const phases = [
+            { name: 'Inhale', color: '#007bff' },  // Blue
+            { name: 'Hold', color: '#28a745' },    // Green
+            { name: 'Exhale', color: '#ffc107' },  // Yellow
+            { name: 'Hold', color: '#6f42c1' }     // Purple
+        ];
+
+        const boxSize = 250; // Match the container size exactly
+        let currentPhase = 0;
+        let isRunning = false;
+        let secondsPerPhase = 4;
+        let animationFrame;
+        let startTime;
+        let phaseStartTime;
+
+        const startButton = document.getElementById('startButton');
+        const resetButton = document.getElementById('resetButton');
+        const phaseText = document.querySelector('.phase-text');
+        const progressBars = document.querySelectorAll('.progress-bar');
+        const settingsIcon = document.getElementById('settingsIcon');
+        const settingsModal = document.getElementById('settingsModal');
+        const saveSettings = document.getElementById('saveSettings');
+        const closeSettings = document.getElementById('closeSettings');
+        const secondsInput = document.getElementById('secondsPerPhase');
+
+        function setBarProgress(barIndex, progress, color) {
+            // Set all bars to black but don't change their sizes
+            progressBars.forEach((bar, index) => {
+                if (index !== barIndex) {
+                    bar.style.background = '#999';
+                }
+            });
+
+            // Set the progress and color for the active bar
+            const bar = progressBars[barIndex];
+            bar.style.background = color;
+            
+            if (barIndex === 0) { // Top
+                bar.style.width = `${progress * 250}px`;
+            } else if (barIndex === 1) { // Right
+                bar.style.height = `${progress * 250}px`;
+            } else if (barIndex === 2) { // Bottom
+                bar.style.width = `${progress * 250}px`;
+            } else { // Left
+                bar.style.height = `${progress * 250}px`;
+            }
+        }
+
+        function resetBars() {
+            progressBars.forEach((bar, index) => {
+                if (index === 0 || index === 2) { // top and bottom
+                    bar.style.width = `${boxSize}px`;
+                    bar.style.height = '6px';
+                } else { // left and right
+                    bar.style.width = '6px';
+                    bar.style.height = `${boxSize}px`;
+                }
+                bar.style.background = '#333';
+            });
+        }
+
+        const debugTime = document.getElementById('debugTime');
+        const debugPhase = document.getElementById('debugPhase');
+        const debugProgress = document.getElementById('debugProgress');
+        const debugRunning = document.getElementById('debugRunning');
+        const debugFrame = document.getElementById('debugFrame');
+
+        function updateDebugInfo(timestamp, progress) {
+            if (startTime && isRunning) {
+                debugTime.textContent = `${((timestamp - startTime) / 1000).toFixed(1)}s`;
+            }
+            debugPhase.textContent = `${currentPhase} (${phases[currentPhase].name})`;
+            debugProgress.textContent = `${(progress * 100).toFixed(1)}%`;
+            debugRunning.textContent = isRunning.toString();
+            debugFrame.textContent = animationFrame?.toString() || '-';
+        }
+
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            if (!phaseStartTime) phaseStartTime = timestamp;
+
+            const phaseElapsed = timestamp - phaseStartTime;
+            const phaseDuration = secondsPerPhase * 1000;
+            const progress = Math.min(phaseElapsed / phaseDuration, 1);
+
+            // Update debug info
+            updateDebugInfo(timestamp, progress);
+
+            // Set progress and color for current phase
+            setBarProgress(currentPhase, progress, phases[currentPhase].color);
+            phaseText.textContent = phases[currentPhase].name;
+
+            if (progress >= 1) {
+                // Phase complete
+                if (currentPhase === 3) {
+                    // Cycle complete
+                    debugTime.textContent = '0.0s';
+            debugPhase.textContent = '-';
+            debugProgress.textContent = '0%';
+            debugRunning.textContent = 'false';
+            debugFrame.textContent = '-';
+                    currentPhase = 0;
+                    // Set a small delay before starting the next cycle
+                    setTimeout(() => {
+                        if (isRunning) {
+                            phaseStartTime = performance.now();
+                            animationFrame = requestAnimationFrame(animate);
+                        }
+                    }, 100);
+                    return;
+                } else {
+                    // Move to next phase
+                    currentPhase++;
+                }
+                phaseStartTime = timestamp;
+            }
+
+            if (isRunning) {
+                animationFrame = requestAnimationFrame(animate);
+            }
+        }
+
+        function startAnimation() {
+            if (isRunning) {
+                isRunning = false;
+                startButton.textContent = 'Start';
+                cancelAnimationFrame(animationFrame);
+                return;
+            }
+
+            isRunning = true;
+            startButton.textContent = 'Pause';
+            startTime = null;
+            phaseStartTime = null;
+            animationFrame = requestAnimationFrame(animate);
+        }
+
+        function resetAnimation() {
+            isRunning = false;
+            currentPhase = 0;
+            startTime = null;
+            phaseStartTime = null;
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+            if (cycleTimeout) {
+                clearTimeout(cycleTimeout);
+            }
+            startButton.textContent = 'Start';
+            phaseText.textContent = 'Press Start to begin';
+            resetBars();
+        }
+
+        // Settings handlers
+        settingsIcon.addEventListener('click', () => {
+            settingsModal.style.display = 'block';
+            secondsInput.value = secondsPerPhase;
+        });
+
+        saveSettings.addEventListener('click', () => {
+            secondsPerPhase = parseInt(secondsInput.value) || 4;
+            settingsModal.style.display = 'none';
+            resetAnimation();
+        });
+
+        closeSettings.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.style.display = 'none';
+            }
+        });
+
+        startButton.addEventListener('click', startAnimation);
+        resetButton.addEventListener('click', resetAnimation);
+    </script>
+</body>
+</html>
