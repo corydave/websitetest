@@ -1,1 +1,239 @@
-abc
+<!-- https://www.urlencoder.org/ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin: 8px 0 16px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .results {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding-left: 3em;
+      position: relative;
+      min-height: 1.5em;
+      margin-bottom: 4px;
+    }
+    .line-number {
+      position: absolute;
+      left: 0;
+      color: #666;
+      width: 2.5em;
+      text-align: right;
+      user-select: none;
+    }
+    .correct {
+      background: #bbf7d0;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+    .incorrect {
+      background: #fecaca;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+    .normal {
+      padding: 2px 4px;
+    }
+    .whitespace { opacity: 0.5; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div>
+      <label>Your Output:</label>
+      <textarea id="userInput" placeholder="Paste your output here..."></textarea>
+    </div>
+    
+    <div>
+      <label>Expected Output:</label>
+      <textarea id="expectedOutput" placeholder="Enter expected output here..."></textarea>
+    </div>
+
+    <div class="checkbox-wrapper">
+      <input type="checkbox" id="whitespace">
+      <label for="whitespace" style="display: inline">Compare whitespace exactly</label>
+    </div>
+    
+    <div>
+      <label>Comparison Results:</label>
+      <div id="results" class="results"></div>
+    </div>
+  </div>
+
+  <script>
+    function compareTexts(input, expected, compareWhitespace) {
+      if (!input || !expected) return [];
+      
+      // Split into lines first
+      const inputLines = input.split('\n');
+      const expectedLines = expected.split('\n');
+      const maxLines = Math.max(inputLines.length, expectedLines.length);
+      
+      // Process each line
+      return Array.from({length: maxLines}, (_, lineIdx) => {
+        const expectedLine = expectedLines[lineIdx] || '';
+        const inputLine = inputLines[lineIdx] || '';
+        
+        let inputTokens, expectedTokens;
+        
+        if (compareWhitespace) {
+          inputTokens = inputLine.split(/(\s+|\S+)/).filter(Boolean);
+          expectedTokens = expectedLine.split(/(\s+|\S+)/).filter(Boolean);
+        } else {
+          inputTokens = inputLine.trim().split(/\s+/).filter(Boolean);
+          expectedTokens = expectedLine.trim().split(/\s+/).filter(Boolean);
+        }
+
+        const maxTokens = Math.max(inputTokens.length, expectedTokens.length);
+        
+        return {
+          lineNumber: lineIdx + 1,
+          tokens: Array.from({length: maxTokens}, (_, idx) => {
+            const expectedToken = expectedTokens[idx] || '';
+            const inputToken = inputTokens[idx] || '';
+            
+            if (!expectedToken && inputToken) {
+              return {
+                expected: '',
+                actual: inputToken,
+                isMatch: false,
+                isWhitespace: inputToken.match(/^\s+$/) ? true : false
+              };
+            }
+            
+            if (expectedToken && !inputToken) {
+              return {
+                expected: expectedToken,
+                actual: '',
+                isMatch: false,
+                isWhitespace: expectedToken.match(/^\s+$/) ? true : false
+              };
+            }
+            
+            if (compareWhitespace && expectedToken.match(/\s+/)) {
+              const expectedSpaces = '␣'.repeat(expectedToken.length);
+              const inputSpaces = inputToken.match(/\s+/) ? '␣'.repeat(inputToken.length) : inputToken;
+              return {
+                expected: expectedSpaces,
+                actual: inputSpaces,
+                isMatch: expectedToken === inputToken,
+                isWhitespace: true
+              };
+            }
+
+            const isMatch = compareWhitespace ? 
+              expectedToken === inputToken :
+              expectedToken.toLowerCase() === inputToken.toLowerCase();
+
+            return {
+              expected: expectedToken,
+              actual: inputToken,
+              isMatch,
+              isWhitespace: false
+            };
+          })
+        };
+      });
+    }
+
+    function renderComparison(comparisonLines) {
+      if (!comparisonLines.length) return '';
+      
+      return comparisonLines.map(line => {
+        const tokens = line.tokens.map(item => {
+          if (item.isMatch) {
+            return `<span class="normal">${item.expected}</span>`;
+          } else {
+            const expectedSpan = item.expected ? 
+              `<span class="correct${item.isWhitespace ? ' whitespace' : ''}">${item.expected}</span>` : '';
+            const actualSpan = item.actual ? 
+              `<span class="incorrect${item.isWhitespace ? ' whitespace' : ''}">${item.actual}</span>` : '';
+            return expectedSpan + actualSpan;
+          }
+        }).join('');
+
+        return `
+          <div class="line">
+            <span class="line-number">${line.lineNumber}</span>
+            ${tokens || '&nbsp;'}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateResults() {
+      const input = document.getElementById('userInput').value;
+      const expected = document.getElementById('expectedOutput').value;
+      const compareWhitespace = document.getElementById('whitespace').checked;
+      
+      const comparison = compareTexts(input, expected, compareWhitespace);
+      document.getElementById('results').innerHTML = renderComparison(comparison);
+    }
+
+    document.getElementById('userInput').addEventListener('input', updateResults);
+    document.getElementById('expectedOutput').addEventListener('input', updateResults);
+    document.getElementById('whitespace').addEventListener('change', updateResults);
+  </script>
+  
+  <script>
+  
+      (function() {
+    
+        const queryString = window.location.search
+        const urlParams = new URLSearchParams(queryString);
+        const expected = urlParams.get('expected');
+
+        let textBox = document.getElementById('expectedOutput');
+        textBox.value = expected;
+
+    })();
+                    
+    
+    </script>
+</body>
+</html>
