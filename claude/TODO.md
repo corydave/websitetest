@@ -14,6 +14,7 @@
 11. GitHub because of Versions
 12. GitHub has a billion features you won't use
 13. Hosting images in GitHub
+14. Understand limitations (it's customized for YOU and your learners - is NOT enterprise level)
 
 
 > 👍 Google Sheets Apps
