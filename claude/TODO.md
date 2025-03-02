@@ -35,6 +35,9 @@
 31. These are for me, not you. but some are generalized (specifically the Sheets ones). difference between building an app and building a platform. some apps can be platformized. 
 32. incur technical debt?
 33. iron triangle (S3, HostGator, GitHub Pages, Google Apps Script, WordPress/Blogger)
+34. takes practice you'll get better at it
+35. stopwatchand mirror might be good starter ones.
+36. imagine!
 
 
 
