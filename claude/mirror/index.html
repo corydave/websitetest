@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Prep Webcam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        .container {
+            margin-top: 30px;
+        }
+        
+        #webcam-container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            margin: 0 auto;
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 20px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #45a049;
+        }
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #switch-btn {
+            background-color: #FF9800;
+        }
+        
+        #switch-btn:hover {
+            background-color: #e68a00;
+        }
+
+        #snapshot-btn {
+            background-color: #2196F3;
+        }
+        
+        #snapshot-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        #stop-btn {
+            background-color: #f44336;
+        }
+        
+        #stop-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meeting Prep Webcam</h1>
+    
+    <div class="instructions">
+        <h3>How to use:</h3>
+        <ol>
+            <li>Click "See how I look" to activate your webcam</li>
+            <li>Use "Switch camera" if you have multiple cameras and want to change views</li>
+            <li>Adjust your position, lighting, and background</li>
+            <li>Take a snapshot if you want to save your current view</li>
+            <li>Click "Stop webcam" when you're done</li>
+        </ol>
+    </div>
+    
+    <div class="container">
+        <button id="start-btn" class="btn">See how I look</button>
+        <button id="switch-btn" class="btn" disabled>Switch camera</button>
+        <button id="snapshot-btn" class="btn" disabled>Take snapshot</button>
+        <button id="stop-btn" class="btn" disabled>Stop webcam</button>
+        
+        <div id="webcam-container">
+            <video id="webcam" autoplay playsinline></video>
+        </div>
+        
+        <canvas id="canvas" class="hidden"></canvas>
+    </div>
+    
+    <script>
+        const startButton = document.getElementById('start-btn');
+        const switchButton = document.getElementById('switch-btn');
+        const snapshotButton = document.getElementById('snapshot-btn');
+        const stopButton = document.getElementById('stop-btn');
+        const webcamContainer = document.getElementById('webcam-container');
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        
+        let stream = null;
+        let currentCameraIndex = 0;
+        let cameras = [];
+        
+        // Set canvas dimensions to match video
+        canvasElement.width = 640;
+        canvasElement.height = 480;
+        
+        // Get list of available cameras
+        async function getCameraDevices() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            
+            // Log camera information to console for debugging
+            console.log('--- Available Cameras ---');
+            if (videoDevices.length === 0) {
+                console.log('No video input devices detected!');
+            } else {
+                videoDevices.forEach((device, index) => {
+                    console.log(`Camera ${index + 1}:`);
+                    console.log(`  Device ID: ${device.deviceId}`);
+                    console.log(`  Label: ${device.label || 'Label not available (no permissions yet)'}`);
+                    console.log(`  Group ID: ${device.groupId}`);
+                });
+                console.log(`Total cameras detected: ${videoDevices.length}`);
+            }
+            
+            return videoDevices;
+        }
+
+        // Start webcam with improved error handling and device detection
+        startButton.addEventListener('click', async () => {
+            try {
+                // Disable the button during initialization
+                startButton.disabled = true;
+                
+                // Add a status message to inform user
+                const statusMsg = document.createElement('p');
+                statusMsg.id = 'status-message';
+                statusMsg.textContent = 'Initializing camera, please wait...';
+                statusMsg.style.color = '#666';
+                webcamContainer.parentNode.insertBefore(statusMsg, webcamContainer);
+                
+                // First request permission with a general request
+                console.log('Requesting initial camera permission...');
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                
+                // Small delay to ensure permissions are properly processed
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Now get available cameras with labels
+                cameras = await getCameraDevices();
+                
+                console.log('Starting webcam with detected cameras:', cameras);
+                
+                if (cameras.length === 0) {
+                    throw new Error('No camera devices found');
+                }
+                
+                // Reset camera index just to be safe
+                currentCameraIndex = 0;
+                
+                // Try to start with a simple constraint first
+                let constraints = {
+                    video: true
+                };
+                
+                // If we have device info, use it
+                if (cameras[currentCameraIndex]?.deviceId) {
+                    constraints = {
+                        video: {
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            deviceId: cameras[currentCameraIndex].deviceId
+                        }
+                    };
+                }
+                
+                console.log('Using camera constraints:', JSON.stringify(constraints));
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                webcamElement.srcObject = stream;
+                webcamContainer.style.display = 'block';
+                
+                // Check which camera is actually being used
+                const tracks = stream.getVideoTracks();
+                if (tracks.length > 0) {
+                    console.log('Active camera:', tracks[0].label);
+                    console.log('Camera settings:', tracks[0].getSettings());
+                    
+                    // Try to match the active camera to our list to ensure correct currentCameraIndex
+                    const activeLabel = tracks[0].label;
+                    const matchingCameraIndex = cameras.findIndex(camera => camera.label === activeLabel);
+                    if (matchingCameraIndex >= 0) {
+                        console.log(`Matched active camera to our list at index ${matchingCameraIndex}`);
+                        currentCameraIndex = matchingCameraIndex;
+                    }
+                }
+                
+                // Update button states
+                startButton.disabled = true;
+                snapshotButton.disabled = false;
+                stopButton.disabled = false;
+                
+                // Only enable switch if multiple cameras
+                const multipleDevices = cameras.length > 1;
+                switchButton.disabled = !multipleDevices; 
+                if (multipleDevices) {
+                    console.log('Multiple cameras available - Switch camera button enabled');
+                } else {
+                    console.log('Only one camera available - Switch camera button disabled');
+                }
+                
+                // Remove status message
+                const existingMsg = document.getElementById('status-message');
+                if (existingMsg) existingMsg.remove();
+                
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+                alert('Could not access webcam. Please ensure you have a webcam connected and have granted permission to use it.');
+                
+                // Re-enable start button so user can try again
+                startButton.disabled = false;
+                
+                // Remove status message
+                const existingMsg = document.getElementById('status-message');
+                if (existingMsg) existingMsg.remove();
+            }
+        });
+        
+        // Take snapshot
+        snapshotButton.addEventListener('click', () => {
+            const context = canvasElement.getContext('2d');
+            
+            // Draw current video frame to canvas
+            context.drawImage(webcamElement, 0, 0, canvasElement.width, canvasElement.height);
+            
+            // Convert canvas to image URL
+            const imageUrl = canvasElement.toDataURL('image/png');
+            
+            // Create a download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = imageUrl;
+            downloadLink.download = 'meeting-prep-' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.png';
+            
+            // Trigger download
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+        
+        // Switch camera - completely revised version
+        switchButton.addEventListener('click', async () => {
+            console.log('Switch camera button clicked');
+            
+            if (cameras.length < 2) {
+                console.log('Cannot switch - fewer than 2 cameras detected');
+                return;
+            }
+            
+            // Disable button during switch to prevent multiple clicks
+            switchButton.disabled = true;
+            
+            try {
+                // Always refresh the camera list first to get the most current devices
+                await navigator.mediaDevices.getUserMedia({ video: true }); // Ensure permissions
+                cameras = await getCameraDevices();
+                
+                if (cameras.length < 2) {
+                    console.log('After refresh, fewer than 2 cameras available');
+                    switchButton.disabled = cameras.length < 2;
+                    return;
+                }
+                
+                // Switch to next camera
+                const previousIndex = currentCameraIndex;
+                currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
+                
+                console.log(`Attempting to switch from camera ${previousIndex} to camera ${currentCameraIndex}`);
+                console.log(`Target camera: ${cameras[currentCameraIndex].label || 'Unnamed camera'}`);
+                
+                // Stop current stream completely and remove it
+                if (stream) {
+                    console.log('Stopping current camera stream');
+                    stream.getTracks().forEach(track => {
+                        console.log(`Stopping track: ${track.kind} - ${track.label}`);
+                        track.stop();
+                    });
+                    webcamElement.srcObject = null;
+                    stream = null;
+                }
+                
+                // Small delay to ensure previous camera is fully stopped
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Try simpler constraints first - just use the deviceId without "exact"
+                // This can be more forgiving on some browsers
+                let constraints = {
+                    video: {
+                        deviceId: cameras[currentCameraIndex].deviceId
+                    }
+                };
+                
+                console.log('Starting new stream with constraints:', JSON.stringify(constraints));
+                
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                } catch (initialError) {
+                    console.log('Initial attempt failed, trying with exact constraint', initialError);
+                    // Try with exact constraint if the first attempt failed
+                    constraints.video.deviceId = { exact: cameras[currentCameraIndex].deviceId };
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                }
+                
+                webcamElement.srcObject = stream;
+                
+                const tracks = stream.getVideoTracks();
+                if (tracks.length > 0) {
+                    console.log('Successfully switched to camera:', tracks[0].label);
+                    console.log('New camera settings:', tracks[0].getSettings());
+                }
+                
+            } catch (error) {
+                console.error('Error in camera switching process:', error);
+                console.log('Error details:', error.name, error.message);
+                
+                // Try a different approach - switching by index instead of deviceId
+                try {
+                    console.log('Trying alternative switching approach...');
+                    
+                    // Just pick the next camera in the list regardless of previous selection
+                    const alternativeIndex = (currentCameraIndex + 1) % cameras.length;
+                    currentCameraIndex = alternativeIndex;
+                    
+                    // Completely remake the stream with minimal constraints
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { deviceId: cameras[alternativeIndex].deviceId }
+                    });
+                    
+                    webcamElement.srcObject = stream;
+                    console.log('Alternative switching successful');
+                    
+                } catch (fallbackError) {
+                    console.error('All camera switching attempts failed:', fallbackError);
+                    alert('Could not switch cameras. Please try stopping and restarting the webcam.');
+                    
+                    // Try to at least get any camera working
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        webcamElement.srcObject = stream;
+                    } catch (lastResortError) {
+                        console.error('Failed to recover camera functionality:', lastResortError);
+                    }
+                }
+            } finally {
+                // Re-enable button regardless of outcome
+                switchButton.disabled = cameras.length < 2;
+            }
+        });
+        
+        // Stop webcam
+        stopButton.addEventListener('click', () => {
+            if (stream) {
+                // Get all tracks and stop them
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                
+                // Reset video element
+                webcamElement.srcObject = null;
+                stream = null;
+                
+                // Hide webcam container
+                webcamContainer.style.display = 'none';
+                
+                // Update button states
+                startButton.disabled = false;
+                snapshotButton.disabled = true;
+                switchButton.disabled = true;
+                stopButton.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
