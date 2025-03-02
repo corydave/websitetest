@@ -1,0 +1,150 @@
+r<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Redirector</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 24px;
+            color: #2c3e50;
+        }
+        p {
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        .link-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .manual-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .manual-link:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #e74c3c;
+            padding: 15px;
+            background-color: #fdf0f0;
+            border-radius: 4px;
+            border: 1px solid #fadbd8;
+            margin-top: 20px;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Link Redirector</h1>
+        <div id="loading">
+            <p>We're connecting you to your destination...</p>
+            <div class="spinner"></div>
+        </div>
+        <div id="manual-redirect" class="link-container" style="display: none;">
+            <p>Click the link below to continue:</p>
+            <a href="#" id="destination-link" class="manual-link" target="_blank">Loading destination...</a>
+        </div>
+        <div id="error-msg" class="error-message">
+            Sorry, we couldn't find that link. It may have been removed or expired.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URL of your Google Apps Script Web App
+            const API_URL = 'https://script.google.com/macros/s/AKfycbx19920e2cu0BhqQvh0RRLloTA0FZev6SDENuZrKxM/exec';
+            
+            // Get the slug from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            
+            if (!slug) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-msg').textContent = 'No link identifier provided.';
+                document.getElementById('error-msg').style.display = 'block';
+                return;
+            }
+            
+            // Fetch the original URL from your API
+            fetch(`${API_URL}?slug=${slug}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.originalUrl) {
+                        // Check if the URL contains certain domains
+                        const sensitiveURLs = ['google.com', 'gmail.com', 'youtube.com'];
+                        const hasBlockedDomain = sensitiveURLs.some(domain => 
+                            data.originalUrl.toLowerCase().includes(domain));
+                        
+                        if (hasBlockedDomain) {
+                            // Show manual link for sensitive domains
+                            showManualRedirect(data.originalUrl);
+                        } else {
+                            // Automatically redirect for other domains
+                            window.location.href = data.originalUrl;
+                        }
+                    } else {
+                        // Show error message
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('error-msg').textContent = data.error || 'Link not found.';
+                        document.getElementById('error-msg').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching URL:', error);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error-msg').textContent = 'An error occurred while fetching the link.';
+                    document.getElementById('error-msg').style.display = 'block';
+                });
+        });
+        
+        function showManualRedirect(url) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('destination-link').href = url;
+            document.getElementById('destination-link').textContent = url;
+            document.getElementById('manual-redirect').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
