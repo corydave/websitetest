@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        
+        .console-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            font-family: monospace;
+        }
+        
+        .console {
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            border-radius: 15px;
+        }
+        
+        .console-input-line {
+            display: flex;
+            margin-top: 0;
+        }
+        
+        .console-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: monospace;
+            font-size: inherit;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            color: #ffffff;
+        }
+        
+        .console-prompt {
+            color: #ffffff;
+            margin-right: 8px;
+        }
+        
+        .console-output {
+            margin: 0;
+            white-space: pre-wrap;
+            color: #ffffff;
+        }
+
+        .reset-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: monospace;
+            transition: background-color 0.2s;
+        }
+
+        .reset-button:hover {
+            background-color: #444;
+        }
+
+        .console-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="console-container">
+        <div id="console" class="console"></div>
+        <div class="console-controls">
+            <button id="reset-button" class="reset-button">Reset</button>
+        </div>        
+    </div>
+
+    <script>
+
+        class ConsoleSimulator {
+            constructor(containerId, program) {
+                this.container = document.getElementById(containerId);
+                this.program = program;
+                this.currentStep = 0;
+                this.programState = {};
+                this.setupConsole();
+                this.setupResetButton();
+            }
+        
+            setupResetButton() {
+                const resetButton = document.getElementById('reset-button');
+                resetButton.addEventListener('click', () => this.reset());
+            }
+        
+            reset() {
+                // Clear the console
+                this.container.innerHTML = '';
+        
+                // Reset the program state
+                this.currentStep = 0;
+                this.programState = {};
+        
+                // Start the program again
+                this.nextStep();
+            }
+        
+            setupConsole() {
+                this.container.addEventListener('click', () => {
+                    const activeInput = this.container.querySelector('.console-input:not([disabled])');
+                    if (activeInput) activeInput.focus();
+                });
+        
+                // Start the program
+                this.nextStep();
+            }
+        
+            createNewInputLine(prompt) {
+                const inputLine = document.createElement('div');
+                inputLine.className = 'console-input-line';
+        
+                const promptElement = document.createElement('span');
+                promptElement.className = 'console-prompt';
+                promptElement.textContent = prompt;
+        
+                const input = document.createElement('input');
+                input.className = 'console-input';
+                input.type = 'text';
+        
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.handleInput(input);
+                    }
+                });
+        
+                inputLine.appendChild(promptElement);
+                inputLine.appendChild(input);
+                this.container.appendChild(inputLine);
+                input.focus();
+            }
+        
+            addOutput(text) {
+                if (!text) return;
+                const output = document.createElement('div');
+                output.className = 'console-output';
+                output.textContent = text;
+                this.container.appendChild(output);
+                this.container.scrollTop = this.container.scrollHeight;
+            }
+        
+            async handleInput(inputElement) {
+                let value = '';
+                if (inputElement) {
+                    value = inputElement.value.trim();
+                    inputElement.disabled = true;
+                }
+        
+                const step = this.program.steps[this.currentStep];
+                const result = await step.process(value, this.programState);
+        
+                if (result.output) {
+                    this.addOutput(result.output);
+                }
+        
+                if (result.state) {
+                    this.programState = {
+                        ...this.programState,
+                        ...result.state
+                    };
+                }
+        
+                this.currentStep = result.nextStep !== undefined ? result.nextStep : this.currentStep + 1;
+        
+                if (this.currentStep < this.program.steps.length) {
+                    // Add a small delay for output-only steps
+                    if (step.prompt === undefined) {
+                        setTimeout(() => this.nextStep(), 100);
+                    } else {
+                        this.nextStep();
+                    }
+                }
+            }
+        
+        
+            nextStep() {
+                const step = this.program.steps[this.currentStep];
+                if (!step) return;
+        
+                if (step.prompt === undefined) {
+                    this.handleInput(null); // Pass null for output-only steps
+                } else {
+                    this.createNewInputLine(step.prompt);
+                }
+            }
+        }
+        
+        
+        
+        
+        // Program: Inches to Feet Converter
+        const inchesToFeetProgram = {
+            steps: [
+        
+                {
+                    prompt: undefined,
+                    process: (input, state) => ({
+                        output: "Welcome to the Temperature Converter!\nThis program will help you convert temperatures.\n\nLoading...",
+                        nextStep: 1
+                    })
+                },
+        
+        
+                {
+                    prompt: "Enter the number of inches: ",
+                    process: (input, state) => {
+                        const inches = parseInt(input);
+                        const feet = Math.floor(inches / 12);
+                        const remainingInches = inches % 12;
+                        return {
+                            output: `${inches} inches is ${feet} feet, and ${remainingInches} inches`,
+                            state: {
+                                inches,
+                                feet,
+                                remainingInches
+                            }
+                        };
+                    }
+                }
+        
+        
+        
+            ]
+        };
+        
+        // Program: Temperature Converter
+        const temperatureProgram = {
+            steps: [{
+                    prompt: undefined,
+                    process: () => ({
+                        output: "Welcome to the Temperature Converter!\n\n\n\n\n\n",
+                        nextStep: 1
+                    })
+                },
+                {
+                    prompt: "Enter temperature in Fahrenheit: ",
+                    process: (input, state) => {
+                        const fahrenheit = parseFloat(input);
+                        const celsius = (fahrenheit - 32) * (5 / 9);
+                        return {
+                            output: `${fahrenheit}Â°F is ${celsius.toFixed(1)}Â°C`,
+                            nextStep: 0
+                        };
+                    }
+                }
+            ]
+        };
+        
+        
+        // Example Program: Multi-step Name Greeting
+        const greetingProgram = {
+            steps: [{
+                    prompt: "What is your first name? ",
+                    process: (input, state) => ({
+                        state: {
+                            firstName: input
+                        }
+                    })
+                },
+                {
+                    prompt: "What is your last name? ",
+                    process: (input, state) => ({
+                        output: `Hi, ${state.firstName} ${input}!`,
+                        state: {
+                            ...state,
+                            lastName: input
+                        }
+                    })
+                }
+            ]
+        };
+        
+        
+        const programWithOutput = {
+            steps: [{
+                    // Output-only step - notice there's no prompt
+                    prompt: undefined,
+                    process: (input, state) => {
+                        return {
+                            output: "Welcome to the Temperature Converter!\nThis program will help you convert temperatures.\n\nLoading...",
+                            nextStep: 1,
+                            state: {}
+                        };
+                    }
+                },
+                {
+                    // Normal interactive step
+                    prompt: "\nEnter a temperature in Fahrenheit: ",
+                    process: (input, state) => {
+                        // Process temperature...
+                    }
+                }
+            ]
+        };
+        
+        
+        const compliment = {
+            steps: [{
+                prompt: "Would you like a compliment? ",
+                process: (input, state) => {
+                    const choice = input;
+        
+                    if (choice == 'yes') {
+                        return {
+                            output: "HI"
+                        };
+                    } else {
+                        return {
+                            output: "NO"
+                        };
+                    }
+                }
+            }]
+        };
+        
+        
+        
+        // Number Guessing Game Program
+        const numberGuessingGame = {
+            steps: [{
+                    prompt: "Welcome to the Number Guessing Game!\n\n\n\nI'm thinkings of a number between 1 and 100.\nWhat's your first guess? ",
+                    process: (input, state) => {
+                        const targetNumber = Math.floor(Math.random() * 100) + 1;
+                        const guess = parseInt(input);
+                        const attempts = 1;
+        
+                        if (isNaN(guess)) {
+                            return {
+                                output: "Please enter a valid number.",
+                                state: {
+                                    targetNumber,
+                                    attempts
+                                },
+                                nextStep: 1
+                            };
+                        }
+        
+                        if (guess === targetNumber) {
+                            return {
+                                output: `Congratulations! You got it in ${attempts} attempt!`,
+                                state: {
+                                    targetNumber,
+                                    attempts
+                                },
+                                nextStep: 2
+                            };
+                        }
+        
+                        const message = guess < targetNumber ? "Too low!" : "Too high!";
+        
+                        return {
+                            output: message,
+                            state: {
+                                targetNumber,
+                                attempts
+                            },
+                            nextStep: 1
+                        };
+                    }
+                },
+                {
+                    prompt: "Try again: ",
+                    process: (input, state) => {
+                        const guess = parseInt(input);
+                        const attempts = state.attempts + 1;
+        
+                        if (isNaN(guess)) {
+                            return {
+                                output: "Please enter a valid number.",
+                                state: {
+                                    ...state,
+                                    attempts
+                                },
+                                nextStep: 1
+                            };
+                        }
+        
+                        if (guess === state.targetNumber) {
+                            return {
+                                output: `Congratulations! You got it in ${attempts} attempts!`,
+                                state: {
+                                    ...state,
+                                    attempts
+                                },
+                                nextStep: 2
+                            };
+                        }
+        
+                        const message = guess < state.targetNumber ? "Too low!" : "Too high!";
+        
+                        return {
+                            output: message,
+                            state: {
+                                ...state,
+                                attempts
+                            },
+                            nextStep: 1
+                        };
+                    }
+                },
+                {
+                    prompt: "\nWould you like to play again? (yes/no) ",
+                    process: (input, state) => {
+                        const response = input.toLowerCase();
+                        if (response === 'yes' || response === 'y') {
+                            return {
+                                output: "\nGreat! Let's play again!",
+                                nextStep: 0
+                            };
+                        }
+                        return {
+                            output: "Thanks for playing! Goodbye!",
+                            nextStep: 3
+                        };
+                    }
+                },
+                {
+                    prompt: "",
+                    process: (input, state) => {
+                        return {
+                            output: ""
+                        };
+                    }
+                }
+            ]
+        };
+
+        const firewallProgram = {
+            steps: [
+                {
+                    prompt: undefined,
+                    process: () => ({
+                        output: "=== Network Traffic Security Analyzer ===\n",
+                        nextStep: 1
+                    })
+                },
+                {
+                    prompt: "Enter the port number (e.g., 80, 22, 443, 3389): ",
+                    process: (input, state) => ({
+                        state: { port: parseInt(input) },
+                        nextStep: 2
+                    })
+                },
+                {
+                    prompt: "Enter the data transfer size in megabytes (MB): ",
+                    process: (input, state) => {
+                        const port = state.port;
+                        const size = parseInt(input);
+                        let risk;
+                        
+                        // Determine risk level based on port and size
+                        if (port === 22 && size > 500) {
+                            risk = "HIGH RISK: Potential unauthorized remote access detected!";
+                        } else if (port === 80 && size > 100) {
+                            risk = "MEDIUM RISK: Large unencrypted data transfer detected.";
+                        } else if (port === 443) {
+                            risk = "LOW RISK: Secure encrypted transfer detected.";
+                        } else {
+                            risk = "UNKNOWN: Unrecognized traffic pattern.";
+                        }
+                        
+                        return {
+                            output: `\nFIREWALL LOG:\nPort: ${port}, Transfer Size: ${size} MB\nRisk Assessment: ${risk}\n------------------------`,
+                            state: { ...state, size, risk },
+                            // nextStep: 0 // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };      
+        
+        const loginProgram = {
+            steps: [{
+                    prompt: "Please enter your name: ",
+                    process: (input, state) => ({
+                        state: {
+                            name: input
+                        },
+                        nextStep: 1
+                    })
+                },
+                {
+                    prompt: "Please enter your user id: ",
+                    process: (input, state) => ({
+                        state: {
+                            ...state,
+                            userId: input
+                        },
+                        nextStep: 2
+                    })
+                },
+                {
+                    prompt: "Please enter your password: ",
+                    process: (input, state) => {
+                        const maskedPassword = 'X'.repeat(input.length);
+                        return {
+                            output: `\nWelcome, ${state.name}. Your ID is ${state.userId}.\n\nPASSWORD:\n${maskedPassword}\n`,
+                            state: {
+                                ...state,
+                                password: input
+                            },
+                            // nextStep: 0 // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };
+
+
+        const phishingAnalyzerProgram = {
+            steps: [
+                {
+                    prompt: "Enter the email subject line: ",
+                    process: (input, state) => {
+                        const subject = input;
+                        let risk;
+                        
+                        // Convert to lowercase for case-insensitive matching
+                        const lowerSubject = subject.toLowerCase();
+                        
+                        // Check for phishing indicators
+                        if (lowerSubject.includes("urgent") || lowerSubject.includes("immediate action required")) {
+                            risk = "HIGH RISK: Possible phishing attempt.";
+                        } else if (lowerSubject.includes("win") || lowerSubject.includes("free")) {
+                            risk = "MEDIUM RISK: Suspicious offer detected.";
+                        } else if (lowerSubject.includes("password reset")) {
+                            risk = "LOW RISK: Verify legitimacy with sender.";
+                        } else {
+                            risk = "No phishing indicators detected.";
+                        }
+                        
+                        return {
+                            output: `\nSECURITY ASSESSMENT:\n${risk}\n------------------------\nAnalyzed subject: "${subject}"`,
+                            state: { subject, risk },
+                            // nextStep: 0 // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };
+
+
+        
+        // Programs collection - outside the class
+        const programs = {
+            temperature: temperatureProgram,
+            guessing: numberGuessingGame,
+            compliment: compliment,
+            inchesToFeet: inchesToFeetProgram,
+            login: loginProgram,
+            greeting: greetingProgram,
+            firewall: firewallProgram,
+            phishing: phishingAnalyzerProgram
+            // Add more programs here
+        };
+        
+        // URL handling and initialization - also outside the class
+        function getProgramFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const programName = urlParams.get('program');
+            return programs[programName] || loginProgram;
+        }
+        
+        // Initialize the simulator
+        const consoleSimulator = new ConsoleSimulator('console', getProgramFromURL());        
+        
+    </script>
+</body>
+</html>
