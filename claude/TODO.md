@@ -38,7 +38,7 @@
 34. takes practice you'll get better at it
 35. stopwatchand mirror might be good starter ones.
 36. imagine!
-
+37. console as a place to debug (camera app)
 
 
 > 👍 Google Sheets Apps
