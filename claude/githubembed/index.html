@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Raw Content Viewer</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #codeContainer {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            overflow: auto;
+            max-height: 600px;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: "Courier New", monospace;
+        }
+        code {
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .line-numbers {
+            color: #999;
+            text-align: right;
+            padding-right: 10px;
+            user-select: none;
+        }
+        .code-row {
+            display: flex;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #urlInput {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="hidden">GitHub Raw Content Viewer</h1>
+    
+    <div class="hidden">
+        <input type="text" id="urlInput" value="https://raw.githubusercontent.com/FLCC-CSC/pyTests/refs/heads/main/test_rectangle.py" 
+            placeholder="Enter GitHub raw URL">
+        <button onclick="fetchContent()">Load Content</button>
+    </div>
+    
+    <div id="codeContainer">
+        <div class="loading">Loading content...</div>
+    </div>
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to fetch and display the content
+        function fetchContent(urlOverride) {
+            const container = document.getElementById('codeContainer');
+            // Use the override URL if provided, otherwise use the input field
+            const url = urlOverride || document.getElementById('urlInput').value.trim();
+            
+            if (!url.startsWith('https://raw.githubusercontent.com')) {
+                container.innerHTML = '<div style="color: red;">Error: URL must be a raw GitHub URL starting with https://raw.githubusercontent.com</div>';
+                return;
+            }
+            
+            // Always update the input field to match the URL being loaded
+            document.getElementById('urlInput').value = url;
+            
+            container.innerHTML = '<div class="loading">Loading content...</div>';
+            
+            // Update URL parameter without refreshing the page
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('url', url);
+            window.history.pushState({}, '', newUrl);
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // Split the content into lines
+                    const lines = data.split('\n');
+                    let html = '';
+                    
+                    // Create line-numbered display
+                    for (let i = 0; i < lines.length; i++) {
+                        html += `<div class="code-row">
+                                    <span class="line-numbers">${i + 1}</span>
+                                    <code>${escapeHtml(lines[i])}</code>
+                                </div>`;
+                    }
+                    
+                    container.innerHTML = `<pre>${html}</pre>`;
+                })
+                .catch(error => {
+                    container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                });
+        }
+        
+        // Helper function to escape HTML characters
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        // Initialize the page with URL parameter
+        function initPage() {
+            const urlParam = getUrlParameter('url');
+            if (urlParam) {
+                // Load content directly from URL parameter
+                fetchContent(urlParam);
+            } else {
+                // Fall back to default URL
+                fetchContent();
+            }
+        }
+        
+        // Load the content when the page loads
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
