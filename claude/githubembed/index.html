@@ -124,7 +124,7 @@
                     // Create line-numbered display
                     for (let i = 0; i < lines.length; i++) {
                         html += `<div class="code-row">
-                                    <span class="line-numbers"></span>
+                                    <span class="line-numbers">${i + 1}</span>
                                     <code>${escapeHtml(lines[i])}</code>
                                 </div>`;
                     }
