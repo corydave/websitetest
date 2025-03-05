@@ -39,6 +39,9 @@
 35. stopwatchand mirror might be good starter ones.
 36. imagine!
 37. console as a place to debug (camera app)
+38. sheets as a platform with URL para s
+39. don't expect privacy in these apps
+40. Scholars day parsing 
 
 
 > 👍 Google Sheets Apps
