@@ -1,3 +1,12 @@
+<!--
+
+  Change the height in the <iframe> (line 95ish) - default 600px
+  URL Parameters:
+      url  = URL to raw GitHub code
+      copy = true | false
+
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,12 +24,12 @@
             padding: 20px;
         }
         #codeContainer {
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            /* border: 1px solid #ddd; */
+            /* border-radius: 5px; */
             padding: 15px;
             background-color: #f5f5f5;
             overflow: auto;
-            max-height: 600px;
+            height: 600px;
             border-radius: 15px;
         }
         pre {
@@ -46,9 +55,17 @@
         .code-row {
             display: flex;
         }
+
+        .buttonContainer {
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+        
         button {
             padding: 8px 16px;
-            background-color: #4CAF50;
+            /* background-color: #4CAF50; */
+            background-color: #365E3B;
             color: white;
             border: none;
             border-radius: 4px;
@@ -75,9 +92,11 @@
         <button onclick="fetchContent()">Load Content</button>
     </div>
     
-    <div id="codeContainer">
-        <div class="loading">Loading content...</div>
+    <div id="codeContainer" style="height:690px;">
+        <div id="code" class="loading">Loading content...</div>
     </div>
+
+    <div class="buttonContainer" id="buttonContainer"><button onclick="copyCode()">Copy Code</button></div>
 
     <script>
         // Function to get URL parameters
@@ -156,7 +175,37 @@
                 // Fall back to default URL
                 fetchContent();
             }
+
+            const copyParam = getUrlParameter('copy');
+            if(copyParam) {
+                document.getElementById('buttonContainer').style.display = 'inline-block';
+            }
+            
         }
+
+        function copyCode() {
+            console.log('copying code');
+            let codeRows = document.getElementsByClassName('code-row');
+            console.log(codeRows);
+
+            let code = '';
+            
+            for (let i = 0; i < codeRows.length; i++) {
+                // console.log(codeRows[i].innerHTML);
+                code += codeRows[i].children[1].innerHTML + "\n";
+                // code += codeRows[i].getElementsByClassName('code').innerText;
+            }
+
+            navigator.clipboard.writeText(code);            
+            
+            console.log(code);
+        }
+
+
+
+
+
+
         
         // Load the content when the page loads
         document.addEventListener('DOMContentLoaded', initPage);
