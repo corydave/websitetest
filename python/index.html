@@ -1,0 +1,33 @@
+<script>
+
+
+let string = `
+ message: 'Output does not match expected: === Network Traffic Security Analyzer ===\n' +
+        '\n' +
+        'Enter the port number (e.g., 80, 22, 443, 3389): Enter the data transfer size in megabytes (MB): \n' +
+        'FIREWALL LOG:\n' +
+        'Port: 443, Transfer Size: 1024 MB\n' +
+        'Risk Assessment: LOW RISK: Secure encrypted transfer detected.\n' +
+        '------------------------ Got: === Network Traffic Security Analyzer ===\n' +
+        '\n' +
+        'Enter the port number (e.g., 80, 22, 443, 3389): Enter the data transfer size in megabytes (MB): \n' +
+        'FIREWALL LOG:\n' +
+        'Port: 443, Transfer Size: 1024 MB\n' +
+        'Risk Assessment: LOW RISK: Secure encrypted transfer detected.',
+`
+
+let startExpected = string.indexOf('message') + 42;
+let endExpected = string.indexOf('------------------------ Got:');
+let expected = console.log(string.substring(startExpected, endExpected));
+
+console.log(expected)
+    
+let startActual = string.indexOf('Got: ') + 4;
+let endActual = string.length - 2;
+let actual = string.substring(startActual + 1, endActual - 1);
+
+console.log(actual);
+
+    
+</script>
+
