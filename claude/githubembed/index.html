@@ -151,11 +151,13 @@
                                 </div>`;
                     }
 
+                    container.innerHTML = `<pre>${html}</pre>`;
+                    
                     let height = i * 10 + 60;
                     console.log("i = " + i);
                     console.log("height = " + height);
-                    container.style.height = height;
-                    container.innerHTML = `<pre>${html}</pre>`;
+                    container.style.height = height;                  
+                  
                 })
                 .catch(error => {
                     container.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
