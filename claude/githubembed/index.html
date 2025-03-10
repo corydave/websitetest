@@ -99,7 +99,7 @@
 
     <script>
         // Version number
-        console.log('version 1.0');
+        console.log('version 1.1');
       
         // Function to get URL parameters
         function getUrlParameter(name) {
@@ -152,7 +152,8 @@
                     }
 
                     let height = i * 10 + 60;
-                    // console.log(height);
+                    console.log("i = " + i);
+                    console.log("height = " + height);
                     container.style.height = height;
                     container.innerHTML = `<pre>${html}</pre>`;
                 })
