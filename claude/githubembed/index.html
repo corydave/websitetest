@@ -141,13 +141,17 @@
                     let html = '';
                     
                     // Create line-numbered display
-                    for (let i = 0; i < lines.length; i++) {
+                    let i = 0;  
+                    for (i = 0; i < lines.length; i++) {
                         html += `<div class="code-row">
                                     <span class="line-numbers">${i + 1}</span>
                                     <code>${escapeHtml(lines[i])}</code>
                                 </div>`;
                     }
-                    container.style.height = '44px';
+
+                    let height = i * 20 + 60;
+                    
+                    container.style.height = height;
                     container.innerHTML = `<pre>${html}</pre>`;
                 })
                 .catch(error => {
