@@ -1,16 +1,19 @@
 # QR Code Generator
 
+## Description
+
+Description including images, how many attempts, link to prompts, etc.
+
 ## Link
 
 [PREVIEW: QR Code Generator](https://corydave.github.io/websitetest/claude/qr/)
 
-EMBED LINK!
+```html
+<iframe src="https://corydave.github.io/websitetest/claude/qr/" width="500" height="600"></iframe>
+```
 
 <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/crown.svg" width="50" height="50">
 
-## Description
-
-Description including images, how many attempts, link to prompts, etc.
 
 ## Potential Uses
 
