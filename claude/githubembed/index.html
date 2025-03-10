@@ -91,7 +91,7 @@
             placeholder="Enter GitHub raw URL">
         <button onclick="fetchContent()">Load Content</button>
     </div>
-    
+    abc
     <div id="codeContainer" style="height:690px;">
         <div id="code" class="loading">Loading content...</div>
     </div>
@@ -147,7 +147,7 @@
                                     <code>${escapeHtml(lines[i])}</code>
                                 </div>`;
                     }
-                    
+                    container.style.height = '44px';
                     container.innerHTML = `<pre>${html}</pre>`;
                 })
                 .catch(error => {
