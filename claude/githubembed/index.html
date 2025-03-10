@@ -91,7 +91,6 @@
             placeholder="Enter GitHub raw URL">
         <button onclick="fetchContent()">Load Content</button>
     </div>
-    01
     <div id="codeContainer"><!--style="height:690px;"-->
         <div id="code" class="loading">Loading content...</div>
     </div>
@@ -99,6 +98,9 @@
     <div class="buttonContainer" id="buttonContainer"><button onclick="copyCode()">Copy Code</button></div>
 
     <script>
+        // Version number
+        console.log('version 1.0');
+      
         // Function to get URL parameters
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -150,7 +152,7 @@
                     }
 
                     let height = i * 10 + 60;
-                    console.log(height);
+                    // console.log(height);
                     container.style.height = height;
                     container.innerHTML = `<pre>${html}</pre>`;
                 })
