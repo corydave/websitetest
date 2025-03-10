@@ -9,7 +9,7 @@ Description including images, how many attempts, link to prompts, etc.
 [PREVIEW: QR Code Generator](https://corydave.github.io/websitetest/claude/qr/)
 
 ```html
-<iframe src="https://corydave.github.io/websitetest/claude/qr/" width="500" height="600"></iframe>
+<iframe src="https://corydave.github.io/websitetest/claude/qr/" width="500" height="900" frameborder="0"></iframe>
 ```
 
 <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/crown.svg" width="50" height="50">
