@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Periodic Table</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --alkali-metal: #ff8f8f;
+      --alkaline-earth: #ffdaa2;
+      --transition-metal: #ffd175;
+      --post-transition: #cccccc;
+      --metalloid: #7dcea0;
+      --nonmetal: #87cefa;
+      --noble-gas: #c8a2c8;
+      --lanthanide: #ffbff9;
+      --actinide: #ff99cc;
+    }
+    
+    .periodic-table {
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      grid-template-rows: repeat(10, auto);
+      gap: 3px;
+      max-width: 1400px;
+      margin: 20px auto;
+    }
+    
+    .spacer {
+      visibility: hidden;
+    }
+    
+    .element {
+      padding: 5px;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .element:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+    
+    .atomic-number {
+      font-size: 10px;
+      text-align: left;
+    }
+    
+    .symbol {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .name {
+      font-size: 9px;
+    }
+    
+    .spacer {
+      grid-column: span 1;
+    }
+    
+    /* Lanthanides and Actinides row styling */
+    .lanthanide-row {
+      grid-row: 9;
+      grid-column: span 18;
+    }
+    
+    .actinide-row {
+      grid-row: 10;
+      grid-column: span 18;
+    }
+    
+    /* Add spacers between the main table and f-block elements */
+    .f-block-spacer {
+      grid-row: 8;
+      height: 20px;
+    }
+    
+    .element.filtered {
+      opacity: 0.25;
+      filter: grayscale(100%);
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+    
+    .legend-items {
+      gap: 10px;
+    }
+    
+    .category-filter {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .form-check-inline.legend-item {
+      margin-right: 0;
+      margin-bottom: 8px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background-color 0.2s;
+    }
+    
+    .form-check-inline.legend-item:hover {
+      background-color: #e9ecef;
+    }
+    
+    .form-check-input {
+      cursor: pointer;
+    }
+    
+    .form-check-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      margin-right: 5px;
+    }
+    
+    .alkali-metal { background-color: var(--alkali-metal); }
+    .alkaline-earth { background-color: var(--alkaline-earth); }
+    .transition-metal { background-color: var(--transition-metal); }
+    .post-transition { background-color: var(--post-transition); }
+    .metalloid { background-color: var(--metalloid); }
+    .nonmetal { background-color: var(--nonmetal); }
+    .noble-gas { background-color: var(--noble-gas); }
+    .lanthanide { background-color: var(--lanthanide); }
+    .actinide { background-color: var(--actinide); }
+    
+    .modal-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .property {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .property-name {
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .property-value {
+      font-size: 1.1em;
+    }
+    
+    .element-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .element-symbol {
+      font-size: 3em;
+      font-weight: bold;
+      margin-right: 15px;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+    
+    .element-title {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    @media (max-width: 992px) {
+      .periodic-table {
+        grid-template-columns: repeat(9, 1fr);
+        overflow-x: auto;
+      }
+      
+      .lanthanide-row, .actinide-row {
+        grid-column: span 9;
+        grid-template-columns: repeat(9, 1fr);
+      }
+      
+      .element {
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <h1 class="text-center my-4">Interactive Periodic Table</h1>
+    
+  <div class="legend category-filter">
+      <div class="filter-header mb-2">
+        <strong>Filter by category:</strong>
+        <button id="clearFilters" class="btn btn-sm btn-outline-secondary ms-2">Clear All</button>
+        <button id="selectAllFilters" class="btn btn-sm btn-outline-secondary ms-2">Select All</button>
+      </div>
+      <div class="legend-items d-flex flex-wrap">
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-alkali-metal" value="alkali-metal">
+          <label class="form-check-label" for="filter-alkali-metal">
+            <div class="legend-color alkali-metal"></div>
+            <span>Alkali Metals</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-alkaline-earth" value="alkaline-earth">
+          <label class="form-check-label" for="filter-alkaline-earth">
+            <div class="legend-color alkaline-earth"></div>
+            <span>Alkaline Earth Metals</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-transition-metal" value="transition-metal">
+          <label class="form-check-label" for="filter-transition-metal">
+            <div class="legend-color transition-metal"></div>
+            <span>Transition Metals</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-post-transition" value="post-transition">
+          <label class="form-check-label" for="filter-post-transition">
+            <div class="legend-color post-transition"></div>
+            <span>Post-Transition Metals</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-metalloid" value="metalloid">
+          <label class="form-check-label" for="filter-metalloid">
+            <div class="legend-color metalloid"></div>
+            <span>Metalloids</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-nonmetal" value="nonmetal">
+          <label class="form-check-label" for="filter-nonmetal">
+            <div class="legend-color nonmetal"></div>
+            <span>Nonmetals</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-noble-gas" value="noble-gas">
+          <label class="form-check-label" for="filter-noble-gas">
+            <div class="legend-color noble-gas"></div>
+            <span>Noble Gases</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-lanthanide" value="lanthanide">
+          <label class="form-check-label" for="filter-lanthanide">
+            <div class="legend-color lanthanide"></div>
+            <span>Lanthanides</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline legend-item">
+          <input class="form-check-input" type="checkbox" id="filter-actinide" value="actinide">
+          <label class="form-check-label" for="filter-actinide">
+            <div class="legend-color actinide"></div>
+            <span>Actinides</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="periodic-table" id="periodicTable">
+      <!-- Elements will be inserted here via JavaScript -->
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="elementModal" tabindex="-1" aria-labelledby="elementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="elementModalLabel">Element Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="elementModalBody">
+          <!-- Element details will be inserted here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Elements data
+    const elements = [
+      {id: 1, symbol: "H", name: "Hydrogen", category: "nonmetal", atomicMass: 1.008, electronConfig: "1s¹", electronegativity: 2.20, density: 0.00008988, meltingPoint: -259.16, boilingPoint: -252.87, discoveredBy: "Henry Cavendish", yearDiscovered: 1766},
+      {id: 2, symbol: "He", name: "Helium", category: "noble-gas", atomicMass: 4.0026, electronConfig: "1s²", electronegativity: null, density: 0.0001785, meltingPoint: -272.2, boilingPoint: -268.93, discoveredBy: "Pierre Janssen, Norman Lockyer", yearDiscovered: 1868},
+      {id: 3, symbol: "Li", name: "Lithium", category: "alkali-metal", atomicMass: 6.94, electronConfig: "[He] 2s¹", electronegativity: 0.98, density: 0.534, meltingPoint: 180.54, boilingPoint: 1342, discoveredBy: "Johan August Arfwedson", yearDiscovered: 1817},
+      {id: 4, symbol: "Be", name: "Beryllium", category: "alkaline-earth", atomicMass: 9.0122, electronConfig: "[He] 2s²", electronegativity: 1.57, density: 1.85, meltingPoint: 1287, boilingPoint: 2470, discoveredBy: "Louis Nicolas Vauquelin", yearDiscovered: 1798},
+      {id: 5, symbol: "B", name: "Boron", category: "metalloid", atomicMass: 10.81, electronConfig: "[He] 2s² 2p¹", electronegativity: 2.04, density: 2.34, meltingPoint: 2075, boilingPoint: 4000, discoveredBy: "Joseph Louis Gay-Lussac, Louis Jacques Thénard", yearDiscovered: 1808},
+      {id: 6, symbol: "C", name: "Carbon", category: "nonmetal", atomicMass: 12.011, electronConfig: "[He] 2s² 2p²", electronegativity: 2.55, density: 2.267, meltingPoint: 3550, boilingPoint: 4027, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 7, symbol: "N", name: "Nitrogen", category: "nonmetal", atomicMass: 14.007, electronConfig: "[He] 2s² 2p³", electronegativity: 3.04, density: 0.0012506, meltingPoint: -210.1, boilingPoint: -195.79, discoveredBy: "Daniel Rutherford", yearDiscovered: 1772},
+      {id: 8, symbol: "O", name: "Oxygen", category: "nonmetal", atomicMass: 15.999, electronConfig: "[He] 2s² 2p⁴", electronegativity: 3.44, density: 0.001429, meltingPoint: -218.3, boilingPoint: -182.9, discoveredBy: "Carl Wilhelm Scheele", yearDiscovered: 1774},
+      {id: 9, symbol: "F", name: "Fluorine", category: "nonmetal", atomicMass: 18.998, electronConfig: "[He] 2s² 2p⁵", electronegativity: 3.98, density: 0.001696, meltingPoint: -220.0, boilingPoint: -188.1, discoveredBy: "Henri Moissan", yearDiscovered: 1886},
+      {id: 10, symbol: "Ne", name: "Neon", category: "noble-gas", atomicMass: 20.180, electronConfig: "[He] 2s² 2p⁶", electronegativity: null, density: 0.0008999, meltingPoint: -248.6, boilingPoint: -246.1, discoveredBy: "Morris Travers, William Ramsay", yearDiscovered: 1898},
+      {id: 11, symbol: "Na", name: "Sodium", category: "alkali-metal", atomicMass: 22.990, electronConfig: "[Ne] 3s¹", electronegativity: 0.93, density: 0.971, meltingPoint: 97.72, boilingPoint: 883, discoveredBy: "Humphry Davy", yearDiscovered: 1807},
+      {id: 12, symbol: "Mg", name: "Magnesium", category: "alkaline-earth", atomicMass: 24.305, electronConfig: "[Ne] 3s²", electronegativity: 1.31, density: 1.738, meltingPoint: 650, boilingPoint: 1090, discoveredBy: "Joseph Black", yearDiscovered: 1755},
+      {id: 13, symbol: "Al", name: "Aluminum", category: "post-transition", atomicMass: 26.982, electronConfig: "[Ne] 3s² 3p¹", electronegativity: 1.61, density: 2.698, meltingPoint: 660.32, boilingPoint: 2519, discoveredBy: "Hans Christian Ørsted", yearDiscovered: 1825},
+      {id: 14, symbol: "Si", name: "Silicon", category: "metalloid", atomicMass: 28.085, electronConfig: "[Ne] 3s² 3p²", electronegativity: 1.90, density: 2.3296, meltingPoint: 1414, boilingPoint: 3265, discoveredBy: "Jöns Jacob Berzelius", yearDiscovered: 1824},
+      {id: 15, symbol: "P", name: "Phosphorus", category: "nonmetal", atomicMass: 30.974, electronConfig: "[Ne] 3s² 3p³", electronegativity: 2.19, density: 1.82, meltingPoint: 44.15, boilingPoint: 280.5, discoveredBy: "Hennig Brand", yearDiscovered: 1669},
+      {id: 16, symbol: "S", name: "Sulfur", category: "nonmetal", atomicMass: 32.06, electronConfig: "[Ne] 3s² 3p⁴", electronegativity: 2.58, density: 2.067, meltingPoint: 115.21, boilingPoint: 444.6, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 17, symbol: "Cl", name: "Chlorine", category: "nonmetal", atomicMass: 35.45, electronConfig: "[Ne] 3s² 3p⁵", electronegativity: 3.16, density: 0.003214, meltingPoint: -101.5, boilingPoint: -34.04, discoveredBy: "Carl Wilhelm Scheele", yearDiscovered: 1774},
+      {id: 18, symbol: "Ar", name: "Argon", category: "noble-gas", atomicMass: 39.948, electronConfig: "[Ne] 3s² 3p⁶", electronegativity: null, density: 0.0017837, meltingPoint: -189.3, boilingPoint: -185.8, discoveredBy: "Lord Rayleigh, William Ramsay", yearDiscovered: 1894},
+      {id: 19, symbol: "K", name: "Potassium", category: "alkali-metal", atomicMass: 39.098, electronConfig: "[Ar] 4s¹", electronegativity: 0.82, density: 0.862, meltingPoint: 63.38, boilingPoint: 759, discoveredBy: "Humphry Davy", yearDiscovered: 1807},
+      {id: 20, symbol: "Ca", name: "Calcium", category: "alkaline-earth", atomicMass: 40.078, electronConfig: "[Ar] 4s²", electronegativity: 1.00, density: 1.54, meltingPoint: 842, boilingPoint: 1484, discoveredBy: "Humphry Davy", yearDiscovered: 1808},
+      {id: 21, symbol: "Sc", name: "Scandium", category: "transition-metal", atomicMass: 44.956, electronConfig: "[Ar] 3d¹ 4s²", electronegativity: 1.36, density: 2.989, meltingPoint: 1541, boilingPoint: 2830, discoveredBy: "Lars Fredrik Nilson", yearDiscovered: 1879},
+      {id: 22, symbol: "Ti", name: "Titanium", category: "transition-metal", atomicMass: 47.867, electronConfig: "[Ar] 3d² 4s²", electronegativity: 1.54, density: 4.54, meltingPoint: 1668, boilingPoint: 3287, discoveredBy: "William Gregor", yearDiscovered: 1791},
+      {id: 23, symbol: "V", name: "Vanadium", category: "transition-metal", atomicMass: 50.942, electronConfig: "[Ar] 3d³ 4s²", electronegativity: 1.63, density: 6.11, meltingPoint: 1910, boilingPoint: 3407, discoveredBy: "Andrés Manuel del Río", yearDiscovered: 1801},
+      {id: 24, symbol: "Cr", name: "Chromium", category: "transition-metal", atomicMass: 51.996, electronConfig: "[Ar] 3d⁵ 4s¹", electronegativity: 1.66, density: 7.15, meltingPoint: 1907, boilingPoint: 2671, discoveredBy: "Louis Nicolas Vauquelin", yearDiscovered: 1794},
+      {id: 25, symbol: "Mn", name: "Manganese", category: "transition-metal", atomicMass: 54.938, electronConfig: "[Ar] 3d⁵ 4s²", electronegativity: 1.55, density: 7.44, meltingPoint: 1246, boilingPoint: 2061, discoveredBy: "Johann Gottlieb Gahn", yearDiscovered: 1774},
+      {id: 26, symbol: "Fe", name: "Iron", category: "transition-metal", atomicMass: 55.845, electronConfig: "[Ar] 3d⁶ 4s²", electronegativity: 1.83, density: 7.874, meltingPoint: 1538, boilingPoint: 2861, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 27, symbol: "Co", name: "Cobalt", category: "transition-metal", atomicMass: 58.933, electronConfig: "[Ar] 3d⁷ 4s²", electronegativity: 1.88, density: 8.86, meltingPoint: 1495, boilingPoint: 2900, discoveredBy: "Georg Brandt", yearDiscovered: 1735},
+      {id: 28, symbol: "Ni", name: "Nickel", category: "transition-metal", atomicMass: 58.693, electronConfig: "[Ar] 3d⁸ 4s²", electronegativity: 1.91, density: 8.912, meltingPoint: 1455, boilingPoint: 2913, discoveredBy: "Axel Fredrik Cronstedt", yearDiscovered: 1751},
+      {id: 29, symbol: "Cu", name: "Copper", category: "transition-metal", atomicMass: 63.546, electronConfig: "[Ar] 3d¹⁰ 4s¹", electronegativity: 1.90, density: 8.96, meltingPoint: 1084.6, boilingPoint: 2560, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 30, symbol: "Zn", name: "Zinc", category: "transition-metal", atomicMass: 65.38, electronConfig: "[Ar] 3d¹⁰ 4s²", electronegativity: 1.65, density: 7.134, meltingPoint: 419.53, boilingPoint: 907, discoveredBy: "Indian metallurgists", yearDiscovered: 1000},
+      {id: 31, symbol: "Ga", name: "Gallium", category: "post-transition", atomicMass: 69.723, electronConfig: "[Ar] 3d¹⁰ 4s² 4p¹", electronegativity: 1.81, density: 5.907, meltingPoint: 29.76, boilingPoint: 2204, discoveredBy: "Lecoq de Boisbaudran", yearDiscovered: 1875},
+      {id: 32, symbol: "Ge", name: "Germanium", category: "metalloid", atomicMass: 72.630, electronConfig: "[Ar] 3d¹⁰ 4s² 4p²", electronegativity: 2.01, density: 5.323, meltingPoint: 938.3, boilingPoint: 2833, discoveredBy: "Clemens Winkler", yearDiscovered: 1886},
+      {id: 33, symbol: "As", name: "Arsenic", category: "metalloid", atomicMass: 74.922, electronConfig: "[Ar] 3d¹⁰ 4s² 4p³", electronegativity: 2.18, density: 5.776, meltingPoint: 817, boilingPoint: 614, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 34, symbol: "Se", name: "Selenium", category: "nonmetal", atomicMass: 78.971, electronConfig: "[Ar] 3d¹⁰ 4s² 4p⁴", electronegativity: 2.55, density: 4.809, meltingPoint: 221, boilingPoint: 685, discoveredBy: "Jöns Jacob Berzelius", yearDiscovered: 1817},
+      {id: 35, symbol: "Br", name: "Bromine", category: "nonmetal", atomicMass: 79.904, electronConfig: "[Ar] 3d¹⁰ 4s² 4p⁵", electronegativity: 2.96, density: 3.122, meltingPoint: -7.3, boilingPoint: 59, discoveredBy: "Antoine Jérôme Balard", yearDiscovered: 1826},
+      {id: 36, symbol: "Kr", name: "Krypton", category: "noble-gas", atomicMass: 83.798, electronConfig: "[Ar] 3d¹⁰ 4s² 4p⁶", electronegativity: 3.00, density: 0.003733, meltingPoint: -157.36, boilingPoint: -153.22, discoveredBy: "William Ramsay, Morris Travers", yearDiscovered: 1898},
+      {id: 37, symbol: "Rb", name: "Rubidium", category: "alkali-metal", atomicMass: 85.468, electronConfig: "[Kr] 5s¹", electronegativity: 0.82, density: 1.532, meltingPoint: 39.31, boilingPoint: 688, discoveredBy: "Robert Bunsen, Gustav Kirchhoff", yearDiscovered: 1861},
+      {id: 38, symbol: "Sr", name: "Strontium", category: "alkaline-earth", atomicMass: 87.62, electronConfig: "[Kr] 5s²", electronegativity: 0.95, density: 2.64, meltingPoint: 777, boilingPoint: 1377, discoveredBy: "William Cruickshank", yearDiscovered: 1790},
+      {id: 39, symbol: "Y", name: "Yttrium", category: "transition-metal", atomicMass: 88.906, electronConfig: "[Kr] 4d¹ 5s²", electronegativity: 1.22, density: 4.469, meltingPoint: 1526, boilingPoint: 3345, discoveredBy: "Johan Gadolin", yearDiscovered: 1794},
+      {id: 40, symbol: "Zr", name: "Zirconium", category: "transition-metal", atomicMass: 91.224, electronConfig: "[Kr] 4d² 5s²", electronegativity: 1.33, density: 6.506, meltingPoint: 1855, boilingPoint: 4409, discoveredBy: "Martin Heinrich Klaproth", yearDiscovered: 1789},
+      
+      {id: 41, symbol: "Nb", name: "Niobium", category: "transition-metal", atomicMass: 92.906, electronConfig: "[Kr] 4d⁴ 5s¹", electronegativity: 1.6, density: 8.57, meltingPoint: 2477, boilingPoint: 4744, discoveredBy: "Charles Hatchett", yearDiscovered: 1801},
+      {id: 42, symbol: "Mo", name: "Molybdenum", category: "transition-metal", atomicMass: 95.95, electronConfig: "[Kr] 4d⁵ 5s¹", electronegativity: 2.16, density: 10.22, meltingPoint: 2623, boilingPoint: 4639, discoveredBy: "Carl Wilhelm Scheele", yearDiscovered: 1778},
+      {id: 43, symbol: "Tc", name: "Technetium", category: "transition-metal", atomicMass: 98, electronConfig: "[Kr] 4d⁵ 5s²", electronegativity: 1.9, density: 11, meltingPoint: 2157, boilingPoint: 4265, discoveredBy: "Carlo Perrier, Emilio Segrè", yearDiscovered: 1937},
+      {id: 44, symbol: "Ru", name: "Ruthenium", category: "transition-metal", atomicMass: 101.07, electronConfig: "[Kr] 4d⁷ 5s¹", electronegativity: 2.2, density: 12.37, meltingPoint: 2334, boilingPoint: 4150, discoveredBy: "Karl Ernst Claus", yearDiscovered: 1844},
+      {id: 45, symbol: "Rh", name: "Rhodium", category: "transition-metal", atomicMass: 102.91, electronConfig: "[Kr] 4d⁸ 5s¹", electronegativity: 2.28, density: 12.41, meltingPoint: 1964, boilingPoint: 3695, discoveredBy: "William Hyde Wollaston", yearDiscovered: 1803},
+      {id: 46, symbol: "Pd", name: "Palladium", category: "transition-metal", atomicMass: 106.42, electronConfig: "[Kr] 4d¹⁰", electronegativity: 2.2, density: 12.02, meltingPoint: 1555, boilingPoint: 2963, discoveredBy: "William Hyde Wollaston", yearDiscovered: 1803},
+      {id: 47, symbol: "Ag", name: "Silver", category: "transition-metal", atomicMass: 107.87, electronConfig: "[Kr] 4d¹⁰ 5s¹", electronegativity: 1.93, density: 10.49, meltingPoint: 961.78, boilingPoint: 2162, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 48, symbol: "Cd", name: "Cadmium", category: "transition-metal", atomicMass: 112.41, electronConfig: "[Kr] 4d¹⁰ 5s²", electronegativity: 1.69, density: 8.65, meltingPoint: 321.07, boilingPoint: 767, discoveredBy: "Karl Samuel Leberecht Hermann, Friedrich Stromeyer", yearDiscovered: 1817},
+      {id: 49, symbol: "In", name: "Indium", category: "post-transition", atomicMass: 114.82, electronConfig: "[Kr] 4d¹⁰ 5s² 5p¹", electronegativity: 1.78, density: 7.31, meltingPoint: 156.6, boilingPoint: 2072, discoveredBy: "Ferdinand Reich, Hieronymous Theodor Richter", yearDiscovered: 1863},
+      {id: 50, symbol: "Sn", name: "Tin", category: "post-transition", atomicMass: 118.71, electronConfig: "[Kr] 4d¹⁰ 5s² 5p²", electronegativity: 1.96, density: 7.31, meltingPoint: 231.93, boilingPoint: 2602, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 51, symbol: "Sb", name: "Antimony", category: "metalloid", atomicMass: 121.76, electronConfig: "[Kr] 4d¹⁰ 5s² 5p³", electronegativity: 2.05, density: 6.697, meltingPoint: 630.63, boilingPoint: 1587, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 52, symbol: "Te", name: "Tellurium", category: "metalloid", atomicMass: 127.60, electronConfig: "[Kr] 4d¹⁰ 5s² 5p⁴", electronegativity: 2.1, density: 6.24, meltingPoint: 449.51, boilingPoint: 988, discoveredBy: "Franz-Joseph Müller von Reichenstein", yearDiscovered: 1782},
+      {id: 53, symbol: "I", name: "Iodine", category: "nonmetal", atomicMass: 126.90, electronConfig: "[Kr] 4d¹⁰ 5s² 5p⁵", electronegativity: 2.66, density: 4.933, meltingPoint: 113.7, boilingPoint: 184.3, discoveredBy: "Bernard Courtois", yearDiscovered: 1811},
+      {id: 54, symbol: "Xe", name: "Xenon", category: "noble-gas", atomicMass: 131.29, electronConfig: "[Kr] 4d¹⁰ 5s² 5p⁶", electronegativity: 2.6, density: 0.005887, meltingPoint: -111.8, boilingPoint: -108, discoveredBy: "William Ramsay, Morris Travers", yearDiscovered: 1898},
+      {id: 55, symbol: "Cs", name: "Cesium", category: "alkali-metal", atomicMass: 132.91, electronConfig: "[Xe] 6s¹", electronegativity: 0.79, density: 1.873, meltingPoint: 28.44, boilingPoint: 671, discoveredBy: "Robert Bunsen, Gustav Kirchhoff", yearDiscovered: 1860},
+      {id: 56, symbol: "Ba", name: "Barium", category: "alkaline-earth", atomicMass: 137.33, electronConfig: "[Xe] 6s²", electronegativity: 0.89, density: 3.51, meltingPoint: 727, boilingPoint: 1897, discoveredBy: "Carl Wilhelm Scheele", yearDiscovered: 1772},
+      {id: 57, symbol: "La", name: "Lanthanum", category: "lanthanide", atomicMass: 138.91, electronConfig: "[Xe] 5d¹ 6s²", electronegativity: 1.1, density: 6.162, meltingPoint: 920, boilingPoint: 3464, discoveredBy: "Carl Gustaf Mosander", yearDiscovered: 1839},
+      {id: 58, symbol: "Ce", name: "Cerium", category: "lanthanide", atomicMass: 140.12, electronConfig: "[Xe] 4f¹ 5d¹ 6s²", electronegativity: 1.12, density: 6.77, meltingPoint: 795, boilingPoint: 3360, discoveredBy: "Martin Heinrich Klaproth, Jöns Jakob Berzelius, Wilhelm Hisinger", yearDiscovered: 1803},
+      {id: 59, symbol: "Pr", name: "Praseodymium", category: "lanthanide", atomicMass: 140.91, electronConfig: "[Xe] 4f³ 6s²", electronegativity: 1.13, density: 6.77, meltingPoint: 935, boilingPoint: 3290, discoveredBy: "Carl Gustaf Mosander", yearDiscovered: 1841},
+      {id: 60, symbol: "Nd", name: "Neodymium", category: "lanthanide", atomicMass: 144.24, electronConfig: "[Xe] 4f⁴ 6s²", electronegativity: 1.14, density: 7.01, meltingPoint: 1024, boilingPoint: 3100, discoveredBy: "Carl Gustaf Mosander", yearDiscovered: 1841},
+      {id: 61, symbol: "Pm", name: "Promethium", category: "lanthanide", atomicMass: 145, electronConfig: "[Xe] 4f⁵ 6s²", electronegativity: 1.13, density: 7.26, meltingPoint: 1042, boilingPoint: 3000, discoveredBy: "Jacob A. Marinsky, Lawrence E. Glendenin, Charles D. Coryell", yearDiscovered: 1945},
+      {id: 62, symbol: "Sm", name: "Samarium", category: "lanthanide", atomicMass: 150.36, electronConfig: "[Xe] 4f⁶ 6s²", electronegativity: 1.17, density: 7.52, meltingPoint: 1072, boilingPoint: 1794, discoveredBy: "Paul Émile Lecoq de Boisbaudran", yearDiscovered: 1879},
+      {id: 63, symbol: "Eu", name: "Europium", category: "lanthanide", atomicMass: 151.96, electronConfig: "[Xe] 4f⁷ 6s²", electronegativity: 1.2, density: 5.264, meltingPoint: 822, boilingPoint: 1596, discoveredBy: "Eugène-Anatole Demarçay", yearDiscovered: 1901},
+      {id: 64, symbol: "Gd", name: "Gadolinium", category: "lanthanide", atomicMass: 157.25, electronConfig: "[Xe] 4f⁷ 5d¹ 6s²", electronegativity: 1.2, density: 7.895, meltingPoint: 1313, boilingPoint: 3266, discoveredBy: "Jean Charles Galissard de Marignac", yearDiscovered: 1880},
+      {id: 65, symbol: "Tb", name: "Terbium", category: "lanthanide", atomicMass: 158.93, electronConfig: "[Xe] 4f⁹ 6s²", electronegativity: 1.2, density: 8.23, meltingPoint: 1356, boilingPoint: 3230, discoveredBy: "Carl Gustaf Mosander", yearDiscovered: 1843},
+      {id: 66, symbol: "Dy", name: "Dysprosium", category: "lanthanide", atomicMass: 162.50, electronConfig: "[Xe] 4f¹⁰ 6s²", electronegativity: 1.22, density: 8.54, meltingPoint: 1412, boilingPoint: 2567, discoveredBy: "Paul Émile Lecoq de Boisbaudran", yearDiscovered: 1886},
+      {id: 67, symbol: "Ho", name: "Holmium", category: "lanthanide", atomicMass: 164.93, electronConfig: "[Xe] 4f¹¹ 6s²", electronegativity: 1.23, density: 8.79, meltingPoint: 1474, boilingPoint: 2700, discoveredBy: "Marc Delafontaine, Jacques-Louis Soret", yearDiscovered: 1878},
+      {id: 68, symbol: "Er", name: "Erbium", category: "lanthanide", atomicMass: 167.26, electronConfig: "[Xe] 4f¹² 6s²", electronegativity: 1.24, density: 9.066, meltingPoint: 1529, boilingPoint: 2868, discoveredBy: "Carl Gustaf Mosander", yearDiscovered: 1843},
+      {id: 69, symbol: "Tm", name: "Thulium", category: "lanthanide", atomicMass: 168.93, electronConfig: "[Xe] 4f¹³ 6s²", electronegativity: 1.25, density: 9.32, meltingPoint: 1545, boilingPoint: 1950, discoveredBy: "Per Teodor Cleve", yearDiscovered: 1879},
+      {id: 70, symbol: "Yb", name: "Ytterbium", category: "lanthanide", atomicMass: 173.05, electronConfig: "[Xe] 4f¹⁴ 6s²", electronegativity: 1.1, density: 6.9, meltingPoint: 824, boilingPoint: 1196, discoveredBy: "Jean Charles Galissard de Marignac", yearDiscovered: 1878},
+      {id: 71, symbol: "Lu", name: "Lutetium", category: "lanthanide", atomicMass: 174.97, electronConfig: "[Xe] 4f¹⁴ 5d¹ 6s²", electronegativity: 1.27, density: 9.841, meltingPoint: 1656, boilingPoint: 3315, discoveredBy: "Georges Urbain", yearDiscovered: 1907},
+      {id: 72, symbol: "Hf", name: "Hafnium", category: "transition-metal", atomicMass: 178.49, electronConfig: "[Xe] 4f¹⁴ 5d² 6s²", electronegativity: 1.3, density: 13.31, meltingPoint: 2233, boilingPoint: 4603, discoveredBy: "Dirk Coster, George de Hevesy", yearDiscovered: 1923},
+      {id: 73, symbol: "Ta", name: "Tantalum", category: "transition-metal", atomicMass: 180.95, electronConfig: "[Xe] 4f¹⁴ 5d³ 6s²", electronegativity: 1.5, density: 16.654, meltingPoint: 3017, boilingPoint: 5458, discoveredBy: "Anders Gustaf Ekeberg", yearDiscovered: 1802},
+      {id: 74, symbol: "W", name: "Tungsten", category: "transition-metal", atomicMass: 183.84, electronConfig: "[Xe] 4f¹⁴ 5d⁴ 6s²", electronegativity: 2.36, density: 19.25, meltingPoint: 3422, boilingPoint: 5555, discoveredBy: "Carl Wilhelm Scheele", yearDiscovered: 1781},
+      {id: 75, symbol: "Re", name: "Rhenium", category: "transition-metal", atomicMass: 186.21, electronConfig: "[Xe] 4f¹⁴ 5d⁵ 6s²", electronegativity: 1.9, density: 21.02, meltingPoint: 3186, boilingPoint: 5596, discoveredBy: "Masataka Ogawa", yearDiscovered: 1908},
+      {id: 76, symbol: "Os", name: "Osmium", category: "transition-metal", atomicMass: 190.23, electronConfig: "[Xe] 4f¹⁴ 5d⁶ 6s²", electronegativity: 2.2, density: 22.59, meltingPoint: 3033, boilingPoint: 5012, discoveredBy: "Smithson Tennant", yearDiscovered: 1803},
+      {id: 77, symbol: "Ir", name: "Iridium", category: "transition-metal", atomicMass: 192.22, electronConfig: "[Xe] 4f¹⁴ 5d⁷ 6s²", electronegativity: 2.2, density: 22.56, meltingPoint: 2446, boilingPoint: 4428, discoveredBy: "Smithson Tennant", yearDiscovered: 1803},
+      {id: 78, symbol: "Pt", name: "Platinum", category: "transition-metal", atomicMass: 195.08, electronConfig: "[Xe] 4f¹⁴ 5d⁹ 6s¹", electronegativity: 2.28, density: 21.45, meltingPoint: 1768.3, boilingPoint: 3825, discoveredBy: "Antonio de Ulloa", yearDiscovered: 1735},
+      {id: 79, symbol: "Au", name: "Gold", category: "transition-metal", atomicMass: 196.97, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹", electronegativity: 2.54, density: 19.3, meltingPoint: 1064.18, boilingPoint: 2856, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 80, symbol: "Hg", name: "Mercury", category: "transition-metal", atomicMass: 200.59, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s²", electronegativity: 2.0, density: 13.546, meltingPoint: -38.83, boilingPoint: 356.73, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 81, symbol: "Tl", name: "Thallium", category: "post-transition", atomicMass: 204.38, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹", electronegativity: 1.62, density: 11.85, meltingPoint: 304, boilingPoint: 1473, discoveredBy: "William Crookes", yearDiscovered: 1861},
+      {id: 82, symbol: "Pb", name: "Lead", category: "post-transition", atomicMass: 207.2, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²", electronegativity: 2.33, density: 11.34, meltingPoint: 327.46, boilingPoint: 1749, discoveredBy: "Ancient", yearDiscovered: null},
+      {id: 83, symbol: "Bi", name: "Bismuth", category: "post-transition", atomicMass: 208.98, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³", electronegativity: 2.02, density: 9.78, meltingPoint: 271.5, boilingPoint: 1564, discoveredBy: "Claude François Geoffroy", yearDiscovered: 1753},
+      {id: 84, symbol: "Po", name: "Polonium", category: "post-transition", atomicMass: 209, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴", electronegativity: 2.0, density: 9.196, meltingPoint: 254, boilingPoint: 962, discoveredBy: "Marie Curie", yearDiscovered: 1898},
+      {id: 85, symbol: "At", name: "Astatine", category: "metalloid", atomicMass: 210, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵", electronegativity: 2.2, density: 7, meltingPoint: 302, boilingPoint: 337, discoveredBy: "Dale R. Corson, Kenneth Ross MacKenzie, Emilio Segrè", yearDiscovered: 1940},
+      {id: 86, symbol: "Rn", name: "Radon", category: "noble-gas", atomicMass: 222, electronConfig: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶", electronegativity: null, density: 0.00973, meltingPoint: -71, boilingPoint: -61.7, discoveredBy: "Friedrich Ernst Dorn", yearDiscovered: 1900},
+      {id: 87, symbol: "Fr", name: "Francium", category: "alkali-metal", atomicMass: 223, electronConfig: "[Rn] 7s¹", electronegativity: 0.7, density: 1.87, meltingPoint: 27, boilingPoint: 677, discoveredBy: "Marguerite Perey", yearDiscovered: 1939},
+      {id: 88, symbol: "Ra", name: "Radium", category: "alkaline-earth", atomicMass: 226, electronConfig: "[Rn] 7s²", electronegativity: 0.9, density: 5.5, meltingPoint: 700, boilingPoint: 1737, discoveredBy: "Pierre Curie, Marie Curie", yearDiscovered: 1898},
+      {id: 89, symbol: "Ac", name: "Actinium", category: "actinide", atomicMass: 227, electronConfig: "[Rn] 6d¹ 7s²", electronegativity: 1.1, density: 10.07, meltingPoint: 1050, boilingPoint: 3200, discoveredBy: "Friedrich Oskar Giesel", yearDiscovered: 1902},
+      {id: 90, symbol: "Th", name: "Thorium", category: "actinide", atomicMass: 232.04, electronConfig: "[Rn] 6d² 7s²", electronegativity: 1.3, density: 11.72, meltingPoint: 1755, boilingPoint: 4788, discoveredBy: "Jöns Jakob Berzelius", yearDiscovered: 1829},
+      {id: 91, symbol: "Pa", name: "Protactinium", category: "actinide", atomicMass: 231.04, electronConfig: "[Rn] 5f² 6d¹ 7s²", electronegativity: 1.5, density: 15.37, meltingPoint: 1568, boilingPoint: 4027, discoveredBy: "William Crookes", yearDiscovered: 1913},
+      {id: 92, symbol: "U", name: "Uranium", category: "actinide", atomicMass: 238.03, electronConfig: "[Rn] 5f³ 6d¹ 7s²", electronegativity: 1.38, density: 19.05, meltingPoint: 1132.2, boilingPoint: 4131, discoveredBy: "Martin Heinrich Klaproth", yearDiscovered: 1789},
+      {id: 93, symbol: "Np", name: "Neptunium", category: "actinide", atomicMass: 237, electronConfig: "[Rn] 5f⁴ 6d¹ 7s²", electronegativity: 1.36, density: 20.45, meltingPoint: 644, boilingPoint: 4000, discoveredBy: "Edwin McMillan, Philip Abelson", yearDiscovered: 1940},
+      {id: 94, symbol: "Pu", name: "Plutonium", category: "actinide", atomicMass: 244, electronConfig: "[Rn] 5f⁶ 7s²", electronegativity: 1.28, density: 19.82, meltingPoint: 640, boilingPoint: 3230, discoveredBy: "Glenn T. Seaborg, Arthur Wahl, Joseph W. Kennedy, Edwin McMillan", yearDiscovered: 1940},
+      {id: 95, symbol: "Am", name: "Americium", category: "actinide", atomicMass: 243, electronConfig: "[Rn] 5f⁷ 7s²", electronegativity: 1.3, density: 13.69, meltingPoint: 1176, boilingPoint: 2607, discoveredBy: "Glenn T. Seaborg, Ralph A. James, Leon O. Morgan, Albert Ghiorso", yearDiscovered: 1944},
+      {id: 96, symbol: "Cm", name: "Curium", category: "actinide", atomicMass: 247, electronConfig: "[Rn] 5f⁷ 6d¹ 7s²", electronegativity: 1.3, density: 13.51, meltingPoint: 1345, boilingPoint: 3110, discoveredBy: "Glenn T. Seaborg, Ralph A. James, Albert Ghiorso", yearDiscovered: 1944},
+      {id: 97, symbol: "Bk", name: "Berkelium", category: "actinide", atomicMass: 247, electronConfig: "[Rn] 5f⁹ 7s²", electronegativity: 1.3, density: 14.78, meltingPoint: 1050, boilingPoint: null, discoveredBy: "Glenn T. Seaborg, Stanley G. Thompson, Albert Ghiorso", yearDiscovered: 1949},
+      {id: 98, symbol: "Cf", name: "Californium", category: "actinide", atomicMass: 251, electronConfig: "[Rn] 5f¹⁰ 7s²", electronegativity: 1.3, density: 15.1, meltingPoint: 900, boilingPoint: null, discoveredBy: "Stanley G. Thompson, Kenneth Street, Jr., Albert Ghiorso, Glenn T. Seaborg", yearDiscovered: 1950},
+      {id: 99, symbol: "Es", name: "Einsteinium", category: "actinide", atomicMass: 252, electronConfig: "[Rn] 5f¹¹ 7s²", electronegativity: 1.3, density: 8.84, meltingPoint: 860, boilingPoint: null, discoveredBy: "Albert Ghiorso, Samuel S. Thompson, Glenn T. Seaborg, etc.", yearDiscovered: 1952},
+      {id: 100, symbol: "Fm", name: "Fermium", category: "actinide", atomicMass: 257, electronConfig: "[Rn] 5f¹² 7s²", electronegativity: 1.3, density: null, meltingPoint: 1527, boilingPoint: null, discoveredBy: "Albert Ghiorso, Samuel S. Thompson, Glenn T. Seaborg, etc.", yearDiscovered: 1952},
+      {id: 101, symbol: "Md", name: "Mendelevium", category: "actinide", atomicMass: 258, electronConfig: "[Rn] 5f¹³ 7s²", electronegativity: 1.3, density: null, meltingPoint: 827, boilingPoint: null, discoveredBy: "Albert Ghiorso, Glenn T. Seaborg, Gregory R. Choppin, Bernard G. Harvey, Stanley G. Thompson", yearDiscovered: 1955},
+      {id: 102, symbol: "No", name: "Nobelium", category: "actinide", atomicMass: 259, electronConfig: "[Rn] 5f¹⁴ 7s²", electronegativity: 1.3, density: null, meltingPoint: 827, boilingPoint: null, discoveredBy: "Albert Ghiorso, Glenn T. Seaborg, Torbørn Sikkeland, John R. Walton", yearDiscovered: 1958},
+      {id: 103, symbol: "Lr", name: "Lawrencium", category: "actinide", atomicMass: 266, electronConfig: "[Rn] 5f¹⁴ 7s² 7p¹", electronegativity: 1.3, density: null, meltingPoint: 1627, boilingPoint: null, discoveredBy: "Albert Ghiorso, Torbjørn Sikkeland, Almon E. Larsh, Robert M. Latimer", yearDiscovered: 1961},
+      {id: 104, symbol: "Rf", name: "Rutherfordium", category: "transition-metal", atomicMass: 267, electronConfig: "[Rn] 5f¹⁴ 6d² 7s²", electronegativity: null, density: 23.2, meltingPoint: 2100, boilingPoint: 5500, discoveredBy: "Joint Institute for Nuclear Research, Lawrence Berkeley National Laboratory", yearDiscovered: 1964},
+      {id: 105, symbol: "Db", name: "Dubnium", category: "transition-metal", atomicMass: 268, electronConfig: "[Rn] 5f¹⁴ 6d³ 7s²", electronegativity: null, density: 29.3, meltingPoint: null, boilingPoint: null, discoveredBy: "Joint Institute for Nuclear Research, Lawrence Berkeley National Laboratory", yearDiscovered: 1968},
+      {id: 106, symbol: "Sg", name: "Seaborgium", category: "transition-metal", atomicMass: 269, electronConfig: "[Rn] 5f¹⁴ 6d⁴ 7s²", electronegativity: null, density: 35.0, meltingPoint: null, boilingPoint: null, discoveredBy: "Lawrence Berkeley National Laboratory", yearDiscovered: 1974},
+      {id: 107, symbol: "Bh", name: "Bohrium", category: "transition-metal", atomicMass: 270, electronConfig: "[Rn] 5f¹⁴ 6d⁵ 7s²", electronegativity: null, density: 37.1, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1981},
+      {id: 108, symbol: "Hs", name: "Hassium", category: "transition-metal", atomicMass: 269, electronConfig: "[Rn] 5f¹⁴ 6d⁶ 7s²", electronegativity: null, density: 40.7, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1984},
+      {id: 109, symbol: "Mt", name: "Meitnerium", category: "transition-metal", atomicMass: 278, electronConfig: "[Rn] 5f¹⁴ 6d⁷ 7s²", electronegativity: null, density: 37.4, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1982},
+      {id: 110, symbol: "Ds", name: "Darmstadtium", category: "transition-metal", atomicMass: 281, electronConfig: "[Rn] 5f¹⁴ 6d⁸ 7s²", electronegativity: null, density: 34.8, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1994},
+      {id: 111, symbol: "Rg", name: "Roentgenium", category: "transition-metal", atomicMass: 282, electronConfig: "[Rn] 5f¹⁴ 6d⁹ 7s²", electronegativity: null, density: 28.7, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1994},
+      {id: 112, symbol: "Cn", name: "Copernicium", category: "transition-metal", atomicMass: 285, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s²", electronegativity: null, density: 23.7, meltingPoint: null, boilingPoint: null, discoveredBy: "Gesellschaft für Schwerionenforschung", yearDiscovered: 1996},
+      {id: 113, symbol: "Nh", name: "Nihonium", category: "post-transition", atomicMass: 286, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹", electronegativity: null, density: 16, meltingPoint: 700, boilingPoint: 1400, discoveredBy: "RIKEN", yearDiscovered: 2004},
+      {id: 114, symbol: "Fl", name: "Flerovium", category: "post-transition", atomicMass: 289, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²", electronegativity: null, density: 14, meltingPoint: 340, boilingPoint: 420, discoveredBy: "Joint Institute for Nuclear Research", yearDiscovered: 1998},
+      {id: 115, symbol: "Mc", name: "Moscovium", category: "post-transition", atomicMass: 290, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³", electronegativity: null, density: 13.5, meltingPoint: 700, boilingPoint: 1400, discoveredBy: "Joint Institute for Nuclear Research", yearDiscovered: 2003},
+      {id: 116, symbol: "Lv", name: "Livermorium", category: "post-transition", atomicMass: 293, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴", electronegativity: null, density: 12.9, meltingPoint: 709, boilingPoint: 1085, discoveredBy: "Joint Institute for Nuclear Research", yearDiscovered: 2000},
+      {id: 117, symbol: "Ts", name: "Tennessine", category: "metalloid", atomicMass: 294, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵", electronegativity: null, density: 7.2, meltingPoint: 723, boilingPoint: 883, discoveredBy: "Joint Institute for Nuclear Research, Oak Ridge National Laboratory", yearDiscovered: 2010},
+      {id: 118, symbol: "Og", name: "Oganesson", category: "noble-gas", atomicMass: 294, electronConfig: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶", electronegativity: null, density: 5, meltingPoint: 325, boilingPoint: 350, discoveredBy: "Joint Institute for Nuclear Research", yearDiscovered: 2002},
+    ];
+    
+    // Function to create the periodic table
+    function createPeriodicTable() {
+      const periodicTable = document.getElementById('periodicTable');
+      
+        // Add spacers for empty spots
+      function addSpacers() {
+        // Add spacers for Period 1 (between H and He)
+        for (let i = 2; i <= 17; i++) {
+          const spacer = document.createElement('div');
+          spacer.className = 'spacer';
+          spacer.style.gridColumn = i.toString();
+          spacer.style.gridRow = '1';
+          periodicTable.appendChild(spacer);
+        }
+        
+        // Add spacers for Period 2 and 3 (between Be and B)
+        for (let row = 2; row <= 3; row++) {
+          for (let col = 3; col <= 12; col++) {
+            const spacer = document.createElement('div');
+            spacer.className = 'spacer';
+            spacer.style.gridColumn = col.toString();
+            spacer.style.gridRow = row.toString();
+            periodicTable.appendChild(spacer);
+          }
+        }
+        
+        // Add gap between main table and lanthanides/actinides
+        for (let col = 1; col <= 18; col++) {
+          const spacer = document.createElement('div');
+          spacer.className = 'spacer';
+          spacer.style.gridColumn = col.toString();
+          spacer.style.gridRow = '8';
+          periodicTable.appendChild(spacer);
+        }
+      }
+      
+      // Create elements
+      for (let i = 1; i <= 118; i++) {
+        const elementData = elements.find(el => el.id === i);
+        if (!elementData) continue; // Skip if element data is not available
+        
+        let element = document.createElement('div');
+        element.className = `element ${elementData.category}`;
+        element.setAttribute('data-id', elementData.id);
+        element.innerHTML = `
+          <div class="atomic-number">${elementData.id}</div>
+          <div class="symbol">${elementData.symbol}</div>
+          <div class="name">${elementData.name}</div>
+        `;
+        
+        // Add click event
+        element.addEventListener('click', function() {
+          showElementModal(elementData);
+        });
+        
+        // Position elements according to their position in the periodic table
+        positionElement(element, elementData.id);
+        
+        periodicTable.appendChild(element);
+      }
+      
+      // Add the spacers after elements
+      addSpacers();
+    }
+    
+    // Function to position elements in the grid based on standard periodic table layout
+    function positionElement(element, atomicNumber) {
+      let row, col;
+      
+      // Determine the position based on atomic number
+      switch(atomicNumber) {
+        // Period 1
+        case 1: row = 1; col = 1; break; // H
+        case 2: row = 1; col = 18; break; // He
+        
+        // Period 2
+        case 3: row = 2; col = 1; break; // Li
+        case 4: row = 2; col = 2; break; // Be
+        case 5: row = 2; col = 13; break; // B
+        case 6: row = 2; col = 14; break; // C
+        case 7: row = 2; col = 15; break; // N
+        case 8: row = 2; col = 16; break; // O
+        case 9: row = 2; col = 17; break; // F
+        case 10: row = 2; col = 18; break; // Ne
+        
+        // Period 3
+        case 11: row = 3; col = 1; break; // Na
+        case 12: row = 3; col = 2; break; // Mg
+        case 13: row = 3; col = 13; break; // Al
+        case 14: row = 3; col = 14; break; // Si
+        case 15: row = 3; col = 15; break; // P
+        case 16: row = 3; col = 16; break; // S
+        case 17: row = 3; col = 17; break; // Cl
+        case 18: row = 3; col = 18; break; // Ar
+        
+        // Period 4
+        case 19: row = 4; col = 1; break; // K
+        case 20: row = 4; col = 2; break; // Ca
+        case 21: row = 4; col = 3; break; // Sc
+        case 22: row = 4; col = 4; break; // Ti
+        case 23: row = 4; col = 5; break; // V
+        case 24: row = 4; col = 6; break; // Cr
+        case 25: row = 4; col = 7; break; // Mn
+        case 26: row = 4; col = 8; break; // Fe
+        case 27: row = 4; col = 9; break; // Co
+        case 28: row = 4; col = 10; break; // Ni
+        case 29: row = 4; col = 11; break; // Cu
+        case 30: row = 4; col = 12; break; // Zn
+        case 31: row = 4; col = 13; break; // Ga
+        case 32: row = 4; col = 14; break; // Ge
+        case 33: row = 4; col = 15; break; // As
+        case 34: row = 4; col = 16; break; // Se
+        case 35: row = 4; col = 17; break; // Br
+        case 36: row = 4; col = 18; break; // Kr
+        
+        // Period 5
+        case 37: row = 5; col = 1; break; // Rb
+        case 38: row = 5; col = 2; break; // Sr
+        case 39: row = 5; col = 3; break; // Y
+        case 40: row = 5; col = 4; break; // Zr
+        case 41: row = 5; col = 5; break; // Nb
+        case 42: row = 5; col = 6; break; // Mo
+        case 43: row = 5; col = 7; break; // Tc
+        case 44: row = 5; col = 8; break; // Ru
+        case 45: row = 5; col = 9; break; // Rh
+        case 46: row = 5; col = 10; break; // Pd
+        case 47: row = 5; col = 11; break; // Ag
+        case 48: row = 5; col = 12; break; // Cd
+        case 49: row = 5; col = 13; break; // In
+        case 50: row = 5; col = 14; break; // Sn
+        case 51: row = 5; col = 15; break; // Sb
+        case 52: row = 5; col = 16; break; // Te
+        case 53: row = 5; col = 17; break; // I
+        case 54: row = 5; col = 18; break; // Xe
+        
+        // Period 6
+        case 55: row = 6; col = 1; break; // Cs
+        case 56: row = 6; col = 2; break; // Ba
+        case 57: row = 6; col = 3; break; // La
+        case 72: row = 6; col = 4; break; // Hf
+        case 73: row = 6; col = 5; break; // Ta
+        case 74: row = 6; col = 6; break; // W
+        case 75: row = 6; col = 7; break; // Re
+        case 76: row = 6; col = 8; break; // Os
+        case 77: row = 6; col = 9; break; // Ir
+        case 78: row = 6; col = 10; break; // Pt
+        case 79: row = 6; col = 11; break; // Au
+        case 80: row = 6; col = 12; break; // Hg
+        case 81: row = 6; col = 13; break; // Tl
+        case 82: row = 6; col = 14; break; // Pb
+        case 83: row = 6; col = 15; break; // Bi
+        case 84: row = 6; col = 16; break; // Po
+        case 85: row = 6; col = 17; break; // At
+        case 86: row = 6; col = 18; break; // Rn
+        
+        // Period 7
+        case 87: row = 7; col = 1; break; // Fr
+        case 88: row = 7; col = 2; break; // Ra
+        case 89: row = 7; col = 3; break; // Ac
+        case 104: row = 7; col = 4; break; // Rf
+        case 105: row = 7; col = 5; break; // Db
+        case 106: row = 7; col = 6; break; // Sg
+        case 107: row = 7; col = 7; break; // Bh
+        case 108: row = 7; col = 8; break; // Hs
+        case 109: row = 7; col = 9; break; // Mt
+        case 110: row = 7; col = 10; break; // Ds
+        case 111: row = 7; col = 11; break; // Rg
+        case 112: row = 7; col = 12; break; // Cn
+        case 113: row = 7; col = 13; break; // Nh
+        case 114: row = 7; col = 14; break; // Fl
+        case 115: row = 7; col = 15; break; // Mc
+        case 116: row = 7; col = 16; break; // Lv
+        case 117: row = 7; col = 17; break; // Ts
+        case 118: row = 7; col = 18; break; // Og
+        
+        // Lanthanides (Period 6)
+        case 58: row = 9; col = 4; break; // Ce
+        case 59: row = 9; col = 5; break; // Pr
+        case 60: row = 9; col = 6; break; // Nd
+        case 61: row = 9; col = 7; break; // Pm
+        case 62: row = 9; col = 8; break; // Sm
+        case 63: row = 9; col = 9; break; // Eu
+        case 64: row = 9; col = 10; break; // Gd
+        case 65: row = 9; col = 11; break; // Tb
+        case 66: row = 9; col = 12; break; // Dy
+        case 67: row = 9; col = 13; break; // Ho
+        case 68: row = 9; col = 14; break; // Er
+        case 69: row = 9; col = 15; break; // Tm
+        case 70: row = 9; col = 16; break; // Yb
+        case 71: row = 9; col = 17; break; // Lu
+        
+        // Actinides (Period 7)
+        case 90: row = 10; col = 4; break; // Th
+        case 91: row = 10; col = 5; break; // Pa
+        case 92: row = 10; col = 6; break; // U
+        case 93: row = 10; col = 7; break; // Np
+        case 94: row = 10; col = 8; break; // Pu
+        case 95: row = 10; col = 9; break; // Am
+        case 96: row = 10; col = 10; break; // Cm
+        case 97: row = 10; col = 11; break; // Bk
+        case 98: row = 10; col = 12; break; // Cf
+        case 99: row = 10; col = 13; break; // Es
+        case 100: row = 10; col = 14; break; // Fm
+        case 101: row = 10; col = 15; break; // Md
+        case 102: row = 10; col = 16; break; // No
+        case 103: row = 10; col = 17; break; // Lr
+      }
+      
+      // Place on the grid
+      if (row && col) {
+        element.style.gridColumn = col.toString();
+        element.style.gridRow = row.toString();
+      }
+      
+      // Add placeholders for Lanthanides and Actinides rows
+      if (atomicNumber === 57) { // La
+        const lanthanideLabel = document.createElement('div');
+        lanthanideLabel.className = 'element lanthanide';
+        lanthanideLabel.innerHTML = 'Lanthanides';
+        lanthanideLabel.style.gridColumn = '3';
+        lanthanideLabel.style.gridRow = '8';
+        document.getElementById('periodicTable').appendChild(lanthanideLabel);
+      }
+      
+      if (atomicNumber === 89) { // Ac
+        const actinideLabel = document.createElement('div');
+        actinideLabel.className = 'element actinide';
+        actinideLabel.innerHTML = 'Actinides';
+        actinideLabel.style.gridColumn = '3';
+        actinideLabel.style.gridRow = '9';
+        document.getElementById('periodicTable').appendChild(actinideLabel);
+      }
+    }
+    
+    // Function to show the modal with element information
+    function showElementModal(element) {
+      const modalLabel = document.getElementById('elementModalLabel');
+      const modalBody = document.getElementById('elementModalBody');
+      
+      // Set modal title
+      modalLabel.textContent = `${element.name} (${element.symbol})`;
+      
+      // Create modal content
+      modalBody.innerHTML = `
+        <div class="element-header">
+          <div class="element-symbol ${element.category}">${element.symbol}</div>
+          <div class="element-title">
+            <h2>${element.name}</h2>
+            <p>Element ${element.id}</p>
+          </div>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Atomic Number</span>
+          <span class="property-value">${element.id}</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Atomic Mass</span>
+          <span class="property-value">${element.atomicMass} u</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Category</span>
+          <span class="property-value">${formatCategory(element.category)}</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Electron Configuration</span>
+          <span class="property-value">${element.electronConfig}</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Electronegativity</span>
+          <span class="property-value">${element.electronegativity !== null ? element.electronegativity : 'N/A'}</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Density</span>
+          <span class="property-value">${element.density} g/cm³</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Melting Point</span>
+          <span class="property-value">${element.meltingPoint} °C</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Boiling Point</span>
+          <span class="property-value">${element.boilingPoint} °C</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Discovered By</span>
+          <span class="property-value">${element.discoveredBy}</span>
+        </div>
+        
+        <div class="property">
+          <span class="property-name">Year Discovered</span>
+          <span class="property-value">${element.yearDiscovered || 'Ancient'}</span>
+        </div>
+      `;
+      
+      // Show the modal
+      const elementModal = new bootstrap.Modal(document.getElementById('elementModal'));
+      elementModal.show();
+    }
+    
+    // Helper function to format category names
+    function formatCategory(category) {
+      switch(category) {
+        case 'alkali-metal': return 'Alkali Metal';
+        case 'alkaline-earth': return 'Alkaline Earth Metal';
+        case 'transition-metal': return 'Transition Metal';
+        case 'post-transition': return 'Post-Transition Metal';
+        case 'metalloid': return 'Metalloid';
+        case 'nonmetal': return 'Nonmetal';
+        case 'noble-gas': return 'Noble Gas';
+        case 'lanthanide': return 'Lanthanide';
+        case 'actinide': return 'Actinide';
+        default: return category;
+      }
+    }
+    
+    // Function to apply filters based on checked categories
+    function applyFilters() {
+      // Get all checked filters
+      const checkedFilters = Array.from(document.querySelectorAll('.category-filter input[type="checkbox"]:checked'))
+        .map(checkbox => checkbox.value);
+      
+      // Get all elements
+      const elementItems = document.querySelectorAll('.element:not(.spacer)');
+      
+      // If no filters are selected, show all elements
+      if (checkedFilters.length === 0) {
+        elementItems.forEach(element => {
+          element.classList.remove('filtered');
+        });
+        return;
+      }
+      
+      // Apply filtering
+      elementItems.forEach(element => {
+        // Skip labels
+        if (element.textContent === 'Lanthanides' || element.textContent === 'Actinides') {
+          return;
+        }
+        
+        // Get element category from class
+        const categoryClasses = Array.from(element.classList)
+          .filter(className => className !== 'element' && className !== 'filtered');
+        
+        if (categoryClasses.length > 0) {
+          const elementCategory = categoryClasses[0];
+          
+          // Apply filtered class if the element's category is not in checked filters
+          if (!checkedFilters.includes(elementCategory)) {
+            element.classList.add('filtered');
+          } else {
+            element.classList.remove('filtered');
+          }
+        }
+      });
+    }
+    
+    // Initialize event listeners for filters
+    function initFilters() {
+      // Add event listeners to all checkboxes
+      document.querySelectorAll('.category-filter input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyFilters);
+      });
+      
+      // Clear all filters
+      document.getElementById('clearFilters').addEventListener('click', function() {
+        document.querySelectorAll('.category-filter input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        applyFilters();
+      });
+      
+      // Select all filters
+      document.getElementById('selectAllFilters').addEventListener('click', function() {
+        document.querySelectorAll('.category-filter input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = true;
+        });
+        applyFilters();
+      });
+    }
+    
+    // Initialize the table and filters when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      createPeriodicTable();
+      initFilters();
+    });
+  </script>
+</body>
+</html>
