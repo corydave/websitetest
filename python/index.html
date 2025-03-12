@@ -1,5 +1,3 @@
-<!-- https://www.urlencoder.org/ -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -122,6 +120,11 @@
       <label for="whitespace" style="display: inline">Compare whitespace exactly</label>
     </div>
     
+    <div class="checkbox-wrapper hidden">
+      <input type="checkbox" id="caseSensitive" checked>
+      <label for="caseSensitive" style="display: inline">Case sensitive comparison</label>
+    </div>
+    
     <div class="hidden">
       <label>Comparison Results:</label>
       <div id="results" class="results"></div>
@@ -160,7 +163,7 @@
         
     }
       
-    function compareTexts(input, expected, compareWhitespace) {
+    function compareTexts(input, expected, compareWhitespace, caseSensitive) {
       if (!input || !expected) return [];
       
       // Split into lines first
@@ -220,9 +223,10 @@
               };
             }
 
-            const isMatch = compareWhitespace ? 
-              expectedToken === inputToken :
-              expectedToken.toLowerCase() === inputToken.toLowerCase();
+            // Apply case comparison based on checkbox
+            const isMatch = compareWhitespace ? expectedToken === inputToken : 
+                            caseSensitive ? expectedToken === inputToken : 
+                            expectedToken.toLowerCase() === inputToken.toLowerCase();
 
             return {
               expected: expectedToken,
@@ -264,14 +268,16 @@
       const input = document.getElementById('userInput').value;
       const expected = document.getElementById('expectedOutput').value;
       const compareWhitespace = document.getElementById('whitespace').checked;
+      const caseSensitive = document.getElementById('caseSensitive').checked;
       
-      const comparison = compareTexts(input, expected, compareWhitespace);
+      const comparison = compareTexts(input, expected, compareWhitespace, caseSensitive);
       document.getElementById('results').innerHTML = renderComparison(comparison);
     }
 
     document.getElementById('userInput').addEventListener('input', updateResults);
     document.getElementById('expectedOutput').addEventListener('input', updateResults);
     document.getElementById('whitespace').addEventListener('change', updateResults);
+    document.getElementById('caseSensitive').addEventListener('change', updateResults);
   </script>
   
   <script>
