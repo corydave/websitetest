@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -560,6 +559,244 @@
         };
 
 
+        const passwordCheckerProgram = {
+            steps: [
+                {
+                    prompt: undefined,
+                    process: () => ({
+                        output: "===== PASSWORD STRENGTH CHECKER =====\nThis tool analyzes your password and rates its strength.",
+                        nextStep: 1
+                    })
+                },
+                {
+                    prompt: "\nEnter a password to check: ",
+                    process: (input, state) => {
+                        const password = input;
+                        const length = password.length;
+                        
+                        // Initialize counters for character types
+                        let uppercaseCount = 0;
+                        let lowercaseCount = 0;
+                        let digitCount = 0;
+                        let specialCount = 0;
+                        
+                        // Define what constitutes a special character
+                        const specialChars = "!@#$%^&*()-_=+[]{}|;:'\",.<>/?";
+                        
+                        // Loop through each character in the password
+                        for (let i = 0; i < password.length; i++) {
+                            const char = password[i];
+                            if (/[A-Z]/.test(char)) {
+                                uppercaseCount++;
+                            } else if (/[a-z]/.test(char)) {
+                                lowercaseCount++;
+                            } else if (/[0-9]/.test(char)) {
+                                digitCount++;
+                            } else if (specialChars.includes(char)) {
+                                specialCount++;
+                            }
+                        }
+                        
+                        // Calculate the score based on different factors
+                        let score = 0;
+                        
+                        // Length factor (up to 25 points)
+                        if (length >= 12) {
+                            score += 25;
+                        } else if (length >= 8) {
+                            score += 15;
+                        } else if (length >= 6) {
+                            score += 10;
+                        }
+                        
+                        // Character variety factors (up to 75 points)
+                        if (uppercaseCount > 0) score += 15;
+                        if (lowercaseCount > 0) score += 15;
+                        if (digitCount > 0) score += 15;
+                        if (specialCount > 0) score += 15;
+                        
+                        // Bonus for using multiple character types (up to 15 points)
+                        let typesUsed = 0;
+                        if (uppercaseCount > 0) typesUsed++;
+                        if (lowercaseCount > 0) typesUsed++;
+                        if (digitCount > 0) typesUsed++;
+                        if (specialCount > 0) typesUsed++;
+                        
+                        if (typesUsed >= 3) {
+                            score += 15;
+                        }
+                        
+                        // Determine strength category
+                        let strength;
+                        if (score >= 80) {
+                            strength = "STRONG";
+                        } else if (score >= 60) {
+                            strength = "MODERATE";
+                        } else if (score >= 40) {
+                            strength = "WEAK";
+                        } else {
+                            strength = "VERY WEAK";
+                        }
+                        
+                        // Prepare improvement suggestions
+                        let suggestions = "\n===== IMPROVEMENT SUGGESTIONS =====\n";
+                        if (length < 12) {
+                            suggestions += "- Use at least 12 characters for better security\n";
+                        }
+                        if (uppercaseCount === 0) {
+                            suggestions += "- Add uppercase letters (A-Z)\n";
+                        }
+                        if (lowercaseCount === 0) {
+                            suggestions += "- Add lowercase letters (a-z)\n";
+                        }
+                        if (digitCount === 0) {
+                            suggestions += "- Add numbers (0-9)\n";
+                        }
+                        if (specialCount === 0) {
+                            suggestions += "- Add special characters (!@#$%^&*)\n";
+                        }
+                        if (score >= 80) {
+                            suggestions += "- Excellent password! Remember to use different passwords for different accounts.";
+                        }
+                        
+                        // Create the output message
+                        const output = `\n===== PASSWORD ANALYSIS =====\nLength: ${length} characters\nUppercase letters: ${uppercaseCount}\nLowercase letters: ${lowercaseCount}\nDigits: ${digitCount}\nSpecial characters: ${specialCount}\n\nSecurity Score: ${score}/100\nStrength Assessment: ${strength}${suggestions}`;
+                        
+                        return {
+                            output,
+                            state: { password, score, strength },
+                            nextStep: 0 // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };
+        
+
+        const portKnockingProgram = {
+            steps: [
+                {
+                    // Initial header and instructions
+                    prompt: undefined,
+                    process: () => ({
+                        output: "===== PORT KNOCKING FIREWALL SIMULATOR =====\nThis firewall requires a specific sequence of port connections.\nYou have 3 attempts to find the correct sequence.\n(Hint: Enter ports as integers, one at a time)",
+                        nextStep: 1,
+                        state: {
+                            secretSequence: [2222, 3333, 4444, 5555],
+                            maxAttempts: 3,
+                            attempts: 0,
+                            currentAttemptPorts: [],
+                            collectingPorts: true
+                        }
+                    })
+                },
+                {
+                    // Start of attempt
+                    prompt: undefined,
+                    process: (input, state) => ({
+                        output: `\nAttempt ${state.attempts + 1} of ${state.maxAttempts}:\nEnter your port knock sequence. Enter 0 when finished.`,
+                        nextStep: 2,
+                        state: { ...state, currentAttemptPorts: [] }
+                    })
+                },
+                {
+                    // Collect port numbers
+                    prompt: "Enter port number: ",
+                    process: (input, state) => {
+                        let port;
+                        try {
+                            port = parseInt(input);
+                            
+                            // Check if user is done entering ports
+                            if (port === 0) {
+                                // Check if sequence matches
+                                let responseMessage = "";
+                                
+                                if (state.currentAttemptPorts.length !== state.secretSequence.length) {
+                                    responseMessage = `\nFIREWALL RESPONSE: Connection rejected!\nYour sequence had ${state.currentAttemptPorts.length} knocks, but the firewall expects ${state.secretSequence.length}.`;
+                                } else {
+                                    // Compare sequences
+                                    let match = true;
+                                    for (let i = 0; i < state.secretSequence.length; i++) {
+                                        if (state.currentAttemptPorts[i] !== state.secretSequence[i]) {
+                                            match = false;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if (match) {
+                                        responseMessage = "\nFIREWALL RESPONSE: Connection accepted!\nCorrect port knocking sequence detected.\nFirewall has opened port 22 for your connection.";
+                                        // Success - reset game
+                                        return {
+                                            output: responseMessage,
+                                            state: {
+                                                secretSequence: [2222, 3333, 4444, 5555],
+                                                maxAttempts: 3,
+                                                attempts: 0,
+                                                currentAttemptPorts: [],
+                                            },
+                                            nextStep: 0  // Back to start
+                                        };
+                                    } else {
+                                        responseMessage = "\nFIREWALL RESPONSE: Connection rejected!\nIncorrect port knocking sequence.";
+                                    }
+                                }
+                                
+                                // Increment attempts
+                                const newAttempts = state.attempts + 1;
+                                
+                                // Check if max attempts reached
+                                if (newAttempts >= state.maxAttempts) {
+                                    return {
+                                        output: `${responseMessage}\n\nMAXIMUM ATTEMPTS REACHED\nFirewall has blocked your IP address for 30 minutes.\nThe correct sequence was: ${state.secretSequence}`,
+                                        state: {
+                                            secretSequence: [2222, 3333, 4444, 5555],
+                                            maxAttempts: 3,
+                                            attempts: 0,
+                                            currentAttemptPorts: [],
+                                        },
+                                        nextStep: 0  // Back to start
+                                    };
+                                }
+                                
+                                return {
+                                    output: responseMessage,
+                                    state: {
+                                        ...state,
+                                        attempts: newAttempts,
+                                        currentAttemptPorts: []
+                                    },
+                                    nextStep: 1  // Start next attempt
+                                };
+                            }
+                            
+                            // Validate port number
+                            if (port < 1 || port > 65535) {
+                                return {
+                                    output: "Invalid port number! Ports must be between 1-65535.",
+                                    state: state,
+                                    nextStep: 2  // Stay at current step
+                                };
+                            }
+                            
+                            // Add port to sequence
+                            const updatedPorts = [...state.currentAttemptPorts, port];
+                            return {
+                                output: "", // No output for valid port entry
+                                state: { ...state, currentAttemptPorts: updatedPorts },
+                                nextStep: 2  // Stay at current step for more ports
+                            };
+                        } catch (e) {
+                            return {
+                                output: "Please enter a valid number.",
+                                state: state,
+                                nextStep: 2  // Stay at current step
+                            };
+                        }
+                    }
+                }
+            ]
+        };
         
         // Programs collection - outside the class
         const programs = {
@@ -571,6 +808,8 @@
             greeting: greetingProgram,
             firewall: firewallProgram,
             phishing: phishingAnalyzerProgram
+            passwordcheck: passwordCheckerProgram;
+            portknock: portKnockingProgram;
             // Add more programs here
         };
         
