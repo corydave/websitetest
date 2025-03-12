@@ -665,7 +665,7 @@
                         return {
                             output,
                             state: { password, score, strength },
-                            nextStep: 0 // Loop back to start
+                            // nextStep: 0 // Loop back to start
                         };
                     }
                 }
@@ -735,7 +735,7 @@
                                                 attempts: 0,
                                                 currentAttemptPorts: [],
                                             },
-                                            nextStep: 0  // Back to start
+                                            // nextStep: 0  // Back to start
                                         };
                                     } else {
                                         responseMessage = "\nFIREWALL RESPONSE: Connection rejected!\nIncorrect port knocking sequence.";
@@ -755,7 +755,7 @@
                                             attempts: 0,
                                             currentAttemptPorts: [],
                                         },
-                                        nextStep: 0  // Back to start
+                                        // nextStep: 0  // Back to start
                                     };
                                 }
                                 
