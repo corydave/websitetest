@@ -1,0 +1,127 @@
+import React, { useState, useEffect } from 'react';
+
+const ToastmasterTimer = () => {
+  const [seconds, setSeconds] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
+  
+  const maxTime = 450; // 7:30 in seconds
+  const greenTime = 300; // 5:00 in seconds
+  const yellowTime = 360; // 6:00 in seconds
+  const redTime = 420; // 7:00 in seconds
+  
+  useEffect(() => {
+    let interval = null;
+    
+    if (isRunning) {
+      interval = setInterval(() => {
+        setSeconds(prevSeconds => {
+          if (prevSeconds >= maxTime) {
+            clearInterval(interval);
+            setIsRunning(false);
+            setHasEnded(true);
+            return maxTime;
+          }
+          return prevSeconds + 1;
+        });
+      }, 1000);
+    } else if (!isRunning) {
+      clearInterval(interval);
+    }
+    
+    return () => clearInterval(interval);
+  }, [isRunning]);
+  
+  const getBackgroundColor = () => {
+    if (seconds >= redTime) return 'bg-red-500';
+    if (seconds >= yellowTime) return 'bg-yellow-400';
+    if (seconds >= greenTime) return 'bg-green-500';
+    return 'bg-white';
+  };
+  
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  };
+  
+  const handleStart = () => {
+    setIsRunning(true);
+    setHasStarted(true);
+  };
+  
+  const handleStop = () => {
+    setIsRunning(false);
+  };
+  
+  const handleReset = () => {
+    setSeconds(0);
+    setIsRunning(false);
+    setHasStarted(false);
+    setHasEnded(false);
+  };
+  
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className={`w-full max-w-md p-8 rounded-lg shadow-lg transition-colors duration-500 ${getBackgroundColor()}`}>
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-8">Toastmaster Timer</h1>
+          
+          <div className="text-8xl font-mono mb-8">
+            {formatTime(seconds)}
+          </div>
+          
+          <div className="flex justify-center space-x-4">
+            {!hasStarted ? (
+              <button 
+                onClick={handleStart} 
+                className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+              >
+                Start
+              </button>
+            ) : (
+              <>
+                {!hasEnded && (
+                  <button 
+                    onClick={isRunning ? handleStop : handleStart} 
+                    className={`px-6 py-2 ${isRunning ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white rounded-md focus:outline-none`}
+                  >
+                    {isRunning ? 'Pause' : 'Resume'}
+                  </button>
+                )}
+                <button 
+                  onClick={handleReset} 
+                  className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                >
+                  Reset
+                </button>
+              </>
+            )}
+          </div>
+          
+          <div className="mt-6 grid grid-cols-4 gap-2 text-center">
+            <div className="p-2 bg-white border rounded">
+              <div className="text-sm">Start</div>
+              <div className="font-semibold">0:00</div>
+            </div>
+            <div className="p-2 bg-green-500 border rounded">
+              <div className="text-sm">Green</div>
+              <div className="font-semibold">5:00</div>
+            </div>
+            <div className="p-2 bg-yellow-400 border rounded">
+              <div className="text-sm">Yellow</div>
+              <div className="font-semibold">6:00</div>
+            </div>
+            <div className="p-2 bg-red-500 border rounded">
+              <div className="text-sm">Red</div>
+              <div className="font-semibold">7:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ToastmasterTimer;
