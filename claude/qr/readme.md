@@ -2,7 +2,7 @@
 
 ## Description
 
-Description including images, how many attempts, link to prompts, etc.
+This program generates a QR code from a URL. The user enters a URL and the code is created. No s
 
 ## Link
 
@@ -26,6 +26,9 @@ asdfa
 asdfasdf
 
 </center>
+
+## Chat from Claude
+[Chat from Claude](https://claude.ai/share/f0940c1c-a19b-4e5b-85b9-cc35355017b9)
 
 
   <iframe width="560" height="315" src="https://www.youtube.com/embed/ix0uXtj_eBU?si=gA58hd8_3C_NtIOE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
