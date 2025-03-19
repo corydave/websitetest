@@ -17,22 +17,20 @@ This program generates a QR code from a URL. The user enters a URL and the code 
 
 ## Potential Uses
 
-asdfa
+* Creating QR codes whenever needed; these QR codes do not expire, do not track information, and are nothing but the URL.
+* The color can be customized to match branding assets.
 
 ## Challenges in Creation
 
-<center>
-
-asdfasdf
-
-</center>
+* The first iteration was not very modern; it was blocky and the color picker was not intuitive.
+* After some iterating, I recognized a few features that needed to be added:
+    * Use Material Design to modernize the look.
+    * Validate the URL (so malformed URLs couldn't be used).
+* Some errors surface during iterating so I had to feed the errors back to Claude.
+* The CSS stopped working at some point and I had to ask Claude to fix it.
+* I finally realized it was easier to have all the HTML, CSS, and JavaScript in one file.
 
 ## Chat from Claude
 [Chat from Claude](https://claude.ai/share/f0940c1c-a19b-4e5b-85b9-cc35355017b9)
-
-
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/ix0uXtj_eBU?si=gA58hd8_3C_NtIOE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-![youtubeThumbnail](https://github.com/user-attachments/assets/081c9bde-7621-4df5-a993-28b5fc00b91f)
 
 [![youtubeThumbnail](https://github.com/user-attachments/assets/081c9bde-7621-4df5-a993-28b5fc00b91f)](https://www.youtube.com)
