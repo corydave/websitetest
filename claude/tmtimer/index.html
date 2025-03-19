@@ -1,127 +1,241 @@
-import React, { useState, useEffect } from 'react';
-
-const ToastmasterTimer = () => {
-  const [seconds, setSeconds] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [hasEnded, setHasEnded] = useState(false);
-  
-  const maxTime = 450; // 7:30 in seconds
-  const greenTime = 300; // 5:00 in seconds
-  const yellowTime = 360; // 6:00 in seconds
-  const redTime = 420; // 7:00 in seconds
-  
-  useEffect(() => {
-    let interval = null;
-    
-    if (isRunning) {
-      interval = setInterval(() => {
-        setSeconds(prevSeconds => {
-          if (prevSeconds >= maxTime) {
-            clearInterval(interval);
-            setIsRunning(false);
-            setHasEnded(true);
-            return maxTime;
-          }
-          return prevSeconds + 1;
-        });
-      }, 1000);
-    } else if (!isRunning) {
-      clearInterval(interval);
-    }
-    
-    return () => clearInterval(interval);
-  }, [isRunning]);
-  
-  const getBackgroundColor = () => {
-    if (seconds >= redTime) return 'bg-red-500';
-    if (seconds >= yellowTime) return 'bg-yellow-400';
-    if (seconds >= greenTime) return 'bg-green-500';
-    return 'bg-white';
-  };
-  
-  const formatTime = (totalSeconds) => {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-  };
-  
-  const handleStart = () => {
-    setIsRunning(true);
-    setHasStarted(true);
-  };
-  
-  const handleStop = () => {
-    setIsRunning(false);
-  };
-  
-  const handleReset = () => {
-    setSeconds(0);
-    setIsRunning(false);
-    setHasStarted(false);
-    setHasEnded(false);
-  };
-  
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className={`w-full max-w-md p-8 rounded-lg shadow-lg transition-colors duration-500 ${getBackgroundColor()}`}>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-8">Toastmaster Timer</h1>
-          
-          <div className="text-8xl font-mono mb-8">
-            {formatTime(seconds)}
-          </div>
-          
-          <div className="flex justify-center space-x-4">
-            {!hasStarted ? (
-              <button 
-                onClick={handleStart} 
-                className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-              >
-                Start
-              </button>
-            ) : (
-              <>
-                {!hasEnded && (
-                  <button 
-                    onClick={isRunning ? handleStop : handleStart} 
-                    className={`px-6 py-2 ${isRunning ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white rounded-md focus:outline-none`}
-                  >
-                    {isRunning ? 'Pause' : 'Resume'}
-                  </button>
-                )}
-                <button 
-                  onClick={handleReset} 
-                  className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
-                >
-                  Reset
-                </button>
-              </>
-            )}
-          </div>
-          
-          <div className="mt-6 grid grid-cols-4 gap-2 text-center">
-            <div className="p-2 bg-white border rounded">
-              <div className="text-sm">Start</div>
-              <div className="font-semibold">0:00</div>
-            </div>
-            <div className="p-2 bg-green-500 border rounded">
-              <div className="text-sm">Green</div>
-              <div className="font-semibold">5:00</div>
-            </div>
-            <div className="p-2 bg-yellow-400 border rounded">
-              <div className="text-sm">Yellow</div>
-              <div className="font-semibold">6:00</div>
-            </div>
-            <div className="p-2 bg-red-500 border rounded">
-              <div className="text-sm">Red</div>
-              <div className="font-semibold">7:00</div>
-            </div>
-          </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toastmaster Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .timer-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: background-color 0.5s ease;
+            background-color: white;
+        }
+        .timer-display {
+            font-size: 80px;
+            font-family: monospace;
+            margin: 30px 0;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        #start-btn {
+            background-color: #4285f4;
+        }
+        #start-btn:hover {
+            background-color: #3367d6;
+        }
+        #pause-btn {
+            background-color: #fbbc05;
+        }
+        #pause-btn:hover {
+            background-color: #f09a0a;
+        }
+        #reset-btn {
+            background-color: #ea4335;
+        }
+        #reset-btn:hover {
+            background-color: #d33426;
+        }
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .legend-item {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .legend-item p {
+            margin: 5px 0;
+        }
+        .legend-item .legend-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .legend-item .legend-time {
+            font-weight: bold;
+        }
+        .white {
+            background-color: white;
+        }
+        .green {
+            background-color: #34a853;
+        }
+        .yellow {
+            background-color: #fbbc05;
+        }
+        .red {
+            background-color: #ea4335;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container" id="timer-container">
+        <h1>Toastmaster Timer</h1>
+        <div class="timer-display" id="timer-display">0:00</div>
+        <div class="button-container">
+            <button id="start-btn">Start</button>
+            <button id="pause-btn" style="display: none;">Pause</button>
+            <button id="reset-btn" style="display: none;">Reset</button>
         </div>
-      </div>
+        <div class="legend">
+            <div class="legend-item white">
+                <p class="legend-label">Start</p>
+                <p class="legend-time">0:00</p>
+            </div>
+            <div class="legend-item green">
+                <p class="legend-label">Green</p>
+                <p class="legend-time">5:00</p>
+            </div>
+            <div class="legend-item yellow">
+                <p class="legend-label">Yellow</p>
+                <p class="legend-time">6:00</p>
+            </div>
+            <div class="legend-item red">
+                <p class="legend-label">Red</p>
+                <p class="legend-time">7:00</p>
+            </div>
+        </div>
     </div>
-  );
-};
 
-export default ToastmasterTimer;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const timerDisplay = document.getElementById('timer-display');
+            const timerContainer = document.getElementById('timer-container');
+            const startBtn = document.getElementById('start-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            let seconds = 0;
+            let timerInterval;
+            let isRunning = false;
+            let hasStarted = false;
+            
+            const MAX_TIME = 450; // 7:30 in seconds
+            const GREEN_TIME = 300; // 5:00 in seconds
+            const YELLOW_TIME = 360; // 6:00 in seconds
+            const RED_TIME = 420; // 7:00 in seconds
+            
+            function formatTime(totalSeconds) {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            }
+            
+            function updateTimerDisplay() {
+                timerDisplay.textContent = formatTime(seconds);
+                
+                // Update background color based on time
+                if (seconds >= RED_TIME) {
+                    timerContainer.style.backgroundColor = '#ea4335';
+                } else if (seconds >= YELLOW_TIME) {
+                    timerContainer.style.backgroundColor = '#fbbc05';
+                } else if (seconds >= GREEN_TIME) {
+                    timerContainer.style.backgroundColor = '#34a853';
+                } else {
+                    timerContainer.style.backgroundColor = 'white';
+                }
+                
+                // Stop at 7:30
+                if (seconds >= MAX_TIME) {
+                    stopTimer();
+                }
+            }
+            
+            function startTimer() {
+                if (!isRunning) {
+                    isRunning = true;
+                    hasStarted = true;
+                    
+                    startBtn.style.display = 'none';
+                    pauseBtn.style.display = 'inline-block';
+                    resetBtn.style.display = 'inline-block';
+                    
+                    timerInterval = setInterval(function() {
+                        seconds++;
+                        updateTimerDisplay();
+                        
+                        // Check if we've reached the max time
+                        if (seconds >= MAX_TIME) {
+                            stopTimer();
+                        }
+                    }, 1000);
+                }
+            }
+            
+            function pauseTimer() {
+                if (isRunning) {
+                    isRunning = false;
+                    clearInterval(timerInterval);
+                    pauseBtn.textContent = 'Resume';
+                } else {
+                    isRunning = true;
+                    pauseBtn.textContent = 'Pause';
+                    
+                    timerInterval = setInterval(function() {
+                        seconds++;
+                        updateTimerDisplay();
+                        
+                        if (seconds >= MAX_TIME) {
+                            stopTimer();
+                        }
+                    }, 1000);
+                }
+            }
+            
+            function stopTimer() {
+                isRunning = false;
+                clearInterval(timerInterval);
+                pauseBtn.style.display = 'none';
+            }
+            
+            function resetTimer() {
+                stopTimer();
+                seconds = 0;
+                updateTimerDisplay();
+                
+                startBtn.style.display = 'inline-block';
+                pauseBtn.style.display = 'none';
+                pauseBtn.textContent = 'Pause';
+                hasStarted = false;
+            }
+            
+            // Event listeners
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            
+            // Initialize the display
+            updateTimerDisplay();
+        });
+    </script>
+</body>
+</html>
