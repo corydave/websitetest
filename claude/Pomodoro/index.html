@@ -23,6 +23,7 @@
             text-align: center;
             max-width: 400px;
             width: 100%;
+            position: relative;
         }
         
         h1 {
@@ -104,16 +105,84 @@
             color: #333;
             margin-top: 15px;
         }
+        
+        /* Settings Styles */
+        .settings-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .settings-panel {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        
+        .settings-panel.active {
+            display: block;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-settings {
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .setting-item {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .setting-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .save-settings {
+            background-color: #3498db;
+            color: white;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Pomodoro Timer</h1>
         
+        <div class="settings-icon" id="settingsIcon">⚙️</div>
+        
         <div class="modes">
-            <button class="mode-btn active" data-time="25">Pomodoro</button>
-            <button class="mode-btn" data-time="5">Short Break</button>
-            <button class="mode-btn" data-time="15">Long Break</button>
+            <button class="mode-btn active" id="pomodoroBtn">Pomodoro</button>
+            <button class="mode-btn" id="shortBreakBtn">Short Break</button>
+            <button class="mode-btn" id="longBreakBtn">Long Break</button>
         </div>
         
         <div class="timer" id="timer">25:00</div>
@@ -128,8 +197,38 @@
         
         <div class="info">
             <p>The Pomodoro Technique is a time management method:</p>
-            <p>25 minutes focused work + 5 minutes break = 1 Pomodoro</p>
-            <p>After 4 Pomodoros, take a longer 15 minute break</p>
+            <p>Work session + short break = 1 Pomodoro</p>
+            <p>After multiple Pomodoros, take a longer break</p>
+        </div>
+        
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <div class="close-settings" id="closeSettings">✕</div>
+            </div>
+            
+            <div class="setting-item">
+                <label for="workDuration">Work Duration (minutes)</label>
+                <input type="number" id="workDuration" min="1" max="120">
+            </div>
+            
+            <div class="setting-item">
+                <label for="shortBreakDuration">Short Break Duration (minutes)</label>
+                <input type="number" id="shortBreakDuration" min="1" max="30">
+            </div>
+            
+            <div class="setting-item">
+                <label for="longBreakDuration">Long Break Duration (minutes)</label>
+                <input type="number" id="longBreakDuration" min="1" max="60">
+            </div>
+            
+            <div class="setting-item">
+                <label for="cyclesBeforeLongBreak">Cycles Before Long Break</label>
+                <input type="number" id="cyclesBeforeLongBreak" min="1" max="10">
+            </div>
+            
+            <button class="save-settings" id="saveSettings">Save Settings</button>
         </div>
     </div>
 
@@ -140,12 +239,33 @@
             const startBtn = document.getElementById('startBtn');
             const pauseBtn = document.getElementById('pauseBtn');
             const resetBtn = document.getElementById('resetBtn');
-            const modeBtns = document.querySelectorAll('.mode-btn');
+            const pomodoroBtn = document.getElementById('pomodoroBtn');
+            const shortBreakBtn = document.getElementById('shortBreakBtn');
+            const longBreakBtn = document.getElementById('longBreakBtn');
             const cycleCountDisplay = document.getElementById('cycleCount');
+            
+            // Settings elements
+            const settingsIcon = document.getElementById('settingsIcon');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const closeSettings = document.getElementById('closeSettings');
+            const saveSettings = document.getElementById('saveSettings');
+            
+            const workDurationInput = document.getElementById('workDuration');
+            const shortBreakDurationInput = document.getElementById('shortBreakDuration');
+            const longBreakDurationInput = document.getElementById('longBreakDuration');
+            const cyclesBeforeLongBreakInput = document.getElementById('cyclesBeforeLongBreak');
+            
+            // Default settings
+            let settings = {
+                workDuration: 25,
+                shortBreakDuration: 5,
+                longBreakDuration: 15,
+                cyclesBeforeLongBreak: 4
+            };
             
             // Timer variables
             let timer;
-            let minutes = 25;
+            let minutes;
             let seconds = 0;
             let isRunning = false;
             let currentMode = 'pomodoro';
@@ -170,33 +290,124 @@
                 }
             }
             
-            // Initialize timer display
-            updateTimerDisplay();
+            // Check for URL parameters
+            function getUrlParameters() {
+                const params = new URLSearchParams(window.location.search);
+                
+                // Update settings from URL parameters if they exist
+                if (params.has('work')) {
+                    settings.workDuration = parseInt(params.get('work'));
+                }
+                
+                if (params.has('shortBreak')) {
+                    settings.shortBreakDuration = parseInt(params.get('shortBreak'));
+                }
+                
+                if (params.has('longBreak')) {
+                    settings.longBreakDuration = parseInt(params.get('longBreak'));
+                }
+                
+                if (params.has('cycles')) {
+                    settings.cyclesBeforeLongBreak = parseInt(params.get('cycles'));
+                }
+                
+                // Save settings to localStorage
+                saveSettingsToStorage();
+            }
             
-            // Event listeners
-            startBtn.addEventListener('click', startTimer);
-            pauseBtn.addEventListener('click', pauseTimer);
-            resetBtn.addEventListener('click', resetTimer);
+            // Load settings from localStorage
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('pomodoroSettings');
+                
+                if (savedSettings) {
+                    settings = JSON.parse(savedSettings);
+                }
+                
+                // URL parameters take precedence over localStorage
+                getUrlParameters();
+                
+                // Update input fields
+                workDurationInput.value = settings.workDuration;
+                shortBreakDurationInput.value = settings.shortBreakDuration;
+                longBreakDurationInput.value = settings.longBreakDuration;
+                cyclesBeforeLongBreakInput.value = settings.cyclesBeforeLongBreak;
+                
+                // Set initial timer
+                setMode('pomodoro');
+            }
             
-            // Mode button event listeners
-            modeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (!isRunning) {
-                        // Remove active class from all buttons
-                        modeBtns.forEach(b => b.classList.remove('active'));
-                        
-                        // Add active class to clicked button
-                        btn.classList.add('active');
-                        
-                        // Set timer based on button data
-                        minutes = parseInt(btn.dataset.time);
-                        seconds = 0;
-                        
-                        // Update the display
-                        updateTimerDisplay();
-                    }
-                });
+            // Save settings to localStorage
+            function saveSettingsToStorage() {
+                localStorage.setItem('pomodoroSettings', JSON.stringify(settings));
+            }
+            
+            // Update settings from input fields
+            function updateSettings() {
+                settings.workDuration = parseInt(workDurationInput.value) || 25;
+                settings.shortBreakDuration = parseInt(shortBreakDurationInput.value) || 5;
+                settings.longBreakDuration = parseInt(longBreakDurationInput.value) || 15;
+                settings.cyclesBeforeLongBreak = parseInt(cyclesBeforeLongBreakInput.value) || 4;
+                
+                // Validate and set limits
+                settings.workDuration = Math.min(Math.max(settings.workDuration, 1), 120);
+                settings.shortBreakDuration = Math.min(Math.max(settings.shortBreakDuration, 1), 30);
+                settings.longBreakDuration = Math.min(Math.max(settings.longBreakDuration, 1), 60);
+                settings.cyclesBeforeLongBreak = Math.min(Math.max(settings.cyclesBeforeLongBreak, 1), 10);
+                
+                // Update inputs with validated values
+                workDurationInput.value = settings.workDuration;
+                shortBreakDurationInput.value = settings.shortBreakDuration;
+                longBreakDurationInput.value = settings.longBreakDuration;
+                cyclesBeforeLongBreakInput.value = settings.cyclesBeforeLongBreak;
+                
+                // Save to localStorage
+                saveSettingsToStorage();
+                
+                // Reset timer with new settings
+                resetTimer();
+            }
+            
+            // Settings event listeners
+            settingsIcon.addEventListener('click', () => {
+                settingsPanel.classList.add('active');
             });
+            
+            closeSettings.addEventListener('click', () => {
+                settingsPanel.classList.remove('active');
+            });
+            
+            saveSettings.addEventListener('click', () => {
+                updateSettings();
+                settingsPanel.classList.remove('active');
+            });
+            
+            // Set timer mode (pomodoro, short break, long break)
+            function setMode(mode) {
+                // Reset active class on mode buttons
+                pomodoroBtn.classList.remove('active');
+                shortBreakBtn.classList.remove('active');
+                longBreakBtn.classList.remove('active');
+                
+                currentMode = mode;
+                
+                switch (mode) {
+                    case 'pomodoro':
+                        pomodoroBtn.classList.add('active');
+                        minutes = settings.workDuration;
+                        break;
+                    case 'shortBreak':
+                        shortBreakBtn.classList.add('active');
+                        minutes = settings.shortBreakDuration;
+                        break;
+                    case 'longBreak':
+                        longBreakBtn.classList.add('active');
+                        minutes = settings.longBreakDuration;
+                        break;
+                }
+                
+                seconds = 0;
+                updateTimerDisplay();
+            }
             
             // Timer functions
             function startTimer() {
@@ -215,13 +426,7 @@
             
             function resetTimer() {
                 pauseTimer();
-                
-                // Get current mode's time
-                const activeBtn = document.querySelector('.mode-btn.active');
-                minutes = parseInt(activeBtn.dataset.time);
-                seconds = 0;
-                
-                updateTimerDisplay();
+                setMode(currentMode);
             }
             
             function updateTimer() {
@@ -257,26 +462,20 @@
                     console.log('Sound play requires user interaction first');
                 }
                 
-                // Get current mode
-                const activeBtn = document.querySelector('.mode-btn.active');
-                const currentMode = activeBtn.textContent.trim().toLowerCase();
-                
-                // Update cycle count if pomodoro completed
+                // Handle cycle completion
                 if (currentMode === 'pomodoro') {
                     cycleCount++;
                     cycleCountDisplay.textContent = cycleCount;
                     
-                    // Auto switch to appropriate break
-                    if (cycleCount % 4 === 0) {
-                        // Long break after 4 pomodoros
-                        document.querySelector('[data-time="15"]').click();
+                    // Check if it's time for a long break
+                    if (cycleCount % settings.cyclesBeforeLongBreak === 0) {
+                        setMode('longBreak');
                     } else {
-                        // Short break otherwise
-                        document.querySelector('[data-time="5"]').click();
+                        setMode('shortBreak');
                     }
                 } else {
-                    // If break is done, switch back to pomodoro
-                    document.querySelector('[data-time="25"]').click();
+                    // After any break, go back to pomodoro
+                    setMode('pomodoro');
                 }
                 
                 // Optional: show notification if browser supports it
@@ -287,10 +486,37 @@
                 }
             }
             
+            // Mode button event listeners
+            pomodoroBtn.addEventListener('click', () => {
+                if (!isRunning) {
+                    setMode('pomodoro');
+                }
+            });
+            
+            shortBreakBtn.addEventListener('click', () => {
+                if (!isRunning) {
+                    setMode('shortBreak');
+                }
+            });
+            
+            longBreakBtn.addEventListener('click', () => {
+                if (!isRunning) {
+                    setMode('longBreak');
+                }
+            });
+            
+            // Timer control event listeners
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            
             // Request notification permission
             if ('Notification' in window && Notification.permission !== 'denied') {
                 Notification.requestPermission();
             }
+            
+            // Initialize the app
+            loadSettings();
         });
     </script>
 </body>
