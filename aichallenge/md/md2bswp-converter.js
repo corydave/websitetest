@@ -70,7 +70,7 @@ const tagsTop = `<!DOCTYPE html>
    
 
 const tagsTopClosing =`
-   <title>Page<//title>
+   
 </head>
 <body>
 <div class="container-fluid">\n`;
