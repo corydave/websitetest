@@ -674,7 +674,92 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
                 }
             ]
         };
-        
+
+        const fortuneTellerProgram = {
+            steps: [
+                {
+                    // Welcome message
+                    prompt: undefined,
+                    process: () => ({
+                        output: "=======================================\nWelcome to the Fortune Telling Machine!\n=======================================\n\n",
+                        nextStep: 1,
+                        state: {
+                            fortunes: []
+                        }
+                    })
+                },
+                {
+                    // Instruction to enter fortunes
+                    prompt: undefined,
+                    process: (input, state) => ({
+                        output: "Enter some fortunes. Type \"DONE\" when you are through.",
+                        nextStep: 2,
+                        state: state
+                    })
+                },
+                {
+                    // Collect fortunes
+                    prompt: "Enter a fortune: ",
+                    process: (input, state) => {
+                        if (input === "DONE") {
+                            // If user is done entering fortunes, move to dispensing
+                            return {
+                                output: "",
+                                state: state,
+                                nextStep: 3
+                            };
+                        }
+                        
+                        // Add the fortune to our list
+                        const updatedFortunes = [...state.fortunes, input];
+                        
+                        return {
+                            output: "",
+                            state: { ...state, fortunes: updatedFortunes },
+                            nextStep: 2  // Stay on the same step to collect more fortunes
+                        };
+                    }
+                },
+                {
+                    // Display random fortune
+                    prompt: undefined,
+                    process: (input, state) => {
+                        // Pick a random fortune
+                        const randomIndex = Math.floor(Math.random() * state.fortunes.length);
+                        const fortune = state.fortunes[randomIndex];
+                        
+                        return {
+                            output: `\n${fortune}`,
+                            nextStep: 4,
+                            state: state
+                        };
+                    }
+                },
+                {
+                    // Ask if user wants another fortune
+                    prompt: "\nAnother fortune (y/n)? ",
+                    process: (input, state) => {
+                        if (input.toLowerCase() === "n") {
+                            // If no more fortunes, show closing message
+                            return {
+                                output: "\n\nThank you for using the Fortune Telling Machine!\nSmash that LIKE and Subscribe button and tell your friends!\n",
+                                state: {
+                                    fortunes: []  // Reset state
+                                },
+                                nextStep: 0  // Back to start
+                            };
+                        }
+                        
+                        // Otherwise display another fortune
+                        return {
+                            output: "",
+                            state: state,
+                            nextStep: 3  // Go back to display fortune
+                        };
+                    }
+                }
+            ]
+        };        
 
         const portKnockingProgram = {
             steps: [
@@ -812,7 +897,8 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             firewall: firewallProgram,
             phishing: phishingAnalyzerProgram,
             passwordcheck: passwordCheckerProgram,
-            portknock: portKnockingProgram
+            portknock: portKnockingProgram,
+            fortune:fortuneTellerProgram
             // Add more programs here
         };
         
