@@ -1,0 +1,265 @@
+body {
+    font-family: "Lato", sans-serif;
+    font-size: 10pt;
+  }
+  
+
+  .sidebar-container {
+    height:90%;
+    overflow-y:auto;
+  }
+  
+  li .no-space-between {
+    margin-bottom: 0rem !important;
+    padding: 0px !important;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+     
+  .sidenav {
+    height: 100%;
+    width: 0px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #3c5a98;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 10px;
+  }
+
+  .sidenav code {
+    /* background-color: #fff; */
+    font-size: 1.1em;
+  }
+
+  .sidenav h2 {
+    color: #ffffff;
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    text-decoration: none !important;
+    border-bottom:0px solid black;
+  }
+  
+  .closebtn {
+    text-decoration: none !important;
+  }
+  
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+      
+      
+      
+      
+  .accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .level-2 {
+    margin-left: 20px;
+    margin-bottom: 7px;
+    padding: 15px 0px 15px 7px;
+    background-color: white;
+    color: #444;
+    cursor: pointer;
+    /* padding: 18px; */
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 1.5em;
+    /*font-weight: bold;*/
+    font-size: 15px;
+    /* border-top: 1px solid lightgray; */
+  }
+  
+  .active, .accordion:hover {
+    background-color: #ccc; 
+  }
+  
+  .level-2:hover {
+    /* background-color: green; */
+  }
+  
+  .level-2-active {
+    /* background-color: blue; */
+  }
+  
+  .panel {
+    padding-top: 0px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+  }
+  
+  .level-2-panel {
+    padding-top: 0px;
+    padding-left: 30px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+  }
+  
+  .panel-2-text {
+    line-height: 20pt;
+  }
+      
+      
+  .topic-title {
+      font-weight: bold;
+      font-size: 1.5em;
+      }
+      
+  .md-text {
+      text-align: left;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      border: opx solid black;
+      border-radius: 5px;
+  /*    padding: 6px;    */
+      font-size: 8pt;
+      font-family: courier, courier new, monospace;
+      overflow-x: auto;
+      background-color: #f1f1f1;
+      white-space: nowrap;
+      margin-bottom: 20px;
+      height: 100px;
+      overflow-y: auto; /* Show vertical scrollbar */
+      padding-top: 6px;
+      padding-bottom: 20px;
+      padding-left: 10px;
+      }
+      
+  .button {
+      margin-left: auto;
+      margin-right: auto;
+      width: 150px;
+      padding: 6px 20px;
+      font-weight: bold;
+      border-radius: 7px;
+      border: 0px;
+      margin-bottom: 20px;
+      }
+    
+      .copy {
+        background-color: #3c5a98;
+      color: #ffffff;
+      }
+       
+      .video {
+        background-color: red;
+      color: #ffffff;
+      }    
+  .button-container {
+      width: 100%;
+      text-align: left;
+      }
+  
+  .regular-link {
+        font-family: "Lato", sans-serif;
+    font-size: 10pt !important;
+      
+    padding: 0px !important;
+    text-decoration: none;
+    
+    color: #3c5a98 !important;
+    display: inline !important;
+    transition: 0s !important;    
+      }    
+  
+      .sample-code {
+        border: 0px solid black;
+        padding: 6px;
+        background-color: #efefef;
+        border-radius: 7px;
+        width: 90%;
+        font-family: 'Courier New', Courier, monospace;
+        margin-bottom: 10px;
+      }
+  
+      .desc-code {
+        color: #3c5a98;
+        font-weight: bold;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.5em;
+      }
+  
+      .code-plain {
+        font-family: 'Courier New', Courier, monospace;
+      }
+  
+      .sidebar-title {
+        color: white;
+        text-align:center;
+        text-transform: uppercase;
+      }
+      
+      .mdJumbo {
+        background-color: #1390ff;
+        color: #ffffff;
+        font-size: 18pt;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        padding-top: 12px;
+        padding-bottom:12px;
+        border-radius: 5px;
+      }
+      
+      /* https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp */
+      
+      
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+      

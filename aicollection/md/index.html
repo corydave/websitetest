@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+   <!-- Required meta tags -->
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+   <!-- Bootstrap CSS -->
+   <!--<link rel="stylesheet" href="https://cdn.usebootstrap.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
+   <link rel="stylesheet" href="bootstrap.min.css">
+   <!-- Font Awesome CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.9.0/css/all.min.css">
+   <!-- prism.min.css for code linting -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+   <!-- Template CSS -->
+   <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="custom.css">
+   
+   
+   
+   
+    <link rel="stylesheet" href="manualStyle.css">
+    
+    
+    
+    
+    
+   
+   <!-- faviocon -->
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+   <title>MD to Brightspace</title>
+
+   <style>  
+      .page-content {
+         margin: 0 auto;
+         max-width: 1792px;
+      }
+      /*
+      p {
+         background-color: var(--light);
+      }
+      
+      a {
+         background-color: white;
+         color: lightskyblue;
+         padding: 0 .2em 0 .2em;
+         border-radius: 2px;
+         border-color: lightskyblue;
+         border-width: 0 0 2px 0;
+      }
+
+      a:hover {
+         color: lightblue;
+         border-color: lightblue;
+         border-width: 0 0 2px 0;
+      }
+      */
+   </style>
+</head>
+
+<body style="margin-left:20px; margin-right: 20px;">
+
+
+
+
+
+
+<div id="mySidenav" class="sidenav">
+
+
+
+<div class="sidebar-title">
+<h2>Quick Guide</h2>
+</div>
+
+
+
+<div class="sidebar-container"><!-- START CONTAINER -->
+
+
+
+
+<button class="accordion">Basics</button>
+<div class="panel">
+<button class="level-2">Bold <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>To make text bold, use <span class="desc-code">**</span> before and after the word(s):</p>
+<div class="sample-code">This is **a great** example!</div>
+This is <strong>a great</strong> example!
+<br />
+</div>
+
+<button class="level-2">Italics <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>To make text italic, use <code>*</code> or <code>_</code> before and after the word(s):</p>
+<div class="sample-code">*This* is _awesome_!</div>
+<em>This</em> is <em>awesome</em>!
+<br />
+</div>
+
+<button class="level-2">Monospace <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>To make text monospace (like a typewriter), use the <em>backtick</em> which is the </em><code>`</code> symbol. It is usually to the left of the <span class="code-plain">1</span> key.</p>
+<div class="sample-code">The variable `age` holds an integer.</div>
+The variable <span class="code-plain">age</span> holds an integer.
+<br />
+</div>
+
+<button class="level-2">Links <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>Put the text you want in square brackets <code>[text]</code>followed <em>directly</em> by the link in parentheses <code>(link)</code>:</p>
+<div class="sample-code">Just [click here](https://www.example.com) to see the agenda.</div>
+Just <a href="https://www.example.com" target="_blank" class="regular-link">click here</a> to see the agenda.
+<br />
+</div>
+
+<button class="level-2">Headings <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>Use <code># </code> before your text for a heading (the number of <code>#</code>s correspond to the heading level - <code>##</code> means "heading 2", <code>###</code> means "heading 3", all the way up to "heading 6":</p>
+<div class="sample-code"># Description</div>
+<h1>Description</h1>
+<br />
+<div class="sample-code">## Second Description</div>
+<h2>Description</h2>
+</div>
+<br />
+
+<button class="level-2">Jumbotron! <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p>To really make text standout, use <code>^^</code> before some words:</p>
+<div class="sample-code">^^ Chapter 1 - Introduction</div>
+
+<div class="mdJumbo">Chapter 1 - Introduction</div>
+
+
+<br />
+</div>    
+
+
+</div>
+
+<button class="accordion">Columns & Lists</button>
+<div class="panel">
+<button class="level-2">Two Columns <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">We use <code>^= =</code> to start two columns, then <code>^===</code> to separate the text of the columns, then <code>^=</code> to signify the end of the columns:</p>
+<div class="md-text">
+<pre id="columns-md">^= =
+
+This is the left column. 
+
+^===
+
+This is the right column.
+
+^=</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('columns-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+
+<button class="level-2">Formatting Columns <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">We use between 0 and four commas [<code>,</code> through <code>,,,,</code>] to indicate formatting for each column. Try experimenting with them to see the different formatting available!</p>
+<div class="md-text">
+<pre id="formatting-columns-md">^= = ,
+
+This is the left column. 
+
+^=== ,,,
+
+This is the right column.
+
+^=</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('formatting-columns-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+<button class="level-2">Multiple Columns <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You have up to 12 columns you can use. So if you wanted three evenly sized columns, each one would have a width of 4. But you could also have one that is 8 and two that are 2 columns wide. This following example shows three columns of width 4. Note that there each is formatted differently using the <code>,</code>:</p>
+<div class="md-text">
+<pre id="multiple-columns-md">^= = , 4
+
+This is the left column. 
+
+^=== ,,, 4
+
+This is the middle column.
+
+^=== ,,,, 4
+
+This is the right column.
+
+^=</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('multiple-columns-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+
+<button class="level-2">Standalone Box <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can use <code>^=^</code> to start a standalone box and <code>^=</code> to indicate the end of a standalone box. It can be decorated with commas (up to 4) as well as one number (up to 12) that indicates how many of the 12 columns the box will span.</p>
+<div class="md-text">
+<pre id="standalone-box-md">^=^ ,, 8
+
+Contents of a standalone box.
+
+^=</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('standalone-box-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+
+
+
+<button class="level-2">Bulleted List <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Just use <code>*</code> to indicate a bulleted list item! You can have multiple lines of bulleted items. If you'd like to have indented sub-lists, use two spaces:</p>
+<div class="md-text">
+<pre id="bulleted-list-md">* item one
+* item two
+* item three
+* item three a
+* item three b
+* another indent
+* item four</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('bulleted-list-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+
+<button class="level-2">Numbered List <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Start the list off with <code>1.</code> and sequentially number each item. To have a sub-list, use two spaces to indent.</p>
+<div class="md-text">
+<pre id="numbered-list-md">1. Stuff
+2. More stuff
+1. sub stuff
+2. more sub stuff
+3. More stuff
+5. The end of the list</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('numbered-list-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>  
+
+
+
+
+
+
+
+
+</div>
+
+<button class="accordion">Callouts</button>
+<div class="panel">
+<button class="level-2">Callouts <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Every callout needs a beginning <code>^callout</code> and an ending <code>^callout-end</code>. Note that you can, at the beginning of a callout, use some special icons, too!</p>
+<div class="md-text">
+<pre id="callouts-md">^callout
+
+some text.
+
+some more text.
+
+^callout-end</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('callouts-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+<button class="level-2">Callout Icons <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">When you start a callout try adding an icon code! This example will create an icon for "download" <code>^callout download</code>. You can experiment with other ones, too.</p>
+<ul>
+<li class="no-space-between" style="padding: 0px;"><pre>question-circle</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>info-circle</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>b-google-drive</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>book</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>comment</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>backward</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>comments</pre></li>
+<li class="no-space-between" style="padding: 0px;"><pre>external-link-alt</pre></li>
+</ul>
+
+<p>You can check out <a href="https://fontawesome.com/v5/search?m=free" target="_blank" class="regular-link">this link</a> for a complete listing.</p>
+
+<div class="md-text">
+<pre id="callouts-icons-md">^callout download
+
+some text.
+
+some more text.
+
+^callout-end</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('callouts-icons-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+</div>    
+
+
+
+
+
+
+
+
+
+<button class="accordion">Accordions & Tabs</button>
+<div class="panel">
+<button class="level-2">Accordions <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">To make an accordion, you need to specify the start (<code>^acc</code>) and end (<code>^acc-end</code>) of the accordion block as well as each heading (<code>^^^ text</code>). Note that in the markdown editor every section will be expanded, but once you paste into Brightspace everything will behave as expected:</p>
+<div class="md-text">
+<pre id="accordion-md">^acc
+
+^^^ First item
+
+any text you want.
+
+^^^ Second item
+
+any text you want.
+
+^^^ Another item
+
+any text you want.
+
+^acc-end</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('accordion-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+
+<button class="level-2">Tabs <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">To make tabs, you'll start with <code>^tabs</code> followed by each tab title separated by a comma. Then, go right into the first tab content. Use <code>^tab</code> to indicate the next tab contents.</p>
+<div class="md-text">
+<pre id="tabs-md">^tabs AAA, BBB, CCC
+
+text to go with AAA
+
+^tab
+
+text to go with BBB
+
+^tab
+
+text to go with CCC
+
+^tabs-end
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('tabs-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<!-- 
+<button class="accordion">TITLE</button>
+<div class="panel">
+
+<button class="level-2">SUBTITLE 1 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+<pre id="REPLACE-md">^acc
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">SUBTITLE 2 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+<pre id="REPLACE-md">^acc
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+</div>
+-->
+
+
+
+
+
+
+<button class="accordion">Media</button>
+<div class="panel">
+
+<!-- keyboard keys, code blocks, images -->
+
+<button class="level-2">YouTube <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Use <code>^youtube</code> followed by the <em>embed code</em> provided by YouTube in the video you want to embed (from the <strong>share</strong> menu)</p>
+<div class="md-text">
+<pre id="youtube-md">^youtube &lt;iframe width="560" height="315" src="https://www.youtube.com/embed/ETBZwtH3fbU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen&gt;</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('youtube-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">Icons <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can use sweet icons in your design by using <code>*^icon users*</code> (besides <em>users</em> there are tons of other icons you can use, too. Check out <a href="https://fontawesome.com/v5/search?m=free" target="_blank" class="regular-link">FontAwesome</a> for all sorts of cool icons. Note that some icons (mostly businesses) might require a <code>b-</code> to be inserted before the icon name. See the example below.</p>
+<div class="md-text">
+<pre id="icons-md">*^icon users*
+
+*^icon upload*
+
+*^icon universal-access*
+
+*^icon university*
+
+*^icon calendar*
+
+*^icon book-open*
+
+*^icon book*
+
+*^icon b-google-drive*
+
+*^icon b-microsoft*
+
+*^icon b-apple*
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('icons-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+<button class="level-2">Keyboard Keys <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Similar to icons, you should use <code>*^key ctrl*</code> to indicate a key (you can replace <em>ctrl</em> with any text).</p>
+<div class="md-text">
+<pre id="keys-md">*^key enter*
+
+*^key ctrl*
+
+*^key ctrl*-*^key c*
+
+*^key ctrl*-*^key v*
+
+*^key esc*
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('keys-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">Images from URL <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can use <code>![alt description](URL of image)</code> to include an image. You can also use <code>^+</code> to indicate the image should be to the right, <code>^-</code> to indicate the image should be to the left, and <code>^o</code> to round the image.<br /><br />You can also combine them, so <code>^-o</code> would put the image to the left and also provide rounded corners and <code>^+o</code> would force the image to the right and round the corners.<br /><br />There are examples of each in the sample below.</p>
+<div class="md-text">
+<pre id="image-from-url-md">![Image of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.
+
+![^-Image of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.
+
+![^+Image of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.
+
+![^oImage of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.
+
+![^-oImage of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.
+
+![^+oImage of a doggo](https://loremflickr.com/200/200/dog)Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sit amet lectus magna. Aenean ut diam ullamcorper, viverra orci ac, commodo diam. Curabitur fringilla facilisis nunc a sollicitudin. Quisque sit amet metus hendrerit, lacinia tortor in, vehicula felis. Integer sollicitudin consectetur mattis. Maecenas a blandit nunc, rhoncus bibendum quam. Praesent in enim id magna vehicula lacinia tempor vel orci. Mauris non dui nunc. Donec nec semper ligula, sed placerat nulla. In venenatis, tellus quis hendrerit iaculis, nisl turpis tempor felis, quis sollicitudin justo massa a justo. Praesent rutrum libero vel vulputate ultricies. Duis sit amet aliquam dui, tempus maximus risus. Nullam ullamcorper dictum massa, quis sollicitudin velit. Sed tempor tincidunt turpis, vel porttitor risus mattis vel.</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('image-from-url-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+<button class="level-2">Images from Google Drive <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">As long as you have an image in your Google Drive shared such that "Anyone with the link can view", you can replace the document ID in the example below with the document ID of your own image. You can also use <code>google-thumb</code> instead of <code>google</code> to see a thumbnail. Just like images from a URL, you can use the <code>^+</code>, <code>^-</code>, and <code>^o</code> to format the image.</p>
+<div class="md-text">
+<pre id="REPLACE-md">![FLCC Logo](google:https://drive.google.com/file/d/1b_U8YYO500-voU8MGsseRyDMg_mzskDt/view?usp=share_link)
+
+![^-FLCC Logo](google-thumb:https://docs.google.com/drawings/d/1b_U8YYO500-voU8MGsseRyDMg_mzskDt/edit?usp=sharing)
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<!-- 
+
+
+ADVANCED
+
+
+![^+bw50^Thumbnail image of a google doc](https://lh3.googleusercontent.com/d/1WGuOg-wCIJZJLNDVd6MUjN9IeBySSywt3mvEop7fqq0=w320)]
+
+
+In ^+bw50^ , + means align-right, b means use a border, w50 means make the width 50% (if it isn't already)       
+
+
+-->            
+
+
+<!-- <button class="level-2">SUBTITLE 2 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+<pre id="REPLACE-md">^acc
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+<button class="level-2">SUBTITLE 1 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+<pre id="REPLACE-md">^acc
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">SUBTITLE 2 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+<pre id="REPLACE-md">^acc
+</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+<button class="level-2">SUBTITLE 1 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+   <pre id="REPLACE-md">^acc
+   </pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">SUBTITLE 2 <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Instructions</p>
+<div class="md-text">
+   <pre id="REPLACE-md">^acc
+   </pre>
+</div>
+<div class="button-container">
+   <button class="button copy" onclick="mdCopy('REPLACE-md')">Copy</button>
+   <button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>                       -->
+
+
+
+</div>    
+
+
+
+
+
+
+
+
+
+<button class="accordion">Tables</button>
+<div class="panel">
+
+<button class="level-2">Table <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">Use the template below. Note that they hyphens and colons signify the alignment. If the colon is on the left side only, the text will be left aligned. Right side only, right aligned. Both the left and the right, centered! The number of hypens doesn't really matter but they do help to visualize the table structure.</p>
+<div class="md-text">
+<pre id="table-md">|Class |Return   |Status  |
+|:----:|--------:|:-------|
+| A    |    $5.00| final  |
+| C    | $1012.00| ongoing|
+
+
+|Name     |Grade    |Overall GPA |Year 
+|:-------:|--------:|:-----------|:---
+| Bart    | 36%     | 1.2        | 4
+| Lisa    | 100%    | 4.4.       | 3
+| Maggie  | N/A.    | N/A.       | K</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('table-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<button class="level-2">Table with Caption <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">The instructions are the same as a regular table <em>except</em> you add the caption <em>directly at the end of the table</em> - in fact, there isn't even the final <code>|</code> in the table; instead use <code>^cap class return comparison^</code>.</p>
+<div class="md-text">
+<pre id="table-caption-md">|Class |Return   |Status  |
+|:----:|--------:|:-------|
+| A    |    $5.00| final  |
+| C    | $1012.00| ongoing ^cap class return comparison^</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('table-caption-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>    
+
+</div>
+
+
+
+
+
+
+
+
+
+<button class="accordion">Special Decorators</button>
+<div class="panel">
+
+<button class="level-2">Colors <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can make your own color scheme! You need to know the hex codes for three things - the main theme color, the text color, and the color of hyperlinks.</p>
+<div class="md-text">
+<pre id="color-md">^colors bg:#1e90ff text:#eeeeee link:#ccccff</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('color-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+
+
+
+<button class="level-2">Line Breaks <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can use the HTML code for line break <code>&lt;br /&gt;</code></p>
+<div class="md-text">
+<pre id="br-md"> &lt;br /></pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('br-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+
+<button class="level-2">Horizontal Line <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You can use three dashes to insert a horizontal rule <code>---</code></p>
+<div class="md-text">
+<pre id="hr-md">some words
+---
+even more words</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('hr-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+<!-- <p>br | hr / --- | div clear both? | nbsp |  color ---</p> -->
+
+<button class="level-2">Colored Text <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">You'll need to use HTML to change the color of specific words. You can use "SPAN" property: <code>&lt;span style="color: red;"&gt;Whatever text&lt;/span&gt;</code>. You can either use the color name or the hex code - but be sure to include the <strong>#</strong> in front of the number (<code>#1e90ff</code>, for instance)</p>
+<div class="md-text">
+<pre id="colored-text-md">Some text &lt;span style="color: red;"&gt;Whatever text&lt;/span&gt; some more text
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('colored-text-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+
+<button class="level-2">Extra spaces on a line <i class="fa fa-chevron-down"></i></button>
+<div class="panel level-2-panel">
+<p class="panel-2-text">If you'd like to have multiple spaces in your text, you can't just add more spaces with the space bar. Instead, use the HTML code for a "non-breaking space". <code>&amp;nbsp;</code></p>
+<div class="md-text">
+<pre id="nbsp-md"> some words &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; some more words</pre>
+</div>
+<div class="button-container">
+<button class="button copy" onclick="mdCopy('nbsp-md')">Copy</button>
+<button class="button video" onclick="goto('ABCD')">Watch Video</button>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+</div> <!-- END CONTAINER -->
+
+
+
+
+
+
+
+</div>
+
+
+
+
+<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+</div>
+      
+      
+      
+      
+      
+      <!-- <span style="font-size:30px;cursor:pointer" onclick="openNav()"><i class="fas fa-question-circle"></i> Help</span> -->
+      
+          <br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+<div class="container-fluid page-content">
+   <div class="row">
+      <div class="col-sm-12">
+          
+          
+          
+          
+          <span style="float:left;border: 3px solid #3C5A98;border-radius: 15px; padding:3px;text-align:center; background-color: #3C5A90; color: white;padding-left: 6px;"><span style="font-size:20px;cursor:pointer" onclick="openNav()"><i class="fas fa-question-circle"></i> Quick Guide&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+          
+          
+          
+          
+         <h3>Markdown to Brightspace</h3>
+         <div style="font-size:8pt;width:100%;text-align:center;">v2023.11.07</div>
+         <div class="form-outline w-100">
+         Convert custom Markdown to 
+         <select id="select-result" name="select-result">
+            <option value="file">Brightspace <b>Web</b> Page File</option>
+            <option value="description">Brightspace <b>Description</b></option>
+            <option value="standalone">Standalone HTML</option>
+         </select>
+          using 
+          <select id="select-color-theme" name="select-color-theme">
+            <option value="None">None</option>
+         </select>
+         color theme
+         </div>
+         <div class="form-outline w-100">
+            <input type="file" name="btn-input-file" id="btn-input-file">
+         </div>
+         <div class="form-outline w-100">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearOriginal();">CLEAR</button>
+            <button type="button" class="btn btn-outline-warning btn-sm" onclick="restore();">Restore</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="copyMd();">Copy md</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="copyHtml();">Copy html</button>
+            | Headings 
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-toggle-headings"><i class="fas fa-align-center"></i></button>
+            | Example markdown:
+            <select id="select-example" name="select-example">
+               <option value="None">None</option>
+            </select>
+            | 
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-copy-meta">Copy Meta:</button>
+            <select id="select-meta-copy" name="select-meta-copy">
+               <option value="None">None</option>
+            </select>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="two-col-panels">
+            <div class="row">
+               <div class="col-sm-4 bg-light">
+                     <div class="form-outline mb-4 mx-3 w-98">
+                        <label class="form-label" for="originalText">original markdown</label>
+                        <textarea 
+                           class="form-control" 
+                           id="originalText" 
+                           rows="60" 
+                           style="font-family:'Courier New', Courier, monospace"></textarea>
+                      </div>
+               </div>
+               <div class="col-lg-8" id="previewArea" contenteditable="true">  
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <!-- <h4>HTML to copy and paste</h4> -->
+         <div class="form-outline mb-4 w-100">
+            <label class="form-label" for="htmlResultText">HTML to copy and paste</label>
+            <textArea class="form-control" id="htmlResultText" cols="180" rows="30"></textArea>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- scripts needed for Brightspace -->
+<script src="js/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.5/umd/popper.min.js"></script>
+<!--<script src="https://cdn.usebootstrap.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
+<script src="bootstrap.min.js"></script>
+
+<!-- Template JavaScript 
+<script src="/shared/Course File templates/Standard/pages/../_assets/js/scripts.min.js"></script>
+-->
+
+<!-- scripts for converter -->
+<script src="js/prism.js"></script>
+<script src="js/highlight.min.js"></script>
+<script src="js/marked.min.js"></script>
+<!-- <script src="js/purify.min.js"></script> -->
+<script src="js/md2bswp-converter.js"></script>
+
+
+
+
+
+<script src="manual/manualJS.js"></script>
+
+<script>
+    document.getElementById('originalText').focus();
+</script>
+
+
+
+</body></html>
