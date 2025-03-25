@@ -60,14 +60,14 @@ const tagsTop = `<!DOCTYPE html>
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
    <!-- Bootstrap CSS -->
-   <link rel="stylesheet" href="/shared/Course File templates/Standard/pages/../_assets/thirdpartylib/bootstrap-4.3.1/css/bootstrap.min.css">
+   <link rel="stylesheet" href="bootstrap.min.css">
    <!-- Font Awesome CSS -->
-   <link rel="stylesheet" href="/shared/Course File templates/Standard/pages/../_assets/thirdpartylib/fontawesome-free-5.9.0-web/css/all.min.css">
+   <link rel="stylesheet" href="all.min.css">
    <!-- prism.min.css for code linting -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
    <!-- Template CSS -->
-   <link rel="stylesheet" href="/shared/Course File templates/Standard/pages/../_assets/css/styles.min.css">
-   <link rel="stylesheet" href="/shared/Course File templates/Standard/pages/../_assets/css/custom.css">`;
+   <link rel="stylesheet" href="styles.min.css">
+   
 
 const tagsTopClosing =`
    <title>Page</title>
@@ -76,11 +76,11 @@ const tagsTopClosing =`
 <div class="container-fluid">\n`;
 
 const tagsBottom = `</div>
-<script src="/shared/Course File templates/Standard/pages/../_assets/thirdpartylib/jquery/jquery-3.3.1.slim.min.js"></script>
-<script src="/shared/Course File templates/Standard/pages/../_assets/thirdpartylib/popper-js/popper.min.js"></script>
-<script src="/shared/Course File templates/Standard/pages/../_assets/thirdpartylib/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
 <!-- Template JavaScript -->
-<script src="/shared/Course File templates/Standard/pages/../_assets/js/scripts.min.js"></script>
+<script src="scripts.min.js"></script>
 </body></html>\n`;
 
 const tagsTopStandalone = `<!DOCTYPE html>
@@ -96,13 +96,13 @@ const tagsTopStandalone = `<!DOCTYPE html>
    <!-- prism.min.css for code linting -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
    <!-- Template CSS -->
-   <link rel="stylesheet" href="css/styles.css">
-   <link rel="stylesheet" href="css/custom.css">
+   <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="custom.css">
    
-   <link rel="icon" type="image/x-icon" href="images/favicon.ico">`;
+   <link rel="icon" type="image/x-icon" href="favicon.ico">`;
 
    const tagsBottomStandalone = `</div>
-   <script src="js/jquery.slim.min.js"></script>
+   <script src="jquery.slim.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.5/umd/popper.min.js"></script>
    <script src="https://cdn.usebootstrap.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
    </body></html>\n`;
