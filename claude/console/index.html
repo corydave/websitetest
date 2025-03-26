@@ -761,6 +761,177 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             ]
         };        
 
+
+        const passwordAnalyzerProgram = {
+            steps: [
+                {
+                    prompt: "Enter your password: ",
+                    process: (input, state) => {
+                        const password = input;
+                        const length = password.length;
+                        
+                        // Initialize counts
+                        let uppercaseCount = 0;
+                        let lowercaseCount = 0;
+                        let numberCount = 0;
+                        let specialCount = 0;
+                        
+                        // Count character types
+                        for (let i = 0; i < password.length; i++) {
+                            const char = password[i];
+                            if (/[A-Z]/.test(char)) {
+                                uppercaseCount++;
+                            } else if (/[a-z]/.test(char)) {
+                                lowercaseCount++;
+                            } else if (/[0-9]/.test(char)) {
+                                numberCount++;
+                            } else {  // special character
+                                specialCount++;
+                            }
+                        }
+                        
+                        // Initialize score variables
+                        let lengthScore = 0;
+                        let uppercaseScore = 0;
+                        let lowercaseScore = 0;
+                        let numberScore = 0;
+                        let specialScore = 0;
+                        
+                        // Length scoring
+                        if (length < 8) {
+                            lengthScore = 0;
+                        } else if (length >= 8 && length <= 15) {
+                            lengthScore = 5;
+                        } else {  // more than 15
+                            lengthScore = 8;
+                        }
+                        
+                        // Scoring helper function
+                        const scoreCategory = (count) => {
+                            if (count === 0) {
+                                return 0;
+                            } else if (count === 1) {
+                                return 2;
+                            } else if (count === 2) {
+                                return 4;
+                            } else {
+                                return 8;
+                            }
+                        };
+                        
+                        // Apply scoring rules
+                        uppercaseScore = scoreCategory(uppercaseCount);
+                        lowercaseScore = scoreCategory(lowercaseCount);
+                        numberScore = scoreCategory(numberCount);
+                        specialScore = scoreCategory(specialCount);
+                        
+                        // Calculate total score and percentage
+                        const totalScore = lengthScore + uppercaseScore + lowercaseScore + numberScore + specialScore;
+                        const maxScore = 40;
+                        const percentage = (totalScore / maxScore) * 100;
+                        
+                        // Create the output message
+                        const output = `\nPassword Analysis Report\n-------------------------\nLENGTH: ${lengthScore} points (${length} characters)\nUPPERCASE: ${uppercaseScore} points (${uppercaseCount} uppercase letter(s))\nLOWERCASE: ${lowercaseScore} points (${lowercaseCount} lowercase letter(s))\nNUMBERS: ${numberScore} points (${numberCount} number(s))\nSPECIAL CHARACTERS: ${specialScore} points (${specialCount} special character(s))\n\nTotal Score: ${totalScore / maxScore}\nStrength Percentage: ${percentage.toFixed(1)}%`;
+                        
+                        return {
+                            output,
+                            state: { password, totalScore, percentage },
+                            // nextStep: 0  // Loop back to start
+                        };
+                    }
+                }
+            ]
+        };
+
+
+        const mfaCodes = {
+            steps: [
+                {
+                    prompt: "ENTER SEED FOR SIMULATION: ",
+                    process: (input, state) => {
+                        const seed = parseInt(input);
+                        
+                        // Using a simple random number generator with seed
+                        // since JavaScript's Math.random() can't be seeded
+                        const seededRandom = (min, max) => {
+                            // Simple LCG random number generator with the seed
+                            let x = seed;
+                            return () => {
+                                x = (x * 16807) % 2147483647;
+                                return min + (x % (max - min + 1));
+                            };
+                        };
+                        
+                        const randomInt = seededRandom(100000, 999999);
+                        
+                        // Generate 10 codes
+                        const codes = [];
+                        for (let i = 0; i < 10; i++) {
+                            codes.push(randomInt());
+                        }
+                        
+                        return {
+                            output: "\n===============================\n  SIMULATING CODE GENERATION   \n===============================\n",
+                            state: { codes, seed },
+                            nextStep: 1
+                        };
+                    }
+                },
+                {
+                    // Display generated codes
+                    prompt: undefined,
+                    process: (input, state) => {
+                        let output = "";
+                        for (const code of state.codes) {
+                            output += `Backup code: ${code}\n`;
+                        }
+                        
+                        output += "\n===============================\n     SIMULATING CODE USE       \n===============================\n\nYou have ${state.codes.length} codes remaining.";
+                        
+                        return {
+                            output,
+                            state: state,
+                            nextStep: 2
+                        };
+                    }
+                },
+                {
+                    // Verify a code
+                    prompt: "Enter a valid code: ",
+                    process: (input, state) => {
+                        const enteredCode = parseInt(input);
+                        const codes = [...state.codes]; // Make a copy of the codes
+                        
+                        if (codes.includes(enteredCode)) {
+                            // Remove the used code
+                            const index = codes.indexOf(enteredCode);
+                            codes.splice(index, 1);
+                            
+                            let output = "\nAccess Granted\n\nYou have " + codes.length + " codes remaining.\n\n";
+                            
+                            // List remaining codes
+                            for (const code of codes) {
+                                output += `Backup code: ${code}\n`;
+                            }
+                            
+                            return {
+                                output,
+                                state: { codes, seed: state.seed },
+                                // nextStep: 0 // Loop back to start
+                            };
+                        } else {
+                            return {
+                                output: "\nAccess Denied",
+                                state: { seed: state.seed },
+                                // nextStep: 0 // Loop back to start
+                            };
+                        }
+                    }
+                }
+            ]
+        };
+        
+
         const portKnockingProgram = {
             steps: [
                 {
@@ -898,7 +1069,9 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             phishing: phishingAnalyzerProgram,
             passwordcheck: passwordCheckerProgram,
             portknock: portKnockingProgram,
-            fortune:fortuneTellerProgram
+            fortune:fortuneTellerProgram,
+            passwordanalyze: passwordAnalyzerProgram,
+            mfa: mfaCodes
             // Add more programs here
         };
         
