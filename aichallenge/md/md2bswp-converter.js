@@ -69,11 +69,11 @@ const tagsTop = `<!DOCTYPE html>
    <link rel="stylesheet" href="styles.min.css">
    
 
-const tagsTopClosing =```
+const tagsTopClosing =`
    <title>Page</title>
 </head>
 <body>
-<div class="container-fluid">\n```;
+<div class="container-fluid">\n`;
 
 const tagsBottom = `</div>
 <script src="jquery-3.3.1.slim.min.js"></script>
