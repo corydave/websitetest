@@ -69,6 +69,7 @@ const tagsTop = `<!DOCTYPE html>
    <link rel="stylesheet" href="styles.min.css">
    
 
+
 const tagsTopClosing =`
    <title>Page</title>
 </head>
