@@ -99,7 +99,10 @@ const tagsTopStandalone = `<!DOCTYPE html>
    <link rel="stylesheet" href="styles.css">
    <link rel="stylesheet" href="custom.css">
    
-   <link rel="icon" type="image/x-icon" href="favicon.ico">`;
+   <link rel="icon" type="image/x-icon" href="favicon.ico">
+   
+
+   `;
 
    const tagsBottomStandalone = `</div>
    <script src="jquery.slim.min.js"></script>
@@ -2549,31 +2552,31 @@ let colorThemes = [
         accentLink: defaultAccentLinkColor,
     },
     {
-        title: `Blue`,
-        accentBg: `#45a`,
+        title: `Yellow`,
+        accentBg: `#f1c232`,
         accentText: defaultAccentTextColor,
         accentLink: `#cef`,
     },
     {
-        title: `Blue, Royal - 270 Security D`,
-        accentBg: `#113063`,
+        title: `Green`,
+        accentBg: `#6aa84f`,
         accentText: defaultAccentTextColor,
         accentLink: `#cef`,
     },
     {
-        title: `Blue, Rich - 253 AWS Cloud`,
-        accentBg: `#1155cc`,
+        title: `Red`,
+        accentBg: `#cc0000`,
         accentText: defaultAccentTextColor,
         accentLink: `#cef`,
     },    
     {
-        title: `Brown - 153 AWS Cloud`,
-        accentBg: `#492000`,
+        title: `Purple`,
+        accentBg: `#a64d79`,
         accentText: defaultAccentTextColor,
         accentLink: `#cef`,
     },        
     {
-        title: `Blue, Dodger - 115 Java D`,
+        title: `Dodger Blue`,
         accentBg: `#1e90ff`,
         accentText: `#fff`,
         accentLink: `#fce`,
