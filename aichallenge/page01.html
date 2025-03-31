@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <title>paige2</title>
+</head>
+
+<body>
+    im a cute emt
+    <div id="newcontent"></div>
+
+
+<script>
+  
+  // Get all the HTML for the other paige2
+  //
+  // Get the response
+  let response = await fetch("paige2.html");
+  // Get the text of the response
+  let text = await response.text();
+  
+  
+  // Parse out the stuff between the <body> and </body> tags
+  //
+  // Find the start and end index
+  let start = text.match("<body>").index + "<body>".length;
+  let end = text.match("</body>").index;
+  // Substring and trim
+  let body = text.substr(start + 6, end).trim();
+  
+  // Dump the parsed and trimed body into the current page at the #newcontent element
+  let target = document.getElementById('newcontent');
+  target.innerHTML = body;  
+</script>
+  
+</body>
+
+</html>
