@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Flight Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #map {
+            flex-grow: 1;
+            width: 100%;
+        }
+        
+        .flight-info {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            max-width: 250px;
+        }
+        
+        .flight-info h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        select, button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            background-color: #ecf0f1;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .status {
+            color: #27ae60;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .demo-mode {
+            background-color: #e74c3c;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <header>
+            <h1>Real-Time Flight Tracker <span id="mode-indicator" class="demo-mode">API Mode</span></h1>
+            <div class="controls">
+                <select id="region-select">
+                    <option value="world">World</option>
+                    <option value="europe">Europe</option>
+                    <option value="north-america">North America</option>
+                    <option value="asia">Asia</option>
+                    <option value="australia">Australia</option>
+                </select>
+                <input type="text" id="api-key" placeholder="Enter AviationStack API Key" style="padding: 5px; width: 200px;">
+                <button id="refresh-btn">Refresh Data</button>
+                <span id="status" class="status">Enter your AviationStack API key</span>
+            </div>
+        </header>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([20, 0], 2);
+        
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Flight marker icon
+        const planeIcon = L.divIcon({
+            html: '<svg width="20" height="20" viewBox="0 0 24 24" fill="#3498db" xmlns="http://www.w3.org/2000/svg"><path d="M21,16V14L13,9V3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5V9L2,14V16L10,13.5V19L8,20.5V22L11.5,21L15,22V20.5L13,19V13.5L21,16Z"/></svg>',
+            className: '',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+        
+        // Store active flights and markers
+        let flightMarkers = {};
+        
+        // Function to generate random flight data (for demo)
+        function generateDemoFlights(count = 100) {
+            const airlines = ['UAL', 'DAL', 'AAL', 'BAW', 'DLH', 'AFR', 'UAE', 'SIA', 'QTR', 'CPA'];
+            const flightStatus = ['En Route', 'Scheduled', 'Delayed', 'Landed'];
+            const flights = [];
+            
+            for (let i = 0; i < count; i++) {
+                const airline = airlines[Math.floor(Math.random() * airlines.length)];
+                const flightNumber = Math.floor(Math.random() * 9000) + 1000;
+                
+                // Generate random coordinates
+                let lat = (Math.random() * 140) - 70; // Between -70 and 70
+                let lng = (Math.random() * 340) - 170; // Between -170 and 170
+                
+                // Adjust based on region selection
+                const region = document.getElementById('region-select').value;
+                if (region === 'europe') {
+                    lat = (Math.random() * 25) + 35; // Between 35 and 60
+                    lng = (Math.random() * 50) - 10; // Between -10 and 40
+                } else if (region === 'north-america') {
+                    lat = (Math.random() * 40) + 25; // Between 25 and 65
+                    lng = (Math.random() * 80) - 130; // Between -130 and -50
+                } else if (region === 'asia') {
+                    lat = (Math.random() * 40) + 10; // Between 10 and 50
+                    lng = (Math.random() * 100) + 50; // Between 50 and 150
+                } else if (region === 'australia') {
+                    lat = (Math.random() * 30) - 40; // Between -40 and -10
+                    lng = (Math.random() * 40) + 110; // Between 110 and 150
+                }
+                
+                // Generate a random heading (0-359 degrees)
+                const heading = Math.floor(Math.random() * 360);
+                
+                flights.push({
+                    id: `${airline}${flightNumber}`,
+                    callsign: `${airline}${flightNumber}`,
+                    origin: getRandomAirport(),
+                    destination: getRandomAirport(),
+                    aircraft: getRandomAircraft(),
+                    altitude: Math.floor(Math.random() * 40000) + 10000,
+                    speed: Math.floor(Math.random() * 500) + 300,
+                    lat: lat,
+                    lng: lng,
+                    heading: heading,
+                    status: flightStatus[Math.floor(Math.random() * flightStatus.length)]
+                });
+            }
+            
+            return flights;
+        }
+        
+        // Helper function for random airports
+        function getRandomAirport() {
+            const airports = [
+                'JFK - New York', 'LAX - Los Angeles', 'LHR - London', 
+                'CDG - Paris', 'FRA - Frankfurt', 'AMS - Amsterdam',
+                'SIN - Singapore', 'HKG - Hong Kong', 'DXB - Dubai',
+                'SYD - Sydney', 'NRT - Tokyo', 'ORD - Chicago'
+            ];
+            return airports[Math.floor(Math.random() * airports.length)];
+        }
+        
+        // Helper function for random aircraft
+        function getRandomAircraft() {
+            const aircraft = [
+                'Boeing 737-800', 'Boeing 777-300ER', 'Boeing 787-9',
+                'Airbus A320', 'Airbus A330-300', 'Airbus A350-900',
+                'Boeing 747-400', 'Airbus A380-800', 'Embraer E190'
+            ];
+            return aircraft[Math.floor(Math.random() * aircraft.length)];
+        }
+        
+        // Update flight markers on the map
+        function updateFlightMarkers(flights) {
+            // Track current flights
+            const currentFlights = {};
+            
+            flights.forEach(flight => {
+                currentFlights[flight.id] = true;
+                
+                if (flightMarkers[flight.id]) {
+                    // Update existing marker
+                    flightMarkers[flight.id].setLatLng([flight.lat, flight.lng]);
+                    
+                    // Update rotation
+                    const icon = flightMarkers[flight.id].getElement();
+                    if (icon) {
+                        const svg = icon.querySelector('svg');
+                        if (svg) {
+                            svg.style.transform = `rotate(${flight.heading}deg)`;
+                        }
+                    }
+                    
+                    // Update popup content
+                    const popup = flightMarkers[flight.id].getPopup();
+                    if (popup) {
+                        popup.setContent(createFlightInfoHTML(flight));
+                        if (popup.isOpen()) {
+                            popup.update();
+                        }
+                    }
+                } else {
+                    // Create new marker
+                    const marker = L.marker([flight.lat, flight.lng], {
+                        icon: planeIcon
+                    }).addTo(map);
+                    
+                    // Set rotation
+                    const icon = marker.getElement();
+                    if (icon) {
+                        const svg = icon.querySelector('svg');
+                        if (svg) {
+                            svg.style.transform = `rotate(${flight.heading}deg)`;
+                        }
+                    }
+                    
+                    // Add popup
+                    marker.bindPopup(createFlightInfoHTML(flight));
+                    
+                    flightMarkers[flight.id] = marker;
+                }
+            });
+            
+            // Remove markers for flights no longer in the data
+            Object.keys(flightMarkers).forEach(id => {
+                if (!currentFlights[id]) {
+                    map.removeLayer(flightMarkers[id]);
+                    delete flightMarkers[id];
+                }
+            });
+        }
+        
+        // Create HTML for flight info popup
+        function createFlightInfoHTML(flight) {
+            return `
+                <div class="flight-info">
+                    <h3>${flight.callsign}</h3>
+                    <div class="info-row">
+                        <span class="info-label">Status:</span>
+                        <span>${flight.status}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">From:</span>
+                        <span>${flight.origin}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">To:</span>
+                        <span>${flight.destination}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Aircraft:</span>
+                        <span>${flight.aircraft}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Altitude:</span>
+                        <span>${flight.altitude.toLocaleString()} ft</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Speed:</span>
+                        <span>${flight.speed} kts</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Function to fetch flight data from AviationStack API
+        function fetchFlightData() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            
+            if (!apiKey) {
+                document.getElementById('status').textContent = 'Please enter your AviationStack API key';
+                document.getElementById('status').className = 'error';
+                document.getElementById('mode-indicator').textContent = 'Demo Mode';
+                
+                // Fall back to demo data if no API key is provided
+                const flights = generateDemoFlights();
+                updateFlightMarkers(flights);
+                return;
+            }
+            
+            // Update status while loading
+            document.getElementById('status').textContent = 'Loading flight data...';
+            document.getElementById('status').className = 'status';
+            
+            // Get the selected region to filter results
+            const region = document.getElementById('region-select').value;
+            
+            // Build the API URL with the appropriate parameters
+            let apiUrl = `https://api.aviationstack.com/v1/flights?access_key=${apiKey}&flight_status=active`;
+            
+            // Add region-specific filters if needed
+            if (region !== 'world') {
+                // For simplicity, we'll just limit the results
+                apiUrl += '&limit=100';
+            }
+            
+            // Fetch data from AviationStack API
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("API Response:", data); // Debug: Log the full response
+                    
+                    if (data.error) {
+                        throw new Error(data.error.info || 'Unknown API error');
+                    }
+                    
+                    // Parse the flight data and update the map
+                    const flights = parseAviationStackData(data);
+                    console.log("Parsed Flights:", flights); // Debug: Log the parsed flights
+                    
+                    if (flights.length === 0) {
+                        document.getElementById('status').textContent = 'No flights found with position data. Showing demo flights instead.';
+                        document.getElementById('mode-indicator').textContent = 'API Mode (No Data)';
+                        
+                        // Fall back to demo data if no flights with position data
+                        const demoFlights = generateDemoFlights();
+                        updateFlightMarkers(demoFlights);
+                    } else {
+                        updateFlightMarkers(flights);
+                        
+                        // Update status message
+                        document.getElementById('status').textContent = `Showing ${flights.length} flights from AviationStack`;
+                        document.getElementById('status').className = 'status';
+                        document.getElementById('mode-indicator').textContent = 'API Mode';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching flight data:', error);
+                    document.getElementById('status').textContent = `Error: ${error.message}`;
+                    document.getElementById('status').className = 'error';
+                    document.getElementById('mode-indicator').textContent = 'Demo Mode';
+                    
+                    // Fall back to demo data if API call fails
+                    const flights = generateDemoFlights();
+                    updateFlightMarkers(flights);
+                });
+        }
+        
+        // Parse AviationStack API response
+        function parseAviationStackData(data) {
+            const flights = [];
+            
+            if (!data.data || !Array.isArray(data.data)) {
+                console.warn("No data array in response:", data);
+                return flights;
+            }
+            
+            console.log(`Processing ${data.data.length} flights from API`);
+            
+            data.data.forEach(flight => {
+                // Check for live data
+                if (!flight.live) {
+                    console.log(`Flight ${flight.flight?.iata || 'unknown'} has no live data`);
+                    return;
+                }
+                
+                // Skip flights without position data
+                if (flight.live.latitude === null || flight.live.longitude === null) {
+                    console.log(`Flight ${flight.flight?.iata || 'unknown'} has no position data`);
+                    return;
+                }
+                
+                console.log(`Adding flight ${flight.flight?.iata || 'unknown'} at position ${flight.live.latitude}, ${flight.live.longitude}`);
+                
+                // Create a flight object with our expected structure
+                flights.push({
+                    id: `${flight.flight?.iata || flight.flight?.icao || 'UNKN'}`,
+                    callsign: flight.flight?.iata || flight.flight?.icao || 'Unknown',
+                    origin: `${flight.departure?.iata || 'UNKN'} - ${flight.departure?.airport || 'Unknown'}`,
+                    destination: `${flight.arrival?.iata || 'UNKN'} - ${flight.arrival?.airport || 'Unknown'}`,
+                    aircraft: flight.aircraft?.iata || 'Unknown',
+                    altitude: flight.live?.altitude || 0,
+                    speed: flight.live?.speed_horizontal || 0,
+                    lat: flight.live.latitude,
+                    lng: flight.live.longitude,
+                    heading: flight.live?.direction || 0,
+                    status: flight.flight_status || 'Unknown'
+                });
+            });
+            
+            return flights;
+        }
+        
+        // Set up region selection
+        document.getElementById('region-select').addEventListener('change', function(e) {
+            const region = e.target.value;
+            
+            // Set map view based on region
+            if (region === 'world') {
+                map.setView([20, 0], 2);
+            } else if (region === 'europe') {
+                map.setView([50, 15], 4);
+            } else if (region === 'north-america') {
+                map.setView([40, -95], 4);
+            } else if (region === 'asia') {
+                map.setView([30, 100], 4);
+            } else if (region === 'australia') {
+                map.setView([-25, 135], 4);
+            }
+            
+            // Refresh flight data for the selected region
+            fetchFlightData();
+        });
+        
+        // Set up refresh button
+        document.getElementById('refresh-btn').addEventListener('click', fetchFlightData);
+        
+        // Set up API key input - refresh data when enter key is pressed
+        document.getElementById('api-key').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                fetchFlightData();
+            }
+        });
+        
+        // Add a simulation of moving flights every few seconds
+        function simulateFlightMovement() {
+            Object.keys(flightMarkers).forEach(id => {
+                const marker = flightMarkers[id];
+                const latlng = marker.getLatLng();
+                
+                // Get the heading from the marker's icon
+                let heading = 0;
+                const icon = marker.getElement();
+                if (icon) {
+                    const svg = icon.querySelector('svg');
+                    if (svg) {
+                        const transform = svg.style.transform;
+                        const match = transform.match(/rotate\((\d+)deg\)/);
+                        if (match) {
+                            heading = parseInt(match[1]);
+                        }
+                    }
+                }
+                
+                // Calculate new position based on heading
+                const speed = 0.02; // Adjust for desired movement speed
+                const lat = latlng.lat + speed * Math.cos((90 - heading) * Math.PI / 180);
+                const lng = latlng.lng + speed * Math.sin((90 - heading) * Math.PI / 180);
+                
+                // Update marker position
+                marker.setLatLng([lat, lng]);
+            });
+        }
+        
+        // Initialize the app
+        fetchFlightData();
+        
+        // Initialize the app with some helpful instructions
+        document.getElementById('status').innerHTML = 'To use real flight data: <br>1. Get a free API key from <a href="https://aviationstack.com/signup/free" target="_blank">AviationStack</a> <br>2. Enter your key above and press Enter or click Refresh';
+        
+        // Only simulate movement for demo mode flights
+        setInterval(function() {
+            const modeIndicator = document.getElementById('mode-indicator').textContent;
+            if (modeIndicator === 'Demo Mode') {
+                simulateFlightMovement();
+            }
+        }, 2000);
+        
+        // Generate some demo data initially
+        const demoFlights = generateDemoFlights();
+        updateFlightMarkers(demoFlights);
+    </script>
+</body>
+</html>
