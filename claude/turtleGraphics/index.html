@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Graphics</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .turtle-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        .canvas-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .console-output {
+            height: 200px;
+            background-color: #2e2e2e;
+            color: #f0f0f0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-y: auto;
+        }
+        .console-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+        .console-command {
+            color: #62a9ff;
+            font-weight: bold;
+        }
+        .console-error {
+            color: #ff6262;
+        }
+        .console-info {
+            color: #7cff62;
+        }
+        .control-panel {
+            margin-bottom: 20px;
+        }
+        .api-table {
+            font-size: 0.9rem;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding-bottom: 30px;
+        }
+        .header {
+            background-color: #6c757d;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        #codeTextarea {
+            font-family: monospace, 'Courier New', Courier;
+            height: 300px;
+        }
+        .custom-commands {
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: white;
+        }
+        .custom-commands-header {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="text-center">Turtle Graphics</h1>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <!-- Left Column: Custom Commands and Controls -->
+            <div class="col-md-5">
+                <!-- Custom Commands Section -->
+                <div class="custom-commands" id="customCommandsSection">
+                    <div class="custom-commands-header">Custom Commands</div>
+                    <textarea id="codeTextarea" class="form-control mb-3" rows="8" placeholder="Enter custom JavaScript code using turtle commands like forward(), right(), etc."></textarea>
+                    <div class="btn-group mb-3">
+                        <button id="runBtn" class="btn btn-primary">Run Code</button>
+                        <button id="downloadBtn" class="btn btn-secondary">Download Code</button>
+                        <button id="clearCanvasBtn" class="btn btn-warning">Clear Canvas</button>
+                        <button id="clearCommandsBtn" class="btn btn-danger">Clear Commands</button>
+                    </div>
+                </div>
+                
+                <!-- Controls Panel -->
+                <div class="control-panel" id="controlPanel">
+                    <!-- Controls will be added here by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Right Column: Turtle Canvas and Console -->
+            <div class="col-md-7">
+                <!-- Turtle Canvas -->
+                <div class="turtle-container" id="turtleContainer">
+                    <!-- Canvas elements will be added here by JavaScript -->
+                </div>
+                
+                <!-- Console Output -->
+                <div class="console-output" id="consoleOutput">
+                    <div class="console-entry">
+                        <span class="console-info">Turtle Graphics Console Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Turtle Graphics Script -->
+    <script>
+    (function() { // Wrap in IIFE to avoid global namespace pollution
+        // Get references to the container elements
+        const turtleContainer = document.getElementById('turtleContainer');
+        const controlPanel = document.getElementById('controlPanel');
+        const customCommandsSection = document.getElementById('customCommandsSection');
+        const consoleOutput = document.getElementById('consoleOutput');
+
+        // Console log function
+        function consoleLog(message, type = 'normal') {
+            if (consoleOutput) {
+                const className = type === 'error' ? 'console-error' : (type === 'info' ? 'console-info' : '');
+                consoleOutput.innerHTML += `<div class="console-entry"><span class="${className}">${message}</span></div>`;
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+        }
+
+        // Create the drawing canvas
+        const drawingCanvas = document.createElement('canvas');
+        drawingCanvas.width = 600;
+        drawingCanvas.height = 600;
+        drawingCanvas.className = 'canvas-layer';
+        turtleContainer.appendChild(drawingCanvas);
+        const drawingCtx = drawingCanvas.getContext('2d');
+
+        // Turtle class
+        class Turtle {
+          constructor(name, x, y, color) {
+            this.name = name;
+            this.x = x !== undefined ? x : drawingCanvas.width / 2;
+            this.y = y !== undefined ? y : drawingCanvas.height / 2;
+            this.direction = 0; // in degrees, 0 is to the right
+            this.penDown = true;
+            this.penColor = color || '#000000';
+            this.penWidth = 2;
+            this.visible = true;
+            
+            // Create turtle element for visualization
+            this.element = document.createElement('canvas');
+            this.element.width = drawingCanvas.width;
+            this.element.height = drawingCanvas.height;
+            this.element.className = 'canvas-layer';
+            this.element.style.pointerEvents = 'none';
+            turtleContainer.appendChild(this.element);
+            this.ctx = this.element.getContext('2d');
+            
+            // Add to turtle registry and update display
+            turtles.push(this);
+            this.updateDisplay();
+          }
+          
+          // Turtle methods
+          forward(distance) {
+            const startX = this.x;
+            const startY = this.y;
+            
+            // Calculate new position
+            const radians = this.direction * Math.PI / 180;
+            this.x += distance * Math.cos(radians);
+            this.y += distance * Math.sin(radians);
+            
+            // Draw if pen is down
+            if (this.penDown) {
+              drawingCtx.beginPath();
+              drawingCtx.moveTo(startX, startY);
+              drawingCtx.lineTo(this.x, this.y);
+              drawingCtx.strokeStyle = this.penColor;
+              drawingCtx.lineWidth = this.penWidth;
+              drawingCtx.stroke();
+            }
+            
+            this.updateDisplay();
+          }
+          
+          backward(distance) {
+            this.forward(-distance);
+          }
+          
+          right(angle) {
+            this.direction = (this.direction + angle) % 360;
+            // Ensure direction is positive
+            if (this.direction < 0) {
+              this.direction += 360;
+            }
+            this.updateDisplay();
+          }
+          
+          left(angle) {
+            this.right(-angle);
+          }
+          
+          penUp() {
+            this.penDown = false;
+          }
+          
+          penDown() {
+            this.penDown = true;
+          }
+          
+          setPenColor(color) {
+            this.penColor = color;
+          }
+          
+          setPenWidth(width) {
+            this.penWidth = width;
+          }
+          
+          hide() {
+            this.visible = false;
+            this.updateDisplay();
+          }
+          
+          show() {
+            this.visible = true;
+            this.updateDisplay();
+          }
+          
+          goTo(x, y) {
+            if (this.penDown) {
+              drawingCtx.beginPath();
+              drawingCtx.moveTo(this.x, this.y);
+              drawingCtx.lineTo(x, y);
+              drawingCtx.strokeStyle = this.penColor;
+              drawingCtx.lineWidth = this.penWidth;
+              drawingCtx.stroke();
+            }
+            this.x = x;
+            this.y = y;
+            this.updateDisplay();
+          }
+          
+          goHome() {
+            this.goTo(drawingCanvas.width / 2, drawingCanvas.height / 2);
+            this.direction = 0;
+            this.updateDisplay();
+          }
+          
+          updateDisplay() {
+            // Clear this turtle's canvas
+            this.ctx.clearRect(0, 0, this.element.width, this.element.height);
+            
+            // Draw the turtle if visible
+            if (this.visible) {
+              // Save the current state
+              this.ctx.save();
+              
+              // Move to turtle position and rotate
+              this.ctx.translate(this.x, this.y);
+              this.ctx.rotate(this.direction * Math.PI / 180);
+              
+              // Draw the turtle as a triangle
+              this.ctx.beginPath();
+              this.ctx.moveTo(10, 0);
+              this.ctx.lineTo(-5, 5);
+              this.ctx.lineTo(-5, -5);
+              this.ctx.closePath();
+              
+              // Fill with turtle's color
+              const turtleColor = this.penColor;
+              this.ctx.fillStyle = turtleColor;
+              this.ctx.fill();
+              
+              // Draw turtle name above it
+              this.ctx.restore();
+              this.ctx.save();
+              this.ctx.translate(this.x, this.y - 15);
+              this.ctx.textAlign = 'center';
+              this.ctx.fillStyle = turtleColor;
+              this.ctx.fillText(this.name, 0, 0);
+              
+              // Restore the context
+              this.ctx.restore();
+            }
+          }
+        }
+
+        // Turtle management
+        const turtles = [];
+        let currentTurtle = null;
+
+        // Create initial turtle
+        function createTurtle(name, x, y, color) {
+          // Generate default name if not provided
+          if (!name) {
+            name = `Turtle ${turtles.length + 1}`;
+          }
+          
+          // Create the new turtle
+          const turtle = new Turtle(name, x, y, color);
+          
+          // Set as current if first turtle
+          if (turtles.length === 1) {
+            setCurrentTurtle(turtle);
+          }
+          
+          // Update turtle selector dropdown
+          updateTurtleSelector();
+          
+          return turtle;
+        }
+        
+        function setCurrentTurtle(turtle) {
+          currentTurtle = turtle;
+          
+          // Update selector if it exists
+          const selector = document.getElementById('turtleSelector');
+          if (selector && currentTurtle) {
+            selector.value = turtles.indexOf(currentTurtle);
+          }
+        }
+        
+        function updateTurtleSelector() {
+          const selector = document.getElementById('turtleSelector');
+          if (selector) {
+            // Clear existing options
+            selector.innerHTML = '';
+            
+            // Add option for each turtle
+            turtles.forEach((turtle, index) => {
+              const option = document.createElement('option');
+              option.value = index;
+              option.textContent = turtle.name;
+              selector.appendChild(option);
+            });
+            
+            // Set current turtle as selected
+            if (currentTurtle) {
+              selector.value = turtles.indexOf(currentTurtle);
+            }
+          }
+        }
+
+        // State shared across all turtles
+        const sharedState = {
+          speed: 5, // Animation speed (1-10)
+          backgroundColor: '#FFFFFF', // Canvas background color
+          showingGrid: false, // Grid visibility
+          gridSpacing: 50 // Grid spacing in pixels
+        };
+
+        // Animation helpers
+        let animationQueue = [];
+        let isAnimating = false;
+
+        // Process the animation queue
+        function processAnimationQueue() {
+          if (animationQueue.length === 0) {
+            isAnimating = false;
+            return;
+          }
+          
+          isAnimating = true;
+          const nextAnimation = animationQueue.shift();
+          
+          // Calculate delay based on speed (invert scale so 10 is fastest)
+          const delay = Math.max(10, 500 - (sharedState.speed * 50)); 
+          
+          setTimeout(() => {
+            nextAnimation();
+            processAnimationQueue();
+          }, delay);
+        }
+
+        // Add action to the queue
+        function queueAnimation(action) {
+          animationQueue.push(action);
+          
+          if (!isAnimating) {
+            processAnimationQueue();
+          }
+        }
+
+        // Wrapper functions that work on the current turtle
+        function forward(distance) {
+          if (!currentTurtle) return;
+          queueAnimation(() => {
+            currentTurtle.forward(distance);
+          });
+        }
+
+        function backward(distance) {
+          if (!currentTurtle) return;
+          queueAnimation(() => {
+            currentTurtle.backward(distance);
+          });
+        }
+
+        function right(angle) {
+          if (!currentTurtle) return;
+          queueAnimation(() => {
+            currentTurtle.right(angle);
+          });
+        }
+
+        function left(angle) {
+          if (!currentTurtle) return;
+          queueAnimation(() => {
+            currentTurtle.left(angle);
+          });
+        }
+
+        function penUp() {
+          if (!currentTurtle) return;
+          currentTurtle.penUp();
+        }
+
+        function penDown() {
+          if (!currentTurtle) return;
+          currentTurtle.penDown();
+        }
+
+        function setPenColor(color) {
+          if (!currentTurtle) return;
+          currentTurtle.setPenColor(color);
+        }
+
+        function setPenWidth(width) {
+          if (!currentTurtle) return;
+          currentTurtle.setPenWidth(width);
+        }
+
+        function hideTurtle() {
+          if (!currentTurtle) return;
+          currentTurtle.hide();
+        }
+
+        function showTurtle() {
+          if (!currentTurtle) return;
+          currentTurtle.show();
+        }
+
+        function home() {
+          if (!currentTurtle) return;
+          queueAnimation(() => {
+            currentTurtle.goHome();
+          });
+        }
+        
+        // New getter functions for the active turtle
+        function getPenColor() {
+          if (!currentTurtle) return null;
+          return currentTurtle.penColor;
+        }
+        
+        function getPenWidth() {
+          if (!currentTurtle) return null;
+          return currentTurtle.penWidth;
+        }
+        
+        function getPenUp() {
+          if (!currentTurtle) return null;
+          return !currentTurtle.penDown;
+        }
+        
+        function getTurtleName() {
+          if (!currentTurtle) return null;
+          return currentTurtle.name;
+        }
+        
+        function setTurtleName(name) {
+          if (!currentTurtle || !name) return;
+          
+          // Store the old name for updating the selector
+          const oldName = currentTurtle.name;
+          
+          // Update the name
+          currentTurtle.name = name;
+          
+          // Update the turtle display
+          currentTurtle.updateDisplay();
+          
+          // Update the turtle selector
+          updateTurtleSelector();
+        }
+        
+        // Getter functions for shared state
+        function getSpeed() {
+          return sharedState.speed;
+        }
+        
+        function getBackgroundColor() {
+          return sharedState.backgroundColor;
+        }
+        
+        function getGridVisibility() {
+          return sharedState.showingGrid;
+        }
+        
+        // Create a new turtle function
+        function newTurtle(name, x, y, color) {
+          return createTurtle(name, x, y, color);
+        }
+        
+        // Retire (delete) a turtle
+        function retireTurtle(nameOrIndex) {
+          // If no parameter is provided, retire the current turtle
+          if (nameOrIndex === undefined && currentTurtle) {
+            nameOrIndex = currentTurtle.name;
+          }
+          
+          let turtleIndex = -1;
+          
+          if (typeof nameOrIndex === 'number') {
+            // Get by index
+            if (nameOrIndex >= 0 && nameOrIndex < turtles.length) {
+              turtleIndex = nameOrIndex;
+            }
+          } else {
+            // Get by name
+            for (let i = 0; i < turtles.length; i++) {
+              if (turtles[i].name === nameOrIndex) {
+                turtleIndex = i;
+                break;
+              }
+            }
+          }
+          
+          // If turtle found, retire it
+          if (turtleIndex >= 0) {
+            const turtleToRetire = turtles[turtleIndex];
+            
+            // Remove the canvas element
+            if (turtleToRetire.element && turtleToRetire.element.parentNode) {
+              turtleToRetire.element.parentNode.removeChild(turtleToRetire.element);
+            }
+            
+            // Get the name for the console message
+            const turtleName = turtleToRetire.name;
+            
+            // Remove from array
+            turtles.splice(turtleIndex, 1);
+            
+            // If this was the current turtle, select a new one
+            if (turtleToRetire === currentTurtle) {
+              currentTurtle = turtles.length > 0 ? turtles[0] : null;
+            }
+            
+            // Update selector
+            updateTurtleSelector();
+            
+            // Log to console
+            consoleLog(`Turtle "${turtleName}" has been retired`, "info");
+            
+            return true;
+          }
+          
+          consoleLog(`Turtle not found`, "error");
+          return false;
+        }
+        
+        // Select a turtle by name or index
+        function selectTurtle(nameOrIndex) {
+          if (typeof nameOrIndex === 'number') {
+            // Select by index
+            if (nameOrIndex >= 0 && nameOrIndex < turtles.length) {
+              setCurrentTurtle(turtles[nameOrIndex]);
+              return turtles[nameOrIndex];
+            }
+          } else {
+            // Select by name
+            for (let i = 0; i < turtles.length; i++) {
+              if (turtles[i].name === nameOrIndex) {
+                setCurrentTurtle(turtles[i]);
+                return turtles[i];
+              }
+            }
+          }
+          return null;
+        }
+        
+        // List all turtles
+        function listTurtles() {
+          const turtleList = turtles.map((t, index) => {
+            return {
+              index: index,
+              name: t.name,
+              x: Math.round(t.x),
+              y: Math.round(t.y),
+              color: t.penColor,
+              isActive: t === currentTurtle
+            };
+          });
+          
+          // Log to console if it exists
+          if (consoleOutput) {
+            consoleOutput.innerHTML += '<div class="console-entry"><span class="console-command">listTurtles()</span><br>';
+            consoleOutput.innerHTML += '<pre>' + JSON.stringify(turtleList, null, 2) + '</pre></div>';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+          }
+          
+          return turtleList;
+        }
+
+        // New functions
+        function setSpeed(speed) {
+          // Clamp speed between 1-10
+          sharedState.speed = Math.min(10, Math.max(1, speed));
+          
+          // Update the speed slider if it exists
+          const speedSlider = document.getElementById('speedSlider');
+          if (speedSlider) {
+            speedSlider.value = sharedState.speed;
+          }
+        }
+
+        function setBackgroundColor(color) {
+          sharedState.backgroundColor = color;
+          
+          // Apply the background color
+          drawingCtx.fillStyle = color;
+          drawingCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+          
+          // Redraw grid if it's showing
+          if (sharedState.showingGrid) {
+            drawGrid();
+          }
+          
+          // Update the background color picker if it exists
+          const bgColorInput = document.getElementById('bgColorInput');
+          if (bgColorInput) {
+            bgColorInput.value = color;
+          }
+        }
+        
+        // Grid functions
+        function drawGrid() {
+          if (!sharedState.showingGrid) return;
+          
+          const width = drawingCanvas.width;
+          const height = drawingCanvas.height;
+          const spacing = sharedState.gridSpacing;
+          
+          // Save current drawing state
+          drawingCtx.save();
+          
+          // Set grid style
+          drawingCtx.strokeStyle = 'rgba(200, 200, 200, 0.5)';
+          drawingCtx.lineWidth = 1;
+          
+          // Draw vertical lines
+          for (let x = spacing; x < width; x += spacing) {
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(x, 0);
+            drawingCtx.lineTo(x, height);
+            drawingCtx.stroke();
+          }
+          
+          // Draw horizontal lines
+          for (let y = spacing; y < height; y += spacing) {
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(0, y);
+            drawingCtx.lineTo(width, y);
+            drawingCtx.stroke();
+          }
+          
+          // Draw center axes with different color
+          drawingCtx.strokeStyle = 'rgba(150, 150, 150, 0.8)';
+          drawingCtx.lineWidth = 2;
+          
+          // Vertical center line
+          drawingCtx.beginPath();
+          drawingCtx.moveTo(width/2, 0);
+          drawingCtx.lineTo(width/2, height);
+          drawingCtx.stroke();
+          
+          // Horizontal center line
+          drawingCtx.beginPath();
+          drawingCtx.moveTo(0, height/2);
+          drawingCtx.lineTo(width, height/2);
+          drawingCtx.stroke();
+          
+          // Restore drawing state
+          drawingCtx.restore();
+        }
+        
+        function showGrid(show = true) {
+          // Toggle grid if no parameter provided
+          if (show === undefined) {
+            sharedState.showingGrid = !sharedState.showingGrid;
+          } else {
+            sharedState.showingGrid = show;
+          }
+          
+          // Clear and redraw the canvas with current background
+          drawingCtx.fillStyle = sharedState.backgroundColor;
+          drawingCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+          
+          // Draw the grid if showing
+          if (sharedState.showingGrid) {
+            drawGrid();
+          }
+          
+          // Update all turtles
+          turtles.forEach(t => t.updateDisplay());
+        }
+        
+        // Clear screen function (now works with grid and multiple turtles)
+        function clearScreen() {
+          drawingCtx.fillStyle = sharedState.backgroundColor;
+          drawingCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+          
+          // Redraw grid if it's showing
+          if (sharedState.showingGrid) {
+            drawGrid();
+          }
+          
+          // Update all turtles
+          turtles.forEach(t => t.updateDisplay());
+        }
+        
+        // Random function (inclusive of a and b)
+        function random(a, b) {
+          // Ensure a and b are numbers
+          a = Number(a);
+          b = Number(b);
+          
+          // Swap if a > b
+          if (a > b) {
+            [a, b] = [b, a];
+          }
+          
+          // For integers
+          if (Number.isInteger(a) && Number.isInteger(b)) {
+            return Math.floor(Math.random() * (b - a + 1)) + a;
+          }
+          
+          // For floats
+          return Math.random() * (b - a) + a;
+        }
+
+        // Example patterns - Now they return code strings
+        function drawSquare(size) {
+          return `// Draw a square with side length ${size}
+for (let i = 0; i < 4; i++) {
+  forward(${size});
+  right(90);
+}`;
+        }
+
+        function drawCircle(radius) {
+          return `// Draw a circle with radius ${radius}
+const circumference = 2 * Math.PI * ${radius};
+const sides = 36; // Approximation with 36 sides
+const angle = 360 / sides;
+const step = circumference / sides;
+
+for (let i = 0; i < sides; i++) {
+  forward(step);
+  right(angle);
+}`;
+        }
+
+        function drawSpiral(size, increment, turns) {
+          return `// Draw a spiral
+for (let i = 0; i < ${turns} * 36; i++) {
+  forward(${size} + i * ${increment});
+  right(10);
+}`;
+        }
+
+        function drawStar(size) {
+          return `// Draw a five-pointed star
+for (let i = 0; i < 5; i++) {
+  forward(${size});
+  right(144);
+}`;
+        }
+
+        function drawSnowflake(size, depth) {
+          return `// Draw a Koch snowflake
+function koch(length, depth) {
+  if (depth === 0) {
+    forward(length);
+  } else {
+    const newLength = length / 3;
+    koch(newLength, depth - 1);
+    left(60);
+    koch(newLength, depth - 1);
+    right(120);
+    koch(newLength, depth - 1);
+    left(60);
+    koch(newLength, depth - 1);
+  }
+}
+
+// Position turtle for snowflake
+home();
+penUp();
+backward(150);
+left(90);
+backward(80);
+right(90);
+penDown();
+
+// Draw three Koch curves to form a snowflake
+for (let i = 0; i < 3; i++) {
+  koch(${size}, ${depth});
+  right(120);
+}`;
+        }
+        
+        function multiTurtleDemo() {
+          return `// Multi-turtle demo
+// Clear everything first
+clearScreen();
+showGrid(true);
+
+// Create turtles with different colors
+const t1 = newTurtle("Red", 300, 300, "#FF5555");
+const t2 = newTurtle("Blue", 300, 300, "#5555FF");
+const t3 = newTurtle("Green", 300, 300, "#55FF55");
+const t4 = newTurtle("Purple", 300, 300, "#FF55FF");
+
+// Configure all turtles
+[t1, t2, t3, t4].forEach(t => {
+  selectTurtle(t.name);
+  setPenWidth(3);
+});
+
+// Draw with first turtle (red)
+selectTurtle("Red");
+for (let i = 0; i < 5; i++) {
+  forward(100);
+  right(144);
+}
+
+// Draw with second turtle (blue)
+selectTurtle("Blue");
+right(45);
+for (let i = 0; i < 4; i++) {
+  forward(100);
+  right(90);
+}
+
+// Draw with third turtle (green)
+selectTurtle("Green");
+right(90);
+for (let i = 0; i < 36; i++) {
+  forward(10);
+  right(10);
+}
+
+// Draw with fourth turtle (purple)
+selectTurtle("Purple");
+right(135);
+for (let i = 0; i < 12; i++) {
+  forward(50);
+  right(150);
+}`;
+        }
+
+        // Create UI controls with Bootstrap
+        controlPanel.innerHTML = `
+        <div class="accordion" id="accordionControls">
+          <!-- Turtle Selector -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTurtleSelector" aria-expanded="true" aria-controls="collapseTurtleSelector">
+                Turtle Management
+              </button>
+            </h2>
+            <div id="collapseTurtleSelector" class="accordion-collapse collapse show" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <div class="row mb-3">
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <label class="input-group-text" for="turtleSelector">Active Turtle:</label>
+                      <select class="form-select" id="turtleSelector">
+                        <!-- Options will be populated dynamically -->
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <button id="newTurtleBtn" class="btn btn-success w-100">New Turtle</button>
+                  </div>
+                </div>
+                <div class="row" id="newTurtleForm" style="display: none;">
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-header">Create New Turtle</div>
+                      <div class="card-body">
+                        <div class="mb-3">
+                          <label for="turtleName" class="form-label">Name:</label>
+                          <input type="text" class="form-control" id="turtleName" placeholder="Enter turtle name">
+                        </div>
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="mb-3">
+                              <label for="turtleX" class="form-label">X Position:</label>
+                              <input type="number" class="form-control" id="turtleX" value="300">
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="mb-3">
+                              <label for="turtleY" class="form-label">Y Position:</label>
+                              <input type="number" class="form-control" id="turtleY" value="300">
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="mb-3">
+                              <label for="turtleColor" class="form-label">Color:</label>
+                              <input type="color" class="form-control form-control-color" id="turtleColor" value="#4CAF50">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="btn-group">
+                          <button id="createTurtleBtn" class="btn btn-primary">Create</button>
+                          <button id="cancelTurtleBtn" class="btn btn-secondary">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Movement Controls -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMovement" aria-expanded="false" aria-controls="collapseMovement">
+                Basic Movement
+              </button>
+            </h2>
+            <div id="collapseMovement" class="accordion-collapse collapse" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <div class="d-flex justify-content-center">
+                  <div class="btn-group-vertical me-3">
+                    <button id="forwardBtn" class="btn btn-primary">▲ Forward (100)</button>
+                    <button id="backwardBtn" class="btn btn-primary">▼ Backward (100)</button>
+                  </div>
+                  <div class="btn-group-vertical">
+                    <button id="leftBtn" class="btn btn-primary">◄ Left Turn (45°)</button>
+                    <button id="rightBtn" class="btn btn-primary">Right Turn (45°) ►</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pen Controls -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePen" aria-expanded="false" aria-controls="collapsePen">
+                Pen Controls
+              </button>
+            </h2>
+            <div id="collapsePen" class="accordion-collapse collapse" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <div class="row align-items-center">
+                  <div class="col-md-6">
+                    <div class="btn-group mb-3">
+                      <button id="penUpBtn" class="btn btn-outline-secondary">Pen Up</button>
+                      <button id="penDownBtn" class="btn btn-outline-secondary">Pen Down</button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">Pen Color</span>
+                      <input type="color" id="penColorInput" class="form-control form-control-color" value="#000000">
+                    </div>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">Pen Width</span>
+                      <input type="number" id="penWidthInput" class="form-control" min="1" max="10" value="2">
+                    </div>
+                    <div class="input-group mb-3">
+                      <span class="input-group-text">Background</span>
+                      <input type="color" id="bgColorInput" class="form-control form-control-color" value="#FFFFFF">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Turtle Controls -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTurtle" aria-expanded="false" aria-controls="collapseTurtle">
+                Turtle Controls
+              </button>
+            </h2>
+            <div id="collapseTurtle" class="accordion-collapse collapse" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <div class="btn-group mb-3">
+                  <button id="homeBtn" class="btn btn-outline-secondary">Home</button>
+                  <button id="clearBtn" class="btn btn-outline-secondary">Clear Screen</button>
+                  <button id="showTurtleBtn" class="btn btn-outline-secondary">Show Turtle</button>
+                  <button id="hideTurtleBtn" class="btn btn-outline-secondary">Hide Turtle</button>
+                  <button id="toggleGridBtn" class="btn btn-outline-secondary">Toggle Grid</button>
+                </div>
+                <div class="row mt-3">
+                  <div class="col">
+                    <label for="speedSlider" class="form-label">Speed: <span id="speedValue">5</span></label>
+                    <input type="range" class="form-range" id="speedSlider" min="1" max="10" value="5">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pattern Buttons -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePatterns" aria-expanded="false" aria-controls="collapsePatterns">
+                Example Patterns
+              </button>
+            </h2>
+            <div id="collapsePatterns" class="accordion-collapse collapse" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <div class="btn-group flex-wrap mb-3">
+                  <button id="squareBtn" class="btn btn-success command-btn">Square</button>
+                  <button id="circleBtn" class="btn btn-success command-btn">Circle</button>
+                  <button id="spiralBtn" class="btn btn-success command-btn">Spiral</button>
+                  <button id="starBtn" class="btn btn-success command-btn">Star</button>
+                  <button id="snowflakeBtn" class="btn btn-success command-btn">Snowflake</button>
+                  <button id="multiTurtleBtn" class="btn btn-success command-btn">Multi-Turtle Demo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- API Documentation -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAPI" aria-expanded="false" aria-controls="collapseAPI">
+                API Reference
+              </button>
+            </h2>
+            <div id="collapseAPI" class="accordion-collapse collapse" data-bs-parent="#accordionControls">
+              <div class="accordion-body">
+                <table class="table table-striped table-hover api-table">
+                  <thead>
+                    <tr>
+                      <th>Command</th>
+                      <th>Description</th>
+                      <th>Parameters</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- API Commands in alphabetical order -->
+                    <tr>
+                      <td><code>backward(distance)</code></td>
+                      <td>Move the turtle backward</td>
+                      <td><code>distance</code>: Number of pixels to move</td>
+                    </tr>
+                    <tr>
+                      <td><code>clearScreen()</code></td>
+                      <td>Clear the drawing canvas</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>forward(distance)</code></td>
+                      <td>Move the turtle forward</td>
+                      <td><code>distance</code>: Number of pixels to move</td>
+                    </tr>
+                    <tr>
+                      <td><code>getBackgroundColor()</code></td>
+                      <td>Get the current background color</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getGridVisibility()</code></td>
+                      <td>Check if the grid is visible</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getPenColor()</code></td>
+                      <td>Get the current pen color</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getPenUp()</code></td>
+                      <td>Check if the pen is up</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getPenWidth()</code></td>
+                      <td>Get the current pen width</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getSpeed()</code></td>
+                      <td>Get the current animation speed</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>getTurtleName()</code></td>
+                      <td>Get the active turtle's name</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>hideTurtle()</code></td>
+                      <td>Hide the active turtle</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>home()</code></td>
+                      <td>Move active turtle to center</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>left(angle)</code></td>
+                      <td>Turn the turtle left</td>
+                      <td><code>angle</code>: Degrees to turn</td>
+                    </tr>
+                    <tr>
+                      <td><code>listTurtles()</code></td>
+                      <td>List all turtles</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>newTurtle(name, x, y, color)</code></td>
+                      <td>Create a new turtle</td>
+                      <td>
+                        <code>name</code>: Turtle name<br>
+                        <code>x</code>, <code>y</code>: Starting position (optional)<br>
+                        <code>color</code>: Turtle color (optional)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>penDown()</code></td>
+                      <td>Lower the pen (start drawing)</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>penUp()</code></td>
+                      <td>Lift the pen (no drawing)</td>
+                      <td>None</td>
+                    </tr>
+                    <tr>
+                      <td><code>random(a, b)</code></td>
+                      <td>Generate a random number</td>
+                      <td><code>a</code>, <code>b</code>: Min and max values (inclusive)</td>
+                    </tr>
+                    <tr>
+                      <td><code>retireTurtle([nameOrIndex])</code></td>
+                      <td>Delete a turtle</td>
+                      <td><code>nameOrIndex</code>: Name or index of turtle to delete (optional - uses current turtle if omitted)</td>
+                    </tr>
+                    <tr>
+                      <td><code>right(angle)</code></td>
+                      <td>Turn the turtle right</td>
+                      <td><code>angle</code>: Degrees to turn</td>
+                    </tr>
+                    <tr>
+                      <td><code>selectTurtle(nameOrIndex)</code></td>
+                      <td>Select a turtle as active</td>
+                      <td><code>nameOrIndex</code>: Turtle name or index</td>
+                    </tr>
+                    <tr>
+                      <td><code>setBackgroundColor(color)</code></td>
+                      <td>Change the canvas background color</td>
+                      <td><code>color</code>: CSS color value</td>
+                    </tr>
+                    <tr>
+                      <td><code>setPenColor(color)</code></td>
+                      <td>Change the pen color</td>
+                      <td><code>color</code>: CSS color value</td>
+                    </tr>
+                    <tr>
+                      <td><code>setPenWidth(width)</code></td>
+                      <td>Change the pen width</td>
+                      <td><code>width</code>: Width in pixels</td>
+                    </tr>
+                    <tr>
+                      <td><code>setSpeed(speed)</code></td>
+                      <td>Change the animation speed</td>
+                      <td><code>speed</code>: Value from 1 (slowest) to 10 (fastest)</td>
+                    </tr>
+                    <tr>
+                      <td><code>setTurtleName(name)</code></td>
+                      <td>Set the active turtle's name</td>
+                      <td><code>name</code>: New name for the turtle</td>
+                    </tr>
+                    <tr>
+                      <td><code>showGrid([show])</code></td>
+                      <td>Toggle grid visibility</td>
+                      <td><code>show</code>: Optional boolean (true to show, false to hide)</td>
+                    </tr>
+                    <tr>
+                      <td><code>showTurtle()</code></td>
+                      <td>Show the active turtle</td>
+                      <td>None</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
+
+        // Add event listeners to buttons
+        document.getElementById('forwardBtn').addEventListener('click', () => forward(100));
+        document.getElementById('backwardBtn').addEventListener('click', () => backward(100));
+        document.getElementById('leftBtn').addEventListener('click', () => left(45));
+        document.getElementById('rightBtn').addEventListener('click', () => right(45));
+        document.getElementById('penUpBtn').addEventListener('click', penUp);
+        document.getElementById('penDownBtn').addEventListener('click', penDown);
+        document.getElementById('homeBtn').addEventListener('click', home);
+        document.getElementById('clearBtn').addEventListener('click', clearScreen);
+        document.getElementById('showTurtleBtn').addEventListener('click', showTurtle);
+        document.getElementById('hideTurtleBtn').addEventListener('click', hideTurtle);
+        document.getElementById('toggleGridBtn').addEventListener('click', () => showGrid());
+
+        // Color and width input listeners
+        document.getElementById('penColorInput').addEventListener('change', (e) => setPenColor(e.target.value));
+        document.getElementById('penWidthInput').addEventListener('change', (e) => setPenWidth(parseInt(e.target.value)));
+        document.getElementById('bgColorInput').addEventListener('change', (e) => setBackgroundColor(e.target.value));
+
+        // Speed slider
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        speedSlider.addEventListener('input', (e) => {
+          const speed = parseInt(e.target.value);
+          setSpeed(speed);
+          speedValue.textContent = speed;
+        });
+
+        // Turtle selector
+        document.getElementById('turtleSelector').addEventListener('change', (e) => {
+          const index = parseInt(e.target.value);
+          if (index >= 0 && index < turtles.length) {
+            setCurrentTurtle(turtles[index]);
+            
+            // Update color picker to match turtle's color
+            if (currentTurtle) {
+              document.getElementById('penColorInput').value = currentTurtle.penColor;
+            }
+          }
+        });
+        
+        // New turtle button
+        document.getElementById('newTurtleBtn').addEventListener('click', () => {
+          document.getElementById('newTurtleForm').style.display = 'block';
+        });
+        
+        // Create turtle button
+        document.getElementById('createTurtleBtn').addEventListener('click', () => {
+          const name = document.getElementById('turtleName').value.trim() || `Turtle ${turtles.length + 1}`;
+          const x = parseInt(document.getElementById('turtleX').value) || 300;
+          const y = parseInt(document.getElementById('turtleY').value) || 300;
+          const color = document.getElementById('turtleColor').value;
+          
+          const turtle = createTurtle(name, x, y, color);
+          setCurrentTurtle(turtle);
+          
+          // Hide the form
+          document.getElementById('newTurtleForm').style.display = 'none';
+        });
+        
+        // Cancel button
+        document.getElementById('cancelTurtleBtn').addEventListener('click', () => {
+          document.getElementById('newTurtleForm').style.display = 'none';
+        });
+
+        // Code textarea and run button
+        const codeTextarea = document.getElementById('codeTextarea');
+        
+        // Function to run the code in the textarea
+        function runCode() {
+          try {
+            // Clear the animation queue first
+            animationQueue = [];
+            isAnimating = false;
+            consoleLog("Running code...", "info");
+            eval(codeTextarea.value);
+          } catch (error) {
+            console.error('Error in custom code:', error);
+            consoleLog(`Error: ${error.message}`, "error");
+            alert('Error in code: ' + error.message);
+          }
+        }
+        
+        // Add event listener for run button
+        document.getElementById('runBtn').addEventListener('click', runCode);
+        
+        // Add keyboard shortcut (CTRL+ENTER) to run code
+        codeTextarea.addEventListener('keydown', function(e) {
+          // Check if it's Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac)
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault(); // Prevent default behavior
+            runCode();
+          }
+        });
+
+        // Pattern buttons
+        document.getElementById('squareBtn').addEventListener('click', () => {
+          const code = drawSquare(100);
+          codeTextarea.value = code;
+          // Clear the animation queue first
+          animationQueue = [];
+          isAnimating = false;
+          // Then run the code
+          consoleLog("Running square pattern...", "info");
+          eval(code);
+        });
+
+        document.getElementById('circleBtn').addEventListener('click', () => {
+          const code = drawCircle(100);
+          codeTextarea.value = code;
+          animationQueue = [];
+          isAnimating = false;
+          consoleLog("Running circle pattern...", "info");
+          eval(code);
+        });
+
+        document.getElementById('spiralBtn').addEventListener('click', () => {
+          const code = drawSpiral(5, 0.5, 10);
+          codeTextarea.value = code;
+          animationQueue = [];
+          isAnimating = false;
+          consoleLog("Running spiral pattern...", "info");
+          eval(code);
+        });
+
+        document.getElementById('starBtn').addEventListener('click', () => {
+          const code = drawStar(100);
+          codeTextarea.value = code;
+          animationQueue = [];
+          isAnimating = false;
+          consoleLog("Running star pattern...", "info");
+          eval(code);
+        });
+
+        document.getElementById('snowflakeBtn').addEventListener('click', () => {
+          const code = drawSnowflake(200, 3);
+          codeTextarea.value = code;
+          animationQueue = [];
+          isAnimating = false;
+          consoleLog("Running snowflake pattern...", "info");
+          eval(code);
+        });
+        
+        document.getElementById('multiTurtleBtn').addEventListener('click', () => {
+          const code = multiTurtleDemo();
+          codeTextarea.value = code;
+          animationQueue = [];
+          isAnimating = false;
+          consoleLog("Running multi-turtle demo...", "info");
+          eval(code);
+        });
+
+        // Clear Canvas button
+        document.getElementById('clearCanvasBtn').addEventListener('click', () => {
+          clearScreen();
+          consoleLog("Canvas cleared", "info");
+        });
+        
+        // Clear Commands button
+        document.getElementById('clearCommandsBtn').addEventListener('click', () => {
+          if (codeTextarea.value.trim() && !confirm('Are you sure you want to clear all code in the editor?')) {
+            return;
+          }
+          codeTextarea.value = '';
+          consoleLog("Commands cleared", "info");
+        });
+
+        // Initialize
+        setBackgroundColor('#FFFFFF');
+        
+        // Create the initial turtle
+        createTurtle('Turtle 1', undefined, undefined, '#4CAF50');
+        
+        // Expose required functions to the global scope for the textarea code to work
+        window.forward = forward;
+        window.backward = backward;
+        window.right = right;
+        window.left = left;
+        window.penUp = penUp;
+        window.penDown = penDown;
+        window.setPenColor = setPenColor;
+        window.getPenColor = getPenColor;
+        window.setPenWidth = setPenWidth;
+        window.getPenWidth = getPenWidth;
+        window.getPenUp = getPenUp;
+        window.setSpeed = setSpeed;
+        window.getSpeed = getSpeed;
+        window.setBackgroundColor = setBackgroundColor;
+        window.getBackgroundColor = getBackgroundColor;
+        window.showGrid = showGrid;
+        window.getGridVisibility = getGridVisibility;
+        window.hideTurtle = hideTurtle;
+        window.showTurtle = showTurtle;
+        window.clearScreen = clearScreen;
+        window.home = home;
+        window.random = random;
+        window.newTurtle = newTurtle;
+        window.retireTurtle = retireTurtle;
+        window.selectTurtle = selectTurtle;
+        window.listTurtles = listTurtles;
+        window.getTurtleName = getTurtleName;
+        window.setTurtleName = setTurtleName;
+    })();
+    </script>
+</body>
+</html>
