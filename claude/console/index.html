@@ -935,30 +935,31 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
         const urlAccessControlProgram = {
             steps: [
                 {
-                    // Initialize the program with predefined approve and deny lists
+                    // Initialize the program with the provided approve and deny lists
                     prompt: undefined,
                     process: () => {
-                        // Create sample approve and deny lists
+                        // Approve list from approve.txt
                         const approveList = [
-                            "google.com",
-                            "microsoft.com",
-                            "wikipedia.org",
-                            "github.com"
+                            "www.google.com",
+                            "www.microsoft.com",
+                            "www.daveghidiu.com",
+                            "www.flcc.edu"
                         ];
                         
+                        // Deny list from deny.txt
                         const denyList = [
-                            "badsite.com",
-                            "malware.org",
-                            "phishing.net",
-                            "unsafe.co"
+                            "www.malware-example.com",
+                            "www.phishingdemo.org",
+                            "www.gambling-example.com",
+                            "www.games.example.org",
+                            "www.social-media-example.com"
                         ];
                         
                         const reviewList = [];
-                        const logEntries = [];
                         
                         return {
-                            output: "\n===== URL ACCESS CONTROL SYSTEM =====",
-                            state: { approveList, denyList, reviewList, logEntries },
+                            output: "",  // No initial output to match Python version
+                            state: { approveList, denyList, reviewList },
                             nextStep: 1
                         };
                     }
@@ -967,7 +968,7 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
                     // Ask for URL to check
                     prompt: "\nEnter a URL to access: ",
                     process: (input, state) => {
-                        const url = input.trim().toLowerCase();
+                        const url = input.trim();
                         
                         // Get current timestamp
                         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
@@ -986,92 +987,21 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
                             status = "REVIEW";
                             output = `\nURL UNDER REVIEW\n--------------------------------------------------\n       PENDING REVIEW: ${url}\n--------------------------------------------------\nThis website is not on the approve or deny lists.\nIt has been submitted for review by the security team.\nAccess is currently restricted until review is complete.\nPlease check back later or contact IT if urgent access is needed.\n--------------------------------------------------\n\nURL has been added to review.txt for security team review.`;
                             
-                            // Add to review list
+                            // Add to review list (simulating writing to review.txt)
                             const updatedReviewList = [...state.reviewList, url];
                             state.reviewList = updatedReviewList;
                         }
                         
-                        // Log the access attempt
+                        // Simulate logging the access attempt (simulating writing to log.txt)
                         const logEntry = `${timestamp} - URL: ${url} - STATUS: ${status}`;
-                        const updatedLogEntries = [...state.logEntries, logEntry];
                         
                         output += `\n\nThis access attempt has been logged to log.txt`;
                         
                         return {
                             output,
-                            state: {
-                                ...state,
-                                logEntries: updatedLogEntries
-                            },
-                            nextStep: 2
+                            state: state
+                            
                         };
-                    }
-                },
-                {
-                    // Option to view logs or check another URL
-                    prompt: "\n\nOptions:\n1. Check another URL\n2. View approved URLs\n3. View denied URLs\n4. View review list\n5. View access logs\nEnter choice (1-5): ",
-                    process: (input, state) => {
-                        const choice = parseInt(input.trim());
-                        
-                        switch (choice) {
-                            case 1:
-                                // Check another URL
-                                return {
-                                    output: "",
-                                    state,
-                                    nextStep: 1
-                                };
-                            case 2:
-                                // View approved URLs
-                                return {
-                                    output: `\n===== APPROVED URLs =====\n${state.approveList.join('\n')}`,
-                                    state,
-                                    nextStep: 2
-                                };
-                            case 3:
-                                // View denied URLs
-                                return {
-                                    output: `\n===== DENIED URLs =====\n${state.denyList.join('\n')}`,
-                                    state,
-                                    nextStep: 2
-                                };
-                            case 4:
-                                // View review list
-                                if (state.reviewList.length === 0) {
-                                    return {
-                                        output: `\n===== REVIEW LIST =====\nNo URLs pending review.`,
-                                        state,
-                                        nextStep: 2
-                                    };
-                                } else {
-                                    return {
-                                        output: `\n===== REVIEW LIST =====\n${state.reviewList.join('\n')}`,
-                                        state,
-                                        nextStep: 2
-                                    };
-                                }
-                            case 5:
-                                // View access logs
-                                if (state.logEntries.length === 0) {
-                                    return {
-                                        output: `\n===== ACCESS LOGS =====\nNo log entries.`,
-                                        state,
-                                        nextStep: 2
-                                    };
-                                } else {
-                                    return {
-                                        output: `\n===== ACCESS LOGS =====\n${state.logEntries.join('\n')}`,
-                                        state,
-                                        nextStep: 2
-                                    };
-                                }
-                            default:
-                                return {
-                                    output: "\nInvalid choice. Please enter a number between 1 and 5.",
-                                    state,
-                                    nextStep: 2
-                                };
-                        }
                     }
                 }
             ]
