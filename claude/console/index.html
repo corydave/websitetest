@@ -930,6 +930,153 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
                 }
             ]
         };
+
+
+        const urlAccessControlProgram = {
+            steps: [
+                {
+                    // Initialize the program with predefined approve and deny lists
+                    prompt: undefined,
+                    process: () => {
+                        // Create sample approve and deny lists
+                        const approveList = [
+                            "google.com",
+                            "microsoft.com",
+                            "wikipedia.org",
+                            "github.com"
+                        ];
+                        
+                        const denyList = [
+                            "badsite.com",
+                            "malware.org",
+                            "phishing.net",
+                            "unsafe.co"
+                        ];
+                        
+                        const reviewList = [];
+                        const logEntries = [];
+                        
+                        return {
+                            output: "\n===== URL ACCESS CONTROL SYSTEM =====",
+                            state: { approveList, denyList, reviewList, logEntries },
+                            nextStep: 1
+                        };
+                    }
+                },
+                {
+                    // Ask for URL to check
+                    prompt: "\nEnter a URL to access: ",
+                    process: (input, state) => {
+                        const url = input.trim().toLowerCase();
+                        
+                        // Get current timestamp
+                        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+                        
+                        let status = "";
+                        let output = "";
+                        
+                        // Check URL against lists
+                        if (state.approveList.includes(url)) {
+                            status = "APPROVE";
+                            output = `\nACCESS GRANTED\n--------------------------------------------------\n       CONTENT FROM: ${url}\n--------------------------------------------------\nThis website has been verified as safe by your organization.\nFeel free to browse this content for business or educational purposes.\nRemember to follow the organization's acceptable use policy.\n--------------------------------------------------`;
+                        } else if (state.denyList.includes(url)) {
+                            status = "DENY";
+                            output = `\nACCESS DENIED\n--------------------------------------------------\n       BLOCKED URL: ${url}\n--------------------------------------------------\nThis website has been blocked by your organization's web filter.\nReason: This URL is on the deny list.\nIf you believe this is an error, please contact IT support.\n--------------------------------------------------`;
+                        } else {
+                            status = "REVIEW";
+                            output = `\nURL UNDER REVIEW\n--------------------------------------------------\n       PENDING REVIEW: ${url}\n--------------------------------------------------\nThis website is not on the approve or deny lists.\nIt has been submitted for review by the security team.\nAccess is currently restricted until review is complete.\nPlease check back later or contact IT if urgent access is needed.\n--------------------------------------------------\n\nURL has been added to review.txt for security team review.`;
+                            
+                            // Add to review list
+                            const updatedReviewList = [...state.reviewList, url];
+                            state.reviewList = updatedReviewList;
+                        }
+                        
+                        // Log the access attempt
+                        const logEntry = `${timestamp} - URL: ${url} - STATUS: ${status}`;
+                        const updatedLogEntries = [...state.logEntries, logEntry];
+                        
+                        output += `\n\nThis access attempt has been logged to log.txt`;
+                        
+                        return {
+                            output,
+                            state: {
+                                ...state,
+                                logEntries: updatedLogEntries
+                            },
+                            nextStep: 2
+                        };
+                    }
+                },
+                {
+                    // Option to view logs or check another URL
+                    prompt: "\n\nOptions:\n1. Check another URL\n2. View approved URLs\n3. View denied URLs\n4. View review list\n5. View access logs\nEnter choice (1-5): ",
+                    process: (input, state) => {
+                        const choice = parseInt(input.trim());
+                        
+                        switch (choice) {
+                            case 1:
+                                // Check another URL
+                                return {
+                                    output: "",
+                                    state,
+                                    nextStep: 1
+                                };
+                            case 2:
+                                // View approved URLs
+                                return {
+                                    output: `\n===== APPROVED URLs =====\n${state.approveList.join('\n')}`,
+                                    state,
+                                    nextStep: 2
+                                };
+                            case 3:
+                                // View denied URLs
+                                return {
+                                    output: `\n===== DENIED URLs =====\n${state.denyList.join('\n')}`,
+                                    state,
+                                    nextStep: 2
+                                };
+                            case 4:
+                                // View review list
+                                if (state.reviewList.length === 0) {
+                                    return {
+                                        output: `\n===== REVIEW LIST =====\nNo URLs pending review.`,
+                                        state,
+                                        nextStep: 2
+                                    };
+                                } else {
+                                    return {
+                                        output: `\n===== REVIEW LIST =====\n${state.reviewList.join('\n')}`,
+                                        state,
+                                        nextStep: 2
+                                    };
+                                }
+                            case 5:
+                                // View access logs
+                                if (state.logEntries.length === 0) {
+                                    return {
+                                        output: `\n===== ACCESS LOGS =====\nNo log entries.`,
+                                        state,
+                                        nextStep: 2
+                                    };
+                                } else {
+                                    return {
+                                        output: `\n===== ACCESS LOGS =====\n${state.logEntries.join('\n')}`,
+                                        state,
+                                        nextStep: 2
+                                    };
+                                }
+                            default:
+                                return {
+                                    output: "\nInvalid choice. Please enter a number between 1 and 5.",
+                                    state,
+                                    nextStep: 2
+                                };
+                        }
+                    }
+                }
+            ]
+        };
+
         
 
         const portKnockingProgram = {
@@ -1071,7 +1218,8 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             portknock: portKnockingProgram,
             fortune:fortuneTellerProgram,
             passwordanalyze: passwordAnalyzerProgram,
-            mfa: mfaCodes
+            mfa: mfaCodes,
+            urlFilter: urlAccessControlProgram
             // Add more programs here
         };
         
