@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Metadata Stripper</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-container {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f7f9fc;
+            transition: all 0.3s ease;
+        }
+        .upload-container:hover {
+            border-color: #2980b9;
+            background-color: #edf2f7;
+        }
+        .upload-container.highlight {
+            border-color: #27ae60;
+            background-color: #e8f5e9;
+        }
+        #upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        #upload-btn:hover {
+            background-color: #2980b9;
+        }
+        .upload-text {
+            margin-bottom: 20px;
+        }
+        #preview-container {
+            display: none;
+            margin-top: 30px;
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #metadata-container {
+            background-color: #f7f9fc;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .metadata-item {
+            display: flex;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .metadata-label {
+            font-weight: bold;
+            width: 150px;
+            color: #2c3e50;
+        }
+        .download-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: #219653;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Photo Metadata Stripper</h1>
+    
+    <div id="upload-container" class="upload-container">
+        <div class="upload-text">Drag & drop your photo here or click to upload</div>
+        <button id="upload-btn">Choose a Photo</button>
+        <input type="file" id="file-input" accept="image/*" class="hidden">
+    </div>
+    
+    <div id="error-message"></div>
+    
+    <div id="preview-container">
+        <h2>Original Photo</h2>
+        <img id="image-preview" alt="Preview">
+        
+        <h2>Metadata Found</h2>
+        <div id="metadata-container"></div>
+        
+        <button id="download-btn" class="download-btn">Download Clean Photo</button>
+    </div>
+
+    <script>
+        // DOM elements
+        const uploadContainer = document.getElementById('upload-container');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const metadataContainer = document.getElementById('metadata-container');
+        const downloadBtn = document.getElementById('download-btn');
+        const errorMessage = document.getElementById('error-message');
+        
+        // Event listeners
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        downloadBtn.addEventListener('click', downloadCleanImage);
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadContainer.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            uploadContainer.classList.remove('highlight');
+        }
+        
+        uploadContainer.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+        
+        // File handling
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        let originalImageDataUrl;
+        
+        function handleFile(file) {
+            // Reset any previous error
+            errorMessage.style.display = 'none';
+            
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                showError('Please select an image file (JPEG, PNG, etc.)');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                // Store the original image data URL
+                originalImageDataUrl = e.target.result;
+                
+                // Display the image preview
+                imagePreview.src = originalImageDataUrl;
+                
+                // Create a new image object to extract metadata
+                const img = new Image();
+                
+                img.onload = function() {
+                    // Extract metadata
+                    extractMetadata(file);
+                    
+                    // Show the preview container
+                    previewContainer.style.display = 'block';
+                    
+                    // Scroll to the preview
+                    previewContainer.scrollIntoView({ behavior: 'smooth' });
+                };
+                
+                img.src = originalImageDataUrl;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        function extractMetadata(file) {
+            // Clear previous metadata
+            metadataContainer.innerHTML = '';
+            
+            // Basic file metadata
+            displayMetadataItem('File Name', file.name);
+            displayMetadataItem('File Type', file.type);
+            displayMetadataItem('File Size', formatFileSize(file.size));
+            displayMetadataItem('Last Modified', new Date(file.lastModified).toLocaleString());
+            
+            // For JPEG and some other formats, we can extract EXIF data
+            if (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/tiff') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    try {
+                        const exifData = extractExifData(arrayBuffer);
+                        displayExifData(exifData);
+                    } catch (error) {
+                        console.error('Error extracting EXIF data:', error);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                displayMetadataItem('EXIF Data', 'Not available for this image format');
+            }
+        }
+        
+        function displayMetadataItem(label, value) {
+            const item = document.createElement('div');
+            item.className = 'metadata-item';
+            
+            const labelElement = document.createElement('div');
+            labelElement.className = 'metadata-label';
+            labelElement.textContent = label + ':';
+            
+            const valueElement = document.createElement('div');
+            valueElement.className = 'metadata-value';
+            valueElement.textContent = value;
+            
+            item.appendChild(labelElement);
+            item.appendChild(valueElement);
+            
+            metadataContainer.appendChild(item);
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return bytes + ' bytes';
+            } else if (bytes < 1024 * 1024) {
+                return (bytes / 1024).toFixed(2) + ' KB';
+            } else {
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+        }
+        
+        function extractExifData(arrayBuffer) {
+            // This is a simplified EXIF extraction
+            // For a real app, you'd want to use a library like exif-js
+            
+            const dataView = new DataView(arrayBuffer);
+            const exifData = {};
+            
+            // Check for JPEG SOI marker
+            if (dataView.getUint16(0) !== 0xFFD8) {
+                return exifData; // Not a JPEG
+            }
+            
+            let offset = 2;
+            
+            while (offset < dataView.byteLength) {
+                // Check for APP1 marker which contains EXIF
+                if (dataView.getUint16(offset) === 0xFFE1) {
+                    const exifHeaderStart = offset + 4; // Skip marker and size
+                    const exifHeader = String.fromCharCode(
+                        dataView.getUint8(exifHeaderStart),
+                        dataView.getUint8(exifHeaderStart + 1),
+                        dataView.getUint8(exifHeaderStart + 2),
+                        dataView.getUint8(exifHeaderStart + 3),
+                        dataView.getUint8(exifHeaderStart + 4),
+                        dataView.getUint8(exifHeaderStart + 5)
+                    );
+                    
+                    if (exifHeader === 'Exif\0\0') {
+                        // Found EXIF data
+                        exifData.exists = true;
+                        
+                        // In a real app, you would parse the EXIF data here
+                        // This simplified version just indicates that EXIF data exists
+                        break;
+                    }
+                }
+                
+                offset += 2 + dataView.getUint16(offset + 2);
+            }
+            
+            return exifData;
+        }
+        
+        function displayExifData(exifData) {
+            if (exifData.exists) {
+                displayMetadataItem('EXIF Data', 'Present (will be removed)');
+                
+                // In a full implementation, you'd display actual EXIF fields here
+                // For example:
+                // if (exifData.GPSLatitude) displayMetadataItem('GPS Latitude', exifData.GPSLatitude);
+                // if (exifData.GPSLongitude) displayMetadataItem('GPS Longitude', exifData.GPSLongitude);
+                // if (exifData.DateTimeOriginal) displayMetadataItem('Date Taken', exifData.DateTimeOriginal);
+                // etc.
+            } else {
+                displayMetadataItem('EXIF Data', 'Not detected');
+            }
+        }
+        
+        function downloadCleanImage() {
+            if (!originalImageDataUrl) {
+                showError('No image loaded');
+                return;
+            }
+            
+            // Create a new image from the original data URL
+            const img = new Image();
+            
+            img.onload = function() {
+                // Create a canvas to draw the image without metadata
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw the image on the canvas (this strips the metadata)
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                // Get the clean image as a data URL
+                let cleanImageDataUrl;
+                try {
+                    // Try to use the same format as the original
+                    cleanImageDataUrl = canvas.toDataURL(
+                        originalImageDataUrl.split(',')[0].split(':')[1].split(';')[0]
+                    );
+                } catch (e) {
+                    // Fallback to PNG
+                    cleanImageDataUrl = canvas.toDataURL('image/png');
+                }
+                
+                // Create a download link
+                const link = document.createElement('a');
+                link.download = 'clean_image.jpg';
+                link.href = cleanImageDataUrl;
+                link.click();
+            };
+            
+            img.src = originalImageDataUrl;
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
