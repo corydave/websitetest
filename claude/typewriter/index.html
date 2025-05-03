@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typewriter Effect</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #display {
+            height: 75vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+        
+        #text-display {
+            max-width: 80%;
+            font-size: 2rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        
+        #settings {
+            height: 25vh;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        label {
+            font-weight: bold;
+            min-width: 80px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        input, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        #text-input {
+            flex-grow: 1;
+            min-width: 200px;
+        }
+        
+        #font-selector {
+            min-width: 150px;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="display">
+        <div id="text-display"></div>
+    </div>
+    
+    <div id="settings">
+        <div class="control-row">
+            <label for="text-input">Text:</label>
+            <input type="text" id="text-input" placeholder="Enter text to display" value="Welcome to the Typewriter Effect App! You can change this text, font, background color, and typing speed in the settings below.">
+        </div>
+        
+        <div class="control-row">
+            <label for="font-selector">Font:</label>
+            <select id="font-selector">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="'Courier New', monospace" selected>Courier New</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                <option value="Impact, sans-serif">Impact</option>
+            </select>
+            
+            <label for="bg-color">Background:</label>
+            <input type="color" id="bg-color" value="#ffffff">
+            
+            <div class="slider-container">
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="10" max="200" value="50">
+                <span id="speed-value" class="slider-value">50ms</span>
+            </div>
+            
+            <button id="play-button">PLAY</button>
+            <button id="stop-button" disabled>STOP</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const display = document.getElementById('display');
+        const textDisplay = document.getElementById('text-display');
+        const textInput = document.getElementById('text-input');
+        const fontSelector = document.getElementById('font-selector');
+        const bgColor = document.getElementById('bg-color');
+        const speedSlider = document.getElementById('speed-slider');
+        const speedValue = document.getElementById('speed-value');
+        const playButton = document.getElementById('play-button');
+        const stopButton = document.getElementById('stop-button');
+        
+        // Variables
+        let typingInterval;
+        let currentIndex = 0;
+        let isTyping = false;
+        
+        // Initialize
+        updateBackgroundColor();
+        updateFont();
+        updateSpeedValue();
+        
+        // Event listeners
+        bgColor.addEventListener('input', updateBackgroundColor);
+        fontSelector.addEventListener('change', updateFont);
+        speedSlider.addEventListener('input', updateSpeedValue);
+        playButton.addEventListener('click', startTypewriter);
+        stopButton.addEventListener('click', stopTypewriter);
+        
+        // Functions
+        function updateBackgroundColor() {
+            display.style.backgroundColor = bgColor.value;
+        }
+        
+        function updateFont() {
+            textDisplay.style.fontFamily = fontSelector.value;
+        }
+        
+        function updateSpeedValue() {
+            speedValue.textContent = `${speedSlider.value}ms`;
+        }
+        
+        function startTypewriter() {
+            // Reset if already typing
+            if (isTyping) {
+                stopTypewriter();
+            }
+            
+            // Prepare for typing
+            const text = textInput.value;
+            textDisplay.textContent = '';
+            currentIndex = 0;
+            isTyping = true;
+            
+            // Update button states
+            playButton.disabled = true;
+            stopButton.disabled = false;
+            
+            // Start typing
+            typingInterval = setInterval(() => {
+                if (currentIndex < text.length) {
+                    textDisplay.textContent += text.charAt(currentIndex);
+                    currentIndex++;
+                } else {
+                    stopTypewriter();
+                }
+            }, parseInt(speedSlider.value));
+        }
+        
+        function stopTypewriter() {
+            clearInterval(typingInterval);
+            isTyping = false;
+            
+            // Update button states
+            playButton.disabled = false;
+            stopButton.disabled = true;
+        }
+    </script>
+</body>
+</html>
