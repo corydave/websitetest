@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Metadata Stripper</title>
+    <!-- Add heic2any library -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-container {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f7f9fc;
+            transition: all 0.3s ease;
+        }
+        .upload-container:hover {
+            border-color: #2980b9;
+            background-color: #edf2f7;
+        }
+        .upload-container.highlight {
+            border-color: #27ae60;
+            background-color: #e8f5e9;
+        }
+        #upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        #upload-btn:hover {
+            background-color: #2980b9;
+        }
+        .upload-text {
+            margin-bottom: 20px;
+        }
+        #preview-container {
+            display: none;
+            margin-top: 30px;
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #metadata-container {
+            background-color: #f7f9fc;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .metadata-item {
+            display: flex;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .metadata-label {
+            font-weight: bold;
+            width: 150px;
+            color: #2c3e50;
+        }
+        .download-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: #219653;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
+        #conversion-message {
+            color: #27ae60;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+            font-weight: bold;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .progress-bar {
+            height: 10px;
+            border-radius: 4px;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1>Photo Metadata Stripper v1.3</h1>
+    
+    <div id="upload-container" class="upload-container">
+        <div class="upload-text">Drag & drop your photo here or click to upload</div>
+        <button id="upload-btn">Choose a Photo</button>
+        <input type="file" id="file-input" accept="image/*" class="hidden">
+    </div>
+    
+    <div id="error-message"></div>
+    <div id="conversion-message"></div>
+    <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    
+    <div id="preview-container">
+        <h2>Original Photo</h2>
+        <img id="image-preview" alt="Preview">
+        
+        <h2>Metadata Found</h2>
+        <div id="metadata-container"></div>
+        
+        <button id="download-btn" class="download-btn">Download Clean Photo</button>
+    </div>
+
+    <script>
+        // DOM elements
+        const uploadContainer = document.getElementById('upload-container');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const metadataContainer = document.getElementById('metadata-container');
+        const downloadBtn = document.getElementById('download-btn');
+        const errorMessage = document.getElementById('error-message');
+        const conversionMessage = document.getElementById('conversion-message');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Event listeners
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        downloadBtn.addEventListener('click', downloadCleanImage);
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadContainer.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadContainer.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            uploadContainer.classList.remove('highlight');
+        }
+        
+        uploadContainer.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+        
+        // File handling
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        let originalImageDataUrl;
+        
+        let isHeic = false;
+        let outputFormat = 'image/jpeg';
+        let outputExtension = 'jpg';
+        
+        function handleFile(file) {
+            // Reset any previous error and conversion message
+            errorMessage.style.display = 'none';
+            document.getElementById('conversion-message').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'none';
+            
+            // Check if file is an image
+            if (!file.type.match('image.*') && 
+                file.name.toLowerCase().indexOf('.heic') === -1 && 
+                file.name.toLowerCase().indexOf('.heif') === -1) {
+                showError('Please select an image file (JPEG, PNG, HEIC, etc.)');
+                return;
+            }
+            
+            // Check if file is a HEIC/HEIF image
+            isHeic = file.type === 'image/heic' || 
+                     file.type === 'image/heif' || 
+                     file.name.toLowerCase().endsWith('.heic') || 
+                     file.name.toLowerCase().endsWith('.heif');
+                    
+            if (isHeic) {
+                // Show conversion message and progress bar
+                document.getElementById('conversion-message').textContent = 'Converting HEIC to PNG...';
+                document.getElementById('conversion-message').style.display = 'block';
+                document.getElementById('progress-container').style.display = 'block';
+                document.getElementById('progress-bar').style.width = '10%';
+                
+                // Set output format to PNG for HEIC files
+                outputFormat = 'image/png';
+                outputExtension = 'png';
+                
+                // Convert HEIC to PNG using heic2any
+                heic2any({
+                    blob: file,
+                    toType: outputFormat,
+                    quality: 0.8
+                })
+                .then(convertedBlob => {
+                    document.getElementById('progress-bar').style.width = '100%';
+                    document.getElementById('conversion-message').textContent = 'HEIC successfully converted to PNG!';
+                    
+                    // Read the converted blob
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Store the converted image data URL
+                        originalImageDataUrl = e.target.result;
+                        
+                        // Display the image preview
+                        imagePreview.src = originalImageDataUrl;
+                        
+                        // Extract metadata from original file (will be limited)
+                        extractMetadata(file);
+                        
+                        // Show the preview container
+                        previewContainer.style.display = 'block';
+                        
+                        // Scroll to the preview
+                        previewContainer.scrollIntoView({ behavior: 'smooth' });
+                    };
+                    
+                    reader.readAsDataURL(convertedBlob);
+                })
+                .catch(err => {
+                    console.error('HEIC conversion error:', err);
+                    showError('Error converting HEIC image. Please try another file.');
+                    document.getElementById('progress-container').style.display = 'none';
+                    document.getElementById('conversion-message').style.display = 'none';
+                });
+            } else {
+                // Handle regular image formats
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Store the original image data URL
+                    originalImageDataUrl = e.target.result;
+                    
+                    // Display the image preview
+                    imagePreview.src = originalImageDataUrl;
+                    
+                    // Create a new image object to extract metadata
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        // Extract metadata
+                        extractMetadata(file);
+                        
+                        // Show the preview container
+                        previewContainer.style.display = 'block';
+                        
+                        // Scroll to the preview
+                        previewContainer.scrollIntoView({ behavior: 'smooth' });
+                    };
+                    
+                    img.src = originalImageDataUrl;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function extractMetadata(file) {
+            // Clear previous metadata
+            metadataContainer.innerHTML = '';
+            
+            // Basic file metadata
+            displayMetadataItem('File Name', file.name);
+            displayMetadataItem('File Type', file.type);
+            displayMetadataItem('File Size', formatFileSize(file.size));
+            displayMetadataItem('Last Modified', new Date(file.lastModified).toLocaleString());
+            
+            // For JPEG and some other formats, we can extract EXIF data
+            if (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/tiff') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    try {
+                        const exifData = extractExifData(arrayBuffer);
+                        displayExifData(exifData);
+                    } catch (error) {
+                        console.error('Error extracting EXIF data:', error);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                displayMetadataItem('EXIF Data', 'Not available for this image format');
+            }
+        }
+        
+        function displayMetadataItem(label, value) {
+            const item = document.createElement('div');
+            item.className = 'metadata-item';
+            
+            const labelElement = document.createElement('div');
+            labelElement.className = 'metadata-label';
+            labelElement.textContent = label + ':';
+            
+            const valueElement = document.createElement('div');
+            valueElement.className = 'metadata-value';
+            valueElement.textContent = value;
+            
+            item.appendChild(labelElement);
+            item.appendChild(valueElement);
+            
+            metadataContainer.appendChild(item);
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return bytes + ' bytes';
+            } else if (bytes < 1024 * 1024) {
+                return (bytes / 1024).toFixed(2) + ' KB';
+            } else {
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+        }
+        
+        function extractExifData(arrayBuffer) {
+            const dataView = new DataView(arrayBuffer);
+            const exifData = {};
+            
+            // Check for JPEG SOI marker
+            if (dataView.getUint16(0) !== 0xFFD8) {
+                return exifData; // Not a JPEG
+            }
+            
+            let offset = 2;
+            let markerFound = false;
+            
+            while (offset < dataView.byteLength) {
+                // Check for APP1 marker which contains EXIF
+                if (dataView.getUint16(offset) === 0xFFE1) {
+                    const exifLength = dataView.getUint16(offset + 2);
+                    const exifHeaderStart = offset + 4; // Skip marker and size
+                    const exifHeader = String.fromCharCode(
+                        dataView.getUint8(exifHeaderStart),
+                        dataView.getUint8(exifHeaderStart + 1),
+                        dataView.getUint8(exifHeaderStart + 2),
+                        dataView.getUint8(exifHeaderStart + 3),
+                        dataView.getUint8(exifHeaderStart + 4),
+                        dataView.getUint8(exifHeaderStart + 5)
+                    );
+                    
+                    if (exifHeader === 'Exif\0\0') {
+                        // Found EXIF data
+                        exifData.exists = true;
+                        markerFound = true;
+                        
+                        const tiffHeaderOffset = exifHeaderStart + 6;
+                        let isBigEndian;
+                        
+                        // Check endianness
+                        const endianness = dataView.getUint16(tiffHeaderOffset);
+                        if (endianness === 0x4949) { // "II" for Intel (little-endian)
+                            isBigEndian = false;
+                        } else if (endianness === 0x4D4D) { // "MM" for Motorola (big-endian)
+                            isBigEndian = true;
+                        } else {
+                            break; // Invalid TIFF header
+                        }
+                        
+                        // Check for TIFF magic number (42)
+                        const magicNumber = readUint16(dataView, tiffHeaderOffset + 2, isBigEndian);
+                        if (magicNumber !== 42) {
+                            break; // Invalid TIFF header
+                        }
+                        
+                        // Get offset to first IFD (Image File Directory)
+                        const ifdOffset = readUint32(dataView, tiffHeaderOffset + 4, isBigEndian);
+                        const firstIfdOffset = tiffHeaderOffset + ifdOffset;
+                        
+                        // Read IFD entries
+                        const entryCount = readUint16(dataView, firstIfdOffset, isBigEndian);
+                        let entryOffset = firstIfdOffset + 2;
+                        
+                        for (let i = 0; i < entryCount; i++) {
+                            // Read tag, data type, and number of components
+                            const tag = readUint16(dataView, entryOffset, isBigEndian);
+                            const dataType = readUint16(dataView, entryOffset + 2, isBigEndian);
+                            const numComponents = readUint32(dataView, entryOffset + 4, isBigEndian);
+                            
+                            // Calculate total data size
+                            const dataSize = getDataTypeSize(dataType) * numComponents;
+                            
+                            // Get value or offset to value
+                            let valueOffset;
+                            if (dataSize <= 4) {
+                                valueOffset = entryOffset + 8;
+                            } else {
+                                const offsetValue = readUint32(dataView, entryOffset + 8, isBigEndian);
+                                valueOffset = tiffHeaderOffset + offsetValue;
+                            }
+                            
+                            // Process known tags
+                            const tagValue = readTagValue(dataView, valueOffset, dataType, numComponents, isBigEndian);
+                            const tagName = getTagName(tag);
+                            
+                            if (tagName && tagValue !== null) {
+                                exifData[tagName] = tagValue;
+                            }
+                            
+                            // Move to next entry
+                            entryOffset += 12;
+                        }
+                        
+                        // Check for EXIF sub-IFD
+                        if (exifData['ExifOffset']) {
+                            const exifSubIfdOffset = tiffHeaderOffset + exifData['ExifOffset'];
+                            const exifEntryCount = readUint16(dataView, exifSubIfdOffset, isBigEndian);
+                            let exifEntryOffset = exifSubIfdOffset + 2;
+                            
+                            for (let i = 0; i < exifEntryCount; i++) {
+                                const tag = readUint16(dataView, exifEntryOffset, isBigEndian);
+                                const dataType = readUint16(dataView, exifEntryOffset + 2, isBigEndian);
+                                const numComponents = readUint32(dataView, exifEntryOffset + 4, isBigEndian);
+                                
+                                const dataSize = getDataTypeSize(dataType) * numComponents;
+                                
+                                let valueOffset;
+                                if (dataSize <= 4) {
+                                    valueOffset = exifEntryOffset + 8;
+                                } else {
+                                    const offsetValue = readUint32(dataView, exifEntryOffset + 8, isBigEndian);
+                                    valueOffset = tiffHeaderOffset + offsetValue;
+                                }
+                                
+                                const tagValue = readTagValue(dataView, valueOffset, dataType, numComponents, isBigEndian);
+                                const tagName = getExifTagName(tag);
+                                
+                                if (tagName && tagValue !== null) {
+                                    exifData[tagName] = tagValue;
+                                }
+                                
+                                exifEntryOffset += 12;
+                            }
+                        }
+                        
+                        // Check for GPS sub-IFD
+                        if (exifData['GPSInfo']) {
+                            const gpsSubIfdOffset = tiffHeaderOffset + exifData['GPSInfo'];
+                            const gpsEntryCount = readUint16(dataView, gpsSubIfdOffset, isBigEndian);
+                            let gpsEntryOffset = gpsSubIfdOffset + 2;
+                            
+                            for (let i = 0; i < gpsEntryCount; i++) {
+                                const tag = readUint16(dataView, gpsEntryOffset, isBigEndian);
+                                const dataType = readUint16(dataView, gpsEntryOffset + 2, isBigEndian);
+                                const numComponents = readUint32(dataView, gpsEntryOffset + 4, isBigEndian);
+                                
+                                const dataSize = getDataTypeSize(dataType) * numComponents;
+                                
+                                let valueOffset;
+                                if (dataSize <= 4) {
+                                    valueOffset = gpsEntryOffset + 8;
+                                } else {
+                                    const offsetValue = readUint32(dataView, gpsEntryOffset + 8, isBigEndian);
+                                    valueOffset = tiffHeaderOffset + offsetValue;
+                                }
+                                
+                                const tagValue = readTagValue(dataView, valueOffset, dataType, numComponents, isBigEndian);
+                                const tagName = getGpsTagName(tag);
+                                
+                                if (tagName && tagValue !== null) {
+                                    // Special handling for GPS coordinates
+                                    if (tagName === 'GPSLatitude' || tagName === 'GPSLongitude') {
+                                        if (Array.isArray(tagValue) && tagValue.length === 3) {
+                                            exifData[tagName] = formatGpsCoordinate(tagValue);
+                                        } else {
+                                            exifData[tagName] = tagValue;
+                                        }
+                                    } else {
+                                        exifData[tagName] = tagValue;
+                                    }
+                                }
+                                
+                                gpsEntryOffset += 12;
+                            }
+                            
+                            // Format GPS data for display
+                            if (exifData['GPSLatitude'] && exifData['GPSLatitudeRef']) {
+                                const ref = exifData['GPSLatitudeRef'];
+                                exifData['GPSLatitude'] = exifData['GPSLatitude'] + (ref === 'N' ? ' N' : ' S');
+                            }
+                            
+                            if (exifData['GPSLongitude'] && exifData['GPSLongitudeRef']) {
+                                const ref = exifData['GPSLongitudeRef'];
+                                exifData['GPSLongitude'] = exifData['GPSLongitude'] + (ref === 'E' ? ' E' : ' W');
+                            }
+                        }
+                        
+                        break;
+                    }
+                }
+                
+                // Move to the next marker
+                offset += 2 + dataView.getUint16(offset + 2);
+            }
+            
+            if (!markerFound) {
+                exifData.exists = false;
+            }
+            
+            return exifData;
+        }
+        
+        // Helper functions for EXIF extraction
+        function readUint16(dataView, offset, isBigEndian) {
+            return dataView.getUint16(offset, !isBigEndian);
+        }
+        
+        function readUint32(dataView, offset, isBigEndian) {
+            return dataView.getUint32(offset, !isBigEndian);
+        }
+        
+        function readInt32(dataView, offset, isBigEndian) {
+            return dataView.getInt32(offset, !isBigEndian);
+        }
+        
+        function getDataTypeSize(dataType) {
+            // EXIF data types and their sizes in bytes
+            const sizes = {
+                1: 1, // BYTE - 8-bit unsigned integer
+                2: 1, // ASCII - 8-bit byte containing character
+                3: 2, // SHORT - 16-bit unsigned integer
+                4: 4, // LONG - 32-bit unsigned integer
+                5: 8, // RATIONAL - Two LONGs (numerator & denominator)
+                6: 1, // SBYTE - 8-bit signed integer
+                7: 1, // UNDEFINED - 8-bit byte
+                8: 2, // SSHORT - 16-bit signed integer
+                9: 4, // SLONG - 32-bit signed integer
+                10: 8, // SRATIONAL - Two SLONGs (numerator & denominator)
+                11: 4, // FLOAT - 32-bit IEEE floating point
+                12: 8  // DOUBLE - 64-bit IEEE floating point
+            };
+            return sizes[dataType] || 0;
+        }
+        
+        function readTagValue(dataView, offset, dataType, numComponents, isBigEndian) {
+            let values = [];
+            let i, value;
+            
+            switch (dataType) {
+                case 1: // BYTE
+                case 6: // SBYTE
+                case 7: // UNDEFINED
+                    for (i = 0; i < numComponents; i++) {
+                        values.push(dataView.getUint8(offset + i));
+                    }
+                    break;
+                    
+                case 2: // ASCII
+                    let str = '';
+                    for (i = 0; i < numComponents; i++) {
+                        const char = dataView.getUint8(offset + i);
+                        if (char === 0) break; // Null-terminated
+                        str += String.fromCharCode(char);
+                    }
+                    return str;
+                    
+                case 3: // SHORT
+                    for (i = 0; i < numComponents; i++) {
+                        values.push(readUint16(dataView, offset + i * 2, isBigEndian));
+                    }
+                    break;
+                    
+                case 8: // SSHORT
+                    for (i = 0; i < numComponents; i++) {
+                        values.push(dataView.getInt16(offset + i * 2, !isBigEndian));
+                    }
+                    break;
+                    
+                case 4: // LONG
+                    for (i = 0; i < numComponents; i++) {
+                        values.push(readUint32(dataView, offset + i * 4, isBigEndian));
+                    }
+                    break;
+                    
+                case 9: // SLONG
+                    for (i = 0; i < numComponents; i++) {
+                        values.push(readInt32(dataView, offset + i * 4, isBigEndian));
+                    }
+                    break;
+                    
+                case 5: // RATIONAL
+                    for (i = 0; i < numComponents; i++) {
+                        const num = readUint32(dataView, offset + i * 8, isBigEndian);
+                        const den = readUint32(dataView, offset + i * 8 + 4, isBigEndian);
+                        
+                        if (den === 0) {
+                            values.push(0); // Avoid division by zero
+                        } else {
+                            value = num / den;
+                            // For better display of common fractions
+                            if (Math.abs(value - Math.round(value)) < 0.000001) {
+                                values.push(Math.round(value));
+                            } else {
+                                values.push(parseFloat(value.toFixed(6)));
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 10: // SRATIONAL
+                    for (i = 0; i < numComponents; i++) {
+                        const num = readInt32(dataView, offset + i * 8, isBigEndian);
+                        const den = readInt32(dataView, offset + i * 8 + 4, isBigEndian);
+                        
+                        if (den === 0) {
+                            values.push(0); // Avoid division by zero
+                        } else {
+                            value = num / den;
+                            if (Math.abs(value - Math.round(value)) < 0.000001) {
+                                values.push(Math.round(value));
+                            } else {
+                                values.push(parseFloat(value.toFixed(6)));
+                            }
+                        }
+                    }
+                    break;
+                    
+                default:
+                    return null;
+            }
+            
+            // Return single value if there's only one
+            if (values.length === 1) {
+                return values[0];
+            }
+            
+            return values;
+        }
+        
+        function formatGpsCoordinate(coord) {
+            if (Array.isArray(coord) && coord.length === 3) {
+                const degrees = coord[0];
+                const minutes = coord[1];
+                const seconds = coord[2];
+                
+                return `${degrees}° ${minutes}' ${seconds}"`;
+            }
+            return coord;
+        }
+        
+        function getTagName(tag) {
+            const tags = {
+                0x010F: 'Make',
+                0x0110: 'Model',
+                0x0112: 'Orientation',
+                0x011A: 'XResolution',
+                0x011B: 'YResolution',
+                0x0128: 'ResolutionUnit',
+                0x0131: 'Software',
+                0x0132: 'DateTime',
+                0x013B: 'Artist',
+                0x013C: 'HostComputer',
+                0x0213: 'YCbCrPositioning',
+                0x8298: 'Copyright',
+                0x8769: 'ExifOffset',
+                0x8825: 'GPSInfo'
+            };
+            return tags[tag];
+        }
+        
+        function getExifTagName(tag) {
+            const tags = {
+                0x829A: 'ExposureTime',
+                0x829D: 'FNumber',
+                0x8822: 'ExposureProgram',
+                0x8827: 'ISOSpeedRatings',
+                0x9000: 'ExifVersion',
+                0x9003: 'DateTimeOriginal',
+                0x9004: 'DateTimeDigitized',
+                0x9201: 'ShutterSpeedValue',
+                0x9202: 'ApertureValue',
+                0x9203: 'BrightnessValue',
+                0x9204: 'ExposureBiasValue',
+                0x9205: 'MaxApertureValue',
+                0x9206: 'SubjectDistance',
+                0x9207: 'MeteringMode',
+                0x9208: 'LightSource',
+                0x9209: 'Flash',
+                0x920A: 'FocalLength',
+                0x927C: 'MakerNote',
+                0x9286: 'UserComment',
+                0xA000: 'FlashpixVersion',
+                0xA001: 'ColorSpace',
+                0xA002: 'PixelXDimension',
+                0xA003: 'PixelYDimension',
+                0xA004: 'RelatedSoundFile',
+                0xA005: 'InteroperabilityOffset',
+                0xA20E: 'FocalPlaneXResolution',
+                0xA20F: 'FocalPlaneYResolution',
+                0xA210: 'FocalPlaneResolutionUnit',
+                0xA217: 'SensingMethod',
+                0xA300: 'FileSource',
+                0xA301: 'SceneType',
+                0xA302: 'CFAPattern',
+                0x9010: 'WhiteBalance',
+                0x9011: 'DigitalZoomRatio'
+            };
+            return tags[tag];
+        }
+        
+        function getGpsTagName(tag) {
+            const tags = {
+                0: 'GPSVersionID',
+                1: 'GPSLatitudeRef',
+                2: 'GPSLatitude',
+                3: 'GPSLongitudeRef',
+                4: 'GPSLongitude',
+                5: 'GPSAltitudeRef',
+                6: 'GPSAltitude',
+                7: 'GPSTimeStamp',
+                8: 'GPSSatellites',
+                9: 'GPSStatus',
+                10: 'GPSMeasureMode',
+                11: 'GPSDOP',
+                12: 'GPSSpeedRef',
+                13: 'GPSSpeed',
+                14: 'GPSTrackRef',
+                15: 'GPSTrack',
+                16: 'GPSImgDirectionRef',
+                17: 'GPSImgDirection',
+                18: 'GPSMapDatum',
+                19: 'GPSDestLatitudeRef',
+                20: 'GPSDestLatitude',
+                21: 'GPSDestLongitudeRef',
+                22: 'GPSDestLongitude',
+                23: 'GPSDestBearingRef',
+                24: 'GPSDestBearing',
+                25: 'GPSDestDistanceRef',
+                26: 'GPSDestDistance',
+                27: 'GPSProcessingMethod',
+                28: 'GPSAreaInformation',
+                29: 'GPSDateStamp',
+                30: 'GPSDifferential'
+            };
+            return tags[tag];
+        }
+        
+        function displayExifData(exifData) {
+            if (exifData.exists) {
+                displayMetadataItem('EXIF Data', 'Present (will be removed)');
+                
+                // Display camera information
+                if (exifData.Make || exifData.Model) {
+                    let camera = '';
+                    if (exifData.Make) camera += exifData.Make;
+                    if (exifData.Model) {
+                        if (camera) camera += ' ';
+                        camera += exifData.Model;
+                    }
+                    displayMetadataItem('Camera', camera);
+                }
+                
+                // Display date information
+                if (exifData.DateTimeOriginal) {
+                    displayMetadataItem('Date Taken', exifData.DateTimeOriginal);
+                } else if (exifData.DateTime) {
+                    displayMetadataItem('Date Modified', exifData.DateTime);
+                }
+                
+                // Display exposure information
+                if (exifData.ExposureTime) {
+                    let exposure = exifData.ExposureTime;
+                    if (typeof exposure === 'number' && exposure < 1) {
+                        exposure = `1/${Math.round(1/exposure)}`;
+                    }
+                    displayMetadataItem('Exposure Time', exposure + ' sec');
+                }
+                
+                if (exifData.FNumber) {
+                    displayMetadataItem('F-Number', 'f/' + exifData.FNumber);
+                }
+                
+                if (exifData.ISOSpeedRatings) {
+                    displayMetadataItem('ISO', exifData.ISOSpeedRatings);
+                }
+                
+                if (exifData.FocalLength) {
+                    displayMetadataItem('Focal Length', exifData.FocalLength + ' mm');
+                }
+                
+                // Display image dimensions
+                if (exifData.PixelXDimension && exifData.PixelYDimension) {
+                    displayMetadataItem('Original Dimensions', 
+                        exifData.PixelXDimension + ' x ' + exifData.PixelYDimension + ' pixels');
+                }
+                
+                // Display GPS information
+                if (exifData.GPSLatitude && exifData.GPSLongitude) {
+                    displayMetadataItem('GPS Coordinates', 
+                        exifData.GPSLatitude + ', ' + exifData.GPSLongitude);
+                }
+                
+                // Display software
+                if (exifData.Software) {
+                    displayMetadataItem('Software', exifData.Software);
+                }
+                
+                // Display copyright
+                if (exifData.Copyright) {
+                    displayMetadataItem('Copyright', exifData.Copyright);
+                }
+                
+                // Display artist
+                if (exifData.Artist) {
+                    displayMetadataItem('Artist', exifData.Artist);
+                }
+                
+                // Show additional EXIF data
+                for (const key in exifData) {
+                    if (!['exists', 'Make', 'Model', 'DateTime', 'DateTimeOriginal', 'ExposureTime', 
+                          'FNumber', 'ISOSpeedRatings', 'FocalLength', 'PixelXDimension', 'PixelYDimension',
+                          'GPSLatitude', 'GPSLongitude', 'GPSLatitudeRef', 'GPSLongitudeRef', 
+                          'Software', 'Copyright', 'Artist', 'ExifOffset', 'GPSInfo'].includes(key)) {
+                        // Skip internal or already displayed tags
+                        displayMetadataItem(key, exifData[key]);
+                    }
+                }
+            } else {
+                displayMetadataItem('EXIF Data', 'Not detected');
+            }
+        }
+        
+        function downloadCleanImage() {
+            if (!originalImageDataUrl) {
+                showError('No image loaded');
+                return;
+            }
+            
+            // Create a new image from the original data URL
+            const img = new Image();
+            
+            img.onload = function() {
+                // Create a canvas to draw the image without metadata
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw the image on the canvas (this strips the metadata)
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                // Get the clean image as a data URL
+                let cleanImageDataUrl;
+                
+                if (isHeic) {
+                    // For converted HEIC images, always use PNG
+                    cleanImageDataUrl = canvas.toDataURL('image/png');
+                } else {
+                    try {
+                        // Try to use the same format as the original
+                        cleanImageDataUrl = canvas.toDataURL(
+                            originalImageDataUrl.split(',')[0].split(':')[1].split(';')[0]
+                        );
+                    } catch (e) {
+                        // Fallback to PNG
+                        cleanImageDataUrl = canvas.toDataURL('image/png');
+                    }
+                }
+                
+                // Create a download link
+                const link = document.createElement('a');
+                link.download = isHeic ? 'clean_image.png' : 'clean_image.jpg';
+                link.href = cleanImageDataUrl;
+                link.click();
+            };
+            
+            img.src = originalImageDataUrl;
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
