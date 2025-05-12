@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Presentation Tool</title>
+    <style>
+        :root {
+            /* Customizable variables */
+            --slide-bg-color: white;
+            --slide-border-color: #434343;
+            --slide-border-radius: 20px;
+            --slide-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            --slide-padding: 40px;
+            --bg-color: white;
+            --text-color: #333;
+            --transition-duration: 0.5s;
+            --slide-spacing: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 90%;
+            height: 85%;
+            left: 5%;
+            transition: transform var(--transition-duration) ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Hide slides by default */
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Slide is active and visible in the center */
+        .slide.active {
+            transform: translateY(-50%);
+            top: 50%;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Slide positioned below viewport (for entering from bottom) */
+        .slide.position-bottom {
+            transform: translateY(0);
+            top: 100%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Slide positioned above viewport (for entering from top) */
+        .slide.position-top {
+            transform: translateY(-100%);
+            top: 0;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .text-slide {
+            background-color: var(--slide-bg-color);
+            border: 2px solid var(--slide-border-color);
+            border-radius: var(--slide-border-radius);
+            box-shadow: var(--slide-shadow);
+            padding: var(--slide-padding);
+            text-align: center;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .text-slide h1, .text-slide h2 {
+            margin-bottom: 20px;
+        }
+        
+        .text-slide ul {
+            list-style-position: inside;
+            text-align: left;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+        
+        .text-slide li {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .iframe-slide {
+            width: 90%;
+            height: 85%;
+        }
+
+        .iframe-slide iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .counter {
+            margin-right: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="presentation-container">
+        <!-- Slides will be injected here by JavaScript -->
+    </div>
+
+    <div class="controls">
+        <div class="counter" id="slide-counter">1/1</div>
+        <div class="nav-btn" id="prev-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </div>
+        <div class="nav-btn" id="next-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        // Sample slides - replace with your content
+        const slides = [
+            {
+                type: 'text',
+                content: '<h1>Welcome to Your Presentation</h1><p>Press right arrow or click the right button to navigate</p>'
+            },
+            {
+                type: 'iframe',
+                content: 'https://example.com'
+            },
+            {
+                type: 'text',
+                content: '<h2>This is a text slide</h2><p>You can put any HTML content here</p>'
+            },
+            {
+                type: 'text',
+                content: '<h2>Features</h2><ul><li>Keyboard navigation (left/right)</li><li>Two slide types</li><li>Filmstrip transitions</li><li>Easy to customize</li></ul>'
+            },
+            {
+                type: 'iframe',
+                content: 'https://maps.google.com'
+            }
+        ];
+
+        // Initialize presentation
+        let currentSlide = 0;
+        let isAnimating = false;
+
+        function initializePresentation() {
+            const container = document.getElementById('presentation-container');
+            
+            // Create slides
+            slides.forEach((slide, index) => {
+                const slideElement = document.createElement('div');
+                slideElement.className = 'slide';
+                
+                if (slide.type === 'text') {
+                    slideElement.classList.add('text-slide');
+                    slideElement.innerHTML = slide.content;
+                } else if (slide.type === 'iframe') {
+                    slideElement.classList.add('iframe-slide');
+                    const iframe = document.createElement('iframe');
+                    iframe.src = slide.content;
+                    iframe.title = 'Embedded Content';
+                    iframe.setAttribute('allow', 'fullscreen');
+                    slideElement.appendChild(iframe);
+                }
+                
+                // Position all slides initially at the bottom except the first one
+                if (index === 0) {
+                    slideElement.classList.add('active');
+                } else {
+                    slideElement.classList.add('position-bottom');
+                }
+                
+                container.appendChild(slideElement);
+            });
+            
+            updateCounter();
+        }
+
+        function goToSlide(index) {
+            if (index < 0 || index >= slides.length || index === currentSlide || isAnimating) return;
+            
+            isAnimating = true;
+            const slideElements = document.querySelectorAll('.slide');
+            const currentSlideElement = slideElements[currentSlide];
+            const targetSlideElement = slideElements[index];
+            const isMovingForward = currentSlide < index;
+            
+            // 1. Position the target slide before animation
+            targetSlideElement.className = targetSlideElement.className.replace(/position-\w+|active/g, '').trim();
+            targetSlideElement.classList.add(isMovingForward ? 'position-bottom' : 'position-top');
+            
+            // 2. Force a reflow to ensure the position is applied
+            void targetSlideElement.offsetWidth;
+            
+            // 3. Start transition - make target slide active and move current slide out
+            setTimeout(() => {
+                currentSlideElement.classList.remove('active');
+                currentSlideElement.classList.add(isMovingForward ? 'position-top' : 'position-bottom');
+                targetSlideElement.classList.remove(isMovingForward ? 'position-bottom' : 'position-top');
+                targetSlideElement.classList.add('active');
+                
+                // Update current slide index
+                currentSlide = index;
+                updateCounter();
+                
+                // Reset animation flag after transition completes
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 600); // Slightly longer than the transition duration
+            }, 20);
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function updateCounter() {
+            document.getElementById('slide-counter').textContent = `${currentSlide + 1}/${slides.length}`;
+        }
+
+        // Event listeners
+        document.getElementById('next-btn').addEventListener('click', nextSlide);
+        document.getElementById('prev-btn').addEventListener('click', prevSlide);
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize the presentation
+        initializePresentation();
+    </script>
+</body>
+</html>
