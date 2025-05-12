@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Image with Text</title>
+    <style>
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: arial, helvetica, geneva, sans-serif;
+        }
+
+        iframe {
+            max-width: 90%;
+            height: 100vh;
+            display: block;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* Added box-shadow */
+        }
+
+        p {
+            text-align: center;
+            margin: 0;
+        }
+        
+        h1 {
+            font-size: 2.4em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Markdown Tester</h1>
+    <iframe src="https://daveghidiu.com/tutorials/act/act.html?rows=6&md=%23%20Python%20Example%0A%0A%60%60%60%0Aprint(%27hiya!%27)%0A%60%60%60" width="100%" height="900" frameborder="0"></iframe>
+</body>
+</html>
