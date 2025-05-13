@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Web Presentation Tool</title>
     <style>
         :root {
@@ -187,7 +187,7 @@
         const slides = [
             {
                 type: 'text',
-                content: '<h1>Welcome to Your Presentation</h1><p>Press right arrow or click the right button to navigate</p>'
+                content: '1.1<h1>Welcome to Your Presentation</h1><p>Press right arrow or click the right button to navigate</p><p>On mobile, swipe left or right to navigate</p>'
             },
             {
                 type: 'iframe',
@@ -199,7 +199,7 @@
             },
             {
                 type: 'text',
-                content: '<h2>Features</h2><ul><li>Keyboard navigation (left/right)</li><li>Two slide types</li><li>Filmstrip transitions</li><li>Easy to customize</li></ul>'
+                content: '<h2>Features</h2><ul><li>Keyboard navigation (left/right)</li><li>Touch gesture navigation (swipe)</li><li>Two slide types</li><li>Filmstrip transitions</li><li>Mobile-friendly design</li></ul>'
             },
             {
                 type: 'iframe',
@@ -210,7 +210,9 @@
         // Initialize presentation
         let currentSlide = 0;
         let isAnimating = false;
-
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
         function initializePresentation() {
             const container = document.getElementById('presentation-container');
             
@@ -242,6 +244,41 @@
             });
             
             updateCounter();
+            
+            // Set up touch events for mobile
+            setupTouchNavigation();
+        }
+        
+        function setupTouchNavigation() {
+            const container = document.getElementById('presentation-container');
+            
+            // Touch start event
+            container.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, false);
+            
+            // Touch end event
+            container.addEventListener('touchend', function(e) {
+                if (isAnimating) return;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                
+                // Only register horizontal swipes with minimal vertical movement
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Swipe left (next slide)
+                        nextSlide();
+                    } else {
+                        // Swipe right (previous slide)
+                        prevSlide();
+                    }
+                }
+            }, false);
         }
 
         function goToSlide(index) {
