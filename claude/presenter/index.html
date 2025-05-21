@@ -19,6 +19,7 @@
             width: 100%;
             height: 100%;
             position: relative; /* For absolute positioning of slides */
+            overflow: hidden; /* Important to hide slides that move outside */
         }
 
         .slide {
@@ -27,17 +28,30 @@
             position: absolute;
             top: 0;
             left: 0;
-            display: none; /* Hidden by default */
+            display: flex; /* Always use flex for positioning */
+            align-items: center;
+            justify-content: center;
             box-sizing: border-box;
-            transition: opacity 0.5s ease-in-out; /* Optional: for fade transitions */
             opacity: 0;
+            z-index: 1; /* Default z-index */
+            /* transform: translateX(100%); /* Start off-screen to the right */ */
+            transform: translateX(0%);
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            pointer-events: none; /* Prevents interaction with hidden slides */
         }
 
         .slide.active-slide {
-            display: flex; /* Using flex for easier centering */
-            align-items: center;
-            justify-content: center;
             opacity: 1;
+            z-index: 2; /* Active slide on top */
+            transform: translateX(0); /* Centered */
+            transform: translateY(0);
+            pointer-events: auto; /* Allow interaction */
+        }
+        
+        .slide.prev-slide {
+            opacity: 0;
+            z-index: 1; /* Lower than active */
+            /* transform: translateX(-100%); /* Off-screen to the left */ */
         }
 
         /* Text Slide Specifics */
@@ -190,14 +204,14 @@
         const slideData = [
             {
                 type: 'text',
-                content: '<h1>Welcome to My Presentation!</h1><p class="slide-text">Press the right arrow key to begin.</p>',
+                content: '<h1>Welcome to My Presentation!</h1><p class="slide-text">Press the right arrow key to begin.</p><p class="slide-text">Slides now feature smooth directional transitions.</p>',
                 backgroundColor: '#3498db', // Blue background
                 textColor: '#ffffff' // White text
             },
             {
                 type: 'title-content',
                 title: 'Enhanced Slide with Title and Content',
-                content: '<p class="slide-text">This slide type has a dedicated title area at the top and content area below.</p><p class="slide-text">The styling now matches the regular text slides with the same rounded corners and box size.</p><ul><li>Feature point 1</li><li>Feature point 2</li><li>Feature point 3</li></ul>',
+                content: '<p class="slide-text">This slide type has a dedicated title area at the top and content area below.</p><p class="slide-text">The styling matches regular text slides with the same rounded corners and box size.</p><p class="slide-text">Slides now smoothly animate as you navigate.</p><ul><li>Feature point 1</li><li>Feature point 2</li><li>Feature point 3</li></ul>',
                 backgroundColor: '#27ae60', // Green background
                 textColor: '#f1f1f1' // Off-white text
             },
@@ -232,7 +246,7 @@
             {
                 type: 'title-content',
                 title: 'Final Thoughts',
-                content: '<p class="slide-text">This presentation demonstrates multiple slide types including:</p><p class="slide-text"><strong>Text slides</strong> - Simple content in a box</p><p class="slide-text"><strong>Title + Content slides</strong> - With separate title and content areas</p><p class="slide-text"><strong>Image slides</strong> - Truly fullscreen images</p><p class="slide-text"><strong>iFrame slides</strong> - For embedding web content</p>',
+                content: '<p class="slide-text">This presentation demonstrates multiple slide types including:</p><p class="slide-text"><strong>Text slides</strong> - Simple content in a box</p><p class="slide-text"><strong>Title + Content slides</strong> - With separate title and content areas</p><p class="slide-text"><strong>Image slides</strong> - Truly fullscreen images</p><p class="slide-text"><strong>iFrame slides</strong> - For embedding web content</p><p class="slide-text">With smooth directional slide transitions!</p>',
                 backgroundColor: '#e74c3c', // Red background
                 textColor: '#ffffff' // White text
             },
@@ -357,11 +371,44 @@
             updateSlideCounter();
         }
 
-        function showSlide(index) {
+        function showSlide(index, direction = 'next') {
+            const previousIndex = currentSlideIndex;
+            
+            // Remove all prev-slide classes first
+            slides.forEach(slide => {
+                slide.classList.remove('prev-slide');
+            });
+            
+            // Set the previous slide to animate off in the appropriate direction
+            if (previousIndex !== index && slides[previousIndex]) {
+                if (direction === 'next') {
+                    // When going forward, the old slide goes to the left
+                    slides[previousIndex].classList.add('prev-slide');
+                } else {
+                    // When going backward, the old slide goes to the right
+                    // We'll handle this by changing the starting position of the new slide
+                    slides[previousIndex].style.transform = 'translateX(100%)'; // Move to right
+                    slides[previousIndex].classList.remove('active-slide');
+                }
+            }
+            
+            // Set the new active slide
             slides.forEach((slide, i) => {
                 if (i === index) {
+                    // Position the new slide before the animation
+                    if (direction === 'prev' && previousIndex !== index) {
+                        slide.style.transform = 'translateX(-100%)'; // Start from left when going backward
+                    } else {
+                        slide.style.transform = 'translateX(100%)'; // Start from right when going forward
+                    }
+                    
+                    // Trigger reflow to ensure the initial position takes effect before transition
+                    void slide.offsetWidth;
+                    
+                    // Now add the active class to trigger the transition
                     slide.classList.add('active-slide');
-                } else {
+                    slide.style.transform = 'translateX(0)'; // Animate to center
+                } else if (i !== previousIndex) { // Don't modify the previous slide again
                     slide.classList.remove('active-slide');
                 }
             });
@@ -376,12 +423,12 @@
 
         function nextSlide() {
             currentSlideIndex = (currentSlideIndex + 1) % slides.length;
-            showSlide(currentSlideIndex);
+            showSlide(currentSlideIndex, 'next');
         }
 
         function prevSlide() {
             currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-            showSlide(currentSlideIndex);
+            showSlide(currentSlideIndex, 'prev');
         }
 
         // Keyboard navigation
@@ -400,7 +447,10 @@
         // Initial setup
         buildSlides();
         if (slides.length > 0) {
-            showSlide(currentSlideIndex);
+            // For the first slide, just make it active without animation
+            slides[0].style.transform = 'translateX(0)';
+            slides[0].classList.add('active-slide');
+            updateSlideCounter();
         }
     </script>
 </body>
