@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Web Presentation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbars on the body */
+            font-family: Arial, sans-serif;
+            background-color: #333; /* Background for areas outside slides, if any */
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            position: relative; /* For absolute positioning of slides */
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none; /* Hidden by default */
+            box-sizing: border-box;
+            transition: opacity 0.5s ease-in-out; /* Optional: for fade transitions */
+            opacity: 0;
+        }
+
+        .slide.active-slide {
+            display: flex; /* Using flex for easier centering */
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        /* Text Slide Specifics */
+        .slide-text {
+            background-color: transparent; /* Transparent background for slide */
+        }
+        
+        .slide-text .content-box {
+            width: 90%;
+            height: 80%;
+            max-width: 1200px; /* Optional: max width for very large screens */
+            max-height: 700px; /* Optional: max height */
+            background-color: #ffffff; /* Default background color */
+            color: #333333; /* Default text color */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column; /* To stack content if needed */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 2rem; /* Default text size */
+            overflow-y: auto; /* In case content overflows */
+        }
+
+        /* Style for slide-text paragraphs */
+        p.slide-text {
+            font-size: 1.6rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+            max-width: 90%;
+        }
+
+        /* Title + Content Slide Specifics */
+        .slide-title-content .content-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 60px;
+        }
+
+        .slide-title-content h1 {
+            font-size: 3rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            color: inherit;
+        }
+
+        .slide-title-content .slide-content {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        /* Iframe Slide Specifics */
+        .slide-iframe {
+            background-color: transparent; /* Transparent background by default */
+        }
+
+        .slide-iframe iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Image Slide Specifics - TRULY FULLSCREEN */
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #000; /* Default black background for images */
+        }
+
+        .slide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Preserve aspect ratio while filling space */
+        }
+
+        /* Navigation FAB */
+        #nav-fab {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #slide-counter {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="presentation-container">
+    </div>
+
+    <!-- Navigation FAB -->
+    <div id="nav-fab">
+        <button id="prev-button" class="nav-button">←</button>
+        <div id="slide-counter">1/1</div>
+        <button id="next-button" class="nav-button">→</button>
+    </div>
+
+    <script>
+        const presentationContainer = document.getElementById('presentation-container');
+        const slideCounter = document.getElementById('slide-counter');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        let currentSlideIndex = 0;
+        let slides = []; // This will hold the slide elements
+
+        // --- SLIDE DEFINITIONS ---
+        // Slide types:
+        // 1. 'text' - Simple text slide with content
+        // 2. 'title-content' - Slide with separate title and content
+        // 3. 'iframe' - Embedded webpage
+        // 4. 'image' - Truly fullscreen image
+        const slideData = [
+            {
+                type: 'text',
+                content: '<h1>Welcome to My Presentation!</h1><p class="slide-text">Press the right arrow key to begin.</p>',
+                backgroundColor: '#3498db', // Blue background
+                textColor: '#ffffff' // White text
+            },
+            {
+                type: 'title-content',
+                title: 'Enhanced Slide with Title and Content',
+                content: '<p class="slide-text">This slide type has a dedicated title area at the top and content area below.</p><p class="slide-text">You can add multiple paragraphs or any HTML content in this section.</p><ul><li>Feature point 1</li><li>Feature point 2</li><li>Feature point 3</li></ul>',
+                backgroundColor: '#27ae60', // Green background
+                textColor: '#f1f1f1' // Off-white text
+            },
+            {
+                type: 'image',
+                imageUrl: 'https://picsum.photos/1920/1080', // Full HD image 
+                alt: 'Random sample image',
+                backgroundColor: '#000000' // Black background for better fullscreen effect
+            },
+            {
+                type: 'iframe',
+                content: 'https://corydave.github.io/websitetest/claude/metaStrip',
+                backgroundColor: '#000000' // Black background for iframe
+            },
+            {
+                type: 'image',
+                imageUrl: 'https://picsum.photos/1600/900', // 16:9 aspect ratio
+                alt: 'Another fullscreen image',
+                backgroundColor: '#000000' // Black background
+            },
+            {
+                type: 'iframe',
+                content: 'https://corydave.github.io/websitetest/claude/videoPlaylist',
+                backgroundColor: '#000000' // Black background for video
+            },            
+            {
+                type: 'image',
+                imageUrl: 'https://picsum.photos/1200/800?grayscale', // Grayscale image
+                alt: 'Grayscale random image',
+                backgroundColor: '#000000' // Black background
+            },
+            {
+                type: 'title-content',
+                title: 'Final Thoughts',
+                content: '<p class="slide-text">This presentation demonstrates multiple slide types including:</p><p class="slide-text"><strong>Text slides</strong> - Simple content in a box</p><p class="slide-text"><strong>Title + Content slides</strong> - With separate title and content areas</p><p class="slide-text"><strong>Image slides</strong> - Truly fullscreen images</p><p class="slide-text"><strong>iFrame slides</strong> - For embedding web content</p>',
+                backgroundColor: '#e74c3c', // Red background
+                textColor: '#ffffff' // White text
+            },
+            {
+                type: 'iframe',
+                content: 'https://www.openstreetmap.org/export/embed.html?bbox=-0.004017949104309083%2C51.47612752641776%2C0.004017949104309083%2C51.478569861898604&layer=mapnik',
+                backgroundColor: '#ecf0f1' // Light gray background
+            }
+        ];
+
+        function buildSlides() {
+            presentationContainer.innerHTML = ''; // Clear existing slides if any
+            slides = []; // Reset the slides array
+
+            slideData.forEach((data, index) => {
+                const slideElement = document.createElement('div');
+                slideElement.classList.add('slide');
+                slideElement.id = `slide-${index}`;
+
+                if (data.type === 'text') {
+                    // Basic text slide
+                    slideElement.classList.add('slide-text');
+                    const contentBox = document.createElement('div');
+                    contentBox.classList.add('content-box');
+                    contentBox.innerHTML = data.content;
+                    
+                    // Apply text color if provided
+                    if (data.textColor) {
+                        contentBox.style.color = data.textColor;
+                    }
+                    
+                    // Apply background color to the content box
+                    if (data.backgroundColor) {
+                        contentBox.style.backgroundColor = data.backgroundColor;
+                    }
+                    
+                    slideElement.appendChild(contentBox);
+                } else if (data.type === 'title-content') {
+                    // Title + Content slide
+                    slideElement.classList.add('slide-title-content');
+                    const contentBox = document.createElement('div');
+                    contentBox.classList.add('content-box');
+                    
+                    // Create title
+                    const titleElement = document.createElement('h1');
+                    titleElement.textContent = data.title;
+                    contentBox.appendChild(titleElement);
+                    
+                    // Create content container
+                    const contentContainer = document.createElement('div');
+                    contentContainer.classList.add('slide-content');
+                    contentContainer.innerHTML = data.content;
+                    contentBox.appendChild(contentContainer);
+                    
+                    // Apply colors
+                    if (data.textColor) {
+                        contentBox.style.color = data.textColor;
+                    }
+                    
+                    if (data.backgroundColor) {
+                        contentBox.style.backgroundColor = data.backgroundColor;
+                    }
+                    
+                    slideElement.appendChild(contentBox);
+                } else if (data.type === 'iframe') {
+                    // iFrame slide
+                    slideElement.classList.add('slide-iframe');
+                    
+                    // Create wrapper div with background color
+                    if (data.backgroundColor) {
+                        const iframeWrapper = document.createElement('div');
+                        iframeWrapper.style.backgroundColor = data.backgroundColor;
+                        iframeWrapper.style.width = '100%';
+                        iframeWrapper.style.height = '100%';
+                        iframeWrapper.style.display = 'flex';
+                        iframeWrapper.style.alignItems = 'center';
+                        iframeWrapper.style.justifyContent = 'center';
+                        
+                        const iframe = document.createElement('iframe');
+                        iframe.setAttribute('src', data.content);
+                        iframe.setAttribute('title', `Slide ${index + 1} content`);
+                        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        
+                        iframeWrapper.appendChild(iframe);
+                        slideElement.appendChild(iframeWrapper);
+                    } else {
+                        // If no background color is specified, just add the iframe directly
+                        const iframe = document.createElement('iframe');
+                        iframe.setAttribute('src', data.content);
+                        iframe.setAttribute('title', `Slide ${index + 1} content`);
+                        iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        slideElement.appendChild(iframe);
+                    }
+                } else if (data.type === 'image') {
+                    // TRULY FULLSCREEN image slide
+                    slideElement.classList.add('slide-image');
+                    
+                    // Create the image element directly - no containers, wrappers or titles
+                    const imageElement = document.createElement('img');
+                    imageElement.setAttribute('src', data.imageUrl);
+                    imageElement.setAttribute('alt', data.alt || 'Slide image');
+                    
+                    // Set background color for the slide if provided
+                    if (data.backgroundColor) {
+                        slideElement.style.backgroundColor = data.backgroundColor;
+                    }
+                    
+                    slideElement.appendChild(imageElement);
+                }
+                
+                presentationContainer.appendChild(slideElement);
+                slides.push(slideElement);
+            });
+
+            // Update slide counter
+            updateSlideCounter();
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active-slide');
+                } else {
+                    slide.classList.remove('active-slide');
+                }
+            });
+            
+            // Update slide counter
+            updateSlideCounter();
+        }
+
+        function updateSlideCounter() {
+            slideCounter.textContent = `${currentSlideIndex + 1}/${slides.length}`;
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === 'PageUp') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft' || event.key === 'PageDown') {
+                prevSlide();
+            }
+        });
+
+        // Button navigation
+        prevButton.addEventListener('click', prevSlide);
+        nextButton.addEventListener('click', nextSlide);
+
+        // Initial setup
+        buildSlides();
+        if (slides.length > 0) {
+            showSlide(currentSlideIndex);
+        }
+    </script>
+</body>
+</html>
