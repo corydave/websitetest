@@ -41,11 +41,12 @@
         }
 
         /* Text Slide Specifics */
-        .slide-text {
+        .slide-text, .slide-title-content {
             background-color: transparent; /* Transparent background for slide */
         }
         
-        .slide-text .content-box {
+        /* Common styles for content boxes - applied to both slide types */
+        .content-box {
             width: 90%;
             height: 80%;
             max-width: 1200px; /* Optional: max width for very large screens */
@@ -73,15 +74,7 @@
             max-width: 90%;
         }
 
-        /* Title + Content Slide Specifics */
-        .slide-title-content .content-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-top: 60px;
-        }
-
+        /* Title + Content specific styles */
         .slide-title-content h1 {
             font-size: 3rem;
             margin-top: 0;
@@ -90,13 +83,12 @@
         }
 
         .slide-title-content .slide-content {
-            flex-grow: 1;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
+            flex-grow: 1;
         }
 
         /* Iframe Slide Specifics */
@@ -205,7 +197,7 @@
             {
                 type: 'title-content',
                 title: 'Enhanced Slide with Title and Content',
-                content: '<p class="slide-text">This slide type has a dedicated title area at the top and content area below.</p><p class="slide-text">You can add multiple paragraphs or any HTML content in this section.</p><ul><li>Feature point 1</li><li>Feature point 2</li><li>Feature point 3</li></ul>',
+                content: '<p class="slide-text">This slide type has a dedicated title area at the top and content area below.</p><p class="slide-text">The styling now matches the regular text slides with the same rounded corners and box size.</p><ul><li>Feature point 1</li><li>Feature point 2</li><li>Feature point 3</li></ul>',
                 backgroundColor: '#27ae60', // Green background
                 textColor: '#f1f1f1' // Off-white text
             },
