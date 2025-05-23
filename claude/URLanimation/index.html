@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser UI Demo</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+
+      .browser-window {
+        width: 100%;
+        max-width: 900px;
+        margin: 20px auto;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+      }
+
+      .browser-header {
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .tab {
+        padding: 8px 16px;
+        background-color: #e8e8e8;
+        border-radius: 5px 5px 0 0;
+        margin-right: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 160px;
+        border: 1px solid #ddd;
+        border-bottom: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .tab.active {
+        background-color: #fff;
+        border-bottom: 1px solid #fff;
+        margin-bottom: -1px;
+      }
+
+      .tab-favicon {
+        width: 16px;
+        height: 16px;
+        margin-right: 6px;
+        background-color: #999;
+        border-radius: 50%;
+      }
+
+      .navigation-bar {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+
+      .nav-icons {
+        display: flex;
+        margin-right: 10px;
+      }
+
+      .nav-icon {
+        width: 16px;
+        height: 16px;
+        padding: 4px;
+        margin-right: 4px;
+        cursor: pointer;
+        color: #5f6368;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-icon:hover {
+        background-color: #f1f1f1;
+        border-radius: 50%;
+      }
+
+      .url-input {
+        flex-grow: 1;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 14px;
+        outline: none;
+        background-color: #f1f3f4;
+      }
+
+      .url-input:focus {
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .star-icon {
+        margin-left: 10px;
+        cursor: pointer;
+        color: #5f6368;
+      }
+
+      .browser-content {
+        height: 400px;
+        padding: 20px;
+        background-color: #fff;
+        overflow: auto;
+      }
+
+      svg {
+        fill: currentColor;
+      }
+
+      .blue {
+        background-color: #0046AD;
+      }
+
+      .green {
+        background-color: #58A619;
+      }
+
+      .settingsBox {
+        padding-left: 20px;
+        border-top: 1px solid black;
+        padding-top: 7px;
+        padding-bottom: 20px;
+        position: absolute;
+        bottom: 0;
+        line-height: 2em;
+        display: inline-block;
+      }
+
+      .openClose {
+        font-size: 3em;
+        color: #D0D0D0;
+      }
+    </style>
+  </head>
+  <body id="mainBody">
+    <div class="openClose" onclick="hide()">&nbsp;&nbsp;&bullet;&nbsp;&nbsp;</div>      
+    <div class="browser-window">
+      <div class="browser-header">
+        <div class="tabs">
+          <div class="tab">
+            <div class="tab-favicon green"></div> FLCC
+          </div>
+          <div class="tab">
+            <div class="tab-favicon blue"></div> AICollections.org
+          </div>
+          <div class="tab active">
+            <div class="tab-favicon"></div> New Tab
+          </div>
+        </div>
+        <div class="navigation-bar">
+          <div class="nav-icons">
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+              </svg>
+            </div>
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"></path>
+              </svg>
+            </div>
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path>
+              </svg>
+            </div>
+            <div class="nav-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+              </svg>
+            </div>
+          </div>
+          <input type="text" class="url-input" id="demo" value="">
+          <div class="star-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="browser-content">
+        <center>
+          <img id="browser-background" src="https://docs.google.com/drawings/d/e/2PACX-1vSLDGKAXWzmM_woPBk8zGNjfIaqdF08Jk_SFmlHY0d3JJiLSY3YrahJA3VPIchLdK9iZ5NwW5a-LqrR/pub?w=775&amp;h=382">
+        </center>
+      </div>
+    </div>
+    
+    <div class="settingsBox" id="settingsBox"> TEXT: <input id="urlToGo" value="https://chatgpt.com">
+      <br /> SPEED: <input id="speed" value="70">
+      <br /> BACKGROUND COLOR: <input id="backgroundColor" value="">
+      <br /> BROSWER IMAGE (775x382): <input id="bk" value="https://docs.google.com/drawings/d/e/2PACX-1vSLDGKAXWzmM_woPBk8zGNjfIaqdF08Jk_SFmlHY0d3JJiLSY3YrahJA3VPIchLdK9iZ5NwW5a-LqrR/pub?w=775&amp;h=382">
+      <br />
+      <button onclick="typeWriter()">Click to start</button>
+      <button onclick="resetURL()">Reset</button>
+      <br />
+      <a target="_blank" href="https://docs.google.com/drawings/d/1gKVFOm7pjSrC_KyBJbDeepHsGmAeCu4Lks2wqhfdouY/edit">Link to BK</a>
+    </div>
+
+    <script>
+      var i = 0;
+      var defaultImage = "https://docs.google.com/drawings/d/e/2PACX-1vSLDGKAXWzmM_woPBk8zGNjfIaqdF08Jk_SFmlHY0d3JJiLSY3YrahJA3VPIchLdK9iZ5NwW5a-LqrR/pub?w=775&amp;h=382";
+      var defaultBGColor = "#F0F0F0";
+
+      function typeWriter() {
+        setTimeout(function() {
+          startTyping();
+        }, 3000); // 3 second delay
+      }
+
+      function startTyping() {
+        var speed = document.getElementById("speed").value;
+        var txt = document.getElementById("urlToGo").value;
+        console.log('---' + txt);
+        if (i < txt.length) {
+          document.getElementById("demo").value += txt.charAt(i);
+          i++;
+          setTimeout(startTyping, speed);
+        }
+      }
+
+      function resetURL() {
+        var image = document.getElementById("bk").value || defaultImage;
+        var bgcolor = document.getElementById("backgroundColor").value || defaultBGColor;
+        i = 0;
+        document.getElementById("demo").value = "";
+        document.getElementById("browser-background").src = image;
+        document.getElementById("mainBody").style.backgroundColor = bgcolor;
+      }
+
+      function hide() {
+        var box = document.getElementById("settingsBox")
+        var status = box.style.display;
+        if (status == "none") {
+          box.style.display = "inline-block";
+        } else {
+          box.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
