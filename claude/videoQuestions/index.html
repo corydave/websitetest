@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Quiz Player</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .controls button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 20px;
+            cursor: pointer;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .controls button:hover {
+            background: #f0f0f0;
+        }
+        
+        .quiz-container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .quiz-container.active {
+            display: block;
+        }
+        
+        .option {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: none;
+            cursor: pointer;
+        }
+        
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .option.correct {
+            background-color: #90EE90;
+        }
+        
+        .option.incorrect {
+            background-color: #FFB6C1;
+        }
+        
+        .timer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .streak-counter {
+            color: #FF8C00;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .name-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .name-modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .name-modal button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .name-modal button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Name Modal -->
+        <div id="nameModal" class="name-modal">
+            <div class="name-modal-content">
+                <h2>Welcome to the Quiz!</h2>
+                <p>Please enter your name to begin:</p>
+                <input type="text" id="learnerName" placeholder="Your name">
+                <button onclick="startQuiz()">Start</button>
+            </div>
+        </div>
+
+        <!-- Score Details Modal -->
+        <div id="scoreDetailsModal" class="score-details-modal" style="display: none;">
+            <div class="score-details-content">
+                <h2>Score Details</h2>
+                <div id="scoreDetails">
+                    <p><strong>Learner:</strong> <span id="modalLearnerName"></span></p>
+                    <p><strong>Video:</strong> <span id="modalVideoTitle">Loading...</span></p>
+                    <p><strong>Current Score:</strong> <span id="modalScore"></span></p>
+                    <p><strong>Current Streak:</strong> <span id="modalStreak"></span></p>
+                </div>
+                <button class="close-button" onclick="closeScoreModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-display" onclick="showScoreDetails()">
+            <div id="scoreText">Score: 0/0 points</div>
+            <div id="streakText" class="streak-counter"></div>
+        </div>
+
+        <div class="video-container">
+            <div id="youtube-player"></div>
+        </div>
+        <div class="controls">
+            <button id="toggleButton">▶</button>
+        </div>
+        <div id="quizContainer" class="quiz-container">
+            <h3 id="question"></h3>
+            <div id="options"></div>
+        </div>
+        <div class="timer">
+            Current time: <span id="currentTime">0</span> seconds
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const VIDEO_ID = 'J4mJzZKKWIs';
+        const QUIZ_POINTS = [
+            {
+                timeStamp: 5,
+                question: "What color is the sky in this video?",
+                options: [
+                    "Blue",
+                    "Gray",
+                    "White",
+                    "Can't see the sky"
+                ],
+                feedback: [
+                    "Well done, {learner name}! The sky is indeed blue.",
+                    "Not quite, {learner name}. While there might be some clouds, the sky is predominantly blue.",
+                    "Look again, {learner name}. While there are white clouds, the sky itself is blue.",
+                    "{learner name}, the sky is clearly visible in the shot!"
+                ],
+                correctAnswer: 0
+            },
+            {
+                timeStamp: 11,
+                question: "How many people are visible in the shot?",
+                options: [
+                    "None",
+                    "One",
+                    "Two",
+                    "Three or more"
+                ],
+                feedback: [
+                    "Take another look, {learner name} - there is definitely someone in the frame!",
+                    "Excellent work, {learner name}! There is exactly one person visible.",
+                    "{learner name}, only one person is shown in this shot.",
+                    "{learner name}, the shot only shows one person, not multiple people."
+                ],
+                correctAnswer: 1
+            }
+        ];
+
+        // Global variables
+        let player;
+        let currentQuiz = null;
+        let completedQuizzes = new Set();
+        let nextQuizPoint = null;
+        let learnerName = '';
+        let currentScore = 0;
+        let totalQuestions = QUIZ_POINTS.length;
+        let currentStreak = 0;
+        let attemptsForCurrentQuestion = 0;
+        let videoTitle = '';
+
+        // Score modal functions
+        function showScoreDetails() {
+            const modal = document.getElementById('scoreDetailsModal');
+            document.getElementById('modalLearnerName').textContent = learnerName;
+            document.getElementById('modalScore').textContent = `${currentScore}/${totalQuestions} points`;
+            document.getElementById('modalStreak').textContent = currentStreak > 1 ? `${currentStreak} correct in a row! 🔥` : 'No current streak';
+            
+            // Get video title if we haven't already
+            if (!videoTitle && player && player.getVideoData) {
+                videoTitle = player.getVideoData().title;
+            }
+            document.getElementById('modalVideoTitle').textContent = videoTitle || 'Interactive Quiz Video';
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeScoreModal() {
+            document.getElementById('scoreDetailsModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('scoreDetailsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Initialize functions
+        function startQuiz() {
+            const nameInput = document.getElementById('learnerName');
+            learnerName = nameInput.value.trim();
+            
+            if (learnerName) {
+                document.getElementById('nameModal').style.display = 'none';
+                updateScoreDisplay();
+                loadYouTubeAPI();
+            } else {
+                alert('Please enter your name to begin!');
+            }
+        }
+
+        function updateScoreDisplay() {
+            // Update the score display in the corner
+            const scoreText = document.getElementById('scoreText');
+            const streakText = document.getElementById('streakText');
+            
+            scoreText.textContent = `${learnerName}'s score: ${currentScore}/${totalQuestions} points`;
+            
+            if (currentStreak > 1) {
+                streakText.textContent = `${currentStreak} correct in a row! 🔥`;
+            } else {
+                streakText.textContent = '';
+            }
+
+            // Update the modal if it's visible
+            const modal = document.getElementById('scoreDetailsModal');
+            if (modal.style.display === 'flex') {
+                document.getElementById('modalLearnerName').textContent = learnerName;
+                document.getElementById('modalScore').textContent = `${currentScore}/${totalQuestions} points`;
+                document.getElementById('modalStreak').textContent = currentStreak > 1 
+                    ? `${currentStreak} correct in a row! 🔥` 
+                    : 'No current streak';
+                
+                // Update video title if we have it
+                if (!videoTitle && player && player.getVideoData) {
+                    videoTitle = player.getVideoData().title;
+                    document.getElementById('modalVideoTitle').textContent = videoTitle || 'Interactive Quiz Video';
+                }
+            }
+        }
+
+        function replaceNameInFeedback(feedback) {
+            return feedback.replace('{learner name}', learnerName);
+        }
+
+        // Load YouTube IFrame API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // Initialize YouTube player when API is ready
+        window.onYouTubeIframeAPIReady = function() {
+            console.log("YouTube API is ready");
+            player = new YT.Player('youtube-player', {
+                height: '360',
+                width: '640',
+                videoId: VIDEO_ID,
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                },
+                playerVars: {
+                    'controls': 0,
+                    'disablekb': 1
+                }
+            });
+        };
+
+        // When player is ready
+        function onPlayerReady(event) {
+            setInterval(() => {
+                if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    document.getElementById('currentTime').textContent = 
+                        Math.floor(player.getCurrentTime());
+                }
+            }, 1000);
+        }
+
+        // Handle player state changes
+        function onPlayerStateChange(event) {
+            const toggleButton = document.getElementById('toggleButton');
+            
+            if (event.data === YT.PlayerState.PLAYING) {
+                toggleButton.textContent = '⏸';
+                updateNextQuizPoint();
+                startQuizCheck();
+            } else {
+                toggleButton.textContent = '▶';
+            }
+        }
+
+        // Find next quiz point
+        function updateNextQuizPoint() {
+            if (!player || !player.getCurrentTime) return;
+            const currentTime = player.getCurrentTime();
+            nextQuizPoint = QUIZ_POINTS
+                .filter(point => !completedQuizzes.has(point.timeStamp))
+                .find(point => point.timeStamp > currentTime);
+        }
+
+        // Check for quiz point
+        function startQuizCheck() {
+            if (!nextQuizPoint || currentQuiz) return;
+            
+            const checkQuiz = () => {
+                if (!player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+                
+                const currentTime = player.getCurrentTime();
+                if (currentTime >= nextQuizPoint.timeStamp) {
+                    player.pauseVideo();
+                    attemptsForCurrentQuestion = 1;  // Reset attempts counter for new question
+                    showQuiz(nextQuizPoint);
+                } else if (currentTime < nextQuizPoint.timeStamp) {
+                    requestAnimationFrame(checkQuiz);
+                }
+            };
+            
+            requestAnimationFrame(checkQuiz);
+        }
+
+        // Display quiz
+        function showQuiz(quiz) {
+            currentQuiz = quiz;
+            const quizContainer = document.getElementById('quizContainer');
+            const questionEl = document.getElementById('question');
+            const optionsEl = document.getElementById('options');
+            
+            questionEl.textContent = quiz.question;
+            optionsEl.innerHTML = '';
+            
+            quiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => handleAnswer(index);
+                optionsEl.appendChild(button);
+            });
+            
+            quizContainer.classList.add('active');
+        }
+
+        // Handle answer selection
+        function handleAnswer(selectedIndex) {
+            const options = document.getElementsByClassName('option');
+            const correct = selectedIndex === currentQuiz.correctAnswer;
+            
+            // Add the appropriate class for coloring
+            options[selectedIndex].classList.add(correct ? 'correct' : 'incorrect');
+            
+            if (correct) {
+                Array.from(options).forEach(option => {
+                    option.disabled = true;
+                });
+                completedQuizzes.add(currentQuiz.timeStamp);
+                
+                // Update score based on attempts
+                if (attemptsForCurrentQuestion === 1) {
+                    currentScore += 1;
+                    currentStreak += 1;
+                } else if (attemptsForCurrentQuestion === 2) {
+                    currentScore += 0.5;
+                    currentStreak = 0;
+                } else {
+                    currentStreak = 0;
+                }
+                
+                updateScoreDisplay();
+                
+                const feedbackMsg = document.createElement('p');
+                feedbackMsg.textContent = replaceNameInFeedback(currentQuiz.feedback[selectedIndex]);
+                feedbackMsg.style.color = '#008000';
+                feedbackMsg.style.marginTop = '10px';
+                feedbackMsg.style.textAlign = 'center';
+                feedbackMsg.style.fontWeight = 'bold';
+                
+                const existingMsg = options[selectedIndex].parentNode.querySelector('p');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                options[selectedIndex].parentNode.appendChild(feedbackMsg);
+                
+                setTimeout(() => {
+                    document.getElementById('quizContainer').classList.remove('active');
+                    currentQuiz = null;
+                    attemptsForCurrentQuestion = 0;
+                    player.playVideo();
+                }, 2000);
+            } else {
+                attemptsForCurrentQuestion++;
+                currentStreak = 0;
+                updateScoreDisplay();
+                
+                const feedbackMsg = document.createElement('p');
+                feedbackMsg.textContent = replaceNameInFeedback(currentQuiz.feedback[selectedIndex]);
+                feedbackMsg.style.color = '#FF0000';
+                feedbackMsg.style.marginTop = '10px';
+                feedbackMsg.style.textAlign = 'center';
+                
+                const existingMsg = options[selectedIndex].parentNode.querySelector('p');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                options[selectedIndex].parentNode.appendChild(feedbackMsg);
+            }
+        }
+
+        // Initialize toggle button
+        document.getElementById('toggleButton').onclick = () => {
+            if (!player) return;
+            
+            const playerState = player.getPlayerState();
+            if (playerState === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                toggleButton.textContent = '▶';
+            } else if (!currentQuiz) {
+                player.playVideo();
+                toggleButton.textContent = '⏸';
+            }
+        };
+
+        // Handle enter key in name input
+        document.getElementById('learnerName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startQuiz();
+            }
+        });
+    </script>
+</body>
+</html>
