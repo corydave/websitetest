@@ -28,5 +28,3 @@ This program generates a QR code from a URL. The user enters a URL and the code 
 
 ## Chat from Claude
 [Chat from Claude](https://claude.ai/share/f0940c1c-a19b-4e5b-85b9-cc35355017b9)
-
-[![youtubeThumbnail](https://github.com/user-attachments/assets/081c9bde-7621-4df5-a993-28b5fc00b91f)](https://www.youtube.com)
