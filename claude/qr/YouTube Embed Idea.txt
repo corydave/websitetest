@@ -1,0 +1,4 @@
+[![youtubeThumbnail](https://github.com/user-attachments/assets/081c9bde-7621-4df5-a993-28b5fc00b91f)](https://www.youtube.com)
+
+https://www.geeksforgeeks.org/how-to-embed-a-video-into-github-readme-md/
+
