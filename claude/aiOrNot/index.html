@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
             min-height: 100vh;
             color: #333;
         }
@@ -31,13 +31,14 @@
         .quiz-header {
             text-align: center;
             margin-bottom: 30px;
-            color: white;
+            color: #0046AD;
         }
 
         .quiz-header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .quiz-header p {
@@ -56,7 +57,8 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #45a049);
+            /* background: linear-gradient(90deg, #4CAF50, #45a049); */
+            background: #0046AD;
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -118,13 +120,16 @@
         }
 
         .guess-btn.human {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            /* background: linear-gradient(135deg, #ff6b6b, #ee5a52); */
+            background-color: #0046AD;
             color: white;
         }
 
         .guess-btn.ai {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
+            /* background: linear-gradient(135deg, #4ecdc4, #44a08d); */
+            background-color: #FFFFFF;
+            color: #0046AD;
+            border: 1px solid #0046AD;
         }
 
         .guess-btn:hover {
@@ -408,9 +413,9 @@
         const quizData = [
             {
                 type: 'text',
-                content: 'The old lighthouse keeper had seen many storms, but none quite like this. As the waves crashed against the rocky shore below, he noticed something peculiar in the water - a bottle, glinting in the moonlight, bobbing toward shore with an almost purposeful determination.',
+                content: 'Those parts of thee that the world\'s eye doth view<br />Want nothing that the thought of hearts can mend;<br />All tongues, the voice of souls, give thee that due,<br />Uttering bare truth, even so as foes commend.<br />Thy outward thus with outward praise is crown\'d;<br />But those same tongues, that give thee so thine own,<br />In other accents do this praise confound<br />By seeing farther than the eye hath shown.<br />They look into the beauty of thy mind,<br />And that in guess they measure by thy deeds;<br />Then, churls, their thoughts, although their eyes were kind,<br />To thy fair flower add the rank smell of weeds:<br />But why thy odour matcheth not thy show,<br />The soil is this, that thou dost common grow.',
                 answer: 'human',
-                feedback: 'This poetic description with its nuanced emotional undertones and specific imagery was written by a human author. The phrase "purposeful determination" attributed to an inanimate object shows creative personification typical of human creative writing.'
+                feedback: 'This is Sonnet LXIX by William Shakespeare.'
             },
             {
                 type: 'text',
@@ -515,10 +520,10 @@
                     </div>
                     <div class="card-buttons">
                         <button class="guess-btn human" onclick="makeGuess('human', ${index})" aria-label="Guess Human">
-                            👤 Human
+                            Human
                         </button>
                         <button class="guess-btn ai" onclick="makeGuess('ai', ${index})" aria-label="Guess AI">
-                            🤖 AI
+                            AI
                         </button>
                     </div>
                 `;
