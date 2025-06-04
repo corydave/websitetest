@@ -157,7 +157,8 @@
             font-size: 4rem;
             font-weight: bold;
             margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #0046AD;
+            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
         }
 
         .score-message {
@@ -168,7 +169,8 @@
 
         .thumbnails-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
+            grid-template-columns: repeat(3, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 30px;
         }
@@ -305,7 +307,8 @@
         }
 
         .restart-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* background: linear-gradient(135deg, #667eea, #764ba2); */
+            background-color: #0046AD;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -419,61 +422,63 @@
             },
             {
                 type: 'text',
-                content: 'To make the perfect cup of coffee, start by selecting high-quality beans that have been roasted within the past two weeks. Grind the beans just before brewing using a burr grinder for consistency. Use a water-to-coffee ratio of 15:1, heat water to 195-205°F, and brew for 4-6 minutes depending on your method.',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/sAG2TL-7eD0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
                 answer: 'ai',
-                feedback: 'This systematic, step-by-step instruction with precise measurements and technical specifications is characteristic of AI-generated content. The structured format and specific temperature ranges are typical of AI responses to "how-to" queries.'
+                feedback: 'This video is 100% AI. It was made with Google Gemini (Veo 3) using the prompt: "A close up of a box turtle in the grass at a park. There is a soft focus on the turtle. It is eating grass but looking at the camera."'
             },
             {
                 type: 'image',
-                content: 'https://images.unsplash.com/photo-1541963463532-d68292c34d19?w=600&h=400&fit=crop',
-                alt: 'Modern architectural building with glass facade and geometric patterns, photographed during daytime with natural lighting',
-                title: 'Contemporary architecture photograph - human vs AI quiz',
+                content: 'barn.jpg',
+                alt: 'An old barn in a field with a cloudy background',
+                title: 'An old barn in a field with a cloudy background',
                 answer: 'human',
-                feedback: 'This is a photograph taken by a human photographer and uploaded to Unsplash. While AI can now generate impressive images, this particular architectural photograph shows the kind of real-world imperfections and natural lighting that indicate human photography.'
+                feedback: 'This is a photograph taken by a human photographer and uploaded to Unsplash. This image was taken by Alex York and is a barn in the Mormon Row Historic District, Antelope Flats Road, Moose, WY, USA. You can find the original here: <a href="https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U" target="_blank">https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U</a>'
             },
             {
                 type: 'text',
-                content: 'Listen, I\'ve been thinking about what you said yesterday, and honestly? You\'re probably right. I mean, I hate admitting it because you know how stubborn I can be, but sometimes I need someone to call me out on my BS. Thanks for being that person, even when I\'m being impossible.',
-                answer: 'human',
-                feedback: 'This conversational, self-reflective text with contractions, casual language ("BS"), and emotional vulnerability is distinctly human. The rambling, stream-of-consciousness style and personal accountability reflect authentic human communication patterns.'
-            },
-            {
-                type: 'text',
-                content: 'Photosynthesis is a biological process that converts light energy into chemical energy. During this process, plants absorb carbon dioxide from the atmosphere and water from the soil. Chlorophyll captures sunlight, which powers the conversion of these materials into glucose and oxygen through a series of complex chemical reactions.',
+                content: 'When Katie walks, the morning dew takes flight,<br />And roses blush to match her gentle grace.<br />Her laughter rings like bells in golden light,<br />While sunshine pales before her radiant face.<br />Her eyes, like sapphires set in starlit skies,<br />Hold depths that speak of wisdom yet untold.<br />In Katie\'s gaze, eternal beauty lies,<br />More precious than the finest burnished gold.<br />Her voice, a melody that soothes the soul,<br />Can chase away the shadows of despair.<br />She makes the broken heart complete and whole,<br />A treasure beyond compare, beyond compare.<br />Though time may steal the bloom from summer\'s rose,<br />Sweet Katie\'s beauty eternally glows.',
                 answer: 'ai',
-                feedback: 'This is a textbook-style explanation with clear, structured information typical of AI-generated educational content. The formal tone, systematic presentation, and comprehensive coverage of the topic in concise sentences are characteristic of AI responses.'
-            },
-            {
-                type: 'text',
-                content: 'My grandmother\'s kitchen always smelled like cinnamon and stories. She\'d roll out pie dough while telling us about the time she met my grandfather at a dance hall in 1952, flour dusting her apron like snow on her memories.',
-                answer: 'human',
-                feedback: 'This nostalgic, sensory-rich description with creative metaphors ("flour dusting her apron like snow on her memories") demonstrates human creativity and emotional depth. The specific historical reference and personal family narrative are hallmarks of human storytelling.'
+                feedback: 'This was written by Claude Sonnet 4 with the prompt "Please generate a sonnet in the spirit of Shakespeare about a woman named Katie."'
             },
             {
                 type: 'image',
-                content: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
-                alt: 'Serene forest landscape with tall trees, misty atmosphere, and filtered sunlight creating a peaceful natural scene',
-                title: 'Forest landscape photograph - human vs AI quiz',
-                answer: 'ai',
-                feedback: 'While this appears to be a nature photograph, this image was actually generated by AI. Modern AI image generation has become sophisticated enough to create realistic nature scenes, though close inspection might reveal subtle inconsistencies in lighting or natural patterns.'
-            },
-            {
-                type: 'text',
-                content: 'The annual rainfall in tropical rainforests typically ranges from 1,500 to 3,000 millimeters. These ecosystems support approximately 50% of all terrestrial biodiversity despite covering only 6% of Earth\'s surface. The Amazon rainforest alone produces about 20% of the world\'s oxygen.',
-                answer: 'ai',
-                feedback: 'This fact-heavy paragraph with specific statistics and percentages is typical of AI-generated informational content. The systematic presentation of data points and the comprehensive overview format are characteristic of AI responses to factual queries.'
-            },
-            {
-                type: 'text',
-                content: 'So there I was, standing in the grocery store checkout line, when the person in front of me started arguing with the cashier about expired coupons. Twenty minutes. TWENTY MINUTES of my life I\'ll never get back, listening to someone explain why their 2019 coupon should still be valid in 2024.',
+                content: 'casks.jpg',
+                alt: 'Wooden casks in a rickhouse.',
+                title: 'Wooden casks in a rickhouse.',
                 answer: 'human',
-                feedback: 'This frustrated, personal anecdote with conversational tone, capital letters for emphasis, and relatable everyday situation shows human emotional expression and storytelling. The specific details and exasperated tone are characteristic of genuine human experiences.'
+                feedback: 'This picture was taken at Maker\'s Mark Distillery in May, 2025.'
             },
             {
                 type: 'text',
-                content: 'Machine learning algorithms can be categorized into three main types: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning uses labeled training data, unsupervised learning identifies patterns in unlabeled data, and reinforcement learning optimizes actions through trial and error with reward feedback.',
+                content: 'The first light of dawn had barely touched the Baltic Sea when Captain Nathan "Hawk" Harris’s submarine, USS Minnesota, slipped beneath the surface with the precision of a predator stalking its prey. At periscope depth, Harris peered through the gyro-stabilized lens, his eagle-eyed gaze fixed on the needle-sharp silhouette of a Russian Akula-class fast attack boat cutting through the grey waves ten klicks to port. In the cramped control room, sonar operators traced the enemy’s propeller clicks—mechanical and ominous—while the tactical display flickered with encrypted chatter from Naval Intelligence in London. A fresh, biting chill crept into Harris’s Gore-Tex jacket as he keyed the intercom: “All stations, prepare for passive tracking. We’re in position to shadow their transit for possible infiltration.” In the hush that followed, only the low hum of the diesel-electric engines and the distant echoes of Cold War paranoia remained, as the stage was set for a confrontation that could ignite a global tinderbox.',
                 answer: 'ai',
-                feedback: 'This technical explanation with clear categorization and systematic definitions is typical of AI-generated educational content. The formal structure, precise terminology, and comprehensive coverage of the topic indicate AI authorship.'
+                feedback: 'This was generated by ChatGPT o4-mini-high in June, 2025. The prompt was "Please write the opening paragraph of a novel that is in the style of Tom Clancy."'
+            },
+            {
+                type: 'text',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/QrrdCcMAEMk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
+                answer: 'ai',
+                feedback: 'This video is 100% AI. It was made with Google Gemini (Veo 3) using the prompt: "Please generate a video of a standup comedian."'
+            },            
+            {
+                type: 'text',
+                content: 'In retrospect, it would seem an odd way to start a war. Only one of the participants knew what was really happening, and even that was a coincidence. The property settlement had been moved up on the calendar due to a death in the attorney\'s family, and so the attorney was scheduled for a redeye flight, two hours from now, to Hawaii. It was Mr. Yamata\'s first property closing on American soil. Though he owned many properties in the continental United States, the actual title transfer had always been handled by other attorneys, invariably American citizens, who had done precisely what they had been paid to do, generally with oversight by one of Mr. Yamata\'s employees. But not this time.',
+                answer: 'human',
+                feedback: 'This is a sample from the opening of Tom Clancy\'s 1994 political thriller <u>Debt of Honor</u>.'
+            },
+            {
+                type: 'image',
+                content: 'boat.jpg',
+                alt: 'A wooden row boat in front of a barn; both are distressed and peeling paint.',
+                title: 'A wooden row boat in front of a barn; both are distressed and peeling paint.',
+                answer: 'ai',
+                feedback: 'This picture was made with Midjourney in 2024 by John Ghidiu'
+            },
+            {
+                type: 'text',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/ubNEWdmOF0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
+                answer: 'human',
+                feedback: 'This video is 100% real. It was sourced from Pixabay and is done by Zethian and can be found at <a href="https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/" target="_blank">https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/</a>.'
             }
         ];
 
@@ -511,7 +516,7 @@
                 if (item.type === 'text') {
                     contentHTML = `<div class="card-text">${item.content}</div>`;
                 } else if (item.type === 'image') {
-                    contentHTML = `<img src="${item.content}" alt="Quiz content" class="card-image">`;
+                    contentHTML = `<img src="${item.content}" alt="${item.alt}" title="${item.title}" class="card-image">`;
                 }
 
                 card.innerHTML = `
