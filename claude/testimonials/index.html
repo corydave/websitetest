@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonial Carousel</title>
+    <style>
+        .testimonial-carousel {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .testimonial-card {
+            display: none;
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .testimonial-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quote {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            left: -30px;
+            top: -10px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .quote::after {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            right: -30px;
+            bottom: -40px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .author {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .star.empty {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .nav-dot:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .testimonial-carousel {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .quote {
+                font-size: 1.1rem;
+            }
+
+            .quote::before,
+            .quote::after {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="testimonial-carousel">
+        <div class="testimonial-card active">
+            <div class="stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <div class="quote">
+                This product completely transformed our workflow. The team's productivity increased by 200% and we couldn't be happier with the results!
+            </div>
+            <div class="author">Sarah Johnson, CEO</div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <div class="quote">
+                Outstanding customer service and an incredible product. I've recommended this to all my colleagues and they've had the same amazing experience.
+            </div>
+            <div class="author">Michael Chen, Director</div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star empty">★</span>
+            </div>
+            <div class="quote">
+                Easy to use, powerful features, and great value for money. The learning curve was minimal and we saw results immediately.
+            </div>
+            <div class="author">Emma Rodriguez, Manager</div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="stars">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <div class="quote">
+                The best investment we've made for our business. Professional, reliable, and the support team goes above and beyond every time.
+            </div>
+            <div class="author">David Park, Founder</div>
+        </div>
+
+        <div class="navigation">
+            <div class="nav-dot active" data-slide="0"></div>
+            <div class="nav-dot" data-slide="1"></div>
+            <div class="nav-dot" data-slide="2"></div>
+            <div class="nav-dot" data-slide="3"></div>
+        </div>
+    </div>
+
+    <script>
+        class TestimonialCarousel {
+            constructor() {
+                this.currentSlide = 0;
+                this.slides = document.querySelectorAll('.testimonial-card');
+                this.dots = document.querySelectorAll('.nav-dot');
+                this.carousel = document.querySelector('.testimonial-carousel');
+                this.autoRotateInterval = null;
+                this.rotationDelay = 4000; // 4 seconds
+
+                this.init();
+            }
+
+            init() {
+                this.addEventListeners();
+                this.startAutoRotation();
+            }
+
+            addEventListeners() {
+                // Add click listeners to navigation dots
+                this.dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        this.goToSlide(index);
+                    });
+                });
+
+                // Pause auto-rotation on hover
+                this.carousel.addEventListener('mouseenter', () => {
+                    this.stopAutoRotation();
+                });
+
+                // Resume auto-rotation when mouse leaves
+                this.carousel.addEventListener('mouseleave', () => {
+                    this.startAutoRotation();
+                });
+
+                // Handle keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        this.previousSlide();
+                    } else if (e.key === 'ArrowRight') {
+                        this.nextSlide();
+                    }
+                });
+            }
+
+            goToSlide(index) {
+                // Remove active class from current slide and dot
+                this.slides[this.currentSlide].classList.remove('active');
+                this.dots[this.currentSlide].classList.remove('active');
+
+                // Update current slide index
+                this.currentSlide = index;
+
+                // Add active class to new slide and dot
+                this.slides[this.currentSlide].classList.add('active');
+                this.dots[this.currentSlide].classList.add('active');
+            }
+
+            nextSlide() {
+                const nextIndex = (this.currentSlide + 1) % this.slides.length;
+                this.goToSlide(nextIndex);
+            }
+
+            previousSlide() {
+                const prevIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+                this.goToSlide(prevIndex);
+            }
+
+            startAutoRotation() {
+                this.autoRotateInterval = setInterval(() => {
+                    this.nextSlide();
+                }, this.rotationDelay);
+            }
+
+            stopAutoRotation() {
+                if (this.autoRotateInterval) {
+                    clearInterval(this.autoRotateInterval);
+                    this.autoRotateInterval = null;
+                }
+            }
+        }
+
+        // Initialize the carousel when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new TestimonialCarousel();
+        });
+    </script>
+</body>
+</html>
