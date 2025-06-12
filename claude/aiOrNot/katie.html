@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human vs AI Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0046AD;
+        }
+
+        .quiz-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .quiz-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            /* background: linear-gradient(90deg, #4CAF50, #45a049); */
+            background: #0046AD;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        .card-content {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .card-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .guess-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .guess-btn.human {
+            /* background: linear-gradient(135deg, #ff6b6b, #ee5a52); */
+            background-color: #0046AD;
+            color: white;
+        }
+
+        .guess-btn.ai {
+            /* background: linear-gradient(135deg, #4ecdc4, #44a08d); */
+            background-color: #FFFFFF;
+            color: #0046AD;
+            border: 1px solid #0046AD;
+        }
+
+        .guess-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .guess-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+            color: white;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #0046AD;
+            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
+        }
+
+        .score-message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .thumbnails-grid {
+            display: grid;
+            /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
+            grid-template-columns: repeat(3, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .thumbnail {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .thumbnail:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .thumbnail.correct {
+            border-color: #4CAF50;
+        }
+
+        .thumbnail.incorrect {
+            border-color: #f44336;
+        }
+
+        .thumbnail-content {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .thumbnail-status {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .thumbnail-status.correct {
+            background: #4CAF50;
+        }
+
+        .thumbnail-status.incorrect {
+            background: #f44336;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-answer {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .modal-answer.human {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .modal-answer.ai {
+            background: #e0f2f1;
+            color: #00695c;
+        }
+
+        .modal-feedback {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .restart-btn {
+            /* background: linear-gradient(135deg, #667eea, #764ba2); */
+            background-color: #0046AD;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .quiz-header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card-content {
+                min-height: 250px;
+            }
+
+            .card-text {
+                font-size: 1.1rem;
+            }
+
+            .guess-btn {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+
+            .score-display {
+                font-size: 3rem;
+            }
+
+            .modal-content {
+                margin: 20px;
+                max-width: calc(100% - 40px);
+                max-height: calc(100% - 40px);
+            }
+
+            .thumbnails-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-header">
+            <h1>Human vs AI Quiz</h1>
+            <p>Can you tell the difference? Guess if each piece of content was created by a Human or AI!</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="quizCards"></div>
+
+        <div id="resultsScreen" class="results-screen">
+            <h2>Quiz Complete!</h2>
+            <div class="score-display" id="scoreDisplay">0/10</div>
+            <div class="score-message" id="scoreMessage">Great job!</div>
+            <button class="restart-btn" onclick="restartQuiz()">Take Quiz Again</button>
+            <div class="thumbnails-grid" id="thumbnailsGrid"></div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // QUIZ DATA - Easy to modify!
+        const quizData = [
+            {
+                type: 'text',
+                content: 'Those parts of thee that the world\'s eye doth view<br />Want nothing that the thought of hearts can mend;<br />All tongues, the voice of souls, give thee that due,<br />Uttering bare truth, even so as foes commend.<br />Thy outward thus with outward praise is crown\'d;<br />But those same tongues, that give thee so thine own,<br />In other accents do this praise confound<br />By seeing farther than the eye hath shown.<br />They look into the beauty of thy mind,<br />And that in guess they measure by thy deeds;<br />Then, churls, their thoughts, although their eyes were kind,<br />To thy fair flower add the rank smell of weeds:<br />But why thy odour matcheth not thy show,<br />The soil is this, that thou dost common grow.',
+                answer: 'human',
+                feedback: 'This is Sonnet LXIX by William Shakespeare.'
+            },
+            {
+                type: 'text',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/sAG2TL-7eD0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
+                answer: 'ai',
+                feedback: 'This video is 100% AI. It was made with Google Gemini (Veo 3) using the prompt: "A close up of a box turtle in the grass at a park. There is a soft focus on the turtle. It is eating grass but looking at the camera."'
+            },
+            {
+                type: 'image',
+                content: 'barn.jpg',
+                alt: 'An old barn in a field with a cloudy background',
+                title: 'An old barn in a field with a cloudy background',
+                answer: 'human',
+                feedback: 'This is a photograph taken by a human photographer and uploaded to Unsplash. This image was taken by Alex York and is a barn in the Mormon Row Historic District, Antelope Flats Road, Moose, WY, USA. You can find the original here: <a href="https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U" target="_blank">https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U</a>'
+            },
+            {
+                type: 'text',
+                content: 'When Katie walks, the morning dew takes flight,<br />And roses blush to match her gentle grace.<br />Her laughter rings like bells in golden light,<br />While sunshine pales before her radiant face.<br />Her eyes, like sapphires set in starlit skies,<br />Hold depths that speak of wisdom yet untold.<br />In Katie\'s gaze, eternal beauty lies,<br />More precious than the finest burnished gold.<br />Her voice, a melody that soothes the soul,<br />Can chase away the shadows of despair.<br />She makes the broken heart complete and whole,<br />A treasure beyond compare, beyond compare.<br />Though time may steal the bloom from summer\'s rose,<br />Sweet Katie\'s beauty eternally glows.',
+                answer: 'ai',
+                feedback: 'This was written by Claude Sonnet 4 with the prompt "Please generate a sonnet in the spirit of Shakespeare about a woman named Katie."'
+            },
+            {
+                type: 'image',
+                content: 'casks.jpg',
+                alt: 'Wooden casks in a rickhouse.',
+                title: 'Wooden casks in a rickhouse.',
+                answer: 'human',
+                feedback: 'This picture was taken at Maker\'s Mark Distillery in May, 2025.'
+            },
+            {
+                type: 'text',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/QrrdCcMAEMk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
+                answer: 'ai',
+                feedback: 'This video is 100% AI. It was made with Google Gemini (Veo 3) using the prompt: "Please generate a video of a standup comedian."'
+            },            
+            {
+                type: 'image',
+                content: 'boat.jpg',
+                alt: 'A wooden row boat in front of a barn; both are distressed and peeling paint.',
+                title: 'A wooden row boat in front of a barn; both are distressed and peeling paint.',
+                answer: 'ai',
+                feedback: 'This picture was made with Midjourney in 2024 by John Ghidiu'
+            },
+            {
+                type: 'text',
+                content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/ubNEWdmOF0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
+                answer: 'human',
+                feedback: 'This video is 100% real. It was sourced from Pixabay and is done by Zethian and can be found at <a href="https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/" target="_blank">https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/</a>.'
+            }
+        ];
+
+        // Quiz state
+        let currentCard = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        // Initialize quiz
+        function initQuiz() {
+            currentCard = 0;
+            userAnswers = [];
+            score = 0;
+            
+            // Hide results screen
+            document.getElementById('resultsScreen').classList.remove('active');
+            
+            // Create quiz cards
+            createQuizCards();
+            showCard(0);
+            updateProgress();
+        }
+
+        // Create quiz cards HTML
+        function createQuizCards() {
+            const container = document.getElementById('quizCards');
+            container.innerHTML = '';
+
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${index}`;
+                
+                let contentHTML = '';
+                if (item.type === 'text') {
+                    contentHTML = `<div class="card-text">${item.content}</div>`;
+                } else if (item.type === 'image') {
+                    contentHTML = `<img src="${item.content}" alt="${item.alt}" title="${item.title}" class="card-image">`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-content">
+                        ${contentHTML}
+                    </div>
+                    <div class="card-buttons">
+                        <button class="guess-btn human" onclick="makeGuess('human', ${index})" aria-label="Guess Human">
+                            Human
+                        </button>
+                        <button class="guess-btn ai" onclick="makeGuess('ai', ${index})" aria-label="Guess AI">
+                            AI
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Show specific card
+        function showCard(index) {
+            // Hide all cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Show current card
+            const currentCardElement = document.getElementById(`card-${index}`);
+            if (currentCardElement) {
+                currentCardElement.classList.add('active');
+            }
+        }
+
+        // Handle user guess
+        function makeGuess(guess, cardIndex) {
+            userAnswers[cardIndex] = guess;
+            
+            // Disable buttons on current card
+            const card = document.getElementById(`card-${cardIndex}`);
+            const buttons = card.querySelectorAll('.guess-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Calculate score
+            if (guess === quizData[cardIndex].answer) {
+                score++;
+            }
+
+            // Move to next card or show results
+            setTimeout(() => {
+                if (currentCard < quizData.length - 1) {
+                    currentCard++;
+                    showCard(currentCard);
+                    updateProgress();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = ((currentCard + 1) / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        // Show results screen
+        function showResults() {
+            // Hide quiz cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            // Show results
+            const resultsScreen = document.getElementById('resultsScreen');
+            resultsScreen.classList.add('active');
+
+            // Update score display
+            document.getElementById('scoreDisplay').textContent = `${score}/${quizData.length}`;
+            
+            // Update score message
+            const percentage = (score / quizData.length) * 100;
+            let message = '';
+            if (percentage >= 90) message = 'Outstanding! You\'re an expert at spotting AI vs Human content!';
+            else if (percentage >= 70) message = 'Great job! You have a good eye for distinguishing content.';
+            else if (percentage >= 50) message = 'Not bad! Keep practicing to improve your detection skills.';
+            else message = 'This is tricky stuff! Try again to see if you can improve.';
+            
+            document.getElementById('scoreMessage').textContent = message;
+
+            // Create thumbnails
+            createThumbnails();
+        }
+
+        // Create thumbnail grid
+        function createThumbnails() {
+            const container = document.getElementById('thumbnailsGrid');
+            container.innerHTML = '';
+
+            quizData.forEach((item, index) => {
+                const thumbnail = document.createElement('div');
+                const isCorrect = userAnswers[index] === item.answer;
+                thumbnail.className = `thumbnail ${isCorrect ? 'correct' : 'incorrect'}`;
+                thumbnail.onclick = () => openModal(index);
+
+                let contentHTML = '';
+                if (item.type === 'text') {
+                    contentHTML = `<div class="thumbnail-content">${item.content}</div>`;
+                } else if (item.type === 'image') {
+                    contentHTML = `<img src="${item.content}" alt="Quiz content">`;
+                }
+
+                thumbnail.innerHTML = `
+                    ${contentHTML}
+                    <div class="thumbnail-status ${isCorrect ? 'correct' : 'incorrect'}">
+                        ${isCorrect ? '✓' : '✗'}
+                    </div>
+                `;
+
+                container.appendChild(thumbnail);
+            });
+        }
+
+        // Open modal with detailed view
+        function openModal(index) {
+            const item = quizData[index];
+            const userGuess = userAnswers[index];
+            const isCorrect = userGuess === item.answer;
+
+            let contentHTML = '';
+            if (item.type === 'text') {
+                contentHTML = `<div class="card-text">${item.content}</div>`;
+            } else if (item.type === 'image') {
+                contentHTML = `<img src="${item.content}" alt="Quiz content" style="max-width: 100%; border-radius: 10px;">`;
+            }
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h3>Question ${index + 1}</h3>
+                <div style="margin: 20px 0;">
+                    ${contentHTML}
+                </div>
+                <div class="modal-answer ${item.answer}">
+                    Correct Answer: ${item.answer.toUpperCase()}
+                </div>
+                <div style="margin: 15px 0; font-weight: bold; color: ${isCorrect ? '#4CAF50' : '#f44336'};">
+                    Your Answer: ${userGuess.toUpperCase()} ${isCorrect ? '✓' : '✗'}
+                </div>
+                <div class="modal-feedback">
+                    <strong>Explanation:</strong><br>
+                    ${item.feedback}
+                </div>
+            `;
+
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize quiz on page load
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
