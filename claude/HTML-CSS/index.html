@@ -618,9 +618,9 @@
                 .replace(/\s+/g, ' ')
                 .trim();
             
-            // Add comment separators
+            // Add HTML comment separators
             const separator = '='.repeat(80);
-            return `\n${separator}\n\n${formatted}\n\n${separator}\n`;
+            return `\n<!-- ${separator} -->\n\n${formatted}\n\n<!-- ${separator} -->\n`;
         }
 
         function copyToClipboard(elementId) {
@@ -658,4 +658,4 @@
         });
     </script>
 </body>
-</html>    
+</html>
