@@ -190,80 +190,192 @@
     <div class="container">
         <div class="header">
             <h1>CSS to Inline Style Converter</h1>
-            <p>Transform your CSS and HTML into a single file with inline styles</p>
+            <p>Transform your HTML documents into embeddable content with inline styles</p>
         </div>
 
         <div class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="html-input">HTML Content</label>
-                    <textarea id="html-input" placeholder="Enter your HTML here..."><!DOCTYPE html>
-<html>
+                    <label for="html-input">Complete HTML Document</label>
+                    <textarea id="html-input" placeholder="Paste your complete HTML document here..."><!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Policy Statement</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; 
+            margin: 2rem; 
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #333;
+        }
+        h1 { 
+            color: #0066cc; 
+            border-bottom: 2px solid #0066cc; 
+            padding-bottom: 0.5rem; 
+            margin-bottom: 2rem;
+        }
+        h2 { 
+            color: #2c3e50; 
+            margin-top: 2rem; 
+            margin-bottom: 1rem;
+        }
+        ul { 
+            margin-left: 1.5rem; 
+            margin-bottom: 1.5rem;
+        }
+        li { 
+            margin-bottom: 0.5rem; 
+        }
+        .policy-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            text-align: left;
+        }
+        .policy-header.policy-permitted {
+            border-left-color: #28a745;
+        }
+        .policy-header.policy-limited {
+            border-left-color: #ffc107;
+        }
+        .policy-header.policy-prohibited {
+            border-left-color: #dc3545;
+        }
+        .policy-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .policy-header .icon {
+            font-size: 1.25rem;
+            color: #007bff;
+        }
+        .policy-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .policy-icon:last-child {
+            margin-right: 0;
+        }
+        .policy-icons {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .policy-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        .policy-section .icon {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.25em;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        .policy-section p {
+            margin: 0;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        .documentation-section {
+            width: 100%;
+        }
+        .documentation-header {
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .documentation-requirements {
+            margin-left: 0;
+            padding-left: 0;
+        }
+        .documentation-requirements li {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .policy-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        @media print {
+            body { margin: 1rem; }
+            .policy-header { break-inside: avoid; }
+            .policy-section { break-inside: avoid; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="main-title">Hello World</h1>
-        <p class="description">This is a sample paragraph.</p>
-        <button class="btn primary">Click me</button>
+    <h1>AI Policy Statement</h1>
+    <div class="policy-statement">
+        <div class="policy-header policy-permitted">
+                <div class="policy-icons">
+                    <span class="policy-icon" aria-hidden="true" title="AI Use Permitted">✅</span><span class="policy-icon" aria-hidden="true" title="Disclosure Required">📢</span><span class="policy-icon" aria-hidden="true" title="Additional Documentation Required">📝</span>
+                </div>
+                <h2>AI Use Permitted, however use must be disclosed and additional documentation needs to be submitted</h2>
+            </div>
+<div class="policy-section">
+                        <span class="icon" aria-hidden="true">✅</span>
+                        <p>You may use AI tools in any part of completing this assignment.</p>
+                    </div>
+<div class="policy-section">
+                        <span class="icon" aria-hidden="true">📢</span>
+                        <p>You must acknowledge your use of AI tools for this assignment.</p>
+                    </div>
+<div class="policy-section">
+                    <span class="icon" aria-hidden="true">📝</span>
+                    <div class="documentation-section">
+                        <p class="documentation-header">If you use AI for this assignment, you must also:</p>
+                        <ul class="documentation-requirements policy-list">
+                            <li>📤 You must include your prompts and AI outputs with this assignment submission.</li>
+                        </ul>
+                    </div>
+                </div>
     </div>
 </body>
 </html></textarea>
                 </div>
 
-                <div class="input-group">
-                    <label for="css-input">CSS Styles</label>
-                    <textarea id="css-input" placeholder="Enter your CSS here...">.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-}
-
-#main-title {
-    color: #2c3e50;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
-.description {
-    color: #7f8c8d;
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin-bottom: 30px;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-.btn.primary {
-    background-color: #3498db;
-    color: white;
-}</textarea>
+                <div class="input-group" style="display: none;">
+                    <label for="css-input">Extracted CSS (Read-only)</label>
+                    <textarea id="css-input" readonly placeholder="CSS will be extracted automatically..."></textarea>
                 </div>
             </div>
 
             <div class="button-container">
-                <button class="convert-btn" onclick="convertToInlineStyles()">
-                    🔄 Convert to Inline Styles
+                <button class="convert-btn" onclick="extractAndInlineStyles()">
+                    🔄 Extract & Inline Styles
                 </button>
             </div>
 
             <div class="output-section">
                 <div class="output-group">
-                    <label>Inlined HTML Output</label>
-                    <div class="output" id="html-output">Click "Convert to Inline Styles" to see the result...</div>
-                    <button class="copy-btn" onclick="copyToClipboard('html-output')">📋 Copy HTML</button>
+                    <label>Embeddable HTML (Body Content Only)</label>
+                    <div class="output" id="html-output">Click "Extract & Inline Styles" to generate embeddable HTML...</div>
+                    <button class="copy-btn" onclick="copyToClipboard('html-output')">📋 Copy Embeddable HTML</button>
                 </div>
 
                 <div class="output-group">
-                    <label>Live Preview</label>
+                    <label>Preview</label>
                     <div class="preview-container" id="preview">Preview will appear here...</div>
                 </div>
             </div>
@@ -273,10 +385,37 @@
     </div>
 
     <script>
-        // CSS Parser and Inliner
+        // CSS Parser and Inliner for Complete HTML Documents
         class CSSInliner {
             constructor() {
                 this.cssRules = [];
+            }
+
+            // Extract CSS from style tags and return combined CSS text
+            extractCSSFromHTML(htmlText) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                const styleTags = doc.querySelectorAll('style');
+                
+                let combinedCSS = '';
+                styleTags.forEach(styleTag => {
+                    combinedCSS += styleTag.textContent + '\n';
+                });
+                
+                return combinedCSS.trim();
+            }
+
+            // Extract body content from complete HTML document
+            extractBodyContent(htmlText) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                const bodyElement = doc.querySelector('body');
+                
+                if (!bodyElement) {
+                    throw new Error('No body element found in HTML document');
+                }
+                
+                return bodyElement.innerHTML;
             }
 
             parseCSS(cssText) {
@@ -295,11 +434,14 @@
                         
                         selectors.forEach(selector => {
                             if (selector) {
-                                this.cssRules.push({
-                                    selector: selector,
-                                    declarations: declarations,
-                                    specificity: this.calculateSpecificity(selector)
-                                });
+                                // Skip body selector since we're only inlining body content
+                                if (selector.toLowerCase() !== 'body') {
+                                    this.cssRules.push({
+                                        selector: selector,
+                                        declarations: declarations,
+                                        specificity: this.calculateSpecificity(selector)
+                                    });
+                                }
                             }
                         });
                     }
@@ -337,14 +479,15 @@
 
             inlineStyles(htmlText) {
                 try {
-                    // Create a temporary DOM
+                    // Create a temporary DOM with the body content
                     const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    const tempDoc = parser.parseFromString(`<div>${htmlText}</div>`, 'text/html');
+                    const container = tempDoc.querySelector('div');
                     
                     // Apply styles to matching elements
                     this.cssRules.forEach(rule => {
                         try {
-                            const elements = doc.querySelectorAll(rule.selector);
+                            const elements = container.querySelectorAll(rule.selector);
                             elements.forEach(element => {
                                 this.applyStylesToElement(element, rule.declarations, rule.specificity);
                             });
@@ -353,10 +496,10 @@
                         }
                     });
                     
-                    // Return the modified HTML
-                    return doc.documentElement.outerHTML;
+                    // Return the modified HTML content
+                    return container.innerHTML;
                 } catch (error) {
-                    throw new Error(`HTML parsing error: ${error.message}`);
+                    throw new Error(`HTML processing error: ${error.message}`);
                 }
             }
 
@@ -406,15 +549,28 @@
                 return styles;
             }
 
-            process(htmlText, cssText) {
-                this.parseCSS(cssText);
-                return this.inlineStyles(htmlText);
+            // Main processing function for complete HTML documents
+            processCompleteHTML(htmlText) {
+                // Extract CSS from style tags
+                const extractedCSS = this.extractCSSFromHTML(htmlText);
+                
+                // Extract body content
+                const bodyContent = this.extractBodyContent(htmlText);
+                
+                // Parse CSS and apply to body content
+                this.parseCSS(extractedCSS);
+                const inlinedContent = this.inlineStyles(bodyContent);
+                
+                return {
+                    css: extractedCSS,
+                    inlinedHTML: inlinedContent
+                };
             }
         }
 
-        function convertToInlineStyles() {
+        function extractAndInlineStyles() {
             const htmlInput = document.getElementById('html-input').value.trim();
-            const cssInput = document.getElementById('css-input').value.trim();
+            const cssInput = document.getElementById('css-input');
             const outputElement = document.getElementById('html-output');
             const previewElement = document.getElementById('preview');
             const messageContainer = document.getElementById('message-container');
@@ -423,35 +579,48 @@
             messageContainer.innerHTML = '';
 
             if (!htmlInput) {
-                showMessage('Please enter some HTML content.', 'error');
+                showMessage('Please enter a complete HTML document.', 'error');
                 return;
             }
 
             try {
                 const inliner = new CSSInliner();
-                const inlinedHTML = inliner.process(htmlInput, cssInput);
+                const result = inliner.processCompleteHTML(htmlInput);
+                
+                // Show extracted CSS in the readonly field
+                cssInput.value = result.css;
+                cssInput.parentElement.style.display = 'block';
                 
                 // Format the output for better readability
-                const formattedHTML = formatHTML(inlinedHTML);
+                const formattedHTML = formatHTML(result.inlinedHTML);
                 outputElement.textContent = formattedHTML;
                 
                 // Update preview
-                previewElement.innerHTML = inlinedHTML;
+                previewElement.innerHTML = result.inlinedHTML;
                 
-                showMessage('Successfully converted CSS to inline styles!', 'success');
+                showMessage('Successfully extracted and inlined styles! The HTML above can be embedded anywhere.', 'success');
             } catch (error) {
                 outputElement.textContent = `Error: ${error.message}`;
                 previewElement.innerHTML = '<p style="color: red;">Error in processing</p>';
-                showMessage(`Conversion failed: ${error.message}`, 'error');
+                showMessage(`Processing failed: ${error.message}`, 'error');
             }
+        }
+
+        function convertToInlineStyles() {
+            // Legacy function - redirect to new function
+            extractAndInlineStyles();
         }
 
         function formatHTML(html) {
             // Basic HTML formatting for better readability
-            return html
+            const formatted = html
                 .replace(/></g, '>\n<')
                 .replace(/\s+/g, ' ')
                 .trim();
+            
+            // Add comment separators
+            const separator = '='.repeat(80);
+            return `\n${separator}\n\n${formatted}\n\n${separator}\n`;
         }
 
         function copyToClipboard(elementId) {
@@ -485,8 +654,8 @@
 
         // Auto-convert on load for demo
         window.addEventListener('load', () => {
-            setTimeout(convertToInlineStyles, 500);
+            setTimeout(extractAndInlineStyles, 500);
         });
     </script>
 </body>
-</html>
+</html>    
