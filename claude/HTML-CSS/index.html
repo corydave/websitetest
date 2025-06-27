@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS to Inline Style Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            min-height: 200px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-container {
+            text-align: center;
+            grid-column: 1 / -1;
+            margin: 20px 0;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .output-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .output {
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .preview-container {
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+            min-height: 200px;
+            overflow: auto;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CSS to Inline Style Converter</h1>
+            <p>Transform your CSS and HTML into a single file with inline styles</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="html-input">HTML Content</label>
+                    <textarea id="html-input" placeholder="Enter your HTML here..."><!DOCTYPE html>
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <div class="container">
+        <h1 id="main-title">Hello World</h1>
+        <p class="description">This is a sample paragraph.</p>
+        <button class="btn primary">Click me</button>
+    </div>
+</body>
+</html></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="css-input">CSS Styles</label>
+                    <textarea id="css-input" placeholder="Enter your CSS here...">.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+#main-title {
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.description {
+    color: #7f8c8d;
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.btn.primary {
+    background-color: #3498db;
+    color: white;
+}</textarea>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button class="convert-btn" onclick="convertToInlineStyles()">
+                    🔄 Convert to Inline Styles
+                </button>
+            </div>
+
+            <div class="output-section">
+                <div class="output-group">
+                    <label>Inlined HTML Output</label>
+                    <div class="output" id="html-output">Click "Convert to Inline Styles" to see the result...</div>
+                    <button class="copy-btn" onclick="copyToClipboard('html-output')">📋 Copy HTML</button>
+                </div>
+
+                <div class="output-group">
+                    <label>Live Preview</label>
+                    <div class="preview-container" id="preview">Preview will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="message-container"></div>
+    </div>
+
+    <script>
+        // CSS Parser and Inliner
+        class CSSInliner {
+            constructor() {
+                this.cssRules = [];
+            }
+
+            parseCSS(cssText) {
+                // Remove comments
+                cssText = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+                
+                // Split into rules
+                const rules = cssText.split('}').filter(rule => rule.trim());
+                this.cssRules = [];
+
+                rules.forEach(rule => {
+                    const parts = rule.split('{');
+                    if (parts.length === 2) {
+                        const selectors = parts[0].trim().split(',').map(s => s.trim());
+                        const declarations = this.parseDeclarations(parts[1]);
+                        
+                        selectors.forEach(selector => {
+                            if (selector) {
+                                this.cssRules.push({
+                                    selector: selector,
+                                    declarations: declarations,
+                                    specificity: this.calculateSpecificity(selector)
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            parseDeclarations(declarationsText) {
+                const declarations = {};
+                const props = declarationsText.split(';').filter(prop => prop.trim());
+                
+                props.forEach(prop => {
+                    const colonIndex = prop.indexOf(':');
+                    if (colonIndex > -1) {
+                        const property = prop.substring(0, colonIndex).trim();
+                        const value = prop.substring(colonIndex + 1).trim();
+                        if (property && value) {
+                            declarations[property] = value;
+                        }
+                    }
+                });
+                
+                return declarations;
+            }
+
+            calculateSpecificity(selector) {
+                let specificity = 0;
+                // ID selectors
+                specificity += (selector.match(/#/g) || []).length * 100;
+                // Class selectors, attribute selectors, pseudo-classes
+                specificity += (selector.match(/\.|:\w+|\[/g) || []).length * 10;
+                // Element selectors
+                specificity += (selector.match(/^[a-zA-Z]|[\s>+~][a-zA-Z]/g) || []).length * 1;
+                return specificity;
+            }
+
+            inlineStyles(htmlText) {
+                try {
+                    // Create a temporary DOM
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    
+                    // Apply styles to matching elements
+                    this.cssRules.forEach(rule => {
+                        try {
+                            const elements = doc.querySelectorAll(rule.selector);
+                            elements.forEach(element => {
+                                this.applyStylesToElement(element, rule.declarations, rule.specificity);
+                            });
+                        } catch (e) {
+                            console.warn(`Invalid selector: ${rule.selector}`);
+                        }
+                    });
+                    
+                    // Return the modified HTML
+                    return doc.documentElement.outerHTML;
+                } catch (error) {
+                    throw new Error(`HTML parsing error: ${error.message}`);
+                }
+            }
+
+            applyStylesToElement(element, declarations, specificity) {
+                const currentStyle = element.getAttribute('style') || '';
+                const currentStyles = this.parseInlineStyles(currentStyle);
+                
+                // Merge with new declarations (higher specificity wins)
+                Object.keys(declarations).forEach(property => {
+                    const existingProperty = currentStyles[property];
+                    if (!existingProperty || existingProperty.specificity <= specificity) {
+                        currentStyles[property] = {
+                            value: declarations[property],
+                            specificity: specificity
+                        };
+                    }
+                });
+                
+                // Convert back to style string
+                const styleString = Object.keys(currentStyles)
+                    .map(prop => `${prop}: ${currentStyles[prop].value}`)
+                    .join('; ');
+                
+                if (styleString) {
+                    element.setAttribute('style', styleString);
+                }
+            }
+
+            parseInlineStyles(styleString) {
+                const styles = {};
+                if (styleString) {
+                    const declarations = styleString.split(';').filter(decl => decl.trim());
+                    declarations.forEach(decl => {
+                        const colonIndex = decl.indexOf(':');
+                        if (colonIndex > -1) {
+                            const property = decl.substring(0, colonIndex).trim();
+                            const value = decl.substring(colonIndex + 1).trim();
+                            if (property && value) {
+                                styles[property] = {
+                                    value: value,
+                                    specificity: 1000 // Inline styles have highest specificity
+                                };
+                            }
+                        }
+                    });
+                }
+                return styles;
+            }
+
+            process(htmlText, cssText) {
+                this.parseCSS(cssText);
+                return this.inlineStyles(htmlText);
+            }
+        }
+
+        function convertToInlineStyles() {
+            const htmlInput = document.getElementById('html-input').value.trim();
+            const cssInput = document.getElementById('css-input').value.trim();
+            const outputElement = document.getElementById('html-output');
+            const previewElement = document.getElementById('preview');
+            const messageContainer = document.getElementById('message-container');
+
+            // Clear previous messages
+            messageContainer.innerHTML = '';
+
+            if (!htmlInput) {
+                showMessage('Please enter some HTML content.', 'error');
+                return;
+            }
+
+            try {
+                const inliner = new CSSInliner();
+                const inlinedHTML = inliner.process(htmlInput, cssInput);
+                
+                // Format the output for better readability
+                const formattedHTML = formatHTML(inlinedHTML);
+                outputElement.textContent = formattedHTML;
+                
+                // Update preview
+                previewElement.innerHTML = inlinedHTML;
+                
+                showMessage('Successfully converted CSS to inline styles!', 'success');
+            } catch (error) {
+                outputElement.textContent = `Error: ${error.message}`;
+                previewElement.innerHTML = '<p style="color: red;">Error in processing</p>';
+                showMessage(`Conversion failed: ${error.message}`, 'error');
+            }
+        }
+
+        function formatHTML(html) {
+            // Basic HTML formatting for better readability
+            return html
+                .replace(/></g, '>\n<')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('Copied to clipboard!', 'success');
+            }).catch(err => {
+                showMessage('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messageDiv.style.margin = '20px 30px';
+            
+            messageContainer.innerHTML = '';
+            messageContainer.appendChild(messageDiv);
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 3000);
+            }
+        }
+
+        // Auto-convert on load for demo
+        window.addEventListener('load', () => {
+            setTimeout(convertToInlineStyles, 500);
+        });
+    </script>
+</body>
+</html>
