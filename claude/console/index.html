@@ -1007,7 +1007,27 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             ]
         };
 
-        
+
+
+        const glueName = {
+            steps: [
+                {
+                    prompt: "Enter first name: ",
+                    process: (input, state) => ({
+                        state: { firstName: input },
+                        nextStep: 1
+                    })
+                },
+                {
+                    prompt: "Enter last name: ",
+                    process: (input, state) => ({
+                        output: `Hi, ${state.firstName} ${input}`,
+                        state: { firstName: state.firstName, lastName: input },
+                        nextStep: 0  // Loop back to start
+                    })
+                }
+            ]
+        };        
 
         const portKnockingProgram = {
             steps: [
@@ -1149,9 +1169,11 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
             fortune:fortuneTellerProgram,
             passwordanalyze: passwordAnalyzerProgram,
             mfa: mfaCodes,
-            urlFilter: urlAccessControlProgram
+            urlFilter: urlAccessControlProgram,
+            glueName: glueName
             // Add more programs here
         };
+        
         
         // URL handling and initialization - also outside the class
         function getProgramFromURL() {
