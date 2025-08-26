@@ -1023,7 +1023,7 @@ https://corydave.github.io/websitetest/claude/console/?program=portknock
                     process: (input, state) => ({
                         output: `Hi, ${state.firstName} ${input}`,
                         state: { firstName: state.firstName, lastName: input },
-                        nextStep: 0  // Loop back to start
+                        // nextStep: 0  // Loop back to start
                     })
                 }
             ]
