@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Rhythm Tap</title>
+
+    <!-- Bootstrap for layout -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e; /* Dark blue background */
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            /* Prevents double-tap zoom on mobile and other annoying touch behaviors */
+            touch-action: manipulation;
+            overflow: hidden;
+        }
+
+        /* Main game container styling */
+        .game-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #16213e;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Header styling */
+        .game-header h1 {
+            color: #00ffff; /* Cyan color for title */
+            font-weight: 700;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        /* Stats display */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+            font-size: 1.25rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #f7b801; /* Amber color for stats */
+            display: block;
+            font-size: 2rem;
+        }
+        
+        /* Game area where the track and marker live */
+        .game-area {
+            position: relative;
+            height: 100px;
+            background-color: #0f3460;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 2px solid #00ffff44;
+        }
+
+        /* The target zone for the marker */
+        .target-zone {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            height: 100%;
+            width: 12%; /* The 'hit' area */
+            transform: translateX(-50%);
+            background-color: rgba(0, 255, 255, 0.2);
+            border-left: 2px solid #00ffff;
+            border-right: 2px solid #00ffff;
+        }
+
+        /* The moving marker */
+        .marker {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 20px;
+            height: 60%;
+            background-color: #e94560; /* Magenta color for marker */
+            border: 2px solid #ffffff;
+            border-radius: 4px;
+            transform: translateY(-50%);
+            box-shadow: 0 0 10px #e94560;
+        }
+
+        /* Feedback messages like "Perfect!", "Good", etc. */
+        #feedback {
+            font-size: 1.5rem;
+            font-weight: 600;
+            height: 30px; /* Reserve space to prevent layout shift */
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            transition: opacity 0.2s;
+        }
+
+        /* The main button to tap */
+        .tap-button {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            border: none;
+            background: linear-gradient(45deg, #e94560, #f7b801);
+            color: #16213e;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        
+        .tap-button:active, .tap-button.active {
+            transform: scale(0.97);
+            box-shadow: 0 0 20px #f7b801;
+        }
+
+        /* Overlay for start/end screens */
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(22, 33, 62, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 1rem;
+            z-index: 10;
+        }
+
+        .game-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container position-relative">
+        <!-- Start/Game Over Overlay -->
+        <div id="game-overlay" class="game-overlay">
+            <div id="start-screen">
+                <h2 class="mb-3">Rhythm Tap</h2>
+                <p class="mb-4">Tap when the marker is in the zone!</p>
+                <button id="start-btn" class="btn btn-primary btn-lg px-5 py-2">Start Game</button>
+            </div>
+            <div id="end-screen" class="d-none">
+                <h2 class="mb-3">Game Over!</h2>
+                <p class="lead mb-2">Final Score: <span id="final-score" class="fw-bold">0</span></p>
+                <button id="restart-btn" class="btn btn-primary btn-lg px-5 py-2 mt-3">Play Again</button>
+            </div>
+        </div>
+
+        <!-- Game UI -->
+        <header class="game-header">
+            <h1>Rhythm Tap</h1>
+        </header>
+
+        <div class="stats">
+            <div>Score<span id="score" class="stat-value">0</span></div>
+            <div>Streak<span id="streak" class="stat-value">0</span></div>
+            <div>Level<span id="level" class="stat-value">1</span></div>
+        </div>
+
+        <div class="game-area">
+            <div class="target-zone"></div>
+            <div class="marker" id="marker"></div>
+        </div>
+        
+        <div id="feedback">&nbsp;</div>
+
+        <button class="tap-button" id="tap-btn">TAP!</button>
+    </div>
+
+    <script>
+        // DOM Elements
+        const marker = document.getElementById('marker');
+        const scoreEl = document.getElementById('score');
+        const streakEl = document.getElementById('streak');
+        const levelEl = document.getElementById('level');
+        const feedbackEl = document.getElementById('feedback');
+        const tapBtn = document.getElementById('tap-btn');
+        
+        const gameOverlay = document.getElementById('game-overlay');
+        const startScreen = document.getElementById('start-screen');
+        const endScreen = document.getElementById('end-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const finalScoreEl = document.getElementById('final-score');
+
+        // Audio Context for sound effects
+        let audioCtx;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.error("Web Audio API is not supported in this browser");
+        }
+        
+        // Game State
+        let score = 0;
+        let streak = 0;
+        let level = 1;
+        let speed = 2.5; // Base speed
+        let direction = 1; // 1 for right, -1 for left
+        let animationFrameId;
+        let gameActive = false;
+        let canTap = true;
+
+        // --- Game Setup and Flow ---
+        function startGame() {
+            score = 0;
+            streak = 0;
+            level = 1;
+            speed = 2.5;
+            marker.style.left = '0%';
+            gameActive = true;
+            canTap = true;
+            
+            gameOverlay.classList.add('hidden');
+            endScreen.classList.add('d-none');
+            
+            updateDisplay();
+            gameLoop();
+        }
+
+        function endGame() {
+            gameActive = false;
+            cancelAnimationFrame(animationFrameId);
+            finalScoreEl.textContent = score;
+            gameOverlay.classList.remove('hidden');
+            endScreen.classList.remove('d-none');
+            startScreen.classList.add('d-none');
+        }
+
+        // --- Core Game Loop ---
+        function gameLoop() {
+            if (!gameActive) return;
+
+            let currentPos = parseFloat(marker.style.left) || 0;
+            currentPos += speed * direction;
+
+            // Reverse direction at edges
+            if (currentPos >= 91) { // 100% - marker width (approx 9%)
+                currentPos = 91;
+                direction *= -1;
+                playTone(150, 0.1, 'sine'); // Edge hit sound
+            } else if (currentPos <= 0) {
+                currentPos = 0;
+                direction *= -1;
+                playTone(150, 0.1, 'sine'); // Edge hit sound
+            }
+
+            marker.style.left = currentPos + '%';
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- Player Interaction ---
+        function handleTap() {
+            if (!gameActive || !canTap) return;
+
+            const markerPos = parseFloat(marker.style.left);
+            // Target zone is from 44% to 56% (50% center - 6% half-width)
+            const inZone = markerPos > 44 && markerPos < 56;
+            
+            if (inZone) {
+                // Determine quality of tap
+                const distance = Math.abs(50 - markerPos);
+                let hitScore = 0;
+                let feedbackText = '';
+
+                if (distance <= 1.5) { // Perfect
+                    hitScore = 100;
+                    feedbackText = 'Perfect!';
+                    playTone(600, 0.1, 'triangle');
+                } else if (distance <= 4) { // Great
+                    hitScore = 50;
+                    feedbackText = 'Great!';
+                     playTone(500, 0.1, 'triangle');
+                } else { // Good
+                    hitScore = 25;
+                    feedbackText = 'Good';
+                     playTone(400, 0.1, 'triangle');
+                }
+
+                streak++;
+                score += hitScore * streak;
+                feedbackEl.textContent = `${feedbackText} +${hitScore * streak}`;
+
+                // Level up logic
+                if (streak > 0 && streak % 5 === 0) {
+                    level++;
+                    speed += 0.5; // Increase speed every 5 successful hits
+                    feedbackEl.textContent = 'Level Up!';
+                }
+                
+                // Reset for next tap
+                resetMarker();
+
+            } else {
+                // Miss
+                streak = 0;
+                feedbackEl.textContent = 'Miss!';
+                playTone(100, 0.2, 'square');
+                endGame();
+            }
+
+            updateDisplay();
+        }
+        
+        function resetMarker() {
+            canTap = false; // Prevent spamming taps
+            setTimeout(() => {
+                direction = Math.random() > 0.5 ? 1 : -1; // Randomize next direction
+                marker.style.left = direction === 1 ? '0%' : '91%';
+                canTap = true;
+            }, 300); // Short delay before next marker appears
+        }
+
+        // --- UI & Utility ---
+        function updateDisplay() {
+            scoreEl.textContent = score;
+            streakEl.textContent = streak;
+            levelEl.textContent = level;
+        }
+
+        function playTone(frequency, duration, type) {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = type; // 'sine', 'square', 'sawtooth', 'triangle'
+            oscillator.frequency.value = frequency;
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.01);
+
+            oscillator.start(audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+            oscillator.stop(audioCtx.currentTime + duration);
+        }
+
+        // --- Event Listeners ---
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // Listen for both touch and mouse clicks on the button
+        tapBtn.addEventListener('mousedown', (e) => { e.preventDefault(); handleTap(); });
+        tapBtn.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(); });
+
+        // Listen for spacebar press for accessibility
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                tapBtn.classList.add('active'); // Visual feedback for key press
+                handleTap();
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                tapBtn.classList.remove('active');
+            }
+        });
+        
+    </script>
+
+</body>
+</html>
