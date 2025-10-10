@@ -271,9 +271,9 @@
       <div class="settings-group">
         <label class="settings-label">Green Duration</label>
         <div class="time-input-group">
-          <input type="number" id="greenMin" class="time-input" min="0" max="59" value="5">
+          <input type="number" id="greenMin" class="time-input" min="0" max="59" value="13">
           <span>min</span>
-          <input type="number" id="greenSec" class="time-input" min="0" max="59" value="30">
+          <input type="number" id="greenSec" class="time-input" min="0" max="59" value="0">
           <span>sec</span>
         </div>
         <div class="error-message" id="greenError"></div>
@@ -284,7 +284,7 @@
         <div class="time-input-group">
           <input type="number" id="yellowMin" class="time-input" min="0" max="59" value="1">
           <span>min</span>
-          <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="0">
+          <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="30">
           <span>sec</span>
         </div>
         <div class="error-message" id="yellowError"></div>
@@ -319,7 +319,7 @@
 
   <!-- Main Timer Container -->
   <div id="container">
-    <div class="timer-display" id="timerDisplay">0:00</div>
+    <div class="timer-display" id="timerDisplay">15:00</div>
     <div class="controls">
       <button id="startBtn">Start</button>
       <button id="resetBtn">Reset</button>
@@ -329,9 +329,9 @@
   <script>
     // Timer settings (in seconds)
     let settings = {
-      greenTime: 182,  // 3:02
-      yellowTime: 122, // 2:02  
-      redTime: 2       // 0:02
+      greenTime: 780,  // 13:00
+      yellowTime: 90,  // 1:30  
+      redTime: 30      // 0:30
     };
 
     let countdown;
@@ -378,6 +378,10 @@
         document.getElementById('redMin').value = rm;
         document.getElementById('redSec').value = rs;
       }
+      
+      // Update total time display after loading parameters
+      totalSeconds = getTotalTime();
+      timerDisplay.textContent = formatTime(totalSeconds);
     }
 
     // Generate share URL based on current settings
@@ -438,6 +442,10 @@
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
+    function getTotalTime() {
+      return settings.greenTime + settings.yellowTime + settings.redTime;
+    }
+
     function updateDisplay() {
       if (totalSeconds < 0) {
         timerDisplay.innerHTML = '<span class="x-mark">X</span>';
@@ -449,8 +457,14 @@
       } else {
         timerDisplay.textContent = formatTime(totalSeconds);
         
-        // Determine background color based on time
-        if (totalSeconds > settings.yellowTime) {
+        // Determine background color based on time remaining
+        // Total time countdown: starts at (green + yellow + red)
+        // Green phase: from total down to (yellow + red)
+        // Yellow phase: from (yellow + red) down to red
+        // Red phase: from red down to 0
+        const yellowRedTime = settings.yellowTime + settings.redTime;
+        
+        if (totalSeconds > yellowRedTime) {
           container.className = 'green-bg';
         } else if (totalSeconds > settings.redTime) {
           container.className = 'yellow-bg';
@@ -462,7 +476,7 @@
 
     function startSequence() {
       if (!isRunning) {
-        totalSeconds = settings.greenTime;
+        totalSeconds = getTotalTime();
         isRunning = true;
         startBtn.textContent = 'Running...';
         startBtn.disabled = true;
@@ -478,9 +492,9 @@
 
     function reset() {
       clearInterval(countdown);
-      totalSeconds = 0;
+      totalSeconds = getTotalTime();
       isRunning = false;
-      timerDisplay.textContent = '0:00';
+      timerDisplay.textContent = formatTime(totalSeconds);
       container.className = 'white-bg';
       startBtn.textContent = 'Start';
       startBtn.disabled = false;
@@ -561,7 +575,7 @@
 
         updateBrowserURL(); // Update the browser URL
         hideModal();
-        reset();
+        reset(); // This will now show the new total time
       }
     }
 
@@ -597,6 +611,10 @@
 
     // Initialize with URL parameters if present
     parseURLParams();
+    
+    // Initialize display with total time
+    totalSeconds = getTotalTime();
+    timerDisplay.textContent = formatTime(totalSeconds);
   </script>
 </body>
 </html>
