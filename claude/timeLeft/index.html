@@ -1,620 +1,561 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      font-family: Arial, sans-serif;
-      transition: background-color 0.5s;
-    }
+    <title>timeLeft</title>
     
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      z-index: 100;
-    }
-
-    .navbar-title {
-      font-weight: bold;
-      font-size: 20px;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 24px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .close-button {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .settings-group {
-      margin-bottom: 20px;
-    }
-
-    .settings-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .time-input-group {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .time-input {
-      width: 80px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    .time-input.error {
-      border-color: #ef4444;
-    }
-
-    .error-message {
-      color: #ef4444;
-      font-size: 14px;
-      margin-top: 4px;
-      min-height: 20px;
-    }
+    <link rel="icon" type="image/x-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png">
+    <link rel="icon" type="image/svg+xml"  href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.svg" />
+    <link rel="alternate icon"   href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.ico" />
+    <link rel="apple-touch-icon" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png"/>
+    <link rel="apple-touch-startup-image" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-192x192.png">
     
-    #container {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background-color: white;
-    }
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-24x24.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-57x57.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-60x60.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-70x70.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-72x72.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-76x76.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-114x114.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-120x120.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-144x144.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-150x150.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-152x152.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-180x180.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-310x310.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://www.daveghidiu.com/webbapps/timeLeft/images/favicon-500x500.png">
 
-    .timer-display {
-      font-size: 120px;
-      font-weight: bold;
-      margin-bottom: 40px;
-      font-family: 'Courier New', monospace;
-      min-height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
 
-    .controls {
-      display: flex;
-      gap: 20px;
-    }
+        .navbar-title {
+            font-weight: bold;
+            font-size: 20px;
+        }
 
-    button {
-      padding: 12px 24px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      transition: background-color 0.3s;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
 
-    button:hover {
-      background-color: #45a049;
-    }
+        .modal-content {
+            background-color: white;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-    button:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-    }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-    #resetBtn {
-      background-color: #f44336;
-    }
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
 
-    #resetBtn:hover {
-      background-color: #da190b;
-    }
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
 
-    .settings-button {
-      background-color: #2196F3;
-    }
+        .settings-group {
+            margin-bottom: 20px;
+        }
 
-    .settings-button:hover {
-      background-color: #0976d2;
-    }
+        .time-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-    .save-button {
-      background-color: #4CAF50;
-      margin-right: 10px;
-    }
+        .time-input-container {
+            flex: 1;
+        }
 
-    .save-button:hover {
-      background-color: #45a049;
-    }
+        .time-input-pair {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
 
-    .share-section {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 2px solid #e5e5e5;
-    }
+        .time-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
 
-    .share-title {
-      font-weight: bold;
-      margin-bottom: 12px;
-      font-size: 18px;
-    }
+        .time-input.error {
+            border-color: #dc2626;
+            background-color: #fee2e2;
+        }
 
-    .share-url-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+        .time-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
 
-    .share-url-input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 14px;
-      background-color: #f5f5f5;
-    }
+        .color-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
 
-    .copy-button {
-      padding: 10px 20px;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-    }
+        .time-unit {
+            font-size: 14px;
+            color: #666;
+            width: 40px;
+        }
 
-    .copy-button:hover {
-      background-color: #0976d2;
-    }
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
+        }
 
-    .copy-success {
-      color: #4CAF50;
-      font-size: 14px;
-      margin-top: 5px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
+        #container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+            padding-top: 60px;
+        }
 
-    .copy-success.show {
-      opacity: 1;
-    }
+        #countdown {
+            font-size: 120px;
+            font-weight: bold;
+            margin: 20px;
+        }
 
-    /* Background colors */
-    .green-bg { background-color: #4CAF50; }
-    .yellow-bg { background-color: #FFEB3B; }
-    .red-bg { background-color: #f44336; }
-    .white-bg { background-color: white; }
+        #finalX {
+            color: red;
+            font-size: 200px;
+            font-weight: bold;
+            display: none;
+        }
 
-    .x-mark {
-      color: #ff0000;
-      font-size: 150px;
-      font-weight: bold;
-    }
+        .controls {
+            position: fixed;
+            bottom: 100px;
+            display: flex;
+            gap: 16px;
+        }
 
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 20px;
-    }
-  </style>
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #startBtn {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        #startBtn:hover {
+            background-color: #2563eb;
+        }
+
+        #startBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #resetBtn, #settingsBtn {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        #resetBtn:hover, #settingsBtn:hover {
+            background-color: #4b5563;
+        }
+
+        .save-button {
+            background-color: #3b82f6;
+            color: white;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .save-button:hover {
+            background-color: #2563eb;
+        }
+
+        .save-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #6b7280;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <div class="navbar">
-    <div class="navbar-title">Timer</div>
-    <button class="settings-button" id="settingsBtn">Settings</button>
-  </div>
-
-  <!-- Settings Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Timer Settings</div>
-        <button class="close-button" id="closeBtn">&times;</button>
-      </div>
-      
-      <div class="settings-group">
-        <label class="settings-label">Green Duration</label>
-        <div class="time-input-group">
-          <input type="number" id="greenMin" class="time-input" min="0" max="59" value="13">
-          <span>min</span>
-          <input type="number" id="greenSec" class="time-input" min="0" max="59" value="0">
-          <span>sec</span>
-        </div>
-        <div class="error-message" id="greenError"></div>
-      </div>
-
-      <div class="settings-group">
-        <label class="settings-label">Yellow Duration</label>
-        <div class="time-input-group">
-          <input type="number" id="yellowMin" class="time-input" min="0" max="59" value="1">
-          <span>min</span>
-          <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="30">
-          <span>sec</span>
-        </div>
-        <div class="error-message" id="yellowError"></div>
-      </div>
-
-      <div class="settings-group">
-        <label class="settings-label">Red Duration</label>
-        <div class="time-input-group">
-          <input type="number" id="redMin" class="time-input" min="0" max="59" value="0">
-          <span>min</span>
-          <input type="number" id="redSec" class="time-input" min="0" max="59" value="30">
-          <span>sec</span>
-        </div>
-        <div class="error-message" id="redError"></div>
-      </div>
-
-      <div class="modal-buttons">
-        <button class="save-button" id="saveBtn">Save Changes</button>
-      </div>
-
-      <!-- Share Section -->
-      <div class="share-section">
-        <div class="share-title">Share Timer Settings</div>
-        <div class="share-url-container">
-          <input type="text" class="share-url-input" id="shareUrl" readonly>
-          <button class="copy-button" id="copyBtn">Copy</button>
-        </div>
-        <div class="copy-success" id="copySuccess">URL copied to clipboard!</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Timer Container -->
-  <div id="container">
-    <div class="timer-display" id="timerDisplay">15:00</div>
-    <div class="controls">
-      <button id="startBtn">Start</button>
-      <button id="resetBtn">Reset</button>
-    </div>
-  </div>
-
-  <script>
-    // Timer settings (in seconds)
-    let settings = {
-      greenTime: 780,  // 13:00
-      yellowTime: 90,  // 1:30  
-      redTime: 30      // 0:30
-    };
-
-    let countdown;
-    let totalSeconds = 0;
-    let isRunning = false;
-
-    // DOM elements
-    const container = document.getElementById('container');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const modal = document.getElementById('modal');
-    const closeBtn = document.getElementById('closeBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const shareUrlInput = document.getElementById('shareUrl');
-    const copyBtn = document.getElementById('copyBtn');
-    const copySuccess = document.getElementById('copySuccess');
-
-    // Parse URL parameters on page load
-    function parseURLParams() {
-      const params = new URLSearchParams(window.location.search);
-      
-      if (params.has('gm') || params.has('gs')) {
-        const gm = parseInt(params.get('gm') || '0');
-        const gs = parseInt(params.get('gs') || '0');
-        settings.greenTime = gm * 60 + gs;
-        document.getElementById('greenMin').value = gm;
-        document.getElementById('greenSec').value = gs;
-      }
-      
-      if (params.has('ym') || params.has('ys')) {
-        const ym = parseInt(params.get('ym') || '0');
-        const ys = parseInt(params.get('ys') || '0');
-        settings.yellowTime = ym * 60 + ys;
-        document.getElementById('yellowMin').value = ym;
-        document.getElementById('yellowSec').value = ys;
-      }
-      
-      if (params.has('rm') || params.has('rs')) {
-        const rm = parseInt(params.get('rm') || '0');
-        const rs = parseInt(params.get('rs') || '0');
-        settings.redTime = rm * 60 + rs;
-        document.getElementById('redMin').value = rm;
-        document.getElementById('redSec').value = rs;
-      }
-      
-      // Update total time display after loading parameters
-      totalSeconds = getTotalTime();
-      timerDisplay.textContent = formatTime(totalSeconds);
-    }
-
-    // Generate share URL based on current settings
-    function generateShareURL() {
-      const greenMin = document.getElementById('greenMin').value;
-      const greenSec = document.getElementById('greenSec').value;
-      const yellowMin = document.getElementById('yellowMin').value;
-      const yellowSec = document.getElementById('yellowSec').value;
-      const redMin = document.getElementById('redMin').value;
-      const redSec = document.getElementById('redSec').value;
-
-      const params = new URLSearchParams({
-        gm: greenMin,
-        gs: greenSec,
-        ym: yellowMin,
-        ys: yellowSec,
-        rm: redMin,
-        rs: redSec
-      });
-
-      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    }
-
-    // Update share URL in modal
-    function updateShareURL() {
-      shareUrlInput.value = generateShareURL();
-    }
-
-    // Update browser URL without reloading
-    function updateBrowserURL() {
-      const url = generateShareURL();
-      window.history.pushState({}, '', url);
-    }
-
-    // Copy URL to clipboard
-    function copyToClipboard() {
-      shareUrlInput.select();
-      shareUrlInput.setSelectionRange(0, 99999); // For mobile devices
-      
-      navigator.clipboard.writeText(shareUrlInput.value).then(() => {
-        copySuccess.classList.add('show');
-        setTimeout(() => {
-          copySuccess.classList.remove('show');
-        }, 2000);
-      }).catch(() => {
-        // Fallback for older browsers
-        document.execCommand('copy');
-        copySuccess.classList.add('show');
-        setTimeout(() => {
-          copySuccess.classList.remove('show');
-        }, 2000);
-      });
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function getTotalTime() {
-      return settings.greenTime + settings.yellowTime + settings.redTime;
-    }
-
-    function updateDisplay() {
-      if (totalSeconds < 0) {
-        timerDisplay.innerHTML = '<span class="x-mark">X</span>';
-        container.className = 'white-bg';
-        clearInterval(countdown);
-        isRunning = false;
-        startBtn.textContent = 'Start';
-        startBtn.disabled = false;
-      } else {
-        timerDisplay.textContent = formatTime(totalSeconds);
-        
-        // Determine background color based on time remaining
-        // Total time countdown: starts at (green + yellow + red)
-        // Green phase: from total down to (yellow + red)
-        // Yellow phase: from (yellow + red) down to red
-        // Red phase: from red down to 0
-        const yellowRedTime = settings.yellowTime + settings.redTime;
-        
-        if (totalSeconds > yellowRedTime) {
-          container.className = 'green-bg';
-        } else if (totalSeconds > settings.redTime) {
-          container.className = 'yellow-bg';
-        } else {
-          container.className = 'red-bg';
-        }
-      }
-    }
-
-    function startSequence() {
-      if (!isRunning) {
-        totalSeconds = getTotalTime();
-        isRunning = true;
-        startBtn.textContent = 'Running...';
-        startBtn.disabled = true;
-        
-        updateDisplay();
-        
-        countdown = setInterval(() => {
-          totalSeconds--;
-          updateDisplay();
-        }, 1000);
-      }
-    }
-
-    function reset() {
-      clearInterval(countdown);
-      totalSeconds = getTotalTime();
-      isRunning = false;
-      timerDisplay.textContent = formatTime(totalSeconds);
-      container.className = 'white-bg';
-      startBtn.textContent = 'Start';
-      startBtn.disabled = false;
-    }
-
-    function showModal() {
-      modal.style.display = 'flex';
-      updateShareURL();
-    }
-
-    function hideModal() {
-      modal.style.display = 'none';
-    }
-
-    function validateInput(minInput, secInput, errorElement) {
-      const min = parseInt(minInput.value) || 0;
-      const sec = parseInt(secInput.value) || 0;
-      
-      let isValid = true;
-      let errorMessage = '';
-
-      if (min < 0 || min > 59) {
-        errorMessage = 'Minutes must be between 0 and 59';
-        isValid = false;
-      } else if (sec < 0 || sec > 59) {
-        errorMessage = 'Seconds must be between 0 and 59';
-        isValid = false;
-      } else if (min === 0 && sec === 0) {
-        errorMessage = 'Duration must be at least 1 second';
-        isValid = false;
-      }
-
-      errorElement.textContent = errorMessage;
-      minInput.classList.toggle('error', !isValid);
-      secInput.classList.toggle('error', !isValid);
-      
-      return isValid;
-    }
-
-    function validateAllInputs() {
-      const greenValid = validateInput(
-        document.getElementById('greenMin'),
-        document.getElementById('greenSec'),
-        document.getElementById('greenError')
-      );
-      
-      const yellowValid = validateInput(
-        document.getElementById('yellowMin'),
-        document.getElementById('yellowSec'),
-        document.getElementById('yellowError')
-      );
-      
-      const redValid = validateInput(
-        document.getElementById('redMin'),
-        document.getElementById('redSec'),
-        document.getElementById('redError')
-      );
-      
-      return greenValid && yellowValid && redValid;
-    }
-
-    function clearErrors() {
-      document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-      document.querySelectorAll('.time-input').forEach(input => input.classList.remove('error'));
-    }
-
-    function saveSettings() {
-      if (validateAllInputs()) {
-        const inputs = {
-          green: [document.getElementById('greenMin'), document.getElementById('greenSec')],
-          yellow: [document.getElementById('yellowMin'), document.getElementById('yellowSec')],
-          red: [document.getElementById('redMin'), document.getElementById('redSec')]
-        };
-
-        settings.greenTime = parseInt(inputs.green[0].value) * 60 + parseInt(inputs.green[1].value);
-        settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
-        settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
-
-        updateBrowserURL(); // Update the browser URL
-        hideModal();
-        reset(); // This will now show the new total time
-      }
-    }
-
-    // Add input validation and share URL update on change
-    document.querySelectorAll('.time-input').forEach(input => {
-      input.addEventListener('input', () => {
-        validateAllInputs();
-        updateShareURL(); // Update share URL as user types
-      });
-    });
-
-    // Event Listeners for buttons
-    startBtn.addEventListener('click', startSequence);
-    resetBtn.addEventListener('click', reset);
-    settingsBtn.addEventListener('click', showModal);
-    closeBtn.addEventListener('click', hideModal);
-    saveBtn.addEventListener('click', saveSettings);
-    copyBtn.addEventListener('click', copyToClipboard);
-
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) hideModal();
-    });
-
-    // Prevent negative numbers in inputs
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('keydown', (e) => {
-        if (e.key === '-' || e.key === 'e') {
-          e.preventDefault();
-        }
-      });
-    });
-
-    // Initialize with URL parameters if present
-    parseURLParams();
     
-    // Initialize display with total time
-    totalSeconds = getTotalTime();
-    timerDisplay.textContent = formatTime(totalSeconds);
-  </script>
-</body>
-</html>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(error => console.log('ServiceWorker error:', error));
+        }
+    </script>    
+    
+    
+    <nav class="navbar">
+        <div class="navbar-title">TimeLeft&trade;</div>
+        <button id="settingsBtn">Settings</button>
+    </nav>
+
+    <div id="container">
+        <div id="countdown"></div>
+        <div id="finalX">X</div>
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Timer Settings</div>
+                <button class="close-button">&times;</button>
+            </div>
+            
+            <div class="settings-group">
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Green Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="greenMin" class="time-input" min="0" value="2">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="greenMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="greenSec" class="time-input" min="0" max="59" value="0">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="greenSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Yellow Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="yellowMin" class="time-input" min="0" value="1">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="yellowMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="0">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="yellowSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-input-group">
+                    <div class="time-input-container">
+                        <div class="color-label">Red Duration</div>
+                        <div class="time-input-pair">
+                            <div>
+                                <input type="number" id="redMin" class="time-input" min="0" value="0">
+                                <div class="time-label">Minutes</div>
+                                <div class="error-message" id="redMinError"></div>
+                            </div>
+                            <span class="time-unit">:</span>
+                            <div>
+                                <input type="number" id="redSec" class="time-input" min="0" max="59" value="2">
+                                <div class="time-label">Seconds</div>
+                                <div class="error-message" id="redSecError"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="save-button">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const container = document.getElementById('container');
+        const countdown = document.getElementById('countdown');
+        const finalX = document.getElementById('finalX');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const modal = document.getElementById('settingsModal');
+        const closeBtn = document.querySelector('.close-button');
+        const saveBtn = document.querySelector('.save-button');
+        
+        // Timer settings
+        let settings = {
+            greenTime: 300,  // 5 minutes
+            yellowTime: 60,  // 1 minute
+            redTime: 30       // 30 seconds
+        };
+        
+        let timeLeft = 0;
+        let timerInterval;
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function updateTimer() {
+            if (timeLeft >= 0) {
+                countdown.textContent = formatTime(timeLeft);
+                
+                const yellowStart = settings.redTime + settings.yellowTime;
+                const greenStart = yellowStart + settings.greenTime;
+                
+                if (timeLeft === yellowStart) {
+                    container.style.backgroundColor = '#facc15';
+                } else if (timeLeft === settings.redTime) {
+                    container.style.backgroundColor = '#dc2626';
+                } else if (timeLeft === 0) {
+                    container.style.backgroundColor = '#ffffff';
+                    countdown.style.display = 'none';
+                    finalX.style.display = 'block';
+                    clearInterval(timerInterval);
+                }
+                
+                timeLeft--;
+            }
+        }
+        
+        function startSequence() {
+            startBtn.disabled = true;
+            finalX.style.display = 'none';
+            countdown.style.display = 'block';
+            container.style.backgroundColor = '#22c55e';
+            
+            timeLeft = settings.greenTime + settings.yellowTime + settings.redTime;
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function reset() {
+            clearInterval(timerInterval);
+            container.style.backgroundColor = '#f3f4f6';
+            countdown.style.display = 'block';
+            countdown.textContent = '';
+            finalX.style.display = 'none';
+            startBtn.disabled = false;
+            timeLeft = 0;
+        }
+
+        function validateTimeInput(input, errorElement) {
+            const value = input.value.trim();
+            const numValue = parseInt(value);
+            let error = '';
+            input.classList.remove('error');
+
+            if (value === '') {
+                error = 'Required';
+                input.classList.add('error');
+            } else if (isNaN(numValue)) {
+                error = 'Must be a number';
+                input.classList.add('error');
+            } else if (numValue < 0) {
+                error = 'Must be positive';
+                input.classList.add('error');
+            } else if (input.hasAttribute('max') && numValue > parseInt(input.max)) {
+                error = `Max ${input.max}`;
+                input.classList.add('error');
+            }
+
+            errorElement.textContent = error;
+            return error === '';
+        }
+
+        function validateAllInputs() {
+            const inputs = {
+                greenMin: document.getElementById('greenMin'),
+                greenSec: document.getElementById('greenSec'),
+                yellowMin: document.getElementById('yellowMin'),
+                yellowSec: document.getElementById('yellowSec'),
+                redMin: document.getElementById('redMin'),
+                redSec: document.getElementById('redSec')
+            };
+
+            const errors = {
+                greenMin: document.getElementById('greenMinError'),
+                greenSec: document.getElementById('greenSecError'),
+                yellowMin: document.getElementById('yellowMinError'),
+                yellowSec: document.getElementById('yellowSecError'),
+                redMin: document.getElementById('redMinError'),
+                redSec: document.getElementById('redSecError')
+            };
+
+            let isValid = true;
+            
+            for (const [key, input] of Object.entries(inputs)) {
+                if (!validateTimeInput(input, errors[key])) {
+                    isValid = false;
+                }
+            }
+
+            // Check if at least one time period is greater than zero
+            const totalTime = (parseInt(inputs.greenMin.value) * 60 + parseInt(inputs.greenSec.value)) +
+                           (parseInt(inputs.yellowMin.value) * 60 + parseInt(inputs.yellowSec.value)) +
+                           (parseInt(inputs.redMin.value) * 60 + parseInt(inputs.redSec.value));
+            
+            if (totalTime === 0) {
+                errors.greenMinError.textContent = 'At least one duration must be greater than zero';
+                isValid = false;
+            }
+
+            saveBtn.disabled = !isValid;
+            return isValid;
+        }
+
+        function showModal() {
+            modal.style.display = 'flex';
+            document.getElementById('greenMin').value = Math.floor(settings.greenTime / 60);
+            document.getElementById('greenSec').value = settings.greenTime % 60;
+            document.getElementById('yellowMin').value = Math.floor(settings.yellowTime / 60);
+            document.getElementById('yellowSec').value = settings.yellowTime % 60;
+            document.getElementById('redMin').value = Math.floor(settings.redTime / 60);
+            document.getElementById('redSec').value = settings.redTime % 60;
+            validateAllInputs();
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+            // Clear all error messages
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.time-input').forEach(input => input.classList.remove('error'));
+        }
+
+        function saveSettings() {
+            if (validateAllInputs()) {
+                const inputs = {
+                    green: [document.getElementById('greenMin'), document.getElementById('greenSec')],
+                    yellow: [document.getElementById('yellowMin'), document.getElementById('yellowSec')],
+                    red: [document.getElementById('redMin'), document.getElementById('redSec')]
+                };
+
+                settings.greenTime = parseInt(inputs.green[0].value) * 60 + parseInt(inputs.green[1].value);
+                settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
+                settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
+
+                hideModal();
+                reset();
+            }
+        }
+
+        // Add input validation on change
+        document.querySelectorAll('.time-input').forEach(input => {
+            input.addEventListener('input', validateAllInputs);
+            
+            // Prevent negative numbers and non-numeric input
+            input.addEventListener('keydown', (e) => {
+                if (e.key === '-' || e.key === 'e') {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Event Listeners for buttons
+        startBtn.addEventListener('click', startSequence);
+        resetBtn.addEventListener('click', reset);
+        settingsBtn.addEventListener('click', showModal);
+        closeBtn.addEventListener('click', hideModal);
+        saveBtn.addEventListener('click', saveSettings);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) hideModal();
+        });
+
+        // Add event listeners for number input validation
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+                if (this.hasAttribute('max') && this.value > parseInt(this.max)) {
+                    this.value = this.max;
+                }
+            });
+        });
+
+    </script>
