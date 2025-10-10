@@ -328,286 +328,297 @@
 
 
 <script>
-    // Timer settings (in seconds)
-    let settings = {
-      greenTime: 780,  // 13:00
-      yellowTime: 90,  // 1:30  
-      redTime: 30      // 0:30
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+      // Timer settings (in seconds)
+      let settings = {
+        greenTime: 780,  // 13:00
+        yellowTime: 90,  // 1:30  
+        redTime: 30      // 0:30
+      };
 
-    let countdown;
-    let totalSeconds = 0;
-    let endTime = 0; // NEW: To store the target end timestamp
-    let isRunning = false;
+      let countdown;
+      let totalSeconds = 0;
+      let endTime = 0;
+      let isRunning = false;
+      let timeRemainingOnPause = 0; // NEW: To store time when paused
 
-    // DOM elements
-    const container = document.getElementById('container');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const modal = document.getElementById('modal');
-    const closeBtn = document.getElementById('closeBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const shareUrlInput = document.getElementById('shareUrl');
-    const copyBtn = document.getElementById('copyBtn');
-    const copySuccess = document.getElementById('copySuccess');
+      // DOM elements
+      const container = document.getElementById('container');
+      const timerDisplay = document.getElementById('timerDisplay');
+      const startBtn = document.getElementById('startBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const settingsBtn = document.getElementById('settingsBtn');
+      const modal = document.getElementById('modal');
+      const closeBtn = document.getElementById('closeBtn');
+      const saveBtn = document.getElementById('saveBtn');
+      const shareUrlInput = document.getElementById('shareUrl');
+      const copyBtn = document.getElementById('copyBtn');
+      const copySuccess = document.getElementById('copySuccess');
 
-    // Parse URL parameters on page load
-    function parseURLParams() {
-      const params = new URLSearchParams(window.location.search);
-      
-      if (params.has('gm') || params.has('gs')) {
-        const gm = parseInt(params.get('gm') || '0');
-        const gs = parseInt(params.get('gs') || '0');
-        settings.greenTime = gm * 60 + gs;
-        document.getElementById('greenMin').value = gm;
-        document.getElementById('greenSec').value = gs;
-      }
-      
-      if (params.has('ym') || params.has('ys')) {
-        const ym = parseInt(params.get('ym') || '0');
-        const ys = parseInt(params.get('ys') || '0');
-        settings.yellowTime = ym * 60 + ys;
-        document.getElementById('yellowMin').value = ym;
-        document.getElementById('yellowSec').value = ys;
-      }
-      
-      if (params.has('rm') || params.has('rs')) {
-        const rm = parseInt(params.get('rm') || '0');
-        const rs = parseInt(params.get('rs') || '0');
-        settings.redTime = rm * 60 + rs;
-        document.getElementById('redMin').value = rm;
-        document.getElementById('redSec').value = rs;
-      }
-      
-      totalSeconds = getTotalTime();
-      timerDisplay.textContent = formatTime(totalSeconds);
-      container.className = 'white-bg';
-    }
-
-    // Generate share URL based on current settings
-    function generateShareURL() {
-      const greenMin = document.getElementById('greenMin').value;
-      const greenSec = document.getElementById('greenSec').value;
-      const yellowMin = document.getElementById('yellowMin').value;
-      const yellowSec = document.getElementById('yellowSec').value;
-      const redMin = document.getElementById('redMin').value;
-      const redSec = document.getElementById('redSec').value;
-
-      const params = new URLSearchParams({
-        gm: greenMin,
-        gs: greenSec,
-        ym: yellowMin,
-        ys: yellowSec,
-        rm: redMin,
-        rs: redSec
-      });
-
-      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    }
-
-    function updateShareURL() {
-      shareUrlInput.value = generateShareURL();
-    }
-
-    function updateBrowserURL() {
-      const url = generateShareURL();
-      window.history.pushState({}, '', url);
-    }
-
-    function copyToClipboard() {
-      shareUrlInput.select();
-      shareUrlInput.setSelectionRange(0, 99999);
-      
-      navigator.clipboard.writeText(shareUrlInput.value).then(() => {
-        copySuccess.classList.add('show');
-        setTimeout(() => {
-          copySuccess.classList.remove('show');
-        }, 2000);
-      }).catch(() => {
-        document.execCommand('copy');
-        copySuccess.classList.add('show');
-        setTimeout(() => {
-          copySuccess.classList.remove('show');
-        }, 2000);
-      });
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function getTotalTime() {
-      return settings.greenTime + settings.yellowTime + settings.redTime;
-    }
-
-    // UPDATED: This function is now only for updating the visual display
-    function updateDisplay() {
-      timerDisplay.textContent = formatTime(totalSeconds);
-      
-      const yellowRedTime = settings.yellowTime + settings.redTime;
-      
-      if (totalSeconds > yellowRedTime) {
-        container.className = 'green-bg';
-      } else if (totalSeconds > settings.redTime) {
-        container.className = 'yellow-bg';
-      } else {
-        container.className = 'red-bg';
-      }
-    }
-
-    // UPDATED: The core logic now uses a target end time
-    function startSequence() {
-      if (!isRunning) {
-        isRunning = true;
-        startBtn.textContent = 'Running...';
-        startBtn.disabled = true;
-
-        // Set the exact time the countdown should end
-        endTime = Date.now() + totalSeconds * 1000;
+      // Parse URL parameters on page load
+      function parseURLParams() {
+        const params = new URLSearchParams(window.location.search);
         
-        // Immediately set the color and update the display
-        updateDisplay();
-        
-        countdown = setInterval(() => {
-          const remainingMs = endTime - Date.now();
-
-          if (remainingMs <= 0) {
-            // Timer has finished
-            clearInterval(countdown);
-            isRunning = false;
-            timerDisplay.innerHTML = '<span class="x-mark">X</span>';
-            container.className = 'white-bg';
-            startBtn.textContent = 'Start';
-            startBtn.disabled = false;
-            return; // Stop the interval callback
-          }
-
-          // Update the global totalSeconds for the updateDisplay function
-          totalSeconds = Math.round(remainingMs / 1000);
-          updateDisplay();
-        }, 250); // Check 4 times per second for better accuracy
-      }
-    }
-    
-    // UPDATED: Reset function to clear any 'X' marks
-    function reset() {
-      clearInterval(countdown);
-      totalSeconds = getTotalTime();
-      isRunning = false;
-      timerDisplay.innerHTML = ''; // Clear any potential 'X' mark
-      timerDisplay.textContent = formatTime(totalSeconds);
-      container.className = 'white-bg';
-      startBtn.textContent = 'Start';
-      startBtn.disabled = false;
-    }
-
-    function showModal() {
-      modal.style.display = 'flex';
-      updateShareURL();
-    }
-
-    function hideModal() {
-      modal.style.display = 'none';
-    }
-
-    function validateInput(minInput, secInput, errorElement) {
-      const min = parseInt(minInput.value) || 0;
-      const sec = parseInt(secInput.value) || 0;
-      
-      let isValid = true;
-      let errorMessage = '';
-
-      if (min < 0 || min > 59) {
-        errorMessage = 'Minutes must be between 0 and 59';
-        isValid = false;
-      } else if (sec < 0 || sec > 59) {
-        errorMessage = 'Seconds must be between 0 and 59';
-        isValid = false;
-      } else if (min === 0 && sec === 0) {
-        errorMessage = 'Duration must be at least 1 second';
-        isValid = false;
-      }
-
-      errorElement.textContent = errorMessage;
-      minInput.classList.toggle('error', !isValid);
-      secInput.classList.toggle('error', !isValid);
-      
-      return isValid;
-    }
-
-    function validateAllInputs() {
-      const greenValid = validateInput(
-        document.getElementById('greenMin'),
-        document.getElementById('greenSec'),
-        document.getElementById('greenError')
-      );
-      
-      const yellowValid = validateInput(
-        document.getElementById('yellowMin'),
-        document.getElementById('yellowSec'),
-        document.getElementById('yellowError')
-      );
-      
-      const redValid = validateInput(
-        document.getElementById('redMin'),
-        document.getElementById('redSec'),
-        document.getElementById('redError')
-      );
-      
-      return greenValid && yellowValid && redValid;
-    }
-
-    function saveSettings() {
-      if (validateAllInputs()) {
-        const inputs = {
-          green: [document.getElementById('greenMin'), document.getElementById('greenSec')],
-          yellow: [document.getElementById('yellowMin'), document.getElementById('yellowSec')],
-          red: [document.getElementById('redMin'), document.getElementById('redSec')]
-        };
-
-        settings.greenTime = parseInt(inputs.green[0].value) * 60 + parseInt(inputs.green[1].value);
-        settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
-        settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
-
-        updateBrowserURL();
-        hideModal();
-        reset();
-      }
-    }
-
-    // Event listeners... (all unchanged)
-    document.querySelectorAll('.time-input').forEach(input => {
-      input.addEventListener('input', () => {
-        validateAllInputs();
-        updateShareURL();
-      });
-    });
-
-    startBtn.addEventListener('click', startSequence);
-    resetBtn.addEventListener('click', reset);
-    settingsBtn.addEventListener('click', showModal);
-    closeBtn.addEventListener('click', hideModal);
-    saveBtn.addEventListener('click', saveSettings);
-    copyBtn.addEventListener('click', copyToClipboard);
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) hideModal();
-    });
-
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('keydown', (e) => {
-        if (e.key === '-' || e.key === 'e') {
-          e.preventDefault();
+        if (params.has('gm') || params.has('gs')) {
+          const gm = parseInt(params.get('gm') || '0');
+          const gs = parseInt(params.get('gs') || '0');
+          settings.greenTime = gm * 60 + gs;
+          document.getElementById('greenMin').value = gm;
+          document.getElementById('greenSec').value = gs;
         }
-      });
-    });
+        
+        if (params.has('ym') || params.has('ys')) {
+          const ym = parseInt(params.get('ym') || '0');
+          const ys = parseInt(params.get('ys') || '0');
+          settings.yellowTime = ym * 60 + ys;
+          document.getElementById('yellowMin').value = ym;
+          document.getElementById('yellowSec').value = ys;
+        }
+        
+        if (params.has('rm') || params.has('rs')) {
+          const rm = parseInt(params.get('rm') || '0');
+          const rs = parseInt(params.get('rs') || '0');
+          settings.redTime = rm * 60 + rs;
+          document.getElementById('redMin').value = rm;
+          document.getElementById('redSec').value = rs;
+        }
+        
+        totalSeconds = getTotalTime();
+        timerDisplay.textContent = formatTime(totalSeconds);
+        container.className = 'white-bg';
+      }
 
-    // Initialize the application
-    parseURLParams();
+      function generateShareURL() {
+        const greenMin = document.getElementById('greenMin').value;
+        const greenSec = document.getElementById('greenSec').value;
+        const yellowMin = document.getElementById('yellowMin').value;
+        const yellowSec = document.getElementById('yellowSec').value;
+        const redMin = document.getElementById('redMin').value;
+        const redSec = document.getElementById('redSec').value;
+
+        const params = new URLSearchParams({
+          gm: greenMin,
+          gs: greenSec,
+          ym: yellowMin,
+          ys: yellowSec,
+          rm: redMin,
+          rs: redSec
+        });
+
+        return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      }
+
+      function updateShareURL() {
+        shareUrlInput.value = generateShareURL();
+      }
+
+      function updateBrowserURL() {
+        const url = generateShareURL();
+        window.history.pushState({}, '', url);
+      }
+
+      function copyToClipboard() {
+        shareUrlInput.select();
+        shareUrlInput.setSelectionRange(0, 99999);
+        
+        navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+          copySuccess.classList.add('show');
+          setTimeout(() => {
+            copySuccess.classList.remove('show');
+          }, 2000);
+        }).catch(() => {
+          document.execCommand('copy');
+          copySuccess.classList.add('show');
+          setTimeout(() => {
+            copySuccess.classList.remove('show');
+          }, 2000);
+        });
+      }
+
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      function getTotalTime() {
+        return settings.greenTime + settings.yellowTime + settings.redTime;
+      }
+
+      function updateDisplay() {
+        timerDisplay.textContent = formatTime(totalSeconds);
+        
+        const yellowRedTime = settings.yellowTime + settings.redTime;
+        
+        if (totalSeconds > yellowRedTime) {
+          container.className = 'green-bg';
+        } else if (totalSeconds > settings.redTime) {
+          container.className = 'yellow-bg';
+        } else {
+          container.className = 'red-bg';
+        }
+      }
+
+      // MODIFIED: This function now handles Start, Pause, and Resume
+      function toggleTimer() {
+        if (isRunning) {
+          // --- PAUSE LOGIC ---
+          isRunning = false;
+          clearInterval(countdown);
+          timeRemainingOnPause = endTime - Date.now(); // Store remaining ms
+          startBtn.textContent = 'Resume';
+
+        } else {
+          // --- START / RESUME LOGIC ---
+          isRunning = true;
+          startBtn.textContent = 'Pause';
+          
+          // If we have paused time, we are resuming. Otherwise, we start from the beginning.
+          const duration = timeRemainingOnPause > 0 ? timeRemainingOnPause : totalSeconds * 1000;
+          
+          endTime = Date.now() + duration;
+
+          // Immediately update the display when starting/resuming
+          updateDisplay();
+          
+          countdown = setInterval(() => {
+            const remainingMs = endTime - Date.now();
+
+            if (remainingMs <= 0) {
+              clearInterval(countdown);
+              isRunning = false;
+              timeRemainingOnPause = 0; // Clear pause state
+              timerDisplay.innerHTML = '<span class="x-mark">X</span>';
+              container.className = 'white-bg';
+              startBtn.textContent = 'Start';
+              startBtn.disabled = false;
+              return;
+            }
+
+            totalSeconds = Math.round(remainingMs / 1000);
+            updateDisplay();
+          }, 250);
+
+          timeRemainingOnPause = 0; // Clear the stored paused time
+        }
+      }
+      
+      // MODIFIED: Reset function now also clears the pause state
+      function reset() {
+        clearInterval(countdown);
+        totalSeconds = getTotalTime();
+        isRunning = false;
+        timeRemainingOnPause = 0; // Clear pause state
+        timerDisplay.innerHTML = '';
+        timerDisplay.textContent = formatTime(totalSeconds);
+        container.className = 'white-bg';
+        startBtn.textContent = 'Start';
+        startBtn.disabled = false;
+      }
+
+      function showModal() {
+        modal.style.display = 'flex';
+        updateShareURL();
+      }
+
+      function hideModal() {
+        modal.style.display = 'none';
+      }
+
+      function validateInput(minInput, secInput, errorElement) {
+        const min = parseInt(minInput.value) || 0;
+        const sec = parseInt(secInput.value) || 0;
+        
+        let isValid = true;
+        let errorMessage = '';
+
+        if (min < 0 || min > 59) {
+          errorMessage = 'Minutes must be between 0 and 59';
+          isValid = false;
+        } else if (sec < 0 || sec > 59) {
+          errorMessage = 'Seconds must be between 0 and 59';
+          isValid = false;
+        } else if (min === 0 && sec === 0) {
+          errorMessage = 'Duration must be at least 1 second';
+          isValid = false;
+        }
+
+        errorElement.textContent = errorMessage;
+        minInput.classList.toggle('error', !isValid);
+        secInput.classList.toggle('error', !isValid);
+        
+        return isValid;
+      }
+
+      function validateAllInputs() {
+        const greenValid = validateInput(
+          document.getElementById('greenMin'),
+          document.getElementById('greenSec'),
+          document.getElementById('greenError')
+        );
+        
+        const yellowValid = validateInput(
+          document.getElementById('yellowMin'),
+          document.getElementById('yellowSec'),
+          document.getElementById('yellowError')
+        );
+        
+        const redValid = validateInput(
+          document.getElementById('redMin'),
+          document.getElementById('redSec'),
+          document.getElementById('redError')
+        );
+        
+        return greenValid && yellowValid && redValid;
+      }
+
+      function saveSettings() {
+        if (validateAllInputs()) {
+          const inputs = {
+            green: [document.getElementById('greenMin'), document.getElementById('greenSec')],
+            yellow: [document.getElementById('yellowMin'), document.getElementById('yellowSec')],
+            red: [document.getElementById('redMin'), document.getElementById('redSec')]
+          };
+
+          settings.greenTime = parseInt(inputs.green[0].value) * 60 + parseInt(inputs.green[1].value);
+          settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
+          settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
+
+          updateBrowserURL();
+          hideModal();
+          reset();
+        }
+      }
+
+      document.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('input', () => {
+          validateAllInputs();
+          updateShareURL();
+        });
+      });
+
+      startBtn.addEventListener('click', toggleTimer); // MODIFIED: Button now calls toggleTimer
+      resetBtn.addEventListener('click', reset);
+      settingsBtn.addEventListener('click', showModal);
+      closeBtn.addEventListener('click', hideModal);
+      saveBtn.addEventListener('click', saveSettings);
+      copyBtn.addEventListener('click', copyToClipboard);
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) hideModal();
+      });
+
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === '-' || e.key === 'e') {
+            e.preventDefault();
+          }
+        });
+      });
+
+      // Initialize the application
+      parseURLParams();
+    });
   </script>
 
 
