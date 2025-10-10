@@ -271,9 +271,9 @@
       <div class="settings-group">
         <label class="settings-label">Green Duration</label>
         <div class="time-input-group">
-          <input type="number" id="greenMin" class="time-input" min="0" max="59" value="3">
+          <input type="number" id="greenMin" class="time-input" min="0" max="59" value="13">
           <span>min</span>
-          <input type="number" id="greenSec" class="time-input" min="0" max="59" value="2">
+          <input type="number" id="greenSec" class="time-input" min="0" max="59" value="0">
           <span>sec</span>
         </div>
         <div class="error-message" id="greenError"></div>
@@ -282,9 +282,9 @@
       <div class="settings-group">
         <label class="settings-label">Yellow Duration</label>
         <div class="time-input-group">
-          <input type="number" id="yellowMin" class="time-input" min="0" max="59" value="2">
+          <input type="number" id="yellowMin" class="time-input" min="0" max="59" value="1">
           <span>min</span>
-          <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="2">
+          <input type="number" id="yellowSec" class="time-input" min="0" max="59" value="30">
           <span>sec</span>
         </div>
         <div class="error-message" id="yellowError"></div>
@@ -295,7 +295,7 @@
         <div class="time-input-group">
           <input type="number" id="redMin" class="time-input" min="0" max="59" value="0">
           <span>min</span>
-          <input type="number" id="redSec" class="time-input" min="0" max="59" value="2">
+          <input type="number" id="redSec" class="time-input" min="0" max="59" value="30">
           <span>sec</span>
         </div>
         <div class="error-message" id="redError"></div>
@@ -319,7 +319,7 @@
 
   <!-- Main Timer Container -->
   <div id="container">
-    <div class="timer-display" id="timerDisplay">5:06</div>
+    <div class="timer-display" id="timerDisplay">15:00</div>
     <div class="controls">
       <button id="startBtn">Start</button>
       <button id="resetBtn">Reset</button>
@@ -329,9 +329,9 @@
   <script>
     // Timer settings (in seconds)
     let settings = {
-      greenTime: 182,  // 3:02
-      yellowTime: 122, // 2:02  
-      redTime: 2       // 0:02
+      greenTime: 780,  // 13:00
+      yellowTime: 90,  // 1:30  
+      redTime: 30      // 0:30
     };
 
     let countdown;
