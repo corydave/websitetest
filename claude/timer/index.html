@@ -326,7 +326,8 @@
     </div>
   </div>
 
-  <script>
+
+<script>
     // Timer settings (in seconds)
     let settings = {
       greenTime: 780,  // 13:00
@@ -336,6 +337,7 @@
 
     let countdown;
     let totalSeconds = 0;
+    let endTime = 0; // NEW: To store the target end timestamp
     let isRunning = false;
 
     // DOM elements
@@ -379,7 +381,6 @@
         document.getElementById('redSec').value = rs;
       }
       
-      // Update total time display after loading parameters (keep white background)
       totalSeconds = getTotalTime();
       timerDisplay.textContent = formatTime(totalSeconds);
       container.className = 'white-bg';
@@ -406,21 +407,18 @@
       return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
     }
 
-    // Update share URL in modal
     function updateShareURL() {
       shareUrlInput.value = generateShareURL();
     }
 
-    // Update browser URL without reloading
     function updateBrowserURL() {
       const url = generateShareURL();
       window.history.pushState({}, '', url);
     }
 
-    // Copy URL to clipboard
     function copyToClipboard() {
       shareUrlInput.select();
-      shareUrlInput.setSelectionRange(0, 99999); // For mobile devices
+      shareUrlInput.setSelectionRange(0, 99999);
       
       navigator.clipboard.writeText(shareUrlInput.value).then(() => {
         copySuccess.classList.add('show');
@@ -428,7 +426,6 @@
           copySuccess.classList.remove('show');
         }, 2000);
       }).catch(() => {
-        // Fallback for older browsers
         document.execCommand('copy');
         copySuccess.classList.add('show');
         setTimeout(() => {
@@ -447,56 +444,61 @@
       return settings.greenTime + settings.yellowTime + settings.redTime;
     }
 
+    // UPDATED: This function is now only for updating the visual display
     function updateDisplay() {
-      if (totalSeconds < 0) {
-        timerDisplay.innerHTML = '<span class="x-mark">X</span>';
-        container.className = 'white-bg';
-        clearInterval(countdown);
-        isRunning = false;
-        startBtn.textContent = 'Start';
-        startBtn.disabled = false;
+      timerDisplay.textContent = formatTime(totalSeconds);
+      
+      const yellowRedTime = settings.yellowTime + settings.redTime;
+      
+      if (totalSeconds > yellowRedTime) {
+        container.className = 'green-bg';
+      } else if (totalSeconds > settings.redTime) {
+        container.className = 'yellow-bg';
       } else {
-        timerDisplay.textContent = formatTime(totalSeconds);
-        
-        // Determine background color based on time remaining
-        // Total time countdown: starts at (green + yellow + red)
-        // Green phase: from total down to (yellow + red)
-        // Yellow phase: from (yellow + red) down to red
-        // Red phase: from red down to 0
-        const yellowRedTime = settings.yellowTime + settings.redTime;
-        
-        if (totalSeconds > yellowRedTime) {
-          container.className = 'green-bg';
-        } else if (totalSeconds > settings.redTime) {
-          container.className = 'yellow-bg';
-        } else {
-          container.className = 'red-bg';
-        }
+        container.className = 'red-bg';
       }
     }
 
+    // UPDATED: The core logic now uses a target end time
     function startSequence() {
       if (!isRunning) {
-        totalSeconds = getTotalTime();
         isRunning = true;
         startBtn.textContent = 'Running...';
         startBtn.disabled = true;
+
+        // Set the exact time the countdown should end
+        endTime = Date.now() + totalSeconds * 1000;
         
-        // Immediately set background to green when starting
-        container.className = 'green-bg';
+        // Immediately set the color and update the display
         updateDisplay();
         
         countdown = setInterval(() => {
-          totalSeconds--;
+          const remainingMs = endTime - Date.now();
+
+          if (remainingMs <= 0) {
+            // Timer has finished
+            clearInterval(countdown);
+            isRunning = false;
+            timerDisplay.innerHTML = '<span class="x-mark">X</span>';
+            container.className = 'white-bg';
+            startBtn.textContent = 'Start';
+            startBtn.disabled = false;
+            return; // Stop the interval callback
+          }
+
+          // Update the global totalSeconds for the updateDisplay function
+          totalSeconds = Math.round(remainingMs / 1000);
           updateDisplay();
-        }, 1000);
+        }, 250); // Check 4 times per second for better accuracy
       }
     }
-
+    
+    // UPDATED: Reset function to clear any 'X' marks
     function reset() {
       clearInterval(countdown);
       totalSeconds = getTotalTime();
       isRunning = false;
+      timerDisplay.innerHTML = ''; // Clear any potential 'X' mark
       timerDisplay.textContent = formatTime(totalSeconds);
       container.className = 'white-bg';
       startBtn.textContent = 'Start';
@@ -559,11 +561,6 @@
       return greenValid && yellowValid && redValid;
     }
 
-    function clearErrors() {
-      document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-      document.querySelectorAll('.time-input').forEach(input => input.classList.remove('error'));
-    }
-
     function saveSettings() {
       if (validateAllInputs()) {
         const inputs = {
@@ -576,21 +573,20 @@
         settings.yellowTime = parseInt(inputs.yellow[0].value) * 60 + parseInt(inputs.yellow[1].value);
         settings.redTime = parseInt(inputs.red[0].value) * 60 + parseInt(inputs.red[1].value);
 
-        updateBrowserURL(); // Update the browser URL
+        updateBrowserURL();
         hideModal();
-        reset(); // This will now show the new total time
+        reset();
       }
     }
 
-    // Add input validation and share URL update on change
+    // Event listeners... (all unchanged)
     document.querySelectorAll('.time-input').forEach(input => {
       input.addEventListener('input', () => {
         validateAllInputs();
-        updateShareURL(); // Update share URL as user types
+        updateShareURL();
       });
     });
 
-    // Event Listeners for buttons
     startBtn.addEventListener('click', startSequence);
     resetBtn.addEventListener('click', reset);
     settingsBtn.addEventListener('click', showModal);
@@ -598,12 +594,10 @@
     saveBtn.addEventListener('click', saveSettings);
     copyBtn.addEventListener('click', copyToClipboard);
 
-    // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
       if (e.target === modal) hideModal();
     });
 
-    // Prevent negative numbers in inputs
     document.querySelectorAll('input[type="number"]').forEach(input => {
       input.addEventListener('keydown', (e) => {
         if (e.key === '-' || e.key === 'e') {
@@ -612,13 +606,11 @@
       });
     });
 
-    // Initialize with URL parameters if present
+    // Initialize the application
     parseURLParams();
-    
-    // Initialize display with total time and white background
-    totalSeconds = getTotalTime();
-    timerDisplay.textContent = formatTime(totalSeconds);
-    container.className = 'white-bg';
   </script>
+
+
+    
 </body>
 </html>
