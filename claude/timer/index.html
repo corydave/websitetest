@@ -235,10 +235,10 @@
     }
 
     /* Background colors */
-    .green-bg { background-color: #4CAF50; }
-    .yellow-bg { background-color: #FFEB3B; }
-    .red-bg { background-color: #f44336; }
-    .white-bg { background-color: white; }
+    #container.green-bg { background-color: #4CAF50; }
+    #container.yellow-bg { background-color: #FFEB3B; }
+    #container.red-bg { background-color: #f44336; }
+    #container.white-bg { background-color: white; }
 
     .x-mark {
       color: #ff0000;
@@ -318,7 +318,7 @@
   </div>
 
   <!-- Main Timer Container -->
-  <div id="container">
+  <div id="container" class="white-bg">
     <div class="timer-display" id="timerDisplay">15:00</div>
     <div class="controls">
       <button id="startBtn">Start</button>
@@ -379,9 +379,10 @@
         document.getElementById('redSec').value = rs;
       }
       
-      // Update total time display after loading parameters
+      // Update total time display after loading parameters (keep white background)
       totalSeconds = getTotalTime();
       timerDisplay.textContent = formatTime(totalSeconds);
+      container.className = 'white-bg';
     }
 
     // Generate share URL based on current settings
@@ -481,6 +482,8 @@
         startBtn.textContent = 'Running...';
         startBtn.disabled = true;
         
+        // Immediately set background to green when starting
+        container.className = 'green-bg';
         updateDisplay();
         
         countdown = setInterval(() => {
@@ -612,9 +615,10 @@
     // Initialize with URL parameters if present
     parseURLParams();
     
-    // Initialize display with total time
+    // Initialize display with total time and white background
     totalSeconds = getTotalTime();
     timerDisplay.textContent = formatTime(totalSeconds);
+    container.className = 'white-bg';
   </script>
 </body>
 </html>
