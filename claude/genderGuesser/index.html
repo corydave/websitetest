@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Gender Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #0046ad;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .progress {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .image-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .baby-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #0046ad;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 70, 173, 0.3);
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #003a8c;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 70, 173, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .feedback {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+
+        .feedback.correct {
+            color: #28a745;
+        }
+
+        .feedback.incorrect {
+            color: #dc3545;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .score {
+            font-size: 3em;
+            color: #0046ad;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.5em;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            margin-top: 30px;
+            background: #28a745;
+        }
+
+        .restart-btn:hover {
+            background: #218838;
+            box-shadow: 0 7px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .game-area {
+            display: block;
+        }
+
+        .game-area.hide {
+            display: none;
+        }
+        
+        .DRG-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ðŸ‘¶ Baby Gender Game</h1>
+        
+        <div class="game-area" id="gameArea">
+            <p class="progress" id="progress">Question 1 of 10</p>
+            
+            <div class="image-container">
+                <img src="" alt="Baby" class="baby-image" id="babyImage">
+            </div>
+            
+            <div class="button-container">
+                <button onclick="makeGuess('boy')">Boy</button>
+                <button onclick="makeGuess('girl')">Girl</button>
+            </div>
+            
+            <div class="feedback DRG-hidden" style="display: none;" id="feedback"></div>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Game Over!</h2>
+            <div class="score" id="finalScore">0/10</div>
+            <div class="results-message">It doesn't matter what your final score was - the conceit of this exercise is to show that oftentimes people (and, consequently, AI training algorithms) look at <em>outfit color</em> when classifying babies.<br /><br />So if you used <em>blue</em> as a proxy for <em>boy</em> and <em>pink</em> as a proxy for <em>girl</em>, understand that this is the same mistake machine learning has made (thus presenting biased results).</div>
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Define all 15 babies with their images and genders
+        // Replace these placeholder images with your actual baby images
+        const allBabies = [
+            { image: 'baby01.png', gender: 'boy' },
+            { image: 'baby02.png', gender: 'girl' },
+            { image: 'baby03.png', gender: 'boy' },
+            { image: 'baby04.png', gender: 'girl' },
+            { image: 'baby05.png', gender: 'girl' },
+            { image: 'baby06.png', gender: 'boy' },
+            { image: 'baby07.png', gender: 'girl' },
+            { image: 'baby08.png', gender: 'boy' },
+            { image: 'baby09.png', gender: 'girl' },
+            { image: 'baby10.png', gender: 'boy' },
+            { image: 'baby11.png', gender: 'girl' },
+            { image: 'baby12.png', gender: 'girl' },
+            { image: 'baby13.png', gender: 'boy' },
+            { image: 'baby14.png', gender: 'girl' },
+            { image: 'baby15.png', gender: 'boy' },
+            { image: 'baby16.png', gender: 'girl' }
+        ];
+
+        let selectedBabies = [];
+        let currentIndex = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        // Shuffle and select 10 random babies
+        function selectRandomBabies() {
+            const shuffled = [...allBabies].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 10);
+        }
+
+        // Initialize the game
+        function initGame() {
+            selectedBabies = selectRandomBabies();
+            currentIndex = 0;
+            score = 0;
+            canAnswer = true;
+            showCurrentBaby();
+        }
+
+        // Display current baby
+        function showCurrentBaby() {
+            const baby = selectedBabies[currentIndex];
+            document.getElementById('babyImage').src = baby.image;
+            document.getElementById('progress').textContent = `Question ${currentIndex + 1} of 10`;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+        }
+
+        // Handle guess
+        function makeGuess(guess) {
+            if (!canAnswer) return;
+            
+            canAnswer = false;
+            const baby = selectedBabies[currentIndex];
+            const feedbackEl = document.getElementById('feedback');
+            
+            if (guess === baby.gender) {
+                score++;
+                feedbackEl.textContent = 'âœ“ Correct!';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = 'âœ— Wrong!';
+                feedbackEl.className = 'feedback incorrect';
+            }
+
+            // Move to next question after a short delay
+            setTimeout(() => {
+                currentIndex++;
+                canAnswer = true;
+                
+                if (currentIndex < 10) {
+                    showCurrentBaby();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        // Show final results
+        function showResults() {
+            document.getElementById('gameArea').classList.add('hide');
+            document.getElementById('results').classList.add('show');
+            document.getElementById('finalScore').textContent = `${score}/10`;
+        }
+
+        // Restart the game
+        function restartGame() {
+            document.getElementById('gameArea').classList.remove('hide');
+            document.getElementById('results').classList.remove('show');
+            initGame();
+        }
+
+        // Start the game when page loads
+        initGame();
+    </script>
+</body>
+</html>
