@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +42,7 @@
         }
 
         .accordion-container {
-            max-width: 800px;
+            width: 100%;
             margin: 0 auto;
         }
 
@@ -128,26 +129,21 @@
 
         .accordion-body {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-            animation: slideIn 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
 
         .accordion-body.show {
             display: flex;
+            max-height: 85vh;
+            min-height: 500px;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+
+
+        .accordion-body {
+            padding: 0 !important;
         }
 
         .body-content {
@@ -156,6 +152,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
+            flex: 1;
         }
 
         .countdown {
@@ -501,9 +498,19 @@
         }
 
         function attachHeaderListeners() {
-            document.querySelectorAll('.accordion-header').forEach((header, index) => {
+            document.querySelectorAll('.accordion-header').forEach((header) => {
                 header.addEventListener('click', (e) => {
                     if (e.target.closest('.delete-btn') || e.target.closest('.drag-handle')) return;
+                    
+                    const accordionItem = header.closest('.accordion-item');
+                    const index = parseInt(accordionItem.dataset.index);
+                    
+                    // Allow switching sections if playing
+                    if (state.isPlaying && index !== state.currentIndex) {
+                        state.currentIndex = index;
+                        state.currentTime = state.items[index].remainingTime;
+                        renderAccordions();
+                    }
                 });
             });
         }
@@ -588,9 +595,8 @@
                     // Move to next item
                     state.currentIndex++;
                     if (state.currentIndex >= state.items.length) {
-                        // All done
+                        // All done - reset and stop
                         stopTimer();
-                        state.currentIndex = -1;
                     } else {
                         state.currentTime = state.items[state.currentIndex].remainingTime;
                         renderAccordions();
@@ -610,9 +616,16 @@
         function stopTimer() {
             clearInterval(state.timerInterval);
             state.isPlaying = false;
+            
+            // Reset all timers to their original values
+            state.items.forEach(item => {
+                item.remainingTime = item.time;
+            });
+            
             state.currentIndex = -1;
             updatePlayButton();
             renderAccordions();
+            saveState();
         }
 
         function updatePlayButton() {
