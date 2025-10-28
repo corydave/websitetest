@@ -1,3 +1,7 @@
+<!-- 
+https://corydave.github.io/websitetest/claude/podcastTimer/?config=W3sidGl0bGUiOiJJbnRybyIsInRpbWUiOjE1MCwiY29sb3IiOiIjMzQ5OGRiIn0seyJ0aXRsZSI6IkhvdCBUYWtlL05ld3MgQnl0ZXMiLCJ0aW1lIjo3NTAsImNvbG9yIjoiIzM0NDk1ZSJ9LHsidGl0bGUiOiJEZWVwIERpdmUgVG9waWMiLCJ0aW1lIjo3NTAsImNvbG9yIjoiI2U2N2UyMiJ9LHsidGl0bGUiOiJFZHVjYXRvcidzIENvcm5lciIsInRpbWUiOjM2MCwiY29sb3IiOiIjMWFiYzljIn0seyJ0aXRsZSI6IlByZWRpY3Rpb25zIC0gV2lucyAmIExvc3NlcyIsInRpbWUiOjE4MCwiY29sb3IiOiIjOWI1OWI2In1d
+-->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -453,7 +457,7 @@
                             <div class="header-content">
                                 <span class="drag-handle" title="Drag to reorder">⋮⋮</span>
                                 <span class="accordion-title">${escapeHtml(item.title)}</span>
-                                <span style="color: #999; font-size: 0.9rem;">${item.time}s</span>
+                                <span style="color: #999; font-size: 0.9rem;">${formatTime(item.time)}</span>
                             </div>
                             <button class="delete-btn" aria-label="Delete ${escapeHtml(item.title)}" data-index="${index}" title="Delete item">×</button>
                         </div>
