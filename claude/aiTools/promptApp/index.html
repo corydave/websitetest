@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering for Educators</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== CSS VARIABLES & RESET ===== */
+        :root {
+            /*--color-primary: #2563eb;*/
+            --color-primary: #0046ad;
+            --color-primary-dark: #1e40af;
+            --color-secondary: #10b981;
+            --color-bg: #f9fafb;
+            --color-bg-card: #ffffff;
+            --color-text: #1f2937;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* ===== CONTROLS SECTION ===== */
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            gap: var(--spacing-md);
+        }
+
+        .controls-toggle {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all 0.2s;
+        }
+
+        .controls-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .controls-toggle:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        .controls-toggle:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .search-icon-btn {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-icon-btn:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        .search-icon-btn:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .search-bar-container {
+            display: none;
+            position: fixed;
+            top: var(--spacing-lg);
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            min-width: 300px;
+            max-width: 500px;
+            width: 90%;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .search-bar-container.active {
+            display: block;
+        }
+
+        .search-bar-close {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-text-light);
+        }
+
+        .search-bar-close:hover {
+            color: var(--color-text);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .controls.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding: 0;
+            margin-bottom: 0;
+            overflow: hidden;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--color-text);
+        }
+
+        select, input {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            background-color: white;
+            color: var(--color-text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        select:hover, input:hover {
+            border-color: var(--color-primary-dark);
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy {
+            background-color: #58a618;
+            color: white;
+            font-size: 0.9rem;
+            padding: var(--spacing-xs) var(--spacing-md);
+        }
+
+        .btn-copy:hover {
+            background-color: #4a7c14;
+        }
+
+        .btn-copy.copied {
+            background-color: var(--color-warning);
+        }
+
+        /* ===== STATS & INFO ===== */
+        .stats {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-item strong {
+            display: block;
+            font-size: 1.8rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-item span {
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+        }
+
+        /* ===== MOBILE RESULTS (COMPACT STATS) ===== */
+        #mobile-results {
+            display: none;
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-xl);
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            text-align: center;
+        }
+
+        #mobile-results strong {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        /* ===== PROMPTS GRID ===== */
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        @media (max-width: 768px) {
+            .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== PROMPT CARD ===== */
+        .prompt-card {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .prompt-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        .prompt-card:focus-within {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .prompt-header {
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: var(--spacing-md);
+        }
+
+        .prompt-number {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .prompt-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-top: var(--spacing-sm);
+        }
+
+        .prompt-metadata {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-utility {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--color-primary);
+        }
+
+        .badge-level {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--color-secondary);
+        }
+
+        .badge-type {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            font-size: 0.8rem;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prompt-text {
+            background-color: var(--color-bg);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--color-text);
+            overflow-y: auto;
+            max-height: 200px;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .prompt-use-case {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            font-style: italic;
+            padding: var(--spacing-md);
+            background-color: var(--color-bg);
+            border-radius: var(--radius-md);
+        }
+
+        .prompt-use-case strong {
+            color: var(--color-text);
+            font-style: normal;
+        }
+
+        /* ===== ACTIONS ===== */
+        .prompt-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: auto;
+        }
+
+        .btn-copy {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.95rem;
+        }
+
+        .copy-feedback {
+            position: fixed;
+            top: var(--spacing-lg);
+            right: var(--spacing-lg);
+            background-color: var(--color-success);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--color-text-light);
+        }
+
+        .empty-state h2 {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--color-border);
+            margin-top: var(--spacing-2xl);
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                display: none;
+            }
+
+            #mobile-results {
+                display: block;
+            }
+
+            .stat-item {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <h1>Prompt Engineering for Educators</h1>
+            <p>63+ copy-paste ready prompts organized by utility and experience level</p>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- CONTROLS HEADER -->
+        <section class="controls-header" aria-label="Controls header">
+            <button id="controls-toggle-btn" class="controls-toggle" aria-label="Toggle filters">
+                <i class="fas fa-sliders"></i>
+                <span>Filters</span>
+            </button>
+            <button id="search-icon-btn" class="search-icon-btn" aria-label="Open search">
+                <i class="fas fa-search"></i>
+            </button>
+        </section>
+
+        <!-- SEARCH BAR (MODAL) -->
+        <div id="search-bar-container" class="search-bar-container" aria-label="Search modal">
+            <button id="search-bar-close" class="search-bar-close" aria-label="Close search">âœ•</button>
+            <label for="search-input-modal" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600;">Search Prompts:</label>
+            <input 
+                type="text" 
+                id="search-input-modal" 
+                placeholder="Search by title, type, or keyword..."
+                aria-label="Search prompts by keyword"
+                style="width: 100%; padding: var(--spacing-sm) var(--spacing-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 1rem;"
+            >
+        </div>
+
+        <!-- FILTERS (COLLAPSIBLE) -->
+        <section class="controls" id="controls-section" aria-label="Filter controls">
+            <div class="control-group">
+                <label for="utility-filter">Filter by Utility:</label>
+                <select id="utility-filter" aria-label="Filter prompts by utility category">
+                    <option value="">All Utilities</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="level-filter">Filter by Level:</label>
+                <select id="level-filter" aria-label="Filter prompts by experience level">
+                    <option value="">All Levels</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="type-filter">Filter by Type:</label>
+                <select id="type-filter" aria-label="Filter prompts by technique type">
+                    <option value="">All Types</option>
+                </select>
+            </div>
+
+            <!-- Hidden search input (synced with modal) -->
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search by title, type, or keyword..."
+                aria-label="Search prompts by keyword"
+                style="display: none;"
+            >
+        </section>
+
+        <!-- MOBILE RESULTS (COMPACT STATS) -->
+        <div id="mobile-results">
+            <strong id="mobile-total">63</strong> prompts | 
+            <strong id="mobile-filtered">63</strong> matching | 
+            <strong>7</strong> categories | 
+            <strong>14</strong> types
+        </div>
+
+        <!-- STATS -->
+        <section class="stats" aria-label="Display statistics">
+            <div class="stat-item">
+                <strong id="total-prompts">63</strong>
+                <span>Total Prompts</span>
+            </div>
+            <div class="stat-item">
+                <strong id="filtered-prompts">63</strong>
+                <span>Matching Filters</span>
+            </div>
+            <div class="stat-item">
+                <strong id="unique-utilities">7</strong>
+                <span>Utility Categories</span>
+            </div>
+            <div class="stat-item">
+                <strong id="unique-types">14</strong>
+                <span>Prompt Types</span>
+            </div>
+        </section>
+
+        <!-- PROMPTS GRID -->
+        <section aria-label="Prompts">
+            <div id="prompts-container" class="prompts-grid"></div>
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <h2>No prompts found</h2>
+                <p>Try adjusting your filters or search terms to find what you're looking for.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>ðŸ’¡ Tip: Click "Copy Prompt" to copy the prompt text to your clipboard. Use it anywhere you work with AI.</p>
+        <p style="margin-top: var(--spacing-md);">Made for K-12 educators | 2025</p>
+    </footer>
+
+    <!-- COPY FEEDBACK (dynamically inserted) -->
+    <!-- This will be populated by JavaScript when user copies -->
+
+    <script>
+        // ===== DATA: All 63 Prompts =====
+        // Note: Data is organized with full details for filtering and searching
+        const allPrompts = [
+            // 1. COMMUNICATION - BEGINNER
+            {
+                id: 1,
+                utility: "Communication",
+                level: "Beginner",
+                number: "1.1",
+                title: "Quick Parent Email",
+                type: ["Zero-shot"],
+                prompt: `Write a brief, friendly email to a parent checking in on their child's progress in my class. 
+Keep it warm but professional, mention one specific strength, and invite them to reach out with questions.`,
+                useCase: "When you want to build parent relationships with positive communication"
+            },
+            {
+                id: 2,
+                utility: "Communication",
+                level: "Beginner",
+                number: "1.2",
+                title: "Newsletter Starter",
+                type: ["One-shot"],
+                prompt: `Here's an example of a classroom newsletter I like:
+"This week, Room 5 learned about the water cycle, started our community service project, 
+and celebrated our math progress! Parents: ask your child about evaporation."
+
+Now create a similar newsletter for this week's highlights: [insert your week's highlights]
+Keep it to 3-4 sentences, warm and celebratory.`,
+                useCase: "When you want consistency in your newsletter tone"
+            },
+            {
+                id: 3,
+                utility: "Communication",
+                level: "Beginner",
+                number: "1.3",
+                title: "Tough Message (Eye-popping)",
+                type: ["Role-playing", "System prompt"],
+                prompt: `You are a warm, empathetic educator who delivers difficult information with grace and hope.
+
+A student has fallen behind in reading. I need to email their parent about this. 
+The email should be honest about the challenge but also include concrete next steps 
+and reassurance that we'll work together. Write the email.`,
+                useCase: "When you need to address a problem without causing alarm or defensiveness"
+            },
+            // 2. COMMUNICATION - INTERMEDIATE
+            {
+                id: 4,
+                utility: "Communication",
+                level: "Intermediate",
+                number: "1.4",
+                title: "Multi-Audience Email",
+                type: ["Perspective-shifting"],
+                prompt: `I need to communicate about a field trip cancellation due to weather. 
+Write three versions of the same message:
+1. For parents (factual, reassuring, next steps)
+2. For students (age-appropriate, excitement about rescheduled date)
+3. For admin (logistical details, financial impact)
+
+Grade level: [insert grade]
+Tone differences should be clear.`,
+                useCase: "When one message needs to land differently with different audiences"
+            },
+            {
+                id: 5,
+                utility: "Communication",
+                level: "Intermediate",
+                number: "1.5",
+                title: "Transparent Communication",
+                type: ["Blind spot prompting"],
+                prompt: `Here's how I typically communicate with families:
+[describe your communication approach - channels, frequency, topics, tone]
+
+What might I be missing in how I communicate? 
+What barriers might prevent some families from hearing my message? 
+Who might feel left out? What should I consider?`,
+                useCase: "When you want to examine your communication practices for blind spots"
+            },
+            {
+                id: 6,
+                utility: "Communication",
+                level: "Intermediate",
+                number: "1.6",
+                title: "Newsletter That Builds Engagement (Eye-popping)",
+                type: ["Meta-prompt", "Constraint-based"],
+                prompt: `Generate 5 newsletter topics I could write about this month that would spark 
+a meaningful conversation between parents and their child at home. 
+
+Each topic should:
+- Highlight something kids did (not just academics)
+- Include a specific question families could ask
+- Be no more than 2 sentences
+
+Grade level: [insert]`,
+                useCase: "When you want your newsletters to do more than informâ€”you want them to deepen home-school connection"
+            },
+            // 3. COMMUNICATION - ADVANCED
+            {
+                id: 7,
+                utility: "Communication",
+                level: "Advanced",
+                number: "1.7",
+                title: "Crisis Communication Planning",
+                type: ["Reverse-prompting", "System prompt"],
+                prompt: `You are a school communication strategist. 
+
+I need to have a difficult conversation with a parent about a behavioral/academic concern. 
+I want to approach this in a way that builds partnership rather than defensiveness.
+
+Working backwards from a strong partnership outcome, what should I:
+- Know before the meeting?
+- Communicate during it?
+- Follow up with after?
+
+How should I frame the conversation to focus on solutions rather than blame?`,
+                useCase: "When you're preparing for a high-stakes communication"
+            },
+            {
+                id: 8,
+                utility: "Communication",
+                level: "Advanced",
+                number: "1.8",
+                title: "Communication Strategy Audit (Eye-popping)",
+                type: ["Belief-challenging", "Blind spot prompting"],
+                prompt: `I believe that [insert your belief about communication, e.g., "frequent emails keep families engaged" 
+or "parents don't care about updates" or "I should send good news, not concerns"].
+
+What's a compelling argument against this belief? 
+What evidence might challenge it? 
+How might this belief be limiting my effectiveness?
+What would change if I questioned it?`,
+                useCase: "When you want to examine and possibly shift your core assumptions about parent communication"
+            },
+            {
+                id: 9,
+                utility: "Communication",
+                level: "Advanced",
+                number: "1.9",
+                title: "Structured Communication System (Eye-popping)",
+                type: ["Structured output", "Meta-prompt"],
+                prompt: `Design a communication system for my classroom. For each category, specify:
+- What I'll communicate about
+- Frequency
+- Channel (email, app, phone, face-to-face)
+- Who needs to hear it
+- What success looks like
+
+Categories: Positive news, concerns, logistical info, celebrations, seeking input
+
+Format as a table.`,
+                useCase: "When you want to be intentional and systematic about communication instead of reactive"
+            },
+            // 4. INSTRUCTIONAL DESIGN - BEGINNER
+            {
+                id: 10,
+                utility: "Instructional Design",
+                level: "Beginner",
+                number: "2.1",
+                title: "Simple Lesson Plan",
+                type: ["Zero-shot"],
+                prompt: `Create a lesson plan for teaching [topic] to [grade level].
+Include: objective, hook/opener, main activity, and wrap-up.
+Keep it simple and practical.`,
+                useCase: "Quick lesson planning when you need a structure to build from"
+            },
+            {
+                id: 11,
+                utility: "Instructional Design",
+                level: "Beginner",
+                number: "2.2",
+                title: "Learning Objective Builder",
+                type: ["One-shot"],
+                prompt: `Here's a learning objective I wrote: "Students will understand fractions."
+
+Here's a better one: "Students will explain why 1/2 and 2/4 represent the same amount using visual models."
+
+Now, turn this into a better learning objective: "Students will learn about the Civil War."
+Use the same specificity and measurability as my example.`,
+                useCase: "When you want more precise, measurable learning goals"
+            },
+            {
+                id: 12,
+                utility: "Instructional Design",
+                level: "Beginner",
+                number: "2.3",
+                title: "Unit Roadmap (Eye-popping)",
+                type: ["Reverse-prompting"],
+                prompt: `I want students to [insert your end goal - e.g., "write a persuasive essay about climate change" 
+or "demonstrate mastery of long division" or "create a historical museum exhibit"].
+
+Working backwards, create a 4-5 week unit outline showing:
+1. What students need to know/be able to do first
+2. How each week builds on the last
+3. Formative checks along the way
+4. The culminating project
+
+Make it concrete and actionable.`,
+                useCase: "When you want to think about your unit as a coherent progression toward mastery"
+            },
+            // 5. INSTRUCTIONAL DESIGN - INTERMEDIATE
+            {
+                id: 13,
+                utility: "Instructional Design",
+                level: "Intermediate",
+                number: "2.4",
+                title: "Differentiated Instruction Plan",
+                type: ["Perspective-shifting"],
+                prompt: `I'm teaching [topic] to [grade level]. 
+My class has mixed abilities: some students are advanced, some are struggling, some are on grade level.
+
+Design three versions of the lesson:
+1. Below grade level: What scaffolds, visuals, or supports do they need?
+2. Grade level: The core lesson
+3. Advanced: What extension or complexity would challenge them?
+
+All three should access the same core concept.`,
+                useCase: "When you want to be intentional about meeting students where they are"
+            },
+            {
+                id: 14,
+                utility: "Instructional Design",
+                level: "Intermediate",
+                number: "2.5",
+                title: "Identifying Prerequisites (Eye-popping)",
+                type: ["Reverse-prompting", "Error analysis"],
+                prompt: `My students are struggling to [insert learning goal - e.g., "solve multi-step word problems" 
+or "write coherent paragraphs" or "understand decimals"].
+
+What prerequisite skills or concepts might they be missing? 
+Create a diagnostic checklist: what would I look for to pinpoint where they're stuck?
+What would I teach first to build the foundation they need?`,
+                useCase: "When students aren't getting it, and you want to figure out what foundational piece is missing"
+            },
+            {
+                id: 15,
+                utility: "Instructional Design",
+                level: "Intermediate",
+                number: "2.6",
+                title: "Curriculum Alignment Check (Eye-popping)",
+                type: ["Blind spot prompting", "Structured output"],
+                prompt: `Here's my unit on [topic]. Here are the main lessons/activities:
+[list 5-7 lessons/activities]
+
+What perspectives, voices, or content might I be leaving out?
+What assumptions am I making about what students know?
+What controversial or complex aspects am I avoiding?
+Format as a table: What I'm covering | What might be missing | Why it matters`,
+                useCase: "When you want to audit your curriculum for inclusivity and completeness"
+            },
+            // 6. INSTRUCTIONAL DESIGN - ADVANCED
+            {
+                id: 16,
+                utility: "Instructional Design",
+                level: "Advanced",
+                number: "2.7",
+                title: "Competency-Based Learning Design",
+                type: ["Meta-prompt", "Structured output"],
+                prompt: `I want to shift from seat-time based grading to competency-based learning for [topic/unit].
+
+Generate:
+1. 3-4 core competencies students should master
+2. For each competency: what proficiency levels look like (novice, developing, proficient, advanced)
+3. How students would demonstrate each level
+4. How I'd assess and track progress
+
+Make it specific to my context: [grade level, subject, unit]`,
+                useCase: "When you want to move toward mastery-based learning instead of traditional grading"
+            },
+            {
+                id: 17,
+                utility: "Instructional Design",
+                level: "Advanced",
+                number: "2.8",
+                title: "Assessment Strategy Architecture (Eye-popping)",
+                type: ["Structured output", "Reverse-prompting"],
+                prompt: `Design a balanced assessment system for my [unit/course].
+
+Create a table showing:
+- Assessment type (formative, summative, performance)
+- What I'm assessing
+- How I'm assessing it
+- When it happens
+- How results inform instruction
+
+Ensure a mix that goes beyond traditional tests. Include performance tasks and student self-assessment.`,
+                useCase: "When you want an intentional, comprehensive approach to assessment"
+            },
+            {
+                id: 18,
+                utility: "Instructional Design",
+                level: "Advanced",
+                number: "2.9",
+                title: "Universal Design for Learning (UDL) Audit (Eye-popping)",
+                type: ["Blind spot prompting", "Belief-challenging"],
+                prompt: `I assume that my instruction is accessible to all students because [insert your assumption - 
+e.g., "I differentiate," "I use visuals," "I explain things clearly"].
+
+From a UDL perspective:
+- What am I missing about how students access information differently?
+- Where might barriers exist that I'm not seeing?
+- What's one thing I could do to increase flexibility in how students engage with the content?
+- What belief about learning might be limiting my approach?`,
+                useCase: "When you want to deeply examine accessibility in your instruction"
+            },
+            // 7. CONTENT CREATION - BEGINNER
+            {
+                id: 19,
+                utility: "Content Creation",
+                level: "Beginner",
+                number: "3.1",
+                title: "Worksheet Generator",
+                type: ["Zero-shot"],
+                prompt: `Create a worksheet for [grade level] students to practice [skill/concept].
+Include 8-10 problems/questions, an answer key, and clear instructions.
+Make it engaging, not just drill-and-kill.`,
+                useCase: "Quick worksheet creation for practice"
+            },
+            {
+                id: 20,
+                utility: "Content Creation",
+                level: "Beginner",
+                number: "3.2",
+                title: "Study Guide Builder",
+                type: ["One-shot"],
+                prompt: `Here's a study guide format I like:
+1. Key vocabulary (with definitions)
+2. "Big idea" summary (2-3 sentences)
+3. Practice questions
+4. "Trick spots" (common mistakes)
+
+Now create a study guide for [topic] using this same structure.`,
+                useCase: "When you want consistency in how you present study material"
+            },
+            {
+                id: 21,
+                utility: "Content Creation",
+                level: "Beginner",
+                number: "3.3",
+                title: "Explanation for Different Learners (Eye-popping)",
+                type: ["Role-playing", "Perspective-shifting"],
+                prompt: `Explain [concept] four different ways:
+1. For a visual learner (use analogies, imagery)
+2. For a kinesthetic learner (use movement, hands-on description)
+3. For an auditory learner (use rhythm, pattern, dialogue)
+4. For a logical learner (use steps, rules, cause-and-effect)
+
+Grade level: [insert]`,
+                useCase: "When you want to create content that reaches different learning styles"
+            },
+            // 8. CONTENT CREATION - INTERMEDIATE
+            {
+                id: 22,
+                utility: "Content Creation",
+                level: "Intermediate",
+                number: "3.4",
+                title: "Assessment with Error Analysis",
+                type: ["Error analysis", "Structured output"],
+                prompt: `Create a 5-question assessment for [topic]. 
+For each question, include:
+- The question itself
+- The correct answer
+- A common misconception/wrong answer
+- An explanation of why students might choose the wrong answer
+- How I'd use that misconception to teach
+
+Format as a table.`,
+                useCase: "When you want assessments that help you understand how students think, not just if they're right"
+            },
+            {
+                id: 23,
+                utility: "Content Creation",
+                level: "Intermediate",
+                number: "3.5",
+                title: "Rubric with Descriptors",
+                type: ["Structured output", "Few-shot"],
+                prompt: `Create a rubric for [assignment - e.g., "persuasive essay," "group presentation," "lab report"].
+
+Include 4-5 criteria. For each criterion, describe what proficiency looks like at 4 levels:
+- Beginning (1)
+- Developing (2)
+- Proficient (3)
+- Advanced (4)
+
+Descriptors should be specific and observable, not vague. Format as a table.`,
+                useCase: "When you want clear, standards-based assessment criteria"
+            },
+            {
+                id: 24,
+                utility: "Content Creation",
+                level: "Intermediate",
+                number: "3.6",
+                title: "Accessibility Checklist (Eye-popping)",
+                type: ["Blind spot prompting", "Constraint-based"],
+                prompt: `I created [type of content - worksheet, video, assignment, etc.] about [topic].
+
+Create an accessibility checklist for me. What should I check?
+- For students with different ability levels?
+- For students who learn differently?
+- For students with visual/hearing differences?
+- For students who are ELL?
+- What am I probably not thinking about?
+
+Format as a checklist with specific, actionable items.`,
+                useCase: "When you want to make sure your content is truly accessible"
+            },
+            // 9. CONTENT CREATION - ADVANCED
+            {
+                id: 25,
+                utility: "Content Creation",
+                level: "Advanced",
+                number: "3.7",
+                title: "Project Design with Scaffolding (Eye-popping)",
+                type: ["Reverse-prompting", "Structured output", "Meta-prompt"],
+                prompt: `Design a project where students [insert your goal - e.g., "research and present on a social issue," 
+"design and build a prototype," "create a multimedia presentation"].
+
+Include:
+1. The end product/goal (what excellence looks like)
+2. Scaffolding: what checkpoints/mini-projects lead up to it?
+3. For each checkpoint: what skill are they practicing?
+4. Formative feedback points
+5. How different learners could approach it differently
+
+Make it ambitious but achievable.`,
+                useCase: "When you want projects that challenge students while building them up to success"
+            },
+            {
+                id: 26,
+                utility: "Content Creation",
+                level: "Advanced",
+                number: "3.8",
+                title: "Content Validity & Bias Review (Eye-popping)",
+                type: ["Belief-challenging", "Blind spot prompting"],
+                prompt: `Here's the content I created for [topic]:
+[summarize or paste your content]
+
+Questions:
+1. What assumptions am I making about students' background knowledge or experiences?
+2. Whose perspectives are centered? Whose are missing?
+3. Are there any stereotypes or biased language?
+4. What would a student from [specific group] think about this content?
+5. What beliefs about [topic] am I baking into this content?
+6. How could I make this more accurate and inclusive?`,
+                useCase: "When you want to examine your content for hidden biases and misconceptions"
+            },
+            {
+                id: 27,
+                utility: "Content Creation",
+                level: "Advanced",
+                number: "3.9",
+                title: "Adaptive Content Framework (Eye-popping)",
+                type: ["Structured output", "Meta-prompt"],
+                prompt: `Create a framework for [topic] where content adapts based on student needs.
+
+For the core concept, provide:
+1. The essential version (for students who need scaffolding)
+2. The standard version
+3. The enriched version (for advanced learners)
+
+Then: what would help me know which students need which version?
+What formative data would guide this?`,
+                useCase: "When you want one piece of content that meets students at different levels"
+            },
+            // 10. PRODUCTIVITY - BEGINNER
+            {
+                id: 28,
+                utility: "Productivity",
+                level: "Beginner",
+                number: "4.1",
+                title: "Grading Efficiency Tool",
+                type: ["Zero-shot"],
+                prompt: `Generate 10 specific, actionable feedback comments I could use for [assignment type - 
+e.g., "essays," "math problems," "group work"].
+
+Each comment should:
+- Name what they did well
+- Identify one thing to improve
+- Give a specific next step
+
+Make them natural and supportive, not robotic.`,
+                useCase: "When you're grading and want to avoid repetitive, vague comments"
+            },
+            {
+                id: 29,
+                utility: "Productivity",
+                level: "Beginner",
+                number: "4.2",
+                title: "To-Do List Prioritizer",
+                type: ["One-shot"],
+                prompt: `Here's an example of how I categorize my tasks:
+
+URGENT (this week): [examples]
+IMPORTANT (this month): [examples]  
+NICE-TO-HAVE (ongoing): [examples]
+
+My current to-do list: [paste your list]
+
+Categorize each task using the same framework.`,
+                useCase: "When you feel overwhelmed and need to see what actually matters"
+            },
+            {
+                id: 30,
+                utility: "Productivity",
+                level: "Beginner",
+                number: "4.3",
+                title: "Time-Saving Template (Eye-popping)",
+                type: ["Meta-prompt", "Structured output"],
+                prompt: `Generate 5 templates I could use repeatedly to save time on [task - e.g., "parent emails," 
+"lesson openers," "closing reflections," "announcements"].
+
+For each template:
+- Leave blanks for specific info [like this]
+- Keep enough structure to be useful
+- Keep enough flexibility for personalization
+
+Make them truly reusable, not generic.`,
+                useCase: "When you're doing similar tasks repeatedly and want to systematize them"
+            },
+            // 11. PRODUCTIVITY - INTERMEDIATE
+            {
+                id: 31,
+                utility: "Productivity",
+                level: "Intermediate",
+                number: "4.4",
+                title: "Classroom Management Workflow",
+                type: ["Structured output", "System prompt"],
+                prompt: `You are an efficient classroom manager.
+
+I struggle with: [describe a classroom management challenge - e.g., "transitions take forever," 
+"I spend too much time on behavior issues," "paperwork piles up"]
+
+Design a simple system or workflow that would help. Include:
+1. The steps/sequence
+2. What I need to prep upfront
+3. How I'll communicate the system to students
+4. How I'll maintain it`,
+                useCase: "When you want to address a recurring productivity drain with a system"
+            },
+            {
+                id: 32,
+                utility: "Productivity",
+                level: "Intermediate",
+                number: "4.5",
+                title: "Meeting Agendas & Notes (Eye-popping)",
+                type: ["Structured output", "Constraint-based"],
+                prompt: `Create a meeting template (agenda + notes) for [type of meeting - grade level team, IEP, 
+parent conference, staff meeting].
+
+Include:
+- What goes on the agenda
+- How long each section takes
+- A notes section that captures what matters
+- Action items with owners
+
+Keep it to one page. Make it time-efficient.`,
+                useCase: "When meetings are eating your time and you need structure"
+            },
+            {
+                id: 33,
+                utility: "Productivity",
+                level: "Intermediate",
+                number: "4.6",
+                title: "Admin Task Audit (Eye-popping)",
+                type: ["Blind spot prompting"],
+                prompt: `Here's how I spend my non-teaching time:
+[list your main tasks/routines]
+
+Which of these are truly necessary? 
+Which ones am I doing out of habit or because "that's how we've always done it"?
+What could I stop doing, delegate, or automate?
+What's one task I could eliminate this week?`,
+                useCase: "When you need to reclaim time by examining what's actually necessary"
+            },
+            // 12. PRODUCTIVITY - ADVANCED
+            {
+                id: 34,
+                utility: "Productivity",
+                level: "Advanced",
+                number: "4.7",
+                title: "Data-Driven Workflows (Eye-popping)",
+                type: ["Structured output", "Reverse-prompting"],
+                prompt: `Design a workflow for how I collect, analyze, and act on student performance data.
+
+Include:
+1. What data I collect (formative, summative, behavioral, etc.)
+2. How often I review it
+3. What I'm looking for (patterns, outliers, trends)
+4. How I translate findings into instructional changes
+5. How I communicate results to students/families
+6. How I track if changes are working
+
+Make it practical and sustainable.`,
+                useCase: "When you want data to actually inform instruction, not just be stored"
+            },
+            {
+                id: 35,
+                utility: "Productivity",
+                level: "Advanced",
+                number: "4.8",
+                title: "Personalized Learning System (Eye-popping)",
+                type: ["Meta-prompt", "Structured output"],
+                prompt: `Design a system for tracking and responding to individual student needs across your class.
+
+What would I need to know about each student?
+How would I track it (without drowning in paperwork)?
+How would I use that information to personalize their experience?
+How would I communicate with students about their personalized path?
+What systems/tools would support this?
+
+Make it feasible for one teacher with 25+ students.`,
+                useCase: "When you want to personalize learning but feel overwhelmed about how"
+            },
+            {
+                id: 36,
+                utility: "Productivity",
+                level: "Advanced",
+                number: "4.9",
+                title: "Reflection & Iteration System (Eye-popping)",
+                type: ["Belief-challenging", "Meta-prompt", "System prompt"],
+                prompt: `Design a weekly/monthly reflection system for me to examine my practice.
+
+Include:
+1. What I reflect on (instruction, relationships, equity, assessment, etc.)
+2. Prompts that push me beyond surface-level thinking
+3. How I identify what to change next
+4. How I track changes and their impact
+5. How I avoid just going through the motions
+
+Make it deep but doable. Include belief-challenging questions.`,
+                useCase: "When you want improvement to be intentional, not accidental"
+            },
+            // 13. STUDENT ENGAGEMENT - BEGINNER
+            {
+                id: 37,
+                utility: "Student Engagement",
+                level: "Beginner",
+                number: "5.1",
+                title: "Discussion Starters",
+                type: ["Zero-shot"],
+                prompt: `Create 5 discussion starter questions for [topic] suitable for [grade level].
+
+Each question should:
+- Be open-ended (not yes/no)
+- Connect to students' lives
+- Not have one "right" answer
+- Spark genuine thinking
+
+Make them questions you'd actually ask, not textbook questions.`,
+                useCase: "When you want to spark conversation beyond basic comprehension"
+            },
+            {
+                id: 38,
+                utility: "Student Engagement",
+                level: "Beginner",
+                number: "5.2",
+                title: "Hook/Opener Ideas",
+                type: ["One-shot"],
+                prompt: `Here's a hook I used that landed well: "Before we start, I want to show you something 
+that contradicts what you think you know about [topic]..."
+
+For this week's lesson on [topic], create 3 different hooks that would grab attention 
+and make students curious. Use similar structure to my example.`,
+                useCase: "When you want lessons to start strong and build curiosity"
+            },
+            {
+                id: 39,
+                utility: "Student Engagement",
+                level: "Beginner",
+                number: "5.3",
+                title: "Gamification Ideas (Eye-popping)",
+                type: ["Role-playing", "Constraint-based"],
+                prompt: `I'm teaching [topic] to [grade level]. I want to add elements that feel game-like 
+without being cheesy or too cutesy.
+
+Generate 3 ideas that:
+- Add competition or progression (but not grading anxiety)
+- Keep students engaged and thinking hard
+- Feel authentic to the content (not just points and badges)
+- Work for a class of 25 students
+
+What would students actually care about?`,
+                useCase: "When you want engagement without gimmicks"
+            },
+            // 14. STUDENT ENGAGEMENT - INTERMEDIATE
+            {
+                id: 40,
+                utility: "Student Engagement",
+                level: "Intermediate",
+                number: "5.4",
+                title: "Student Choice Architecture",
+                type: ["Structured output", "Constraint-based"],
+                prompt: `I want to build student choice into [assignment/unit] so it feels personalized but still 
+maintains rigor and consistency in assessment.
+
+Design a choice structure showing:
+1. What aspects students can choose (topic, format, product, timeline, etc.)
+2. What stays the same (so assessment is fair)
+3. Examples of different paths a student might take
+4. How this increases engagement and investment
+
+Make sure all paths hit the same learning goals.`,
+                useCase: "When you want choice to be meaningful, not just 'pick any topic'"
+            },
+            {
+                id: 41,
+                utility: "Student Engagement",
+                level: "Intermediate",
+                number: "5.5",
+                title: "Peer Feedback System (Eye-popping)",
+                type: ["Socratic prompting", "Structured output"],
+                prompt: `I want students to give each other meaningful feedback on [work type].
+
+Create:
+1. A feedback framework with specific questions they should ask
+2. Example sentences they could use to start feedback
+3. What to focus on (not just "good job")
+4. Red flags (what NOT to do)
+5. A template they'd use
+
+Frame this as: "You're a supportive critic, not a judge."`,
+                useCase: "When peer feedback feels surface-level and you need to deepen it"
+            },
+            {
+                id: 42,
+                utility: "Student Engagement",
+                level: "Intermediate",
+                number: "5.6",
+                title: "Differentiated Engagement (Eye-popping)",
+                type: ["Perspective-shifting", "Error analysis"],
+                prompt: `In my class, these groups of students disengage during [activity/type of lesson]:
+[describe which students and why you think they check out]
+
+For each group, what would make this genuinely engaging?
+- Not punishment or extra work
+- Actually connected to their interests or strengths
+- Still hitting the same learning goals as everyone else
+
+Give specific, different ideas for each group.`,
+                useCase: "When you notice certain students consistently disengaging and want to reach them"
+            },
+            // 15. STUDENT ENGAGEMENT - ADVANCED
+            {
+                id: 43,
+                utility: "Student Engagement",
+                level: "Advanced",
+                number: "5.7",
+                title: "Project-Based Learning Design (Eye-popping)",
+                type: ["Reverse-prompting", "Socratic prompting", "Meta-prompt"],
+                prompt: `Design a project for [topic] that [insert your goal - 
+e.g., "has students solve a real problem," "creates something for an authentic audience," 
+"requires collaboration and iteration"].
+
+Include:
+1. The real-world context/why it matters
+2. The challenge or problem students solve
+3. Scaffolding that builds them toward it
+4. How you'll know they've learned deeply
+5. How students would present/share their work
+6. How different learners can participate
+
+Make it ambitious. Make it something you'd genuinely want to do.`,
+                useCase: "When you want projects that drive both engagement and deep learning"
+            },
+            {
+                id: 44,
+                utility: "Student Engagement",
+                level: "Advanced",
+                number: "5.8",
+                title: "Metacognition & Self-Awareness (Eye-popping)",
+                type: ["Socratic prompting", "Structured output", "Belief-challenging"],
+                prompt: `Design a system to help students develop metacognition (thinking about their thinking) 
+around [topic or skill].
+
+Include:
+1. Reflection prompts (not "What did you learn?" but deeper questions)
+2. How they'd track growth over time
+3. How they'd identify their own learning edge
+4. How they'd recognize their own misconceptions
+5. How peer discussion deepens metacognition
+
+The goal: students become their own best teachers.`,
+                useCase: "When you want students to develop self-awareness and ownership of learning"
+            },
+            {
+                id: 45,
+                utility: "Student Engagement",
+                level: "Advanced",
+                number: "5.9",
+                title: "Equity in Engagement (Eye-popping)",
+                type: ["Blind spot prompting", "Belief-challenging", "Perspective-shifting"],
+                prompt: `I believe my classroom is engaging for all students because [insert your belief].
+
+Reality check:
+1. Whose hands go up most? Whose rarely speak?
+2. Who seems genuinely excited? Who looks disconnected?
+3. What patterns do you notice by gender, race, ability, background?
+4. Who am I calling on? How often? Who gets wait time?
+5. Whose questions/ideas shape the conversation?
+6. What's one group that might feel like outsiders?
+7. What would need to change for them to feel genuinely engaged?
+
+Don't defendâ€”just observe and think.`,
+                useCase: "When you want to honestly examine whether engagement is equitable"
+            },
+            // 16. PROFESSIONAL DEVELOPMENT - BEGINNER
+            {
+                id: 46,
+                utility: "Professional Development",
+                level: "Beginner",
+                number: "6.1",
+                title: "Reflection Prompt",
+                type: ["Socratic prompting"],
+                prompt: `Reflect on [specific lesson, unit, or experience]. Consider:
+1. What went well and why?
+2. What didn't go as planned?
+3. What would you do differently next time?
+4. What did you learn about your students?
+5. What did you learn about yourself as a teacher?`,
+                useCase: "When you want structured reflection instead of just 'that was okay'"
+            },
+            {
+                id: 47,
+                utility: "Professional Development",
+                level: "Beginner",
+                number: "6.2",
+                title: "Professional Growth Goal",
+                type: ["Zero-shot"],
+                prompt: `I want to improve at [area - e.g., "questioning," "classroom management," "differentiating"].
+
+Help me write a specific, measurable goal I could work on this semester.
+Then suggest 2-3 concrete ways to practice and improve.
+How would I know I'm getting better?`,
+                useCase: "When you want to be intentional about growth instead of vague about it"
+            },
+            {
+                id: 48,
+                utility: "Professional Development",
+                level: "Beginner",
+                number: "6.3",
+                title: "Colleague Collaboration Conversation (Eye-popping)",
+                type: ["Role-playing", "Socratic prompting"],
+                prompt: `I want to have a real conversation with [colleague] about [topic - 
+e.g., how to handle a difficult student, how to implement something new].
+
+Role-play this conversation:
+- What questions should I ask to truly understand their thinking?
+- What should I share about my perspective?
+- How do I listen without fixing or judging?
+- What would a genuine collaboration look like?
+
+Give me the conversation flow, not just bullet points.`,
+                useCase: "When you want to collaborate more deeply with colleagues"
+            },
+            // 17. PROFESSIONAL DEVELOPMENT - INTERMEDIATE
+            {
+                id: 49,
+                utility: "Professional Development",
+                level: "Intermediate",
+                number: "6.4",
+                title: "Your Teaching Philosophy Audit (Eye-popping)",
+                type: ["Belief-challenging", "Blind spot prompting"],
+                prompt: `Here are some of my core beliefs about teaching:
+[list 3-4 of your beliefs - e.g., "all students can learn," "I should be the expert," 
+"students need structure," "mistakes are learning opportunities"]
+
+For each belief:
+1. Where does this belief come from?
+2. What evidence supports it?
+3. What would challenge it?
+4. How does this belief show up in my daily practice?
+5. Is this belief serving my students, or limiting them?`,
+                useCase: "When you want to deeply examine the assumptions driving your practice"
+            },
+            {
+                id: 50,
+                utility: "Professional Development",
+                level: "Intermediate",
+                number: "6.5",
+                title: "PD Resource Curation (Eye-popping)",
+                type: ["Meta-prompt", "Structured output"],
+                prompt: `I'm interested in learning more about [topic - e.g., "culturally responsive teaching," 
+"social-emotional learning," "assessment"].
+
+Suggest 5 resources (books, articles, podcasts, courses) that:
+1. Are substantive, not superficial
+2. Challenge my thinking, not just confirm what I already believe
+3. Have practical applications I could use this semester
+4. Are from diverse perspectives/authors
+
+For each, briefly say why it's worth your time.`,
+                useCase: "When you want curated learning instead of random PD"
+            },
+            {
+                id: 51,
+                utility: "Professional Development",
+                level: "Intermediate",
+                number: "6.6",
+                title: "Practice Inventory (Eye-popping)",
+                type: ["Blind spot prompting", "Error analysis"],
+                prompt: `Here are my current practices in [area - e.g., assessment, classroom management, parent communication]:
+[list your main practices]
+
+Analysis:
+1. Which practices are actually effective? How do you know?
+2. Which ones are you doing out of habit?
+3. Which ones might have unintended negative effects?
+4. What's missing? What should you add?
+5. If you could change one thing about your current approach, what would it be?
+
+Be honest. This is for you.`,
+                useCase: "When you want to audit what you're actually doing and whether it's working"
+            },
+            // 18. PROFESSIONAL DEVELOPMENT - ADVANCED
+            {
+                id: 52,
+                utility: "Professional Development",
+                level: "Advanced",
+                number: "6.7",
+                title: "Coaching Conversation Design (Eye-popping)",
+                type: ["Role-playing", "Socratic prompting", "Meta-prompt"],
+                prompt: `I'm working with [a colleague, mentor, instructional coach] on improving [skill/practice].
+
+Design a coaching cycle including:
+1. Pre-observation conversation: What questions should they ask me?
+2. What specifically should they observe?
+3. Post-observation: How should they give feedback?
+4. Reflection questions for me
+5. How we'd know if I'm improving
+6. Follow-up and accountability
+
+Make this a real learning partnership, not an evaluation.`,
+                useCase: "When you want to structure meaningful coaching relationships"
+            },
+            {
+                id: 53,
+                utility: "Professional Development",
+                level: "Advanced",
+                number: "6.8",
+                title: "Equity & Bias Self-Audit (Eye-popping)",
+                type: ["Belief-challenging", "Blind spot prompting", "Error analysis"],
+                prompt: `This is hard but important. Answer honestly:
+
+1. Whose perspectives are centered in my curriculum?
+2. Whose voices am I missing?
+3. What stereotypes or biases might I hold (even unconsciously)?
+4. Who are the "teachers' pets"? Who are the "problem students"?
+5. Who do I call on? Who gets wait time? Any patterns?
+6. What opportunities have I missed to address bias or injustice in the moment?
+7. What's one thing I'm afraid to face about myself?
+8. What's one change I could make that would be meaningful?
+
+Then: What support do I need to keep growing?`,
+                useCase: "When you want to do deep work on your own biases and their impact"
+            },
+            {
+                id: 54,
+                utility: "Professional Development",
+                level: "Advanced",
+                number: "6.9",
+                title: "Systems-Level Change Thinking (Eye-popping)",
+                type: ["Reverse-prompting", "Belief-challenging", "Meta-prompt"],
+                prompt: `If you imagine your ideal classroom/school 5 years from now, what would be different?
+[paint a picture]
+
+Working backwards:
+1. What would have to change about systems/structures?
+2. What would have to change about adults' mindsets?
+3. What would have to change about your own practice first?
+4. What's one thing you could start influencing now?
+5. Who else needs to be part of this change?
+6. What's one belief you'd need to challenge?
+7. What scares you about this change? Why?
+
+How do you become an agent of this change, not just a voice for it?`,
+                useCase: "When you want to think beyond compliance and toward transformation"
+            },
+            // 19. MENTAL HEALTH & WELLBEING - BEGINNER
+            {
+                id: 55,
+                utility: "Mental Health & Wellbeing",
+                level: "Beginner",
+                number: "7.1",
+                title: "Wellbeing Check-In",
+                type: ["Socratic prompting"],
+                prompt: `Create 5-7 gentle check-in questions I could ask students to understand their emotional state:
+
+Examples of what you might ask:
+- How are you feeling today, on a scale of happy to tough?
+- If your feelings were weather, what would they be?
+- What's one thing that made you smile this week?
+
+Make questions that:
+- Feel safe to answer
+- Don't feel like interrogation
+- Invite them to share without forcing it
+- Show you genuinely care
+
+Grade level: [insert]`,
+                useCase: "When you want to regularly notice and support student wellbeing"
+            },
+            {
+                id: 56,
+                utility: "Mental Health & Wellbeing",
+                level: "Beginner",
+                number: "7.2",
+                title: "De-Escalation Phrases",
+                type: ["One-shot", "Role-playing"],
+                prompt: `Here are some phrases that have worked for me when a student is upset:
+"I see you're frustrated. Let's take a breath together."
+"I'm not upset with you. I want to help you figure this out."
+
+Generate 10 similar phrases I could use when:
+- A student is angry or frustrated
+- A student is anxious
+- A student is withdrawn or sad
+- A student is overwhelmed
+
+Make them genuine, not robotic.`,
+                useCase: "When you want to respond with compassion in tough moments"
+            },
+            {
+                id: 57,
+                utility: "Mental Health & Wellbeing",
+                level: "Beginner",
+                number: "7.3",
+                title: "Student Advocate (Eye-popping)",
+                type: ["Role-playing", "Perspective-shifting"],
+                prompt: `One of my students is [struggling - describe the behavior/situation].
+From their perspective, what might be going on beneath the surface?
+
+Now, imagine you're advocating for this student to admin/colleagues:
+- What would you want them to know?
+- What would you ask for on their behalf?
+- What's one thing this student needs that they're not getting?
+- How would you frame this with compassion and without blame?
+
+Write what you'd actually say.`,
+                useCase: "When you see a student struggling and want to be their advocate"
+            },
+            // 20. MENTAL HEALTH & WELLBEING - INTERMEDIATE
+            {
+                id: 58,
+                utility: "Mental Health & Wellbeing",
+                level: "Intermediate",
+                number: "7.4",
+                title: "Trauma-Informed Practices Audit",
+                type: ["Blind spot prompting", "Error analysis"],
+                prompt: `Consider your classroom practices through a trauma-informed lens:
+
+1. Where might I be triggering anxiety without realizing it?
+2. What feels controlling or punitive to some students?
+3. How do I respond to big emotions?
+4. Do all students feel safe and heard?
+5. Where's my power over vs. power with students?
+6. What's one practice I'm doing that might re-traumatize?
+7. What's one small shift that would increase safety?
+
+Be specific. Think about actual moments.`,
+                useCase: "When you want to make your classroom genuinely safe for all students"
+            },
+            {
+                id: 59,
+                utility: "Mental Health & Wellbeing",
+                level: "Intermediate",
+                number: "7.5",
+                title: "Social-Emotional Learning Integration (Eye-popping)",
+                type: ["Structured output", "Meta-prompt"],
+                prompt: `Design how you'd integrate social-emotional learning into [subject/unit] without 
+it feeling like an add-on.
+
+For core SEL competencies (self-awareness, responsible decision-making, relationship skills, etc.):
+1. Where naturally appears in your content
+2. How students practice it
+3. How you reinforce it
+4. How you assess growth
+
+Make it organic, not a separate class.`,
+                useCase: "When you want SEL to be woven in, not just a poster on the wall"
+            },
+            {
+                id: 60,
+                utility: "Mental Health & Wellbeing",
+                level: "Intermediate",
+                number: "7.6",
+                title: "Restorative Practices Framework (Eye-popping)",
+                type: ["Reverse-prompting", "Socratic prompting", "Structured output"],
+                prompt: `Design a restorative practice for when conflict happens in your classroom.
+
+Include:
+1. Initial response: How do you pause and create space?
+2. Individual conversations: What questions help each person reflect?
+3. Bringing people together: How do they understand each other?
+4. Repair: What does making things right look like?
+5. Prevention: How do you build community so conflicts matter less?
+
+Make it practical for a busy classroom.`,
+                useCase: "When you want to move from punishment to restoration"
+            },
+            // 21. MENTAL HEALTH & WELLBEING - ADVANCED
+            {
+                id: 61,
+                utility: "Mental Health & Wellbeing",
+                level: "Advanced",
+                number: "7.7",
+                title: "Recognizing Signs of Struggle (Eye-popping)",
+                type: ["Error analysis", "Blind spot prompting"],
+                prompt: `List the students you're concerned about or noticing struggles with:
+[list students and behaviors]
+
+For each:
+1. What are the behavioral signs you're seeing?
+2. What might be underneath (anxiety, trauma, abuse, bullying, abuse at home, etc.)?
+3. What questions would you ask to understand better?
+4. What resources or support might help?
+5. What's your role vs. what needs a specialist?
+6. What conversations do you need to have (with student, family, counselor)?
+
+Don't diagnose. Notice and refer.`,
+                useCase: "When you want to notice signs earlier and connect students with support"
+            },
+            {
+                id: 62,
+                utility: "Mental Health & Wellbeing",
+                level: "Advanced",
+                number: "7.8",
+                title: "Teacher Wellbeing & Burnout Prevention (Eye-popping)",
+                type: ["Belief-challenging", "Blind spot prompting", "Reverse-prompting"],
+                prompt: `Imagine you're thriving professionally in 2 years: energized, sustainable, no burnout.
+
+Working backwards:
+1. What would be different about how you spend your time?
+2. What would be different about your relationships with students/colleagues?
+3. What would be different about your mindset?
+4. What would need to change about your practices or boundaries?
+5. What beliefs would you need to let go of?
+6. What's one thing you're "shoulding" on yourself that you could stop?
+7. What would you do more of? Less of?
+
+Then: What's one thing you could actually change this week?`,
+                useCase: "When you realize you can't sustain your current pace"
+            },
+            {
+                id: 63,
+                utility: "Mental Health & Wellbeing",
+                level: "Advanced",
+                number: "7.9",
+                title: "Mental Health Culture Shift (Eye-popping)",
+                type: ["Meta-prompt", "Belief-challenging"],
+                prompt: `Design a shift in how your classroom/community talks about mental health:
+- From shame/hiding â†’ to openness and help-seeking
+- From "just get over it" â†’ to "let's figure this out together"
+- From problem identification â†’ to strength building
+
+Include:
+1. How you model vulnerability and self-care
+2. How you normalize talking about emotions/struggles
+3. How you teach students to help each other
+4. What language you use (and what you'd stop using)
+5. Resources and support systems
+6. How you address stigma when it shows up
+7. How you check if this is actually working
+
+Make it a culture shift, not just a program.`,
+                useCase: "When you want mental health to be woven into the fabric of your community"
+            }
+        ];
+
+        // ===== INITIALIZE APP =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate dropdowns
+            populateUtilityFilter();
+            populateTypeFilter();
+            // Initial render
+            renderPrompts();
+            // Add event listeners for filters
+            document.getElementById('utility-filter').addEventListener('change', renderPrompts);
+            document.getElementById('level-filter').addEventListener('change', renderPrompts);
+            document.getElementById('type-filter').addEventListener('change', renderPrompts);
+            
+            // Search - modal version
+            document.getElementById('search-input-modal').addEventListener('input', function(e) {
+                document.getElementById('search-input').value = e.target.value;
+                renderPrompts();
+            });
+            
+            // Search - regular version (hidden, but linked)
+            document.getElementById('search-input').addEventListener('input', function(e) {
+                document.getElementById('search-input-modal').value = e.target.value;
+                renderPrompts();
+            });
+            
+            // Collapsible controls toggle
+            document.getElementById('controls-toggle-btn').addEventListener('click', toggleControls);
+            
+            // Search icon button
+            document.getElementById('search-icon-btn').addEventListener('click', openSearch);
+            document.getElementById('search-bar-close').addEventListener('click', closeSearch);
+            
+            // Close search modal when clicking outside
+            document.getElementById('search-bar-container').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSearch();
+                }
+            });
+
+            // Event delegation for copy buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-copy')) {
+                    const cardId = e.target.getAttribute('data-card-id');
+                    const promptText = promptDataMap.get(cardId);
+                    copyToClipboard(e.target, promptText);
+                }
+            });
+        });
+
+        // ===== TOGGLE CONTROLS =====
+        function toggleControls() {
+            const controls = document.getElementById('controls-section');
+            const button = document.getElementById('controls-toggle-btn');
+            const icon = button.querySelector('i');
+            
+            controls.classList.toggle('collapsed');
+            
+            if (controls.classList.contains('collapsed')) {
+                icon.style.transform = 'rotate(-90deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // ===== OPEN SEARCH =====
+        function openSearch() {
+            document.getElementById('search-bar-container').classList.add('active');
+            document.getElementById('search-input-modal').focus();
+        }
+
+        // ===== CLOSE SEARCH =====
+        function closeSearch() {
+            document.getElementById('search-bar-container').classList.remove('active');
+        }
+
+        // ===== POPULATE DROPDOWN: UTILITIES =====
+        function populateUtilityFilter() {
+            const utilities = [...new Set(allPrompts.map(p => p.utility))].sort();
+            const select = document.getElementById('utility-filter');
+            utilities.forEach(utility => {
+                const option = document.createElement('option');
+                option.value = utility;
+                option.textContent = utility;
+                select.appendChild(option);
+            });
+        }
+
+        // ===== POPULATE DROPDOWN: TYPES =====
+        function populateTypeFilter() {
+            const allTypes = [];
+            allPrompts.forEach(p => {
+                allTypes.push(...p.type);
+            });
+            const types = [...new Set(allTypes)].sort();
+            const select = document.getElementById('type-filter');
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                select.appendChild(option);
+            });
+        }
+
+        // ===== FILTER & SEARCH LOGIC =====
+        function getFilteredPrompts() {
+            const utilityFilter = document.getElementById('utility-filter').value;
+            const levelFilter = document.getElementById('level-filter').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+
+            return allPrompts.filter(prompt => {
+                const matchUtility = !utilityFilter || prompt.utility === utilityFilter;
+                const matchLevel = !levelFilter || prompt.level === levelFilter;
+                const matchType = !typeFilter || prompt.type.includes(typeFilter);
+                const matchSearch = !searchTerm || 
+                    prompt.title.toLowerCase().includes(searchTerm) ||
+                    prompt.prompt.toLowerCase().includes(searchTerm) ||
+                    prompt.useCase.toLowerCase().includes(searchTerm) ||
+                    prompt.type.some(t => t.toLowerCase().includes(searchTerm));
+
+                return matchUtility && matchLevel && matchType && matchSearch;
+            });
+        }
+
+        // ===== RENDER PROMPTS =====
+        function renderPrompts() {
+            const filtered = getFilteredPrompts();
+            const container = document.getElementById('prompts-container');
+            const emptyState = document.getElementById('empty-state');
+
+            // Clear the map when re-rendering
+            promptDataMap.clear();
+
+            // Update desktop stats
+            document.getElementById('filtered-prompts').textContent = filtered.length;
+            
+            // Update mobile stats
+            document.getElementById('mobile-filtered').textContent = filtered.length;
+
+            // Clear container
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Render each prompt card
+            filtered.forEach((prompt, index) => {
+                const card = createPromptCard(prompt, index);
+                container.appendChild(card);
+            });
+        }
+
+        // ===== CREATE PROMPT CARD =====
+        function createPromptCard(prompt, index) {
+            const card = document.createElement('div');
+            card.className = 'prompt-card';
+            const cardId = `prompt-card-${index}`;
+
+            // Escape HTML to prevent XSS
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+
+            const typeBadges = prompt.type
+                .map(t => `<span class="badge badge-type">${escapeHtml(t)}</span>`)
+                .join('');
+
+            card.innerHTML = `
+                <div class="prompt-header">
+                    <div class="prompt-number">${escapeHtml(prompt.number)} â€¢ ${escapeHtml(prompt.utility)}</div>
+                    <h2 class="prompt-title">${escapeHtml(prompt.title)}</h2>
+                </div>
+
+                <div class="prompt-metadata">
+                    <span class="badge badge-utility">${escapeHtml(prompt.utility)}</span>
+                    <span class="badge badge-level">${escapeHtml(prompt.level)}</span>
+                    ${typeBadges}
+                </div>
+
+                <div class="prompt-text">${escapeHtml(prompt.prompt)}</div>
+
+                <div class="prompt-use-case">
+                    <strong>Use case:</strong> ${escapeHtml(prompt.useCase)}
+                </div>
+
+                <div class="prompt-actions">
+                    <button class="btn-copy" data-card-id="${cardId}">
+                        Copy Prompt
+                    </button>
+                </div>
+            `;
+
+            // Store the prompt data with card ID as key
+            promptDataMap.set(cardId, prompt.prompt);
+
+            return card;
+        }
+
+        // ===== PROMPT DATA STORAGE =====
+        // Using a Map to store prompt data keyed by card ID
+        const promptDataMap = new Map();
+
+        // ===== COPY TO CLIPBOARD =====
+        function copyToClipboard(button, promptText) {
+            navigator.clipboard.writeText(promptText).then(() => {
+                // Visual feedback
+                const originalText = button.textContent;
+                button.textContent = 'âœ… Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+
+                // Toast notification
+                showCopyFeedback();
+            }).catch(() => {
+                console.error('Copy failed');
+            });
+        }
+
+        // ===== SHOW COPY FEEDBACK =====
+        function showCopyFeedback() {
+            const feedback = document.createElement('div');
+            feedback.className = 'copy-feedback';
+            feedback.textContent = 'âœ… Prompt copied to clipboard!';
+            document.body.appendChild(feedback);
+
+            setTimeout(() => {
+                feedback.remove();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
