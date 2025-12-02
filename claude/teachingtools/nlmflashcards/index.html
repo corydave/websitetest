@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+
+GEMINI 3
+
+https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFRKnsBcNhviSO3wfNCUlzSTYRLwjnPvxgCi8rdZzoxa39j1Vg/pub?output=csv
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotebookLM Flashcards</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- LZ-String for URL Compression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+
+    <style>
+        /* Custom 3D Styles matching the React version */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        /* Dark mode scrollbar for the back of the card */
+        .back-face .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+        }
+
+        /* Utility for hiding/showing views */
+        .hidden-view {
+            display: none !important;
+        }
+
+        /* Toast Animation */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(10px) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) translateX(-50%); }
+        }
+        .animate-toast {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+        
+        /* Loading Spinner */
+        .loader {
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans selection:bg-blue-100 min-h-screen flex flex-col">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-3 rounded-full shadow-lg z-50 hidden flex items-center gap-2">
+        <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+        <span class="text-sm font-medium">Link copied to clipboard!</span>
+    </div>
+
+    <!-- VIEW: Upload Screen -->
+    <div id="upload-view" class="flex-1 flex flex-col items-center justify-center p-6 transition-opacity duration-300">
+        <div class="max-w-md w-full text-center space-y-8">
+            <div class="space-y-2">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg mb-4">
+                    <i data-lucide="rotate-cw" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-4xl font-bold tracking-tight text-stone-900">Flashcards</h1>
+                <p class="text-stone-500 text-lg">
+                    Interactive wrapper for your NotebookLM exports.
+                </p>
+            </div>
+
+            <!-- Drop Zone -->
+            <div id="drop-zone"
+                class="relative group cursor-pointer border-3 border-dashed border-stone-200 bg-white rounded-3xl p-10 transition-all duration-300 flex flex-col items-center justify-center gap-4 hover:border-stone-300 hover:bg-stone-50">
+                
+                <input id="file-input" type="file" accept=".csv" class="hidden" />
+                
+                <div class="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <i id="upload-icon" data-lucide="upload" class="w-8 h-8 text-stone-400 group-hover:text-blue-600"></i>
+                </div>
+                
+                <div class="space-y-1 pointer-events-none">
+                    <p class="font-semibold text-stone-700">Click to upload or drag and drop</p>
+                    <p class="text-sm text-stone-400">Supported format: .CSV (NotebookLM Export)</p>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 w-full px-4">
+                <div class="h-px bg-stone-200 flex-1"></div>
+                <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider">Or paste link</span>
+                <div class="h-px bg-stone-200 flex-1"></div>
+            </div>
+
+            <!-- URL Input -->
+            <div class="w-full flex gap-2">
+                <input id="url-input" type="text" placeholder="Paste Google Sheet 'Publish to web' CSV link..." 
+                    class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm shadow-sm transition-all" />
+                <button id="url-btn" class="px-5 py-3 bg-stone-900 text-white rounded-xl text-sm font-medium hover:bg-stone-800 transition-colors flex items-center justify-center gap-2 min-w-[80px]">
+                    <span>Load</span>
+                </button>
+            </div>
+            
+            <div class="flex items-center justify-center gap-2 text-xs text-stone-400">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>Use "File > Share > Publish to web" > CSV</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: Flashcard Interface -->
+    <div id="flashcard-view" class="hidden-view min-h-screen bg-[#F0F2F5] flex flex-col w-full">
+        <!-- Header -->
+        <header class="px-6 py-4 flex items-center justify-between bg-white/80 backdrop-blur-sm sticky top-0 z-10 border-b border-stone-100">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-sm">
+                    <i data-lucide="rotate-cw" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-bold text-lg tracking-tight text-stone-800">Flashcards</span>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-stone-100 rounded-full text-xs font-medium text-stone-500">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                    <span id="file-name-display" class="max-w-[150px] truncate">filename.csv</span>
+                </div>
+                
+                <!-- Share Button -->
+                <button id="share-btn" class="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-blue-600 transition-colors" title="Copy Share Link">
+                    <i data-lucide="link" class="w-5 h-5"></i>
+                </button>
+
+                <div class="w-px h-6 bg-stone-200 mx-1"></div>
+
+                <button id="reset-btn" class="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-red-500 transition-colors" title="Upload new file">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full max-w-4xl mx-auto">
+            
+            <!-- Progress Bar -->
+            <div class="w-full max-w-2xl mb-8 flex items-center gap-4">
+                <span id="current-index" class="text-sm font-medium text-stone-400 w-12 text-right">1</span>
+                <div class="h-2 flex-1 bg-stone-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ease-out" style="width: 0%"></div>
+                </div>
+                <span id="total-count" class="text-sm font-medium text-stone-400 w-12">0</span>
+            </div>
+
+            <!-- Card Container -->
+            <div id="card-container" class="perspective-1000 w-full max-w-2xl aspect-[3/2] sm:aspect-[16/9] relative group cursor-pointer">
+                
+                <!-- The Card (Inner) -->
+                <div id="card-inner" class="w-full h-full relative transition-all duration-500 preserve-3d shadow-xl rounded-3xl">
+                    
+                    <!-- Front -->
+                    <div class="absolute inset-0 backface-hidden bg-white rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center border border-white">
+                        <!-- Decorative Gradient Blob -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl -z-10 translate-x-10 -translate-y-10"></div>
+                        
+                        <span class="uppercase tracking-widest text-xs font-bold text-stone-400 mb-6">Question</span>
+                        <div class="flex-1 flex items-center justify-center overflow-y-auto w-full custom-scrollbar">
+                            <p id="card-question" class="text-2xl sm:text-3xl font-medium text-stone-800 leading-snug">
+                                <!-- Question goes here -->
+                            </p>
+                        </div>
+                        <p class="text-xs text-stone-300 mt-6 font-medium">Click to flip</p>
+                    </div>
+
+                    <!-- Back -->
+                    <div class="back-face absolute inset-0 backface-hidden bg-stone-900 rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center rotate-y-180 border border-stone-800">
+                        <!-- Decorative Gradient Blob -->
+                        <div class="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl -z-10 -translate-x-10 translate-y-10"></div>
+
+                        <span class="uppercase tracking-widest text-xs font-bold text-stone-500 mb-6">Answer</span>
+                        <div class="flex-1 flex items-center justify-center overflow-y-auto w-full custom-scrollbar">
+                            <p id="card-answer" class="text-xl sm:text-2xl text-stone-100 leading-relaxed font-light">
+                                <!-- Answer goes here -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="mt-10 flex items-center gap-6">
+                <button id="prev-btn" class="p-4 rounded-full bg-white text-stone-400 hover:text-blue-600 hover:bg-blue-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 border border-stone-100 shadow-sm">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                
+                <button id="flip-btn" class="px-8 py-3 rounded-full bg-stone-900 text-white font-medium hover:bg-stone-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-md min-w-[160px]">
+                    Show Answer
+                </button>
+
+                <button id="next-btn" class="p-4 rounded-full bg-white text-stone-400 hover:text-blue-600 hover:bg-blue-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 border border-stone-100 shadow-sm">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <p class="mt-8 text-xs text-stone-400 font-medium">
+                Tip: Use <kbd class="font-sans px-1.5 py-0.5 bg-stone-200 rounded text-stone-500">Space</kbd> to flip and <kbd class="font-sans px-1.5 py-0.5 bg-stone-200 rounded text-stone-500">Arrows</kbd> to navigate
+            </p>
+
+        </main>
+    </div>
+
+    <script>
+        // --- State ---
+        let cards = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let fileName = "";
+        let currentShareUrl = ""; // To track if we should share the CSV URL or the Data blob
+
+        // --- DOM Elements ---
+        const uploadView = document.getElementById('upload-view');
+        const flashcardView = document.getElementById('flashcard-view');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const uploadIcon = document.getElementById('upload-icon');
+        const toast = document.getElementById('toast');
+        
+        // URL Input Elements
+        const urlInput = document.getElementById('url-input');
+        const urlBtn = document.getElementById('url-btn');
+
+        // Flashcard Elements
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const currentIndexDisplay = document.getElementById('current-index');
+        const totalCountDisplay = document.getElementById('total-count');
+        const progressBar = document.getElementById('progress-bar');
+        const cardContainer = document.getElementById('card-container');
+        const cardInner = document.getElementById('card-inner');
+        const cardQuestion = document.getElementById('card-question');
+        const cardAnswer = document.getElementById('card-answer');
+        
+        // Buttons
+        const resetBtn = document.getElementById('reset-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flipBtn = document.getElementById('flip-btn');
+        const shareBtn = document.getElementById('share-btn');
+
+        // --- Logic ---
+
+        const showToast = (msg = "Link copied to clipboard!") => {
+            toast.querySelector('span').textContent = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('animate-toast');
+            setTimeout(() => {
+                toast.classList.remove('animate-toast');
+                toast.classList.add('hidden');
+            }, 3000);
+        };
+
+        const generateShareLink = () => {
+            if (cards.length === 0) return;
+            
+            try {
+                const url = new URL(window.location.href);
+                
+                // Option 1: If we loaded from a CSV URL, share that! (Much shorter)
+                if (currentShareUrl) {
+                     url.searchParams.set('csv', currentShareUrl);
+                     url.searchParams.delete('data'); // Remove heavy data param if it existed
+                } 
+                // Option 2: Otherwise, compress the data (Fallback for file uploads)
+                else {
+                    const jsonStr = JSON.stringify(cards);
+                    const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+                    url.searchParams.set('data', compressed);
+                    url.searchParams.delete('csv');
+                }
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(url.toString()).then(() => {
+                    showToast();
+                }).catch(err => {
+                    console.error("Failed to copy", err);
+                    alert("Could not copy link to clipboard.");
+                });
+                
+                // Update URL UI
+                window.history.pushState({}, '', url);
+
+            } catch (err) {
+                console.error("Error generating link:", err);
+                alert("Error generating share link.");
+            }
+        };
+
+        const loadFromParams = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const dataParam = params.get('data');
+            const csvParam = params.get('csv');
+            
+            // Priority 1: CSV URL
+            if (csvParam) {
+                urlInput.value = csvParam;
+                await handleFetchUrl(csvParam);
+                return;
+            }
+
+            // Priority 2: Compressed Data
+            if (dataParam) {
+                try {
+                    const decompressed = LZString.decompressFromEncodedURIComponent(dataParam);
+                    if (decompressed) {
+                        const parsedCards = JSON.parse(decompressed);
+                        if (Array.isArray(parsedCards) && parsedCards.length > 0) {
+                            cards = parsedCards;
+                            fileName = "Shared Deck";
+                            currentIndex = 0;
+                            isFlipped = false;
+                            currentShareUrl = ""; // No CSV url backing this
+                            updateUI();
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading from URL", err);
+                }
+            }
+        };
+
+        const handleFetchUrl = async (url) => {
+            if (!url) return;
+            
+            const originalBtnText = urlBtn.innerHTML;
+            urlBtn.innerHTML = '<div class="loader"></div>';
+            urlBtn.disabled = true;
+
+            try {
+                let response;
+                
+                // Attempt 1: Direct Fetch (works on some browsers/extensions)
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout for direct
+                    response = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) throw new Error("Direct fetch failed");
+                } catch (directError) {
+                    console.warn("Direct fetch failed, switching to Proxy...", directError);
+                    
+                    // Attempt 2: CORS Proxy Fallback
+                    // allorigins.win is a free open source CORS proxy
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                    response = await fetch(proxyUrl);
+                    
+                    if (!response.ok) throw new Error("Proxy fetch failed");
+                }
+
+                const text = await response.text();
+                
+                const parsedCards = parseCSV(text);
+                if (parsedCards.length > 0) {
+                    cards = parsedCards;
+                    fileName = "Remote Deck";
+                    currentIndex = 0;
+                    isFlipped = false;
+                    currentShareUrl = url; 
+                    updateUI();
+                } else {
+                    alert("No valid flashcards found. Check if the sheet is published as CSV.");
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                alert("Failed to load CSV. Google might be blocking the request. Ensure it is a 'Publish to web' link.");
+            } finally {
+                urlBtn.innerHTML = originalBtnText;
+                urlBtn.disabled = false;
+            }
+        };
+
+        // CSV Parser
+        const parseCSV = (text) => {
+            const rows = [];
+            let currentRow = [];
+            let currentField = '';
+            let insideQuotes = false;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (char === '"') {
+                    if (insideQuotes && nextChar === '"') {
+                        currentField += '"';
+                        i++; 
+                    } else {
+                        insideQuotes = !insideQuotes;
+                    }
+                } else if (char === ',' && !insideQuotes) {
+                    currentRow.push(currentField.trim());
+                    currentField = '';
+                } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+                    if (currentField || currentRow.length > 0) {
+                        currentRow.push(currentField.trim());
+                        rows.push(currentRow);
+                    }
+                    currentRow = [];
+                    currentField = '';
+                    if (char === '\r' && nextChar === '\n') i++;
+                } else {
+                    currentField += char;
+                }
+            }
+            if (currentField || currentRow.length > 0) {
+                currentRow.push(currentField.trim());
+                rows.push(currentRow);
+            }
+
+            const cleanRows = rows.filter(r => r.length >= 2 && (r[0] || r[1]));
+            
+            // Heuristic for header removal
+            if (cleanRows.length > 0) {
+                const first = cleanRows[0];
+                if (first[0].toLowerCase().includes('question') && first[1].toLowerCase().includes('answer')) {
+                    cleanRows.shift();
+                }
+            }
+
+            return cleanRows.map(row => ({
+                question: row[0] || "Empty Question",
+                answer: row[1] || "Empty Answer"
+            }));
+        };
+
+        // UI Updates
+        const updateUI = () => {
+            if (cards.length === 0) {
+                uploadView.classList.remove('hidden-view');
+                flashcardView.classList.add('hidden-view');
+                document.body.classList.add('bg-stone-50');
+                document.body.classList.remove('bg-[#F0F2F5]');
+                return;
+            }
+
+            // Switch to flashcard view
+            uploadView.classList.add('hidden-view');
+            flashcardView.classList.remove('hidden-view');
+            document.body.classList.remove('bg-stone-50');
+            document.body.classList.add('bg-[#F0F2F5]');
+
+            const currentCard = cards[currentIndex];
+            
+            // Update Text
+            cardQuestion.textContent = currentCard.question;
+            cardAnswer.textContent = currentCard.answer;
+            fileNameDisplay.textContent = fileName;
+            
+            // Update Progress
+            currentIndexDisplay.textContent = currentIndex + 1;
+            totalCountDisplay.textContent = cards.length;
+            const progress = ((currentIndex + 1) / cards.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Update Flip State
+            if (isFlipped) {
+                cardInner.classList.add('rotate-y-180');
+                flipBtn.textContent = "Show Question";
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+                flipBtn.textContent = "Show Answer";
+            }
+        };
+
+        // Actions
+        const handleFileUpload = (file) => {
+            if (!file) return;
+            fileName = file.name;
+            currentShareUrl = ""; // Reset URL share if uploading local file
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const parsedCards = parseCSV(text);
+                    if (parsedCards.length > 0) {
+                        cards = parsedCards;
+                        currentIndex = 0;
+                        isFlipped = false;
+                        updateUI();
+                    } else {
+                        alert("Could not find any valid flashcards in this CSV.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error parsing CSV file.");
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        const toggleFlip = () => {
+            isFlipped = !isFlipped;
+            updateUI();
+        };
+
+        const handleNext = () => {
+            isFlipped = false;
+            updateUI(); // Immediate update for flip reset
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % cards.length;
+                updateUI();
+            }, 150);
+        };
+
+        const handlePrev = () => {
+            isFlipped = false;
+            updateUI();
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+                updateUI();
+            }, 150);
+        };
+
+        const resetApp = () => {
+            cards = [];
+            currentIndex = 0;
+            isFlipped = false;
+            fileName = "";
+            currentShareUrl = "";
+            fileInput.value = ""; 
+            urlInput.value = "";
+            
+            // Clear URL param
+            const url = new URL(window.location.href);
+            url.searchParams.delete('data');
+            url.searchParams.delete('csv');
+            window.history.pushState({}, '', url);
+            
+            updateUI();
+        };
+
+        // --- Event Listeners ---
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-500', 'bg-blue-50/50', 'scale-[1.02]');
+            uploadIcon.classList.remove('text-stone-400');
+            uploadIcon.classList.add('text-blue-600');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50/50', 'scale-[1.02]');
+            uploadIcon.classList.add('text-stone-400');
+            uploadIcon.classList.remove('text-blue-600');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50/50', 'scale-[1.02]');
+            uploadIcon.classList.add('text-stone-400');
+            uploadIcon.classList.remove('text-blue-600');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === "text/csv") {
+                handleFileUpload(file);
+            } else {
+                alert("Please upload a CSV file.");
+            }
+        });
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files[0]));
+
+        // URL Load
+        urlBtn.addEventListener('click', () => {
+            const val = urlInput.value.trim();
+            if(val) handleFetchUrl(val);
+        });
+        urlInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                const val = urlInput.value.trim();
+                if(val) handleFetchUrl(val);
+            }
+        });
+
+        // Controls
+        cardContainer.addEventListener('click', (e) => {
+             e.preventDefault();
+             toggleFlip();
+        });
+        flipBtn.addEventListener('click', (e) => {
+             e.stopPropagation();
+             toggleFlip();
+        });
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleNext();
+        });
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handlePrev();
+        });
+        resetBtn.addEventListener('click', resetApp);
+        shareBtn.addEventListener('click', generateShareLink);
+
+        // Keyboard
+        window.addEventListener('keydown', (e) => {
+            // Disable keyboard shortcuts if user is typing in the URL input
+            if (document.activeElement === urlInput) return;
+            
+            if (cards.length === 0) return;
+
+            switch(e.code) {
+                case 'Space':
+                case 'ArrowUp':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    toggleFlip();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    handleNext();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    handlePrev();
+                    break;
+            }
+        });
+
+        // Init
+        lucide.createIcons();
+        loadFromParams();
+    </script>
+</body>
+</html>
