@@ -1,14 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<!--
-
-GEMINI 3
-
-https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFRKnsBcNhviSO3wfNCUlzSTYRLwjnPvxgCi8rdZzoxa39j1Vg/pub?output=csv
-
--->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -123,13 +114,13 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             <!-- Divider -->
             <div class="flex items-center gap-4 w-full px-4">
                 <div class="h-px bg-stone-200 flex-1"></div>
-                <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider">Or paste link</span>
+                <span class="text-xs font-semibold text-stone-400 uppercase tracking-wider">Or paste link/ID</span>
                 <div class="h-px bg-stone-200 flex-1"></div>
             </div>
 
             <!-- URL Input -->
             <div class="w-full flex gap-2">
-                <input id="url-input" type="text" placeholder="Paste Google Sheet 'Publish to web' CSV link..." 
+                <input id="url-input" type="text" placeholder="Paste Google Sheet URL (Anyone with link)..." 
                     class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm shadow-sm transition-all" />
                 <button id="url-btn" class="px-5 py-3 bg-stone-900 text-white rounded-xl text-sm font-medium hover:bg-stone-800 transition-colors flex items-center justify-center gap-2 min-w-[80px]">
                     <span>Load</span>
@@ -138,7 +129,7 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             
             <div class="flex items-center justify-center gap-2 text-xs text-stone-400">
                 <i data-lucide="info" class="w-4 h-4"></i>
-                <span>Use "File > Share > Publish to web" > CSV</span>
+                <span>Use a standard "Share > Anyone with link" URL</span>
             </div>
         </div>
     </div>
@@ -248,7 +239,8 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
         let currentIndex = 0;
         let isFlipped = false;
         let fileName = "";
-        let currentShareUrl = ""; // To track if we should share the CSV URL or the Data blob
+        let currentShareUrl = ""; 
+        let currentGid = null; // Store Sheet GID (Tab ID)
 
         // --- DOM Elements ---
         const uploadView = document.getElementById('upload-view');
@@ -279,6 +271,50 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
         const flipBtn = document.getElementById('flip-btn');
         const shareBtn = document.getElementById('share-btn');
 
+        // --- Helper: Google ID & GID Extractor ---
+        // Looks for patterns like /d/ID/edit or /d/e/ID/pub
+        const extractGoogleInfo = (input) => {
+            if (!input) return null;
+            
+            let id = null;
+            let gid = null;
+
+            // Pattern 1: Published to web (long ID starting with 2PACX...)
+            const pubMatch = input.match(/\/spreadsheets\/d\/e\/([a-zA-Z0-9-_]+)\//);
+            if (pubMatch && pubMatch[1]) {
+                id = pubMatch[1];
+            }
+            
+            // Pattern 2: Standard ID (e.g. /d/1Bxi.../edit)
+            // Matches /d/ID with either / or end of string
+            const stdMatch = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (!id && stdMatch && stdMatch[1]) {
+                id = stdMatch[1];
+            }
+
+            // Pattern 3: Input is JUST the ID
+            if (!id && input.length > 20 && !input.includes('/') && !input.includes('.')) {
+                id = input;
+            }
+
+            // Extract GID (Tab ID)
+            const gidMatch = input.match(/[#&?]gid=([0-9]+)/);
+            if (gidMatch && gidMatch[1]) {
+                gid = gidMatch[1];
+            }
+
+            return id ? { id, gid } : null;
+        };
+
+        const buildGoogleExportUrl = (id, gid = null) => {
+            // We use the export endpoint which works for both "Anyone with link" and "Published"
+            let url = `https://docs.google.com/spreadsheets/d/${id}/export?format=csv`;
+            if (gid) {
+                url += `&gid=${gid}`;
+            }
+            return url;
+        };
+
         // --- Logic ---
 
         const showToast = (msg = "Link copied to clipboard!") => {
@@ -297,17 +333,35 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             try {
                 const url = new URL(window.location.href);
                 
-                // Option 1: If we loaded from a CSV URL, share that! (Much shorter)
-                if (currentShareUrl) {
+                // Check if we can extract a Google ID from the current source
+                const googleInfo = extractGoogleInfo(currentShareUrl);
+
+                // Option 1: Clean Google ID
+                if (googleInfo && googleInfo.id) {
+                     url.searchParams.set('id', googleInfo.id);
+                     if (googleInfo.gid) {
+                         url.searchParams.set('gid', googleInfo.gid);
+                     } else if (currentGid) {
+                         url.searchParams.set('gid', currentGid);
+                     }
+                     url.searchParams.delete('csv');
+                     url.searchParams.delete('data');
+                }
+                // Option 2: Generic CSV URL
+                else if (currentShareUrl) {
                      url.searchParams.set('csv', currentShareUrl);
-                     url.searchParams.delete('data'); // Remove heavy data param if it existed
+                     url.searchParams.delete('id');
+                     url.searchParams.delete('gid');
+                     url.searchParams.delete('data');
                 } 
-                // Option 2: Otherwise, compress the data (Fallback for file uploads)
+                // Option 3: Compressed Data (Fallback)
                 else {
                     const jsonStr = JSON.stringify(cards);
                     const compressed = LZString.compressToEncodedURIComponent(jsonStr);
                     url.searchParams.set('data', compressed);
                     url.searchParams.delete('csv');
+                    url.searchParams.delete('id');
+                    url.searchParams.delete('gid');
                 }
                 
                 // Copy to clipboard
@@ -331,15 +385,29 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             const params = new URLSearchParams(window.location.search);
             const dataParam = params.get('data');
             const csvParam = params.get('csv');
+            const idParam = params.get('id');
+            const gidParam = params.get('gid');
             
-            // Priority 1: CSV URL
+            // Priority 1: Google Sheet ID
+            if (idParam) {
+                const fullUrl = buildGoogleExportUrl(idParam, gidParam);
+                urlInput.value = idParam; // Show ID in input
+                // Construct pseudo-url for share tracking
+                currentShareUrl = `https://docs.google.com/spreadsheets/d/${idParam}/edit` + (gidParam ? `#gid=${gidParam}` : '');
+                currentGid = gidParam;
+                await handleFetchUrl(fullUrl); 
+                return;
+            }
+
+            // Priority 2: Full CSV URL
             if (csvParam) {
                 urlInput.value = csvParam;
+                currentShareUrl = csvParam;
                 await handleFetchUrl(csvParam);
                 return;
             }
 
-            // Priority 2: Compressed Data
+            // Priority 3: Compressed Data
             if (dataParam) {
                 try {
                     const decompressed = LZString.decompressFromEncodedURIComponent(dataParam);
@@ -350,7 +418,7 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
                             fileName = "Shared Deck";
                             currentIndex = 0;
                             isFlipped = false;
-                            currentShareUrl = ""; // No CSV url backing this
+                            currentShareUrl = ""; 
                             updateUI();
                         }
                     }
@@ -370,41 +438,47 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             try {
                 let response;
                 
-                // Attempt 1: Direct Fetch (works on some browsers/extensions)
+                // Attempt 1: Direct Fetch
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout for direct
+                    const timeoutId = setTimeout(() => controller.abort(), 3000); 
                     response = await fetch(url, { signal: controller.signal });
                     clearTimeout(timeoutId);
                     
                     if (!response.ok) throw new Error("Direct fetch failed");
                 } catch (directError) {
-                    console.warn("Direct fetch failed, switching to Proxy...", directError);
-                    
                     // Attempt 2: CORS Proxy Fallback
-                    // allorigins.win is a free open source CORS proxy
+                    // We use allorigins.win
                     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
                     response = await fetch(proxyUrl);
-                    
                     if (!response.ok) throw new Error("Proxy fetch failed");
                 }
 
                 const text = await response.text();
                 
+                // Verify we got CSV and not a Google Login page HTML
+                if (text.trim().startsWith('<!DOCTYPE html>') || text.includes('<html')) {
+                    throw new Error("Received HTML instead of CSV. Link might not be public.");
+                }
+
                 const parsedCards = parseCSV(text);
                 if (parsedCards.length > 0) {
                     cards = parsedCards;
                     fileName = "Remote Deck";
                     currentIndex = 0;
                     isFlipped = false;
-                    currentShareUrl = url; 
+                    
+                    // Note: currentShareUrl is set before calling this in most cases
+                    // If not, we set it here to the fetched URL as fallback
+                    if (!currentShareUrl) currentShareUrl = url;
+
                     updateUI();
                 } else {
-                    alert("No valid flashcards found. Check if the sheet is published as CSV.");
+                    alert("No valid flashcards found. Check your CSV format.");
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
-                alert("Failed to load CSV. Google might be blocking the request. Ensure it is a 'Publish to web' link.");
+                alert("Failed to load. \n1. Ensure 'Anyone with the link' is Viewer.\n2. Ensure the sheet has data.");
             } finally {
                 urlBtn.innerHTML = originalBtnText;
                 urlBtn.disabled = false;
@@ -451,7 +525,6 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
 
             const cleanRows = rows.filter(r => r.length >= 2 && (r[0] || r[1]));
             
-            // Heuristic for header removal
             if (cleanRows.length > 0) {
                 const first = cleanRows[0];
                 if (first[0].toLowerCase().includes('question') && first[1].toLowerCase().includes('answer')) {
@@ -475,7 +548,6 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
                 return;
             }
 
-            // Switch to flashcard view
             uploadView.classList.add('hidden-view');
             flashcardView.classList.remove('hidden-view');
             document.body.classList.remove('bg-stone-50');
@@ -483,18 +555,15 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
 
             const currentCard = cards[currentIndex];
             
-            // Update Text
             cardQuestion.textContent = currentCard.question;
             cardAnswer.textContent = currentCard.answer;
             fileNameDisplay.textContent = fileName;
             
-            // Update Progress
             currentIndexDisplay.textContent = currentIndex + 1;
             totalCountDisplay.textContent = cards.length;
             const progress = ((currentIndex + 1) / cards.length) * 100;
             progressBar.style.width = `${progress}%`;
 
-            // Update Flip State
             if (isFlipped) {
                 cardInner.classList.add('rotate-y-180');
                 flipBtn.textContent = "Show Question";
@@ -508,7 +577,8 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
         const handleFileUpload = (file) => {
             if (!file) return;
             fileName = file.name;
-            currentShareUrl = ""; // Reset URL share if uploading local file
+            currentShareUrl = ""; 
+            currentGid = null;
             
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -538,7 +608,7 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
 
         const handleNext = () => {
             isFlipped = false;
-            updateUI(); // Immediate update for flip reset
+            updateUI(); 
             setTimeout(() => {
                 currentIndex = (currentIndex + 1) % cards.length;
                 updateUI();
@@ -560,13 +630,15 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             isFlipped = false;
             fileName = "";
             currentShareUrl = "";
+            currentGid = null;
             fileInput.value = ""; 
             urlInput.value = "";
             
-            // Clear URL param
             const url = new URL(window.location.href);
             url.searchParams.delete('data');
             url.searchParams.delete('csv');
+            url.searchParams.delete('id');
+            url.searchParams.delete('gid');
             window.history.pushState({}, '', url);
             
             updateUI();
@@ -574,7 +646,6 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
 
         // --- Event Listeners ---
 
-        // Drag & Drop
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('border-blue-500', 'bg-blue-50/50', 'scale-[1.02]');
@@ -605,16 +676,32 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files[0]));
 
-        // URL Load
-        urlBtn.addEventListener('click', () => {
+        // Handle URL Input
+        const processInput = () => {
             const val = urlInput.value.trim();
-            if(val) handleFetchUrl(val);
-        });
-        urlInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') {
-                const val = urlInput.value.trim();
-                if(val) handleFetchUrl(val);
+            if (!val) return;
+
+            // Check if it's an ID or a URL
+            const googleInfo = extractGoogleInfo(val);
+            if (googleInfo && googleInfo.id) {
+                // If it's an ID/Sheet URL, construct the Export URL
+                const exportUrl = buildGoogleExportUrl(googleInfo.id, googleInfo.gid);
+                
+                // Track the ID/URL for cleaner sharing later
+                currentShareUrl = val; 
+                if (googleInfo.gid) currentGid = googleInfo.gid;
+
+                handleFetchUrl(exportUrl);
+            } else {
+                // Assume it's a direct generic CSV link
+                currentShareUrl = val;
+                handleFetchUrl(val);
             }
+        };
+
+        urlBtn.addEventListener('click', processInput);
+        urlInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') processInput();
         });
 
         // Controls
@@ -637,11 +724,8 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
         resetBtn.addEventListener('click', resetApp);
         shareBtn.addEventListener('click', generateShareLink);
 
-        // Keyboard
         window.addEventListener('keydown', (e) => {
-            // Disable keyboard shortcuts if user is typing in the URL input
             if (document.activeElement === urlInput) return;
-            
             if (cards.length === 0) return;
 
             switch(e.code) {
@@ -662,7 +746,6 @@ https://docs.google.com/spreadsheets/d/e/2PACX-1vRTwWY2dgWU2R1b0dSBMJ0Aeoh1nUQFR
             }
         });
 
-        // Init
         lucide.createIcons();
         loadFromParams();
     </script>
