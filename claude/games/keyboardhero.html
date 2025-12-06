@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyboardHero</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+            border-left: 2px solid #333;
+            border-right: 2px solid #333;
+        }
+
+        /* UI Overlays */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .score-box {
+            text-align: right;
+        }
+
+        .health-container {
+            width: 300px;
+            height: 20px;
+            background: #222;
+            border: 2px solid #555;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #health-bar {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+            transition: width 0.1s linear;
+        }
+
+        #combo-display {
+            font-size: 3rem;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
+            font-weight: 900;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: center;
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Menu Overlay */
+        #menu-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0 0 20px 0;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 800px;
+        }
+
+        button {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 15px 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #00ffff;
+            color: black;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        button.disabled {
+            border-color: #555;
+            color: #555;
+            pointer-events: none;
+        }
+
+        .stats-panel {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #ff00ff;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.2);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .grade {
+            font-size: 6rem;
+            font-weight: 900;
+            margin: 20px 0;
+            color: gold;
+            text-shadow: 0 0 30px gold;
+        }
+
+        #start-instruction {
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Practice Mode Specifics */
+        .practice-label {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #00ffff;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        #practice-hud {
+            display: none;
+            position: absolute;
+            top: 130px; /* Moved to top to avoid keyboard */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ffff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            accent-color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div>
+                <div style="font-size: 1.5rem">MULTIPLIER</div>
+                <div id="multiplier-display" style="font-size: 3rem; color: #00ffff">x1</div>
+            </div>
+            <div class="score-box">
+                <div style="font-size: 1.5rem">SCORE</div>
+                <div id="score-display" style="font-size: 3rem">000000</div>
+            </div>
+        </div>
+        <div id="combo-display">COMBO 10!</div>
+        <div style="align-self: center">
+            <div style="text-align: center; margin-bottom: 5px;">SYSTEM INTEGRITY</div>
+            <div class="health-container">
+                <div id="health-bar"></div>
+            </div>
+        </div>
+        
+        <!-- Practice HUD -->
+        <div id="practice-hud">
+            <div style="color: #00ffff; margin-bottom: 5px; font-size: 0.8rem;">TEMPORAL DILATION (SPEED)</div>
+            <input type="range" id="speed-slider" min="0.1" max="1.0" step="0.1" value="1.0" oninput="updateSpeed(this.value)">
+            <div id="speed-value" style="font-weight: bold; margin-top: 5px;">100%</div>
+        </div>
+    </div>
+
+    <!-- Menus -->
+    <div id="menu-overlay">
+        <!-- Main Menu -->
+        <div id="main-menu">
+            <h1>KEYBOARD HERO</h1>
+            <p style="margin-bottom: 10px; font-family: 'Roboto Mono'">SELECT PROTOCOL LEVEL</p>
+            
+            <label class="practice-label">
+                <input type="checkbox" id="practice-mode-toggle" style="transform: scale(1.5); margin-right: 10px;">
+                Practice Mode (No Fail)
+            </label>
+
+            <div class="level-grid" id="level-buttons">
+                <!-- Generated by JS -->
+            </div>
+            <div id="start-instruction">Audio required. Click a level to initialize.</div>
+        </div>
+
+        <!-- Post Game Report -->
+        <div id="post-game" class="stats-panel">
+            <h2 id="report-title">MISSION COMPLETE</h2>
+            <div class="grade" id="report-grade">S</div>
+            <div style="width: 400px; margin: 0 auto;">
+                <div class="stat-row"><span>Final Score</span><span id="report-score">0</span></div>
+                <div class="stat-row"><span>Accuracy</span><span id="report-accuracy">0%</span></div>
+                <div class="stat-row"><span>Max Combo</span><span id="report-combo">0</span></div>
+                <br>
+                <div class="stat-row" style="color: #00ffff"><span>PERFECT</span><span id="report-perfect">0</span></div>
+                <div class="stat-row" style="color: #00ff00"><span>GREAT</span><span id="report-great">0</span></div>
+                <div class="stat-row" style="color: #ffff00"><span>GOOD</span><span id="report-good">0</span></div>
+                <div class="stat-row" style="color: #ff0000"><span>MISS</span><span id="report-miss">0</span></div>
+            </div>
+            <br>
+            <button onclick="returnToMenu()">RETURN TO HUB</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * KEYBOARD HERO - DEVELOPER BLUEPRINT IMPLEMENTATION
+ */
+
+// --- CONSTANTS & CONFIG ---
+const CANVAS_WIDTH = 1000; 
+const CANVAS_HEIGHT = 900; // Increased height to fit full keyboard
+const SCROLL_SPEED = 400; // Pixels per second
+const SPAWN_Y = -50;
+const KEYBOARD_Y = 600; // Moved up to allow bottom row visibility
+// Note: HIT_ZONE_Y is no longer a single global line; notes target specific keys.
+const HIT_WINDOW_PERFECT = 40; // ms
+const HIT_WINDOW_GREAT = 80;   // ms
+const HIT_WINDOW_GOOD = 120;   // ms
+
+// Level Definitions (Keys allowed per level)
+const LEVEL_DATA = [
+    { id: 1, name: "Home Row", keys: "asdfghjkl;'" },
+    { id: 2, name: "Top Row", keys: "qwertyuiop[]" },
+    { id: 3, name: "Bottom Row", keys: "zxcvbnm,./" },
+    { id: 4, name: "Number Row", keys: "1234567890-=" },
+    { id: 5, name: "Top + Home", keys: "qwertyuiop[]asdfghjkl;'" },
+    { id: 6, name: "Basic Alpha", keys: "qwertyuiop[]asdfghjkl;'zxcvbnm,./" },
+    { id: 7, name: "Alphanumeric", keys: "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890-=" },
+    { id: 8, name: "Shifted Bottom", keys: "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890-=<>?:{}" },
+    { id: 9, name: "Symbols", keys: "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890-=<>?:{}!@#$%^&*()_+" },
+    { id: 10, name: "God Mode", keys: "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890-=<>?:{}!@#$%^&*()_+ABCDEFGHIJKLMNOPQRSTUVWXYZ" }
+];
+
+// --- VISUAL KEYBOARD LAYOUT MAPPING ---
+// We map every character to a {row, index} on a standard QWERTY
+const KEYBOARD_LAYOUT = [
+    "`1234567890-=",
+    "qwertyuiop[]\\",
+    "asdfghjkl;'",
+    "zxcvbnm,./"
+];
+
+// Map shift-characters to their base key for positioning
+// e.g. '!' falls on '1', '?' falls on '/'
+const SHIFT_MAP = {
+    '~':'`', '!':'1', '@':'2', '#':'3', '$':'4', '%':'5', '^':'6', '&':'7', '*':'8', '(':'9', ')':'0', '_':'-', '+':'+',
+    '{':'[', '}':']', '|':'\\', ':':';', '"':"'", '<':',', '>':'.', '?':'/'
+};
+
+// Store pre-calculated key coordinates {char: {x, y, w, h}}
+const KEY_COORDS = {}; 
+const KEY_SIZE = 55;
+const KEY_GAP = 5;
+
+// --- AUDIO SYSTEM (Web Audio API) ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    
+    if (type === 'hit') {
+        // Crisp synth pluck
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440 + Math.random()*200, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+    } else if (type === 'miss') {
+        // Low buzzer
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+    }
+}
+
+// --- GAME STATE ---
+let gameState = 'MENU'; // MENU, PLAYING, GAMEOVER
+let isPracticeMode = false;
+let timeScale = 1.0;
+let currentLevelData = null;
+let notes = []; // The active falling notes
+let particles = [];
+let songChart = []; // The "Script" for the level
+let gameTime = 0; // Current time in seconds
+let lastFrameTime = 0;
+let nextNoteIndex = 0;
+let pressedKeys = {}; // Track visually pressed keys { 'a': timestamp }
+
+// Stats
+let score = 0;
+let health = 50; // 0 to 100
+let combo = 0;
+let maxCombo = 0;
+let multiplier = 1;
+let stats = { perfect:0, great:0, good:0, miss:0 };
+
+// Canvas Setup
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
+
+// --- INIT VIRTUAL KEYBOARD ---
+function initKeyboardCoords() {
+    // Center the keyboard
+    const totalW = 14 * (KEY_SIZE + KEY_GAP); // Approx width of number row
+    const startX = (CANVAS_WIDTH - totalW) / 2;
+    
+    KEYBOARD_LAYOUT.forEach((rowStr, rIndex) => {
+        // Indentation for standard layout feel
+        let rowOffset = rIndex * 20; 
+        
+        for(let i=0; i<rowStr.length; i++) {
+            const char = rowStr[i];
+            const x = startX + rowOffset + (i * (KEY_SIZE + KEY_GAP));
+            const y = KEYBOARD_Y + (rIndex * (KEY_SIZE + KEY_GAP));
+            
+            KEY_COORDS[char] = { x, y, w: KEY_SIZE, h: KEY_SIZE, baseChar: char };
+        }
+    });
+}
+
+// Helper to get spawn coordinate for any char (handles shift map)
+function getTargetCoord(char) {
+    const lower = char.toLowerCase();
+    // 1. Check direct map (lower case logic)
+    if (KEY_COORDS[lower]) return KEY_COORDS[lower];
+    
+    // 2. Check shift map (e.g. '!' -> '1')
+    if (SHIFT_MAP[char]) {
+        const base = SHIFT_MAP[char];
+        if (KEY_COORDS[base]) return KEY_COORDS[base];
+    }
+    
+    // Fallback for uppercase letters if not caught
+    if (KEY_COORDS[char.toLowerCase()]) return KEY_COORDS[char.toLowerCase()];
+    
+    return { x: CANVAS_WIDTH/2, y: KEYBOARD_Y, w: KEY_SIZE }; // Should not happen
+}
+
+// --- CORE CLASSES ---
+
+class Note {
+    constructor(char, time) {
+        this.char = char;
+        this.targetTime = time;
+        this.hit = false;
+        this.processed = false; // If missed or hit
+        
+        // Find visual target
+        const coord = getTargetCoord(char);
+        this.x = coord.x + coord.w / 2; // Center of key
+        this.targetY = coord.y + coord.h / 2; // Exact center of visual key
+        
+        // Calculate spawn time based on specific distance to THIS key
+        const dist = this.targetY - SPAWN_Y;
+        const timeToTravel = dist / SCROLL_SPEED;
+        this.spawnTime = this.targetTime - timeToTravel;
+    }
+
+    get y() {
+        return this.targetY - (this.targetTime - gameTime) * SCROLL_SPEED;
+    }
+
+    draw(ctx) {
+        if (this.hit) return;
+
+        const y = this.y;
+        
+        // Glow effect
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#00ffff';
+        ctx.fillStyle = '#000';
+        ctx.strokeStyle = '#00ffff';
+        
+        // Note Shape (Matches key size approx)
+        const size = 45;
+        ctx.beginPath();
+        ctx.roundRect(this.x - size/2, y - size/2, size, size, 6);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Text
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 0;
+        ctx.font = 'bold 20px "Roboto Mono"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.char, this.x, y);
+    }
+}
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 10;
+        this.vy = (Math.random() - 0.5) * 10;
+        this.life = 1.0;
+        this.color = color;
+    }
+    
+    update(dt) {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= dt * 2; // Fade speed
+    }
+    
+    draw(ctx) {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 4, 0, Math.PI*2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+    }
+}
+
+class FloatingText {
+    constructor(text, x, y, color) {
+        this.text = text;
+        this.x = x;
+        this.y = y;
+        this.life = 1.0;
+        this.color = color;
+    }
+    
+    update(dt) {
+        this.y -= 50 * dt; // Float up
+        this.life -= dt * 1.5;
+    }
+    
+    draw(ctx) {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.font = 'bold 20px "Orbitron"';
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.globalAlpha = 1.0;
+    }
+}
+
+// --- GAME LOGIC ---
+
+function generateSong(levelId) {
+    const level = LEVEL_DATA.find(l => l.id === levelId);
+    const availableKeys = level.keys.split('');
+    const chart = [];
+    
+    const songLength = 60; // seconds
+    const bps = 1.0 + (levelId * 0.2); // Notes per second
+    
+    let time = 2.0; // Start delay
+    
+    while(time < songLength) {
+        const key = availableKeys[Math.floor(Math.random() * availableKeys.length)];
+        
+        chart.push({
+            char: key,
+            time: time
+        });
+        
+        // Rhythm randomization
+        const gap = (1 / bps); 
+        const mod = Math.random();
+        if(mod > 0.8) time += gap * 2;
+        else if(mod > 0.6) time += gap / 2;
+        else time += gap;
+    }
+    
+    return chart;
+}
+
+function initGame(levelId) {
+    gameState = 'PLAYING';
+    
+    const toggle = document.getElementById('practice-mode-toggle');
+    isPracticeMode = toggle.checked;
+    timeScale = isPracticeMode ? parseFloat(document.getElementById('speed-slider').value) : 1.0;
+
+    document.getElementById('practice-hud').style.display = isPracticeMode ? 'block' : 'none';
+    if(isPracticeMode) updateSpeed(timeScale);
+
+    currentLevelData = LEVEL_DATA.find(l => l.id === levelId);
+    songChart = generateSong(levelId);
+    
+    notes = [];
+    particles = [];
+    gameTime = 0;
+    nextNoteIndex = 0;
+    score = 0;
+    health = 50;
+    if (isPracticeMode) health = 100;
+    combo = 0;
+    maxCombo = 0;
+    multiplier = 1;
+    stats = { perfect:0, great:0, good:0, miss:0 };
+    lastFrameTime = performance.now();
+    pressedKeys = {};
+    
+    document.getElementById('menu-overlay').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'none';
+    document.getElementById('post-game').style.display = 'none';
+    updateHUD();
+    
+    requestAnimationFrame(gameLoop);
+}
+
+function handleInput(e) {
+    if (gameState !== 'PLAYING') return;
+    if (e.key.length === 1) e.preventDefault();
+
+    const pressedKey = e.key;
+    
+    // Visual Feedback Logic
+    // Find visual key coordinate (handle shift mapping)
+    let visualChar = pressedKey.toLowerCase();
+    if(SHIFT_MAP[pressedKey]) visualChar = SHIFT_MAP[pressedKey];
+    else if(pressedKey.match(/[A-Z]/)) visualChar = pressedKey.toLowerCase();
+    
+    // Mark key as visually pressed for a short time
+    pressedKeys[visualChar] = gameTime;
+
+    const validNotes = notes.filter(n => !n.hit && !n.processed && n.char === pressedKey);
+    
+    if (validNotes.length === 0) {
+        breakCombo();
+        if (!isPracticeMode) health -= 2;
+        playSound('miss');
+        return;
+    }
+
+    const targetNote = validNotes.reduce((prev, curr) => {
+        return Math.abs(curr.targetTime - gameTime) < Math.abs(prev.targetTime - gameTime) ? curr : prev;
+    });
+
+    const diff = Math.abs(targetNote.targetTime - gameTime) * 1000; // ms
+
+    if (diff <= HIT_WINDOW_GOOD) {
+        targetNote.hit = true;
+        targetNote.processed = true;
+        
+        let points = 0;
+        let flavor = "";
+        let color = "";
+        
+        if (diff <= HIT_WINDOW_PERFECT) {
+            flavor = "PERFECT";
+            points = 100;
+            color = "#00ffff"; 
+            stats.perfect++;
+            health += 5;
+        } else if (diff <= HIT_WINDOW_GREAT) {
+            flavor = "GREAT";
+            points = 75;
+            color = "#00ff00"; 
+            stats.great++;
+            health += 3;
+        } else {
+            flavor = "GOOD";
+            points = 50;
+            color = "#ffff00"; 
+            stats.good++;
+            health += 1;
+        }
+        
+        score += points * multiplier;
+        incrementCombo();
+        
+        spawnExplosion(targetNote.x, targetNote.y, color);
+        particles.push(new FloatingText(flavor, targetNote.x, targetNote.y - 60, color));
+        playSound('hit');
+        
+        if (health < 100) health += (isPracticeMode ? 0 : points/20);
+
+    } else {
+        // Too early/late logic... 
+    }
+    
+    updateHUD();
+}
+
+function updateSpeed(val) {
+    timeScale = parseFloat(val);
+    document.getElementById('speed-value').innerText = Math.round(timeScale * 100) + '%';
+}
+
+function breakCombo() {
+    combo = 0;
+    multiplier = 1;
+    updateHUD();
+    const comboEl = document.getElementById('combo-display');
+    comboEl.style.opacity = 0;
+}
+
+function incrementCombo() {
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
+    
+    if (combo >= 30) multiplier = 4;
+    else if (combo >= 20) multiplier = 3;
+    else if (combo >= 10) multiplier = 2;
+    else multiplier = 1;
+    
+    const comboEl = document.getElementById('combo-display');
+    comboEl.textContent = `COMBO ${combo}!`;
+    comboEl.style.opacity = 1;
+    comboEl.style.transform = "translateX(-50%) scale(1.2)";
+    setTimeout(() => {
+        comboEl.style.transform = "translateX(-50%) scale(1.0)";
+    }, 100);
+}
+
+function spawnExplosion(x, y, color) {
+    for(let i=0; i<10; i++) {
+        particles.push(new Particle(x, y, color));
+    }
+}
+
+function failGame() {
+    gameState = 'GAMEOVER';
+    showPostGame(false);
+    playSound('miss');
+}
+
+function finishLevel() {
+    gameState = 'GAMEOVER';
+    showPostGame(true);
+}
+
+// --- RENDERING ---
+
+function drawKeyboard(ctx) {
+    ctx.lineWidth = 2;
+    ctx.font = '16px "Roboto Mono"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Render Layout
+    for (const char in KEY_COORDS) {
+        const k = KEY_COORDS[char];
+        
+        const isPressed = pressedKeys[char] && (gameTime - pressedKeys[char] < 0.15);
+        
+        if (isPressed) {
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#00ffff';
+            ctx.strokeStyle = '#fff';
+            ctx.fillRect(k.x, k.y, k.w, k.h);
+        } else {
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; // Background for legibility
+            ctx.strokeStyle = '#555';
+            ctx.shadowBlur = 0;
+            ctx.fillRect(k.x, k.y, k.w, k.h);
+        }
+        
+        // Stroke
+        ctx.beginPath();
+        ctx.roundRect(k.x, k.y, k.w, k.h, 4);
+        ctx.stroke();
+        
+        // Label
+        ctx.fillStyle = isPressed ? '#fff' : '#888';
+        ctx.fillText(char.toUpperCase(), k.x + k.w/2, k.y + k.h/2);
+    }
+}
+
+function gameLoop(timestamp) {
+    if (gameState !== 'PLAYING') return;
+
+    const realDt = (timestamp - lastFrameTime) / 1000;
+    lastFrameTime = timestamp;
+    const dt = realDt * timeScale;
+    gameTime += dt;
+
+    // --- LOGIC ---
+    
+    // Note Spawning (Using Max possible travel time roughly to catch all)
+    // Distance from Spawn to Bottom Row ~ 900
+    const maxDist = (CANVAS_HEIGHT - SPAWN_Y);
+    const maxTravelTime = maxDist / SCROLL_SPEED;
+    
+    while(nextNoteIndex < songChart.length) {
+        const noteData = songChart[nextNoteIndex];
+        // Ensure we spawn it early enough
+        // Note: note constructor recalcs exact spawn time, this is just the "trigger" loop
+        if (gameTime >= noteData.time - maxTravelTime) {
+            // We create it, and it calculates its own specific y-pos based on its target key
+            notes.push(new Note(noteData.char, noteData.time));
+            nextNoteIndex++;
+        } else {
+            break;
+        }
+    }
+    
+    if (nextNoteIndex >= songChart.length && notes.length === 0) {
+        finishLevel();
+        return;
+    }
+
+    for (let i = notes.length - 1; i >= 0; i--) {
+        const n = notes[i];
+        
+        // Miss Line: Slightly below the target key
+        const missLine = n.targetY + 40; 
+        
+        if (!n.processed && n.y > missLine) {
+            n.processed = true;
+            stats.miss++;
+            if (!isPracticeMode) health -= 20;
+            breakCombo();
+            particles.push(new FloatingText("MISS", n.x, n.y, "#ff0000"));
+            playSound('miss');
+        }
+        
+        if (n.y > CANVAS_HEIGHT + 50) notes.splice(i, 1);
+    }
+    
+    if (health > 100) health = 100;
+    if (health <= 0 && !isPracticeMode) {
+        failGame();
+        return;
+    }
+    
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update(dt);
+        if (particles[i].life <= 0) particles.splice(i, 1);
+    }
+
+    // --- DRAW ---
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    // Background Grid
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+    // Simple perspective lines
+    const centerX = CANVAS_WIDTH / 2;
+    for(let i=-5; i<=5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(centerX + i * 100, 0);
+        ctx.lineTo(centerX + i * 300, CANVAS_HEIGHT); // Faking perspective
+        ctx.stroke();
+    }
+    
+    // Draw Virtual Keyboard (Target Zone)
+    drawKeyboard(ctx);
+
+    // Draw Notes
+    notes.forEach(n => n.draw(ctx));
+    
+    // Draw Particles
+    particles.forEach(p => p.draw(ctx));
+
+    updateHUD();
+    requestAnimationFrame(gameLoop);
+}
+
+// --- UI & MENUS ---
+
+function updateHUD() {
+    document.getElementById('score-display').innerText = score.toString().padStart(6, '0');
+    document.getElementById('multiplier-display').innerText = 'x' + multiplier;
+    
+    const hb = document.getElementById('health-bar');
+    if (isPracticeMode) {
+        hb.style.width = '100%';
+        hb.style.background = '#00ffff'; 
+    } else {
+        hb.style.width = health + '%';
+        if (health < 30) hb.style.background = '#ff0000';
+        else if (health < 60) hb.style.background = '#ffff00';
+        else hb.style.background = '#00ff00';
+    }
+}
+
+function initMenu() {
+    // Calc coords once on load
+    initKeyboardCoords();
+    
+    const grid = document.getElementById('level-buttons');
+    grid.innerHTML = '';
+    
+    LEVEL_DATA.forEach(level => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<div>Lvl ${level.id}</div><div style="font-size:0.8em; color: #888">${level.name}</div>`;
+        btn.onclick = () => initGame(level.id);
+        grid.appendChild(btn);
+    });
+}
+
+function showPostGame(cleared) {
+    document.getElementById('menu-overlay').style.display = 'flex';
+    document.getElementById('main-menu').style.display = 'none';
+    const p = document.getElementById('post-game');
+    p.style.display = 'block';
+    
+    if (!cleared) {
+        document.getElementById('report-title').innerText = "SYSTEM FAILURE";
+        document.getElementById('report-title').style.color = "red";
+        document.getElementById('report-grade').innerText = "F";
+        document.getElementById('report-grade').style.color = "red";
+    } else {
+        document.getElementById('report-title').innerText = "MISSION COMPLETE";
+        document.getElementById('report-title').style.color = "#00ffff";
+        
+        const total = stats.perfect + stats.great + stats.good + stats.miss;
+        const hits = stats.perfect + stats.great + stats.good;
+        const accuracy = total > 0 ? (hits / total) * 100 : 0;
+        
+        let grade = "C";
+        if (accuracy >= 98) grade = "S";
+        else if (accuracy >= 90) grade = "A";
+        else if (accuracy >= 80) grade = "B";
+        
+        document.getElementById('report-grade').innerText = grade;
+        document.getElementById('report-grade').style.color = "gold";
+        document.getElementById('report-accuracy').innerText = accuracy.toFixed(1) + "%";
+    }
+    
+    document.getElementById('report-score').innerText = score;
+    document.getElementById('report-combo').innerText = maxCombo;
+    document.getElementById('report-perfect').innerText = stats.perfect;
+    document.getElementById('report-great').innerText = stats.great;
+    document.getElementById('report-good').innerText = stats.good;
+    document.getElementById('report-miss').innerText = stats.miss;
+}
+
+function returnToMenu() {
+    document.getElementById('post-game').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'block';
+}
+
+// --- BOOTSTRAP ---
+window.addEventListener('keydown', handleInput);
+window.onload = initMenu;
+
+</script>
+</body>
+</html>
