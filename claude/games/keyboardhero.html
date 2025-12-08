@@ -51,6 +51,51 @@
             justify-content: space-between;
             align-items: flex-start;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            margin-top: 20px;
+        }
+
+        #progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #111;
+            z-index: 5;
+        }
+        
+        #progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            transition: width 0.2s linear;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        /* HOME BUTTON */
+        #home-btn {
+            pointer-events: auto;
+            background: transparent;
+            border: 1px solid #555;
+            color: #888;
+            padding: 5px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        #home-btn:hover {
+            border-color: #00ffff;
+            color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            background: rgba(0, 255, 255, 0.1);
         }
 
         .score-box {
@@ -83,7 +128,7 @@
             transition: opacity 0.2s;
             text-align: center;
             position: absolute;
-            top: 20%;
+            top: 25%;
             left: 50%;
             transform: translateX(-50%);
         }
@@ -113,6 +158,50 @@
             text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
         }
 
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .diff-btn {
+            background: transparent;
+            border: 1px solid #555;
+            color: #888;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .diff-btn.active {
+            border-color: #00ffff;
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Options Row (Mute & Practice) */
+        .options-row {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #00ffff;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .option-label input {
+            transform: scale(1.5);
+            margin-right: 10px;
+            accent-color: #00ffff;
+        }
+
         .level-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -130,6 +219,7 @@
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
+            position: relative;
         }
 
         button:hover {
@@ -138,10 +228,24 @@
             box-shadow: 0 0 20px #00ffff;
         }
 
-        button.disabled {
-            border-color: #555;
-            color: #555;
-            pointer-events: none;
+        /* Completed Level Style */
+        button.completed {
+            border-color: #00ff00;
+            color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        button.completed::after {
+            content: "✓ CLEARED";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #00ff00;
+            color: black;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
         .stats-panel {
@@ -177,20 +281,10 @@
             font-size: 0.9rem;
         }
 
-        /* Practice Mode Specifics */
-        .practice-label {
-            display: block;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: #00ffff;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        
         #practice-hud {
             display: none;
             position: absolute;
-            top: 130px; /* Moved to top to avoid keyboard */
+            top: 130px; 
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
@@ -213,6 +307,12 @@
     <canvas id="gameCanvas"></canvas>
     
     <div id="ui-layer">
+        <div id="progress-container">
+            <div id="progress-fill"></div>
+        </div>
+
+        <button id="home-btn" onclick="quitToMenu()">HOME</button>
+
         <div class="hud-top">
             <div>
                 <div style="font-size: 1.5rem">MULTIPLIER</div>
@@ -244,13 +344,26 @@
         <!-- Main Menu -->
         <div id="main-menu">
             <h1>KEYBOARD HERO</h1>
-            <p style="margin-bottom: 10px; font-family: 'Roboto Mono'">SELECT PROTOCOL LEVEL</p>
             
-            <label class="practice-label">
-                <input type="checkbox" id="practice-mode-toggle" style="transform: scale(1.5); margin-right: 10px;">
-                Practice Mode (No Fail)
-            </label>
+            <p style="margin-bottom: 10px; font-family: 'Roboto Mono'">SELECT DIFFICULTY</p>
+            <div class="difficulty-selector">
+                <button class="diff-btn" id="btn-easy" onclick="setDifficulty('EASY')">EASY</button>
+                <button class="diff-btn active" id="btn-medium" onclick="setDifficulty('MEDIUM')">MEDIUM</button>
+                <button class="diff-btn" id="btn-expert" onclick="setDifficulty('EXPERT')">EXPERT</button>
+            </div>
 
+            <div class="options-row">
+                <label class="option-label">
+                    <input type="checkbox" id="practice-mode-toggle">
+                    Practice Mode (No Fail)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="mute-toggle" onchange="toggleMute(this)">
+                    Mute Audio
+                </label>
+            </div>
+
+            <p style="margin-bottom: 10px; margin-top: 10px; font-family: 'Roboto Mono'">SELECT PROTOCOL LEVEL</p>
             <div class="level-grid" id="level-buttons">
                 <!-- Generated by JS -->
             </div>
@@ -284,14 +397,20 @@
 
 // --- CONSTANTS & CONFIG ---
 const CANVAS_WIDTH = 1000; 
-const CANVAS_HEIGHT = 900; // Increased height to fit full keyboard
-const SCROLL_SPEED = 400; // Pixels per second
+const CANVAS_HEIGHT = 900; 
 const SPAWN_Y = -50;
-const KEYBOARD_Y = 600; // Moved up to allow bottom row visibility
-// Note: HIT_ZONE_Y is no longer a single global line; notes target specific keys.
+const KEYBOARD_Y = 600; 
 const HIT_WINDOW_PERFECT = 40; // ms
 const HIT_WINDOW_GREAT = 80;   // ms
 const HIT_WINDOW_GOOD = 120;   // ms
+const SONG_DURATION = 60; // seconds - CHANGE THIS to adjust level length for testing
+
+// Difficulty Settings
+const DIFFICULTY_CONFIG = {
+    'EASY': { scrollSpeed: 250, densityMod: 0.6 },
+    'MEDIUM': { scrollSpeed: 450, densityMod: 1.0 },
+    'EXPERT': { scrollSpeed: 650, densityMod: 1.6 }
+};
 
 // Level Definitions (Keys allowed per level)
 const LEVEL_DATA = [
@@ -308,7 +427,6 @@ const LEVEL_DATA = [
 ];
 
 // --- VISUAL KEYBOARD LAYOUT MAPPING ---
-// We map every character to a {row, index} on a standard QWERTY
 const KEYBOARD_LAYOUT = [
     "`1234567890-=",
     "qwertyuiop[]\\",
@@ -316,69 +434,204 @@ const KEYBOARD_LAYOUT = [
     "zxcvbnm,./"
 ];
 
-// Map shift-characters to their base key for positioning
-// e.g. '!' falls on '1', '?' falls on '/'
 const SHIFT_MAP = {
     '~':'`', '!':'1', '@':'2', '#':'3', '$':'4', '%':'5', '^':'6', '&':'7', '*':'8', '(':'9', ')':'0', '_':'-', '+':'+',
     '{':'[', '}':']', '|':'\\', ':':';', '"':"'", '<':',', '>':'.', '?':'/'
 };
 
-// Store pre-calculated key coordinates {char: {x, y, w, h}}
 const KEY_COORDS = {}; 
 const KEY_SIZE = 55;
 const KEY_GAP = 5;
 
 // --- AUDIO SYSTEM (Web Audio API) ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let noiseBuffer = null;
+let bgmInterval = null;
+let nextNoteTime = 0;
+let beatCount = 0;
+let isMuted = false;
 
-function playSound(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    
-    const now = audioCtx.currentTime;
-    
-    if (type === 'hit') {
-        // Crisp synth pluck
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(440 + Math.random()*200, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.start(now);
-        osc.stop(now + 0.15);
-    } else if (type === 'miss') {
-        // Low buzzer
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
+// Dynamic Music State
+let currentTempo = 120;
+let currentBassFreq = 55;
+let currentHihatRate = 1; // 1 = 8th notes, 2 = 16th notes
+
+// Initialize White Noise Buffer for "Typewriter" effect
+function createNoiseBuffer() {
+    if (noiseBuffer) return;
+    const bufferSize = audioCtx.sampleRate * 0.1; // 0.1 seconds
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+    }
+    noiseBuffer = buffer;
+}
+
+function toggleMute(checkbox) {
+    isMuted = checkbox.checked;
+    if (isMuted) {
+        if (audioCtx.state === 'running') audioCtx.suspend();
+    } else {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 }
 
+function playSound(type) {
+    if (isMuted) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    createNoiseBuffer(); 
+
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    gain.connect(audioCtx.destination);
+
+    if (type === 'type') {
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const noiseFilter = audioCtx.createBiquadFilter();
+        noiseFilter.type = 'highpass';
+        noiseFilter.frequency.value = 1000;
+        noise.connect(noiseFilter);
+        noiseFilter.connect(gain);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+        noise.start(now);
+        noise.stop(now + 0.05);
+        
+    } else if (type === 'error') {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(100, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
+        osc.connect(gain);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+        
+    } else if (type === 'miss') {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(80, now + 0.4);
+        osc.connect(gain);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+    }
+}
+
+// --- BGM ENGINE (Procedural Techno) ---
+function playDrum(time, type) {
+    if (isMuted) return;
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'kick') {
+        osc.frequency.setValueAtTime(150, time);
+        osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+        gain.gain.setValueAtTime(0.7, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+        osc.start(time);
+        osc.stop(time + 0.5);
+    } else if (type === 'hihat') {
+        createNoiseBuffer();
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 5000;
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.gain.setValueAtTime(0.3, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+        noise.start(time);
+        noise.stop(time + 0.05);
+    } else if (type === 'bass') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(currentBassFreq, time); 
+        gain.gain.setValueAtTime(0.2, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+        osc.start(time);
+        osc.stop(time + 0.2);
+    }
+}
+
+function scheduler() {
+    const secondsPerBeat = 60.0 / currentTempo;
+    const lookahead = 0.1; 
+
+    while (nextNoteTime < audioCtx.currentTime + lookahead) {
+        // 4/4 Beat Logic
+        // Kick on 1, 2, 3, 4
+        playDrum(nextNoteTime, 'kick');
+        
+        // Hihat logic (8th or 16th notes based on intensity)
+        // 8th notes
+        playDrum(nextNoteTime + secondsPerBeat/2, 'hihat');
+        
+        // If high intensity, add 16th notes
+        if (currentHihatRate === 2) {
+             playDrum(nextNoteTime + secondsPerBeat/4, 'hihat');
+             playDrum(nextNoteTime + (secondsPerBeat * 0.75), 'hihat');
+        }
+        
+        // Bassline on offbeats
+        playDrum(nextNoteTime + secondsPerBeat/2, 'bass');
+
+        nextNoteTime += secondsPerBeat;
+        beatCount++;
+    }
+    bgmInterval = requestAnimationFrame(scheduler);
+}
+
+function startMusic(levelId) {
+    if (audioCtx.state === 'suspended' && !isMuted) audioCtx.resume();
+    
+    // Procedural Parameters based on Level
+    // Tempo ranges from 110 (Lvl 1) to 170 (Lvl 10)
+    currentTempo = 110 + (levelId * 6);
+    
+    // Bass Pitch: Pentatonic-ish scale mapping
+    const baseFreqs = [55, 65.41, 73.42, 82.41, 98.00]; // A, C, D, E, G
+    currentBassFreq = baseFreqs[(levelId - 1) % baseFreqs.length];
+    
+    // Rhythm Complexity
+    currentHihatRate = (levelId > 5) ? 2 : 1;
+
+    nextNoteTime = audioCtx.currentTime + 0.1;
+    beatCount = 0;
+    scheduler();
+}
+
+function stopMusic() {
+    if (bgmInterval) cancelAnimationFrame(bgmInterval);
+}
+
 // --- GAME STATE ---
-let gameState = 'MENU'; // MENU, PLAYING, GAMEOVER
+let gameState = 'MENU'; 
 let isPracticeMode = false;
+let currentDifficulty = 'MEDIUM'; // Default
+let currentScrollSpeed = 450;
 let timeScale = 1.0;
 let currentLevelData = null;
-let notes = []; // The active falling notes
+let notes = []; 
 let particles = [];
-let songChart = []; // The "Script" for the level
-let gameTime = 0; // Current time in seconds
+let songChart = []; 
+let gameTime = 0; 
 let lastFrameTime = 0;
 let nextNoteIndex = 0;
-let pressedKeys = {}; // Track visually pressed keys { 'a': timestamp }
+let pressedKeys = {}; 
+let completedLevels = new Set(); // Track cleared levels
 
 // Stats
 let score = 0;
-let health = 50; // 0 to 100
+let health = 50; 
 let combo = 0;
 let maxCombo = 0;
 let multiplier = 1;
@@ -392,40 +645,29 @@ canvas.height = CANVAS_HEIGHT;
 
 // --- INIT VIRTUAL KEYBOARD ---
 function initKeyboardCoords() {
-    // Center the keyboard
-    const totalW = 14 * (KEY_SIZE + KEY_GAP); // Approx width of number row
+    const totalW = 14 * (KEY_SIZE + KEY_GAP); 
     const startX = (CANVAS_WIDTH - totalW) / 2;
     
     KEYBOARD_LAYOUT.forEach((rowStr, rIndex) => {
-        // Indentation for standard layout feel
         let rowOffset = rIndex * 20; 
-        
         for(let i=0; i<rowStr.length; i++) {
             const char = rowStr[i];
             const x = startX + rowOffset + (i * (KEY_SIZE + KEY_GAP));
             const y = KEYBOARD_Y + (rIndex * (KEY_SIZE + KEY_GAP));
-            
             KEY_COORDS[char] = { x, y, w: KEY_SIZE, h: KEY_SIZE, baseChar: char };
         }
     });
 }
 
-// Helper to get spawn coordinate for any char (handles shift map)
 function getTargetCoord(char) {
     const lower = char.toLowerCase();
-    // 1. Check direct map (lower case logic)
     if (KEY_COORDS[lower]) return KEY_COORDS[lower];
-    
-    // 2. Check shift map (e.g. '!' -> '1')
     if (SHIFT_MAP[char]) {
         const base = SHIFT_MAP[char];
         if (KEY_COORDS[base]) return KEY_COORDS[base];
     }
-    
-    // Fallback for uppercase letters if not caught
     if (KEY_COORDS[char.toLowerCase()]) return KEY_COORDS[char.toLowerCase()];
-    
-    return { x: CANVAS_WIDTH/2, y: KEYBOARD_Y, w: KEY_SIZE }; // Should not happen
+    return { x: CANVAS_WIDTH/2, y: KEYBOARD_Y, w: KEY_SIZE };
 }
 
 // --- CORE CLASSES ---
@@ -435,21 +677,19 @@ class Note {
         this.char = char;
         this.targetTime = time;
         this.hit = false;
-        this.processed = false; // If missed or hit
+        this.processed = false; 
         
-        // Find visual target
         const coord = getTargetCoord(char);
-        this.x = coord.x + coord.w / 2; // Center of key
-        this.targetY = coord.y + coord.h / 2; // Exact center of visual key
+        this.x = coord.x + coord.w / 2; 
+        this.targetY = coord.y + coord.h / 2; 
         
-        // Calculate spawn time based on specific distance to THIS key
         const dist = this.targetY - SPAWN_Y;
-        const timeToTravel = dist / SCROLL_SPEED;
+        const timeToTravel = dist / currentScrollSpeed;
         this.spawnTime = this.targetTime - timeToTravel;
     }
 
     get y() {
-        return this.targetY - (this.targetTime - gameTime) * SCROLL_SPEED;
+        return this.targetY - (this.targetTime - gameTime) * currentScrollSpeed;
     }
 
     draw(ctx) {
@@ -457,20 +697,17 @@ class Note {
 
         const y = this.y;
         
-        // Glow effect
         ctx.shadowBlur = 10;
         ctx.shadowColor = '#00ffff';
         ctx.fillStyle = '#000';
         ctx.strokeStyle = '#00ffff';
         
-        // Note Shape (Matches key size approx)
         const size = 45;
         ctx.beginPath();
         ctx.roundRect(this.x - size/2, y - size/2, size, size, 6);
         ctx.fill();
         ctx.stroke();
         
-        // Text
         ctx.fillStyle = '#fff';
         ctx.shadowBlur = 0;
         ctx.font = 'bold 20px "Roboto Mono"';
@@ -493,7 +730,7 @@ class Particle {
     update(dt) {
         this.x += this.vx;
         this.y += this.vy;
-        this.life -= dt * 2; // Fade speed
+        this.life -= dt * 2; 
     }
     
     draw(ctx) {
@@ -516,7 +753,7 @@ class FloatingText {
     }
     
     update(dt) {
-        this.y -= 50 * dt; // Float up
+        this.y -= 50 * dt; 
         this.life -= dt * 1.5;
     }
     
@@ -531,15 +768,35 @@ class FloatingText {
 
 // --- GAME LOGIC ---
 
+function setDifficulty(diff) {
+    currentDifficulty = diff;
+    
+    // Update UI buttons
+    document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`btn-${diff.toLowerCase()}`).classList.add('active');
+}
+
+function quitToMenu() {
+    gameState = 'MENU';
+    stopMusic();
+    document.getElementById('menu-overlay').style.display = 'flex';
+    document.getElementById('main-menu').style.display = 'block';
+    document.getElementById('post-game').style.display = 'none';
+    initMenu();
+}
+
 function generateSong(levelId) {
     const level = LEVEL_DATA.find(l => l.id === levelId);
     const availableKeys = level.keys.split('');
     const chart = [];
     
-    const songLength = 60; // seconds
-    const bps = 1.0 + (levelId * 0.2); // Notes per second
+    const config = DIFFICULTY_CONFIG[currentDifficulty];
     
-    let time = 2.0; // Start delay
+    const songLength = SONG_DURATION; 
+    // Base BPS modified by difficulty density
+    const bps = (1.0 + (levelId * 0.2)) * config.densityMod; 
+    
+    let time = 2.0; 
     
     while(time < songLength) {
         const key = availableKeys[Math.floor(Math.random() * availableKeys.length)];
@@ -549,7 +806,6 @@ function generateSong(levelId) {
             time: time
         });
         
-        // Rhythm randomization
         const gap = (1 / bps); 
         const mod = Math.random();
         if(mod > 0.8) time += gap * 2;
@@ -566,6 +822,10 @@ function initGame(levelId) {
     const toggle = document.getElementById('practice-mode-toggle');
     isPracticeMode = toggle.checked;
     timeScale = isPracticeMode ? parseFloat(document.getElementById('speed-slider').value) : 1.0;
+
+    // Apply Difficulty Settings
+    const config = DIFFICULTY_CONFIG[currentDifficulty];
+    currentScrollSpeed = config.scrollSpeed;
 
     document.getElementById('practice-hud').style.display = isPracticeMode ? 'block' : 'none';
     if(isPracticeMode) updateSpeed(timeScale);
@@ -592,6 +852,9 @@ function initGame(levelId) {
     document.getElementById('post-game').style.display = 'none';
     updateHUD();
     
+    // START MUSIC
+    startMusic(levelId);
+    
     requestAnimationFrame(gameLoop);
 }
 
@@ -601,21 +864,19 @@ function handleInput(e) {
 
     const pressedKey = e.key;
     
-    // Visual Feedback Logic
-    // Find visual key coordinate (handle shift mapping)
     let visualChar = pressedKey.toLowerCase();
     if(SHIFT_MAP[pressedKey]) visualChar = SHIFT_MAP[pressedKey];
     else if(pressedKey.match(/[A-Z]/)) visualChar = pressedKey.toLowerCase();
     
-    // Mark key as visually pressed for a short time
     pressedKeys[visualChar] = gameTime;
 
     const validNotes = notes.filter(n => !n.hit && !n.processed && n.char === pressedKey);
     
     if (validNotes.length === 0) {
+        // GHOST TAP / WRONG KEY
         breakCombo();
         if (!isPracticeMode) health -= 2;
-        playSound('miss');
+        playSound('error');
         return;
     }
 
@@ -623,7 +884,7 @@ function handleInput(e) {
         return Math.abs(curr.targetTime - gameTime) < Math.abs(prev.targetTime - gameTime) ? curr : prev;
     });
 
-    const diff = Math.abs(targetNote.targetTime - gameTime) * 1000; // ms
+    const diff = Math.abs(targetNote.targetTime - gameTime) * 1000; 
 
     if (diff <= HIT_WINDOW_GOOD) {
         targetNote.hit = true;
@@ -658,12 +919,12 @@ function handleInput(e) {
         
         spawnExplosion(targetNote.x, targetNote.y, color);
         particles.push(new FloatingText(flavor, targetNote.x, targetNote.y - 60, color));
-        playSound('hit');
+        playSound('type');
         
         if (health < 100) health += (isPracticeMode ? 0 : points/20);
 
     } else {
-        // Too early/late logic... 
+        // Ignored
     }
     
     updateHUD();
@@ -708,16 +969,47 @@ function spawnExplosion(x, y, color) {
 
 function failGame() {
     gameState = 'GAMEOVER';
+    stopMusic();
     showPostGame(false);
     playSound('miss');
 }
 
 function finishLevel() {
     gameState = 'GAMEOVER';
+    stopMusic();
     showPostGame(true);
 }
 
 // --- RENDERING ---
+
+function drawBackground(ctx) {
+    const time = performance.now() * 0.001;
+    
+    // Create screensaver-like drift
+    const hue1 = (time * 10) % 360;
+    const hue2 = (time * 15 + 180) % 360;
+    
+    const gradient = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    gradient.addColorStop(0, `hsla(${hue1}, 60%, 10%, 1)`);
+    gradient.addColorStop(1, `hsla(${hue2}, 60%, 5%, 1)`);
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    // Abstract drifting grid lines
+    ctx.strokeStyle = `hsla(${hue1}, 50%, 50%, 0.1)`;
+    ctx.lineWidth = 2;
+    
+    const offset = (time * 50) % 200;
+    
+    for (let i = 0; i < CANVAS_WIDTH + 200; i += 200) {
+        ctx.beginPath();
+        // Slanted lines for motion
+        ctx.moveTo(i - offset, 0);
+        ctx.lineTo(i - offset - 100, CANVAS_HEIGHT);
+        ctx.stroke();
+    }
+}
 
 function drawKeyboard(ctx) {
     ctx.lineWidth = 2;
@@ -725,7 +1017,6 @@ function drawKeyboard(ctx) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
-    // Render Layout
     for (const char in KEY_COORDS) {
         const k = KEY_COORDS[char];
         
@@ -738,18 +1029,16 @@ function drawKeyboard(ctx) {
             ctx.strokeStyle = '#fff';
             ctx.fillRect(k.x, k.y, k.w, k.h);
         } else {
-            ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; // Background for legibility
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; 
             ctx.strokeStyle = '#555';
             ctx.shadowBlur = 0;
             ctx.fillRect(k.x, k.y, k.w, k.h);
         }
         
-        // Stroke
         ctx.beginPath();
         ctx.roundRect(k.x, k.y, k.w, k.h, 4);
         ctx.stroke();
         
-        // Label
         ctx.fillStyle = isPressed ? '#fff' : '#888';
         ctx.fillText(char.toUpperCase(), k.x + k.w/2, k.y + k.h/2);
     }
@@ -765,17 +1054,12 @@ function gameLoop(timestamp) {
 
     // --- LOGIC ---
     
-    // Note Spawning (Using Max possible travel time roughly to catch all)
-    // Distance from Spawn to Bottom Row ~ 900
     const maxDist = (CANVAS_HEIGHT - SPAWN_Y);
-    const maxTravelTime = maxDist / SCROLL_SPEED;
+    const maxTravelTime = maxDist / currentScrollSpeed;
     
     while(nextNoteIndex < songChart.length) {
         const noteData = songChart[nextNoteIndex];
-        // Ensure we spawn it early enough
-        // Note: note constructor recalcs exact spawn time, this is just the "trigger" loop
         if (gameTime >= noteData.time - maxTravelTime) {
-            // We create it, and it calculates its own specific y-pos based on its target key
             notes.push(new Note(noteData.char, noteData.time));
             nextNoteIndex++;
         } else {
@@ -791,7 +1075,6 @@ function gameLoop(timestamp) {
     for (let i = notes.length - 1; i >= 0; i--) {
         const n = notes[i];
         
-        // Miss Line: Slightly below the target key
         const missLine = n.targetY + 40; 
         
         if (!n.processed && n.y > missLine) {
@@ -800,6 +1083,7 @@ function gameLoop(timestamp) {
             if (!isPracticeMode) health -= 20;
             breakCombo();
             particles.push(new FloatingText("MISS", n.x, n.y, "#ff0000"));
+            
             playSound('miss');
         }
         
@@ -818,27 +1102,15 @@ function gameLoop(timestamp) {
     }
 
     // --- DRAW ---
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    drawBackground(ctx);
     
-    // Background Grid
+    // Center Perspective
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 1;
-    // Simple perspective lines
     const centerX = CANVAS_WIDTH / 2;
-    for(let i=-5; i<=5; i++) {
-        ctx.beginPath();
-        ctx.moveTo(centerX + i * 100, 0);
-        ctx.lineTo(centerX + i * 300, CANVAS_HEIGHT); // Faking perspective
-        ctx.stroke();
-    }
     
-    // Draw Virtual Keyboard (Target Zone)
     drawKeyboard(ctx);
-
-    // Draw Notes
     notes.forEach(n => n.draw(ctx));
-    
-    // Draw Particles
     particles.forEach(p => p.draw(ctx));
 
     updateHUD();
@@ -861,10 +1133,13 @@ function updateHUD() {
         else if (health < 60) hb.style.background = '#ffff00';
         else hb.style.background = '#00ff00';
     }
+
+    // Progress Bar
+    const progress = Math.min((gameTime / SONG_DURATION) * 100, 100);
+    document.getElementById('progress-fill').style.width = progress + '%';
 }
 
 function initMenu() {
-    // Calc coords once on load
     initKeyboardCoords();
     
     const grid = document.getElementById('level-buttons');
@@ -872,6 +1147,12 @@ function initMenu() {
     
     LEVEL_DATA.forEach(level => {
         const btn = document.createElement('button');
+        
+        // Add completion styling
+        if (completedLevels.has(level.id)) {
+            btn.classList.add('completed');
+        }
+        
         btn.innerHTML = `<div>Lvl ${level.id}</div><div style="font-size:0.8em; color: #888">${level.name}</div>`;
         btn.onclick = () => initGame(level.id);
         grid.appendChild(btn);
@@ -905,6 +1186,9 @@ function showPostGame(cleared) {
         document.getElementById('report-grade').innerText = grade;
         document.getElementById('report-grade').style.color = "gold";
         document.getElementById('report-accuracy').innerText = accuracy.toFixed(1) + "%";
+        
+        // Mark Level as Completed
+        completedLevels.add(currentLevelData.id);
     }
     
     document.getElementById('report-score').innerText = score;
@@ -918,6 +1202,7 @@ function showPostGame(cleared) {
 function returnToMenu() {
     document.getElementById('post-game').style.display = 'none';
     document.getElementById('main-menu').style.display = 'block';
+    initMenu(); // Re-render menu to show completed levels
 }
 
 // --- BOOTSTRAP ---
