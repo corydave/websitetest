@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Starter Pack - Your First Steps with Artificial Intelligence</title>
+    
+    <!-- 
+    =========================================================================
+    AI STARTER PACK - Interactive Web Application
+    =========================================================================
+    A beginner-friendly guide to AI featuring:
+    - Explanations of what AI is and how it works
+    - Links to major AI services
+    - Best practices for working with AI
+    - 18 prompt techniques from basic to advanced
+    
+    Built with vanilla HTML, CSS, and JavaScript (no build tools required).
+    Fully responsive and accessible with keyboard navigation support.
+    =========================================================================
+    -->
+    
+    <!-- Google Fonts - Using friendly, readable typefaces -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Fraunces:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =====================================================================
+           CSS CUSTOM PROPERTIES (VARIABLES)
+           These define our color palette and spacing for easy customization
+           ===================================================================== */
+        :root {
+            /* Primary colors - warm, approachable blue-teal palette */
+            --color-primary: #0046ad;
+            --color-primary-dark: #0046ad;
+            --color-primary-light: #e8f4f6;
+            
+            /* Accent color for interactive elements */
+            --color-accent: #e07a38;
+            --color-accent-light: #fff3eb;
+            
+            /* Neutral colors for text and backgrounds */
+            --color-text: #2d3748;
+            --color-text-light: #5a6577;
+            --color-bg: #fafbfc;
+            --color-white: #ffffff;
+            --color-border: #e2e8f0;
+            
+            /* Success color for copy confirmation */
+            --color-success: #38a169;
+            
+            /* Typography */
+            --font-heading: 'Fraunces', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing scale */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Border radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        /* =====================================================================
+           RESET AND BASE STYLES
+           ===================================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Focus styles for accessibility */
+        :focus-visible {
+            outline: 3px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: white;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            z-index: 1000;
+            transition: top var(--transition-fast);
+        }
+
+        .skip-link:focus {
+            top: var(--space-md);
+        }
+
+        /* =====================================================================
+           LAYOUT
+           ===================================================================== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        /* =====================================================================
+           HEADER AND NAVIGATION
+           ===================================================================== */
+        header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            padding: var(--space-3xl) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative background pattern */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+            position: relative;
+        }
+
+        header .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Sticky navigation */
+        nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: var(--space-xs);
+            padding: var(--space-sm) 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        nav ul::-webkit-scrollbar {
+            display: none;
+        }
+
+        nav a {
+            display: block;
+            padding: var(--space-sm) var(--space-md);
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        nav a:hover {
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        nav a.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* =====================================================================
+           MAIN CONTENT SECTIONS
+           ===================================================================== */
+        main {
+            padding: var(--space-2xl) 0 var(--space-3xl);
+        }
+
+        section {
+            margin-bottom: var(--space-3xl);
+            scroll-margin-top: 80px;
+        }
+
+        section h2 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 3px solid var(--color-primary-light);
+        }
+
+        section h3 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: var(--color-primary-dark);
+            margin: var(--space-xl) 0 var(--space-md);
+        }
+
+        p {
+            margin-bottom: var(--space-md);
+        }
+
+        /* =====================================================================
+           INTRO CARD (What is AI section opener)
+           ===================================================================== */
+        .intro-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--color-primary);
+            margin-bottom: var(--space-xl);
+        }
+
+        .intro-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* =====================================================================
+           CAPABILITIES GRID (What AI Can/Cannot Do)
+           ===================================================================== */
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .capability-card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        .capability-card h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .capability-card.can-do h4 {
+            color: var(--color-success);
+        }
+
+        .capability-card.limitations h4 {
+            color: var(--color-accent);
+        }
+
+        .capability-card ul {
+            list-style: none;
+            font-size: 0.95rem;
+        }
+
+        .capability-card li {
+            padding: var(--space-xs) 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .capability-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.7rem;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .capability-card.can-do li::before {
+            background: var(--color-success);
+        }
+
+        .capability-card.limitations li::before {
+            background: var(--color-accent);
+        }
+
+        /* =====================================================================
+           AI SERVICES GRID
+           ===================================================================== */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .service-card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary);
+        }
+
+        .service-card h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .service-card .url {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            margin-bottom: var(--space-sm);
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            margin: 0;
+        }
+
+        .service-note {
+            background: var(--color-primary-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+            font-style: italic;
+        }
+
+        .service-note strong {
+            font-style: normal;
+            color: var(--color-primary);
+        }
+
+        /* =====================================================================
+           BEST PRACTICES LIST
+           ===================================================================== */
+        .best-practices {
+            counter-reset: practice;
+        }
+
+        .practice-item {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: var(--space-lg);
+            align-items: start;
+        }
+
+        .practice-item::before {
+            counter-increment: practice;
+            content: counter(practice);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            color: white;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .practice-content h4 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--color-primary-dark);
+            margin-bottom: var(--space-sm);
+        }
+
+        .practice-content p {
+            margin: 0;
+            color: var(--color-text-light);
+        }
+
+        /* =====================================================================
+           PROMPT TECHNIQUES SECTION
+           ===================================================================== */
+        .scenario-intro {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, #f0f7f8 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        .scenario-intro p {
+            margin-bottom: var(--space-md);
+        }
+
+        .scenarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .scenario-badge {
+            background: var(--color-white);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+        }
+
+        .scenario-badge strong {
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: var(--space-xs);
+        }
+
+        /* Prompt category headers */
+        .prompt-category {
+            margin-top: var(--space-2xl);
+        }
+
+        .prompt-category > h3 {
+            background: var(--color-primary-dark);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .prompt-category > p {
+            color: var(--color-text-light);
+            margin-bottom: var(--space-lg);
+        }
+
+        /* Individual prompt cards */
+        .prompt-card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-bg);
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--color-text);
+            transition: background var(--transition-fast);
+        }
+
+        .prompt-header:hover {
+            background: var(--color-primary-light);
+        }
+
+        .prompt-header h4 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .prompt-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--color-primary);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 50%;
+        }
+
+        .expand-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform var(--transition-normal);
+            color: var(--color-text-light);
+        }
+
+        .prompt-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .prompt-body {
+            display: none;
+            padding: var(--space-lg);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .prompt-card.expanded .prompt-body {
+            display: block;
+        }
+
+        .prompt-body .description {
+            margin-bottom: var(--space-lg);
+        }
+
+        .prompt-body .description strong {
+            color: var(--color-primary);
+        }
+
+        /* Example prompt box with copy functionality */
+        .example-box {
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            position: relative;
+        }
+
+        .example-box .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .example-box .prompt-text {
+            /* font-style: italic; */
+            color: var(--color-text);
+            padding-right: 50px;
+            line-height: 1.5;
+            font-family: Consolas, courier, courier new, monospace;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .copy-btn:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: var(--color-success);
+        }
+
+        .pro-tip {
+            background: var(--color-accent-light);
+            border-left: 4px solid var(--color-accent);
+            padding: var(--space-md);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .pro-tip .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-accent);
+            margin-bottom: var(--space-xs);
+        }
+
+        .pro-tip p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* =====================================================================
+           COMBINED EXAMPLE (Special highlight box)
+           ===================================================================== */
+        .combined-example {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin: var(--space-xl) 0;
+        }
+
+        .combined-example h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .combined-example .description {
+            opacity: 0.9;
+            margin-bottom: var(--space-lg);
+        }
+
+        .combined-example .example-box {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .combined-example .example-box .label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .combined-example .example-box .prompt-text {
+            color: white;
+        }
+
+        .combined-example .copy-btn {
+            background: white;
+            color: var(--color-primary);
+        }
+
+        .combined-example .copy-btn:hover {
+            background: var(--color-primary-light);
+        }
+
+        .combined-example .pro-tip {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--color-accent);
+        }
+
+        .combined-example .pro-tip .label {
+            color: var(--color-accent);
+        }
+
+        .combined-example .pro-tip p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* =====================================================================
+           NEXT STEPS SECTION
+           ===================================================================== */
+        .next-steps {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .next-steps h3 {
+            margin-top: 0;
+        }
+
+        .next-steps ul {
+            list-style: none;
+        }
+
+        .next-steps li {
+            padding: var(--space-sm) 0;
+            padding-left: 2rem;
+            position: relative;
+            font-size: 1.05rem;
+        }
+
+        .next-steps li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+
+        .closing {
+            text-align: center;
+            margin-top: var(--space-xl);
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        /* =====================================================================
+           FOOTER
+           ===================================================================== */
+        footer {
+            background: var(--color-primary-dark);
+            color: white;
+            text-align: center;
+            padding: var(--space-xl);
+            margin-top: var(--space-2xl);
+        }
+
+        footer p {
+            opacity: 0.8;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* =====================================================================
+           RESPONSIVE ADJUSTMENTS
+           ===================================================================== */
+        @media (max-width: 640px) {
+            :root {
+                --space-lg: 1rem;
+                --space-xl: 1.5rem;
+                --space-2xl: 2rem;
+                --space-3xl: 2.5rem;
+            }
+
+            header {
+                padding: var(--space-2xl) 0;
+            }
+
+            .practice-item {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+
+            .practice-item::before {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+
+            nav a {
+                padding: var(--space-sm);
+                font-size: 0.85rem;
+            }
+
+            .prompt-header h4 {
+                font-size: 0.95rem;
+            }
+
+            .example-box .prompt-text {
+                padding-right: 0;
+                padding-bottom: var(--space-xl);
+            }
+
+            .copy-btn {
+                top: auto;
+                bottom: var(--space-sm);
+                right: var(--space-sm);
+            }
+        }
+
+        /* =====================================================================
+           PRINT STYLES
+           ===================================================================== */
+        @media print {
+            nav {
+                display: none;
+            }
+
+            .prompt-card .prompt-body {
+                display: block !important;
+            }
+
+            .copy-btn {
+                display: none;
+            }
+
+            section {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* =====================================================================
+           REDUCED MOTION
+           For users who prefer reduced motion (accessibility)
+           ===================================================================== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for keyboard navigation - allows users to jump past nav -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- =====================================================================
+         HEADER
+         ===================================================================== -->
+    <header>
+        <div class="container">
+            <h1>AI Starter Pack</h1>
+            <p class="subtitle">Your First Steps with Artificial Intelligence</p>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         NAVIGATION
+         Sticky nav that highlights current section
+         ===================================================================== -->
+    <nav aria-label="Main navigation">
+        <div class="container">
+            <ul role="list">
+                <li><a href="#what-is-ai">What is AI?</a></li>
+                <li><a href="#services">AI Services</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#prompts">Prompt Techniques</a></li>
+                <li><a href="#next-steps">Next Steps</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- =====================================================================
+         MAIN CONTENT
+         ===================================================================== -->
+    <main id="main-content">
+        <div class="container">
+
+            <!-- =============================================================
+                 SECTION: What is AI?
+                 ============================================================= -->
+            <section id="what-is-ai">
+                <h2>What is AI?</h2>
+                
+                <div class="intro-card">
+                    <p>Artificial Intelligence (AI) refers to computer systems that can perform tasks that typically require human intelligence. The AI tools you will encounter most often are called <strong>Large Language Models (LLMs)</strong>. Think of them as incredibly well-read conversation partners who have absorbed vast amounts of text from books, websites, and documents.</p>
+                </div>
+
+                <h3>How Does It Work? (The Simple Version)</h3>
+                <p>Imagine you started a sentence with "The cat sat on the..." and asked a thousand people to finish it. Most would say "mat" or "couch" or "bed." AI works similarly. It has learned patterns from billions of examples of human writing and predicts what words should come next based on what you have typed.</p>
+                <p>This means AI is excellent at understanding context, following instructions, generating ideas, explaining concepts, and helping you think through problems. However, it is not looking things up in a database or searching the internet in real-time (unless it has specific tools to do so). It is pattern-matching based on its training.</p>
+
+                <h3>What AI Can and Cannot Do</h3>
+                <div class="capabilities-grid">
+                    <div class="capability-card can-do">
+                        <h4>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            AI is Great At
+                        </h4>
+                        <ul>
+                            <li>Brainstorming ideas</li>
+                            <li>Explaining concepts in different ways</li>
+                            <li>Drafting and editing text</li>
+                            <li>Summarizing long documents</li>
+                            <li>Answering questions</li>
+                            <li>Helping you think through decisions</li>
+                            <li>Creating outlines and plans</li>
+                            <li>Acting as a thought partner</li>
+                        </ul>
+                    </div>
+                    <div class="capability-card limitations">
+                        <h4>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            AI Has Limitations
+                        </h4>
+                        <ul>
+                            <li>Can be confidently wrong ("hallucinations")</li>
+                            <li>No real-time information unless connected to web</li>
+                            <li>Cannot remember previous conversations</li>
+                            <li>Works best with clear context and instructions</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 SECTION: AI Services
+                 ============================================================= -->
+            <section id="services">
+                <h2>Where to Start: AI Services</h2>
+                <p>There are several excellent AI assistants available, most with free tiers to get you started. Here are the major players:</p>
+
+                <div class="services-grid">
+                    <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>Claude</h4>
+                        <div class="url">claude.ai</div>
+                        <p>Created by Anthropic. Known for thoughtful, nuanced responses and strong writing abilities. Excellent for complex reasoning and longer documents.</p>
+                    </a>
+
+                    <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>ChatGPT</h4>
+                        <div class="url">chatgpt.com</div>
+                        <p>Created by OpenAI. The most widely known AI assistant. Very versatile with a large ecosystem of plugins and features.</p>
+                    </a>
+
+                    <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>Google Gemini</h4>
+                        <div class="url">gemini.google.com</div>
+                        <p>Created by Google. Integrated with Google services and has strong real-time information access. Great for research tasks.</p>
+                    </a>
+
+                    <a href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>Microsoft Copilot</h4>
+                        <div class="url">copilot.microsoft.com</div>
+                        <p>Powered by OpenAI technology. Built into Windows and Microsoft 365. Convenient if you already use Microsoft products.</p>
+                    </a>
+
+                    <a href="https://meta.ai" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>Meta AI</h4>
+                        <div class="url">meta.ai</div>
+                        <p>Created by Meta (Facebook). Free to use with strong image generation capabilities. Integrated into Facebook, Instagram, and WhatsApp.</p>
+                    </a>
+
+                    <a href="https://perplexity.ai" target="_blank" rel="noopener noreferrer" class="service-card">
+                        <h4>Perplexity</h4>
+                        <div class="url">perplexity.ai</div>
+                        <p>Focused on research and finding information. Shows its sources and is excellent for fact-finding missions.</p>
+                    </a>
+                </div>
+
+                <div class="service-note">
+                    <strong>Which should you choose?</strong> For basic tasks, they are all quite capable. Pick one and start exploring. You can always try others later. The prompting skills you learn will transfer across all of them.
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 SECTION: Best Practices
+                 ============================================================= -->
+            <section id="best-practices">
+                <h2>Best Practices: How to Work with AI</h2>
+                <p>Before diving into specific prompt techniques, here are foundational principles that will make every interaction more productive:</p>
+
+                <div class="best-practices">
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>Have a Conversation, Not a Transaction</h4>
+                            <p>AI works best when you engage in back-and-forth dialogue. Your first prompt does not need to be perfect. Start somewhere, see what you get, and refine from there. Ask follow-up questions. Say "that is not quite what I meant" or "can you focus more on X?" The AI will adjust.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>Always Verify Important Information</h4>
+                            <p>AI can be confidently wrong. For anything consequential - facts, figures, legal information, medical advice - verify with authoritative sources. Think of AI as a helpful first draft or starting point, not the final word.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>Start New Chats for New Topics</h4>
+                            <p>Each conversation builds context. If you have been discussing recipes and suddenly want help with a work email, the AI might still be thinking about food. Starting fresh gives you a clean slate and often better results.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>Provide Context Generously</h4>
+                            <p>The AI only knows what you tell it. Sharing relevant background - who you are, what you are trying to accomplish, who your audience is, what constraints you have - dramatically improves the quality of responses.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>Be Specific About What You Want</h4>
+                            <p>"Help me write an email" will get you something generic. "Help me write a friendly but professional email to my landlord requesting a repair, keeping it under 150 words" will get you something much more useful.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-content">
+                            <h4>You Cannot Get It Wrong</h4>
+                            <p>There is no "correct" way to use AI. Experiment freely. Try weird things. Ask silly questions. The worst that happens is you get a response that is not helpful, and you try again. This is a space for curiosity and play.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 SECTION: Prompt Techniques
+                 ============================================================= -->
+            <section id="prompts">
+                <h2>Prompt Techniques: From Basic to Brilliant</h2>
+                
+                <div class="scenario-intro">
+                    <p>The following sections introduce <strong>18 prompting techniques</strong>, organized from simplest to most sophisticated. We will explore these through two scenarios to contextualize the prompting methods:</p>
+                    <div class="scenarios">
+                        <div class="scenario-badge">
+                            <strong>Scenario A: Planning a Community Event</strong>
+                            You are organizing a summer festival for your neighborhood.
+                        </div>
+                        <div class="scenario-badge">
+                            <strong>Scenario B: Starting a Small Business</strong>
+                            You are launching a small bakery in your town.
+                        </div>
+                    </div>
+                    <p style="margin-top: var(--space-md); margin-bottom: 0;">As you read through these examples, notice how each technique builds on previous ones. Feel free to mix and match - the best prompts often combine multiple techniques. <strong>Click any card to expand it.</strong></p>
+                </div>
+
+                <!-- FOUNDATIONAL PROMPTS -->
+                <div class="prompt-category">
+                    <h3>Foundational Prompts</h3>
+                    <p>These are your everyday workhorses - simple, direct, and effective for most tasks.</p>
+
+                    <div class="prompt-card" data-prompt="1">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">1</span> The Basic Question</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> A straightforward question seeking information or an explanation. No frills, just asking what you want to know.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">What permits do I need to hold an outdoor festival in New York State?</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Start here when you are unsure. A simple question often gets you 80% of what you need.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="2">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">2</span> The Explanation Request</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to explain a concept, often at a specific level or for a specific audience. Great for learning.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Explain food safety requirements for selling baked goods in New York as if I have never run a food business before.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Specify your knowledge level. "Explain like I am five" or "assume I have a background in X" shapes the response significantly.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="3">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">3</span> The List Generator</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to generate a list of ideas, options, or items. Excellent for brainstorming and ensuring you have not missed anything.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Give me a list of 15 potential activities for a family-friendly summer festival.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Ask for more items than you need. You can always trim, but it is harder to expand a short list.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="4">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">4</span> The Comparison</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to compare options, weigh pros and cons, or analyze trade-offs. Helpful when facing decisions.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Compare renting a commercial kitchen versus building a home kitchen for my bakery business. Consider cost, regulations, and flexibility.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Give AI your actual constraints. "I have $5,000 to start" changes the analysis dramatically.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="5">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">5</span> The Brainstorming Partner</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Using AI as a thought partner to generate creative ideas. Unlike list generation, this is more exploratory and open-ended.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">I am planning a summer festival and want it to feel different from typical community events. Brainstorm some creative themes or unique angles we could take.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Follow up on ideas you like. Say "tell me more about idea #3" or "how could we combine ideas 2 and 5?"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="6">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">6</span> The Template Request</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to create a reusable template, framework, or structure that you can fill in yourself.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Create a template for a vendor application form for my festival. Include all the fields I should collect from food vendors.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Ask for templates in formats you can actually use. Specify if you need it as a Word document outline, spreadsheet structure, or simple text.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTEXT-SETTING PROMPTS -->
+                <div class="prompt-category">
+                    <h3>Context-Setting Prompts</h3>
+                    <p>These techniques improve AI responses by providing background information or setting expectations upfront.</p>
+
+                    <div class="prompt-card" data-prompt="7">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">7</span> The Role Assignment</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to adopt a specific persona or expertise. This shapes the perspective and depth of responses.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">You are an experienced event planner who has organized over 50 community festivals. Help me create a realistic timeline for planning a summer festival that is six months away.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>The role you assign affects tone, vocabulary, and what details AI emphasizes. A "marketing expert" gives different advice than a "community organizer."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="8">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">8</span> The Context Dump</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Front-loading your prompt with relevant background information so AI understands your specific situation.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Context: I am opening a small bakery in a town of 8,000 people. There is one existing bakery that focuses on bread. I want to specialize in custom cakes and pastries. My budget is $20,000 for equipment. I have baking experience but no business experience. Question: What should my first three months look like?</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>More context almost always helps. Include your constraints, goals, audience, and any relevant history.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="9">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">9</span> The Audience Specification</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Explicitly stating who the output is for, which shapes tone, complexity, and content choices.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Write a one-page description of our summer festival for the local newspaper. The audience is families in our community who might not have heard of the event.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Consider multiple audiences. You might need one version for sponsors, another for volunteers, another for attendees.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STRUCTURED PROMPTS -->
+                <div class="prompt-category">
+                    <h3>Structured Prompts</h3>
+                    <p>These techniques add structure to your requests, helping AI organize its thinking and output.</p>
+
+                    <div class="prompt-card" data-prompt="10">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">10</span> The Step-by-Step Request</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to break down a process into sequential steps. Great for complex procedures or learning new skills.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Walk me through the step-by-step process of getting a food handler's license in New York, from application to certification.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Specify how detailed you want the steps. "High-level overview" versus "detailed enough that someone could follow without other resources."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="11">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">11</span> The Constraint-Based Prompt</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Adding specific limitations or requirements that the response must meet. Forces more practical, usable outputs.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Create a marketing plan for my bakery grand opening. Constraints: budget is under $500, I have two weeks to prepare, and I can only work on evenings and weekends.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Real constraints lead to real solutions. Do not hold back on sharing your actual limitations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="12">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">12</span> The Format Specification</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Explicitly requesting how you want the output structured - as a table, bullet points, numbered list, paragraph, etc.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Create a festival planning checklist organized by timeframe: 6 months out, 3 months out, 1 month out, 1 week out, and day-of. Format as a table with task, owner, and status columns.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Tables work great for comparing options. Bullet points for quick reference. Paragraphs for things you will share with others.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEARNING BY EXAMPLE -->
+                <div class="prompt-category">
+                    <h3>Learning by Example</h3>
+                    <p>These techniques use examples to show AI exactly what you want, rather than just describing it.</p>
+
+                    <div class="prompt-card" data-prompt="13">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">13</span> Few-Shot Prompting</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Providing examples of what you want before asking AI to generate more. AI learns the pattern from your examples and continues it.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">I need taglines for my bakery. Here are two I like: "Where every crumb tells a story" and "Baked with love, served with joy." Generate 10 more taglines in this same warm, personal style.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Two or three examples is usually enough. Make sure your examples clearly show the pattern you want.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="14">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">14</span> The Style Match</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Providing a sample of writing and asking AI to match its tone, voice, or style for new content.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Here is our festival's previous announcement: [paste example]. Write this year's announcement in the same friendly, community-focused voice, but for our new western theme.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>This works for matching your own writing style, your organization's voice, or even mimicking a format you have seen elsewhere.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ITERATIVE REFINEMENT -->
+                <div class="prompt-category">
+                    <h3>Iterative Refinement</h3>
+                    <p>These techniques embrace the conversational nature of AI, building better outputs through back-and-forth dialogue.</p>
+
+                    <div class="prompt-card" data-prompt="15">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">15</span> The Critique Request</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to review and critique something you have created, identifying weaknesses and suggesting improvements.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Here is my draft budget for the festival. Review it critically - what am I likely underestimating? What costs am I probably missing? Where should I build in contingency?</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Ask for specific types of feedback. "Critique for clarity" differs from "critique for persuasiveness" or "find logical gaps."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="16">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">16</span> Iterative Refinement</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Starting with a basic output and progressively improving it through targeted follow-up requests.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">Start: "Write a description of my bakery." Then: "Make it warmer and more personal." Then: "Add a sentence about our commitment to local ingredients." Then: "Shorten it to 50 words."</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>Small, specific refinements work better than asking for everything at once. It is like sculpting - start with the rough shape, then refine details.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADVANCED TECHNIQUES -->
+                <div class="prompt-category">
+                    <h3>Advanced Techniques</h3>
+                    <p>These sophisticated techniques unlock more powerful uses of AI for complex thinking and planning.</p>
+
+                    <div class="prompt-card" data-prompt="17">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">17</span> Chain-of-Thought Prompting</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to show its reasoning process, thinking through a problem step-by-step before reaching a conclusion. Leads to more accurate and nuanced answers.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">I am trying to decide whether to open my bakery downtown (higher rent, more foot traffic) or in a neighborhood location (lower rent, need to build customer base). Think through this decision step by step, considering all relevant factors before making a recommendation.</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>This technique is especially valuable for complex decisions. The reasoning process often reveals factors you had not considered.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prompt-card" data-prompt="18">
+                        <button class="prompt-header" aria-expanded="false">
+                            <h4><span class="prompt-number">18</span> The Meta-Prompt</h4>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="prompt-body">
+                            <div class="description">
+                                <strong>What it is:</strong> Asking AI to help you write better prompts. It is prompting about prompting - using AI to improve how you communicate with AI.
+                            </div>
+                            <div class="example-box">
+                                <div class="label">Example Prompt</div>
+                                <div class="prompt-text">I want to get AI help planning my festival, but I am not sure how to ask effectively. What information should I include in my prompt to get the most useful planning help? What questions should I be asking?</div>
+                                <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="pro-tip">
+                                <div class="label">Pro Tip</div>
+                                <p>When stuck, ask AI how to ask. It can help you identify what context is missing or what questions you should be exploring.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMBINED EXAMPLE -->
+                <div class="combined-example">
+                    <h3>Putting It All Together</h3>
+                    <p class="description">The best prompts often combine multiple techniques. This example weaves together role assignment, context dump, constraint specification, format request, and step-by-step instruction:</p>
+                    <div class="example-box">
+                        <div class="label">Combined Example Prompt</div>
+                        <div class="prompt-text">You are an experienced small business advisor who specializes in food businesses. Context: I am opening a bakery in a small town (population 8,000) with a $20,000 budget. I have strong baking skills but no business experience. My goal is to be profitable within 12 months. Constraints: I can only work on setup part-time for the next 3 months while I finish my current job. Task: Create a 12-month launch plan. Format it as a timeline with monthly milestones, key tasks, and estimated costs. Think through the logical sequence - what needs to happen before what?</div>
+                        <button class="copy-btn" aria-label="Copy prompt to clipboard">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    <div class="pro-tip">
+                        <div class="label">Pro Tip</div>
+                        <p>Notice how this prompt gives AI everything it needs: expertise to draw on, specific context, clear constraints, defined format, and explicit instruction to reason through the sequence.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 SECTION: Next Steps
+                 ============================================================= -->
+            <section id="next-steps">
+                <h2>Your Next Steps</h2>
+                <div class="next-steps">
+                    <h3>Ready to Get Started?</h3>
+                    <ul>
+                        <li>Pick one AI service and create a free account</li>
+                        <li>Start with a basic question about something you are genuinely curious about</li>
+                        <li>Practice having a conversation - ask follow-up questions</li>
+                        <li>Try one new prompt technique each day</li>
+                        <li>Remember: you cannot get this wrong. Experiment freely!</li>
+                    </ul>
+                    <p class="closing">Happy exploring!</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- =====================================================================
+         FOOTER
+         ===================================================================== -->
+    <footer>
+        <p>AI Starter Pack • A beginner's guide to artificial intelligence</p>
+    </footer>
+
+    <!-- =====================================================================
+         JAVASCRIPT
+         All interactivity is handled with vanilla JS - no frameworks needed
+         ===================================================================== -->
+    <script>
+        /**
+         * =====================================================================
+         * AI STARTER PACK - JavaScript Interactivity
+         * =====================================================================
+         * This script handles:
+         * 1. Accordion expand/collapse for prompt cards
+         * 2. Copy-to-clipboard functionality
+         * 3. Navigation highlighting based on scroll position
+         * 4. Keyboard accessibility
+         * =====================================================================
+         */
+
+        // Wait for DOM to be fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // -----------------------------------------------------------------
+            // ACCORDION FUNCTIONALITY
+            // Allows users to expand/collapse prompt technique cards
+            // -----------------------------------------------------------------
+            
+            // Get all prompt cards
+            const promptCards = document.querySelectorAll('.prompt-card');
+            
+            promptCards.forEach(function(card) {
+                // Find the header button within each card
+                const header = card.querySelector('.prompt-header');
+                
+                // Add click handler
+                header.addEventListener('click', function() {
+                    // Check if this card is currently expanded
+                    const isExpanded = card.classList.contains('expanded');
+                    
+                    // Toggle the expanded state
+                    if (isExpanded) {
+                        // Collapse this card
+                        card.classList.remove('expanded');
+                        header.setAttribute('aria-expanded', 'false');
+                    } else {
+                        // Expand this card
+                        card.classList.add('expanded');
+                        header.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                
+                // Add keyboard support (Enter and Space to toggle)
+                header.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault(); // Prevent page scroll on Space
+                        header.click(); // Trigger the click handler
+                    }
+                });
+            });
+
+            // -----------------------------------------------------------------
+            // COPY TO CLIPBOARD FUNCTIONALITY
+            // Allows users to copy example prompts with one click
+            // -----------------------------------------------------------------
+            
+            // Get all copy buttons
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            
+            copyButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    // Prevent the click from bubbling up (don't toggle card)
+                    event.stopPropagation();
+                    
+                    // Find the prompt text within the same example box
+                    const exampleBox = button.closest('.example-box');
+                    const promptText = exampleBox.querySelector('.prompt-text').textContent;
+                    
+                    // Copy to clipboard using the modern Clipboard API
+                    navigator.clipboard.writeText(promptText).then(function() {
+                        // Success! Show feedback to user
+                        const originalHTML = button.innerHTML;
+                        button.innerHTML = `
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Copied!
+                        `;
+                        button.classList.add('copied');
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(function() {
+                            button.innerHTML = originalHTML;
+                            button.classList.remove('copied');
+                        }, 2000);
+                        
+                    }).catch(function(err) {
+                        // Fallback for older browsers or if clipboard access is denied
+                        console.error('Failed to copy text: ', err);
+                        
+                        // Try the older execCommand method as fallback
+                        const textArea = document.createElement('textarea');
+                        textArea.value = promptText;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-9999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        
+                        try {
+                            document.execCommand('copy');
+                            button.textContent = 'Copied!';
+                            button.classList.add('copied');
+                            setTimeout(function() {
+                                button.innerHTML = `
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    Copy
+                                `;
+                                button.classList.remove('copied');
+                            }, 2000);
+                        } catch (e) {
+                            console.error('Fallback copy failed: ', e);
+                        }
+                        
+                        document.body.removeChild(textArea);
+                    });
+                });
+            });
+
+            // -----------------------------------------------------------------
+            // NAVIGATION HIGHLIGHTING
+            // Highlights the current section in the nav as user scrolls
+            // -----------------------------------------------------------------
+            
+            // Get all nav links and sections
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('section[id]');
+            
+            // Function to update active nav link based on scroll position
+            function updateActiveNav() {
+                // Get current scroll position (with offset for sticky nav)
+                const scrollPosition = window.scrollY + 100;
+                
+                // Find which section is currently in view
+                sections.forEach(function(section) {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    // Check if scroll position is within this section
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        // Remove active class from all nav links
+                        navLinks.forEach(function(link) {
+                            link.classList.remove('active');
+                        });
+                        
+                        // Add active class to corresponding nav link
+                        const activeLink = document.querySelector('nav a[href="#' + sectionId + '"]');
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            }
+            
+            // Update nav highlighting on scroll (with throttling for performance)
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                // Throttle scroll events to improve performance
+                if (scrollTimeout) {
+                    window.cancelAnimationFrame(scrollTimeout);
+                }
+                scrollTimeout = window.requestAnimationFrame(function() {
+                    updateActiveNav();
+                });
+            });
+            
+            // Set initial active state
+            updateActiveNav();
+
+            // -----------------------------------------------------------------
+            // SMOOTH SCROLL FOR NAV LINKS
+            // Handles navigation clicks with smooth scrolling
+            // -----------------------------------------------------------------
+            
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    // Get the target section ID from the href
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        // Smooth scroll is handled by CSS (scroll-behavior: smooth)
+                        // But we can add the active class immediately for better UX
+                        navLinks.forEach(function(l) {
+                            l.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    }
+                });
+            });
+
+            // -----------------------------------------------------------------
+            // EXPAND ALL / COLLAPSE ALL (Optional Enhancement)
+            // Could add buttons to expand or collapse all cards at once
+            // -----------------------------------------------------------------
+            
+            // This is left as a potential future enhancement
+            // You could add "Expand All" / "Collapse All" buttons if needed
+
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>
