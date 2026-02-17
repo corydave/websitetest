@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compound Builder - ChemGames</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #0f0f1e 100%);
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            cursor: crosshair;
+        }
+
+        /* Top UI - Target Formula and Progress */
+        #ui {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+            border: 3px solid #00ff88;
+            z-index: 10;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        #targetFormula {
+            color: #00ff88;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #compoundName {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        #progress {
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .element-count {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .complete {
+            color: #00ff88 !important;
+            background: rgba(0, 255, 136, 0.2) !important;
+        }
+
+        /* Side stats */
+        #stats {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #00ff88;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            pointer-events: none;
+            text-align: right;
+        }
+
+        #instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff88;
+            font-size: 14px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Victory Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #splashScreen.show {
+            display: flex;
+        }
+
+        #certificateContainer {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            text-align: center;
+            max-width: 90%;
+            width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        #certificateCanvas {
+            display: none;
+        }
+
+        #certificatePreview {
+            border: 3px solid #00ff88;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section.hidden {
+            display: none;
+        }
+
+        .ribbon-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .ribbon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 30px;
+            font-size: 28px;
+            font-weight: bold;
+            display: inline-block;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .ribbon::before,
+        .ribbon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .ribbon::before {
+            left: -20px;
+            border-width: 24px 20px 24px 0;
+            border-color: transparent #667eea transparent transparent;
+        }
+
+        .ribbon::after {
+            right: -20px;
+            border-width: 24px 0 24px 20px;
+            border-color: transparent transparent transparent #764ba2;
+        }
+
+        #nameInput {
+            font-size: 18px;
+            padding: 15px;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        #nameInput:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #00dd77;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: #667eea;
+            color: white;
+        }
+
+        .button.secondary:hover {
+            background: #5568d3;
+        }
+
+        /* Accessibility: Focus indicator */
+        #gameCanvas:focus {
+            outline: 3px solid #00ff88;
+            outline-offset: -3px;
+        }
+
+        /* Hidden helper text for screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            #certificateContainer {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .ribbon {
+                font-size: 20px;
+                padding: 8px 20px;
+            }
+
+            .ribbon::before {
+                left: -15px;
+                border-width: 18px 15px 18px 0;
+            }
+
+            .ribbon::after {
+                right: -15px;
+                border-width: 18px 0 18px 15px;
+            }
+
+            #nameInput {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .button {
+                padding: 12px 30px;
+                font-size: 16px;
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            #ui {
+                padding: 15px 20px;
+                font-size: 14px;
+            }
+
+            #targetFormula {
+                font-size: 20px;
+            }
+
+            #compoundName {
+                font-size: 14px;
+            }
+
+            #progress {
+                font-size: 16px;
+            }
+
+            .element-count {
+                margin: 5px;
+                padding: 4px 8px;
+                font-size: 14px;
+            }
+
+            #stats {
+                font-size: 14px;
+            }
+
+            #instructions {
+                font-size: 12px;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #certificateContainer {
+                padding: 15px;
+            }
+
+            .ribbon {
+                font-size: 16px;
+                padding: 6px 15px;
+            }
+
+            #ui {
+                padding: 10px 15px;
+            }
+
+            #targetFormula {
+                font-size: 18px;
+            }
+
+            .element-count {
+                font-size: 12px;
+                margin: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- UI Elements -->
+    <div id="ui">
+        <div id="targetFormula">H₂O</div>
+        <div id="compoundName">Water</div>
+        <div id="progress">
+            <span class="element-count" id="h-count">H: 0/2</span>
+            <span class="element-count" id="o-count">O: 0/1</span>
+        </div>
+    </div>
+
+    <div id="stats">
+        <div>Time: <span id="timer">0:00</span></div>
+        <div>Collected: <span id="collected">0</span></div>
+        <div>Missed: <span id="missed">0</span></div>
+    </div>
+
+    <div id="instructions">
+        Click the <strong>correct elements</strong> to collect them at the bottom! | Avoid wrong elements! | SPACE to pause
+    </div>
+
+    <!-- Victory Splash Screen -->
+    <div id="splashScreen">
+        <div id="certificateContainer">
+            <div class="ribbon-container">
+                <div class="ribbon">🏆 COMPOUND MASTERY! 🏆</div>
+            </div>
+            
+            <canvas id="certificateCanvas" width="800" height="600"></canvas>
+            <img id="certificatePreview" alt="Certificate of completion">
+            
+            <p style="font-size: 20px; color: #333; margin-bottom: 20px;">
+                You successfully built <strong id="finalCompound"></strong>!
+            </p>
+            
+            <div class="input-section" id="inputSection">
+                <label for="nameInput" style="display: block; font-size: 16px; color: #666; margin-bottom: 10px;">
+                    Enter your name for the certificate:
+                </label>
+                <input type="text" id="nameInput" placeholder="Your Name" aria-label="Your name for certificate">
+                
+                <div>
+                    <button class="button" id="generateBtn">Generate Certificate</button>
+                </div>
+            </div>
+                <button class="button secondary" id="downloadBtn" style="display: none;">Download Certificate</button>
+                <button class="button secondary" id="playAgainBtn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // ==============================================
+        // COMPOUND DEFINITIONS
+        // ==============================================
+        
+        const compounds = [
+            {
+                name: 'Water',
+                formula: 'H₂O',
+                elements: { 'H': 2, 'O': 1 },
+                difficulty: 'easy'
+            },
+            {
+                name: 'Carbon Dioxide',
+                formula: 'CO₂',
+                elements: { 'C': 1, 'O': 2 },
+                difficulty: 'easy'
+            },
+            {
+                name: 'Ammonia',
+                formula: 'NH₃',
+                elements: { 'N': 1, 'H': 3 },
+                difficulty: 'easy'
+            },
+            {
+                name: 'Methane',
+                formula: 'CH₄',
+                elements: { 'C': 1, 'H': 4 },
+                difficulty: 'easy'
+            },
+            {
+                name: 'Glucose',
+                formula: 'C₆H₁₂O₆',
+                elements: { 'C': 6, 'H': 12, 'O': 6 },
+                difficulty: 'medium'
+            },
+            {
+                name: 'Sulfuric Acid',
+                formula: 'H₂SO₄',
+                elements: { 'H': 2, 'S': 1, 'O': 4 },
+                difficulty: 'medium'
+            },
+            {
+                name: 'Sodium Chloride',
+                formula: 'NaCl',
+                elements: { 'Na': 1, 'Cl': 1 },
+                difficulty: 'easy'
+            }
+        ];
+
+        // ==============================================
+        // GAME STATE AND CONFIGURATION
+        // ==============================================
+        
+        const gameState = {
+            targetCompound: null,
+            collected: {},
+            totalCollected: 0,
+            missed: 0,
+            isPaused: false,
+            isComplete: false,
+            bricks: [],
+            particles: [],
+            startTime: Date.now(),
+            elapsedTime: 0,
+            collectionSlots: [], // Array of slot objects showing where elements should go
+            animatingBricks: [] // Bricks currently animating to their slots
+        };
+
+        // All possible elements for random spawning with atomic radii (in picometers)
+        const elementData = {
+            'H': { color: 0xffffff, radius: 53 },
+            'He': { color: 0xffc0cb, radius: 31 },
+            'Li': { color: 0xcc80ff, radius: 167 },
+            'Be': { color: 0x33ff99, radius: 112 },
+            'B': { color: 0xffb380, radius: 87 },
+            'C': { color: 0x909090, radius: 67 },
+            'N': { color: 0x3050f8, radius: 56 },
+            'O': { color: 0xff0d0d, radius: 48 },
+            'F': { color: 0x90e050, radius: 42 },
+            'Ne': { color: 0xff1493, radius: 38 },
+            'Na': { color: 0xab5cf2, radius: 190 },
+            'Mg': { color: 0x8aff00, radius: 145 },
+            'Al': { color: 0xbfa6a6, radius: 118 },
+            'Si': { color: 0xf0c8a0, radius: 111 },
+            'P': { color: 0xff8000, radius: 98 },
+            'S': { color: 0xffff30, radius: 88 },
+            'Cl': { color: 0x1ff01f, radius: 79 },
+            'Ar': { color: 0x80d1e3, radius: 71 },
+            'K': { color: 0x8f40d4, radius: 243 },
+            'Ca': { color: 0x3dff00, radius: 194 },
+            'Fe': { color: 0xe06633, radius: 156 },
+            'Cu': { color: 0xc88033, radius: 145 },
+            'Zn': { color: 0x7d80b0, radius: 142 },
+            'Ag': { color: 0xc0c0c0, radius: 165 },
+            'Au': { color: 0xffd700, radius: 174 },
+            'Hg': { color: 0xb8b8d0, radius: 171 },
+            'Pb': { color: 0x575961, radius: 180 },
+            'U': { color: 0x008fff, radius: 156 }
+        };
+
+        const allElements = Object.keys(elementData);
+
+        /**
+         * Calculates the relative luminance of a color and returns
+         * either white or black for maximum contrast
+         */
+        function getContrastColor(hexColor) {
+            // Convert hex to RGB
+            const r = ((hexColor >> 16) & 0xFF) / 255;
+            const g = ((hexColor >> 8) & 0xFF) / 255;
+            const b = (hexColor & 0xFF) / 255;
+            
+            // Calculate relative luminance
+            const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            
+            // Return white for dark backgrounds, black for light backgrounds
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+
+        /**
+         * Calculates sphere size based on atomic radius
+         * Normalizes to a reasonable display range (0.6 to 2.2)
+         */
+        function getElementSize(element) {
+            const radius = elementData[element].radius;
+            // Normalize: smallest (He: 31pm) = 0.6, largest (K: 243pm) = 2.2
+            const minRadius = 31;
+            const maxRadius = 243;
+            const minSize = 0.6;
+            const maxSize = 2.2;
+            
+            return minSize + ((radius - minRadius) / (maxRadius - minRadius)) * (maxSize - minSize);
+        }
+
+        // ==============================================
+        // GAME INITIALIZATION
+        // ==============================================
+
+        /**
+         * Creates collection slots at the bottom of the screen
+         * These are the "holders" where collected elements will go
+         */
+        function createCollectionSlots() {
+            console.log('=== CREATING COLLECTION RACK ===');
+            console.log('Target compound:', gameState.targetCompound.name, gameState.targetCompound.formula);
+            
+            // Clear existing slots
+            gameState.collectionSlots.forEach(slot => {
+                // Only clean up collected spheres if they exist
+                if (slot.collectedSphere) {
+                    scene.remove(slot.collectedSphere);
+                    if (slot.collectedSphere.material.map) slot.collectedSphere.material.map.dispose();
+                    slot.collectedSphere.material.dispose();
+                }
+            });
+            gameState.collectionSlots = [];
+            
+            // Count total elements needed
+            let totalElements = 0;
+            for (let element in gameState.targetCompound.elements) {
+                totalElements += gameState.targetCompound.elements[element];
+            }
+            
+            console.log('Total element slots needed:', totalElements);
+            
+            // Calculate spacing
+            const slotSpacing = 1.2;
+            const totalWidth = (totalElements - 1) * slotSpacing;
+            const startX = -totalWidth / 2;
+            
+            let slotIndex = 0;
+            
+            // Create slots for each element
+            for (let element in gameState.targetCompound.elements) {
+                const count = gameState.targetCompound.elements[element];
+                const elementSize = getElementSize(element);
+                const color = elementData[element].color;
+                
+                for (let i = 0; i < count; i++) {
+                    const x = startX + (slotIndex * slotSpacing);
+                    
+                    console.log(`Creating slot ${slotIndex}: ${element} at x=${x}, y=-1.5, z=2`);
+                    
+                    // Just create the slot position - no visual markers
+                    gameState.collectionSlots.push({
+                        element: element,
+                        position: new THREE.Vector3(x, -1.5, 2),
+                        holder: null,
+                        label: null, // No label sprite
+                        filled: false,
+                        collectedSphere: null
+                    });
+                    
+                    slotIndex++;
+                }
+            }
+            
+            console.log('=== RACK CREATION COMPLETE ===');
+            console.log('Total slots created:', gameState.collectionSlots.length);
+            console.log('All slot positions:', gameState.collectionSlots.map(s => s.position));
+        }
+
+        /**
+         * Initializes a new game with a random compound
+         */
+        function initializeGame() {
+            // Pick a random compound (start with easy ones)
+            const easyCompounds = compounds.filter(c => c.difficulty === 'easy');
+            gameState.targetCompound = easyCompounds[Math.floor(Math.random() * easyCompounds.length)];
+            
+            // Initialize collected counts
+            gameState.collected = {};
+            for (let element in gameState.targetCompound.elements) {
+                gameState.collected[element] = 0;
+            }
+            
+            // Reset stats
+            gameState.totalCollected = 0;
+            gameState.missed = 0;
+            gameState.isComplete = false;
+            gameState.startTime = Date.now();
+            gameState.animatingBricks = [];
+            
+            // Create collection slots
+            createCollectionSlots();
+            
+            updateUI();
+        }
+
+        /**
+         * Updates the UI display
+         */
+        function updateUI() {
+            // Update target compound display
+            document.getElementById('targetFormula').textContent = gameState.targetCompound.formula;
+            document.getElementById('compoundName').textContent = gameState.targetCompound.name;
+            
+            // Update progress for each element
+            const progressDiv = document.getElementById('progress');
+            progressDiv.innerHTML = '';
+            
+            for (let element in gameState.targetCompound.elements) {
+                const needed = gameState.targetCompound.elements[element];
+                const current = gameState.collected[element] || 0;
+                const isComplete = current >= needed;
+                
+                const span = document.createElement('span');
+                span.className = 'element-count' + (isComplete ? ' complete' : '');
+                span.id = `${element.toLowerCase()}-count`;
+                span.textContent = `${element}: ${current}/${needed}`;
+                progressDiv.appendChild(span);
+            }
+            
+            // Update stats
+            document.getElementById('collected').textContent = gameState.totalCollected;
+            document.getElementById('missed').textContent = gameState.missed;
+            
+            // Update timer
+            if (!gameState.isComplete && !gameState.isPaused) {
+                gameState.elapsedTime = Math.floor((Date.now() - gameState.startTime) / 1000);
+            }
+            const minutes = Math.floor(gameState.elapsedTime / 60);
+            const seconds = gameState.elapsedTime % 60;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        /**
+         * Checks if the compound is complete
+         */
+        function checkCompletion() {
+            for (let element in gameState.targetCompound.elements) {
+                if (gameState.collected[element] < gameState.targetCompound.elements[element]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Handles game completion
+         */
+        function completeGame() {
+            gameState.isComplete = true;
+            // DON'T pause yet - let the last sphere settle!
+            
+            // Wait 1 second before showing splash screen - let the user admire their work!
+            setTimeout(() => {
+                gameState.isPaused = true; // NOW pause the game
+                document.getElementById('splashScreen').classList.add('show');
+                document.getElementById('finalCompound').textContent = gameState.targetCompound.name;
+                document.getElementById('nameInput').focus();
+            }, 1000);
+        }
+
+        // ==============================================
+        // SCENE SETUP
+        // ==============================================
+        
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a15);
+        scene.fog = new THREE.Fog(0x0a0a15, 10, 50);
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.position.z = 5;
+
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: false 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+        renderer.domElement.id = 'gameCanvas';
+        renderer.domElement.setAttribute('tabindex', '0');
+        renderer.domElement.focus();
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        // ==============================================
+        // SPHERE CREATION
+        // ==============================================
+
+        /**
+         * Creates a canvas texture with an element symbol repeated in a pattern
+         * This allows the symbol to be visible from multiple angles on the sphere
+         */
+        function createSphereTexture(element, color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // Fill with element color
+            ctx.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Get contrasting text color (white or black)
+            const textColor = getContrastColor(color);
+
+            // Draw element symbol in a 3x2 grid pattern for visibility from all angles
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 120px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Add outline in opposite color for extra contrast
+            ctx.strokeStyle = textColor === '#ffffff' ? '#000000' : '#ffffff';
+            ctx.lineWidth = 4;
+
+            // Create a grid of symbols
+            const cols = 3;
+            const rows = 2;
+            const cellWidth = canvas.width / cols;
+            const cellHeight = canvas.height / rows;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = (col + 0.5) * cellWidth;
+                    const y = (row + 0.5) * cellHeight;
+                    
+                    ctx.strokeText(element, x, y);
+                    ctx.fillText(element, x, y);
+                }
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            return texture;
+        }
+
+        /**
+         * Creates a sprite label for collection slots
+         */
+        function createLabelSprite(element, scale = 0.8) {
+            const canvas = document.createElement('canvas');
+            const size = 256;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background
+            ctx.clearRect(0, 0, size, size);
+
+            // Element symbol
+            ctx.fillStyle = '#00ff88';
+            ctx.font = `bold ${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(element, size / 2, size / 2);
+
+            // Add a black outline for visibility
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = size * 0.04;
+            ctx.strokeText(element, size / 2, size / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true
+            });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(scale, scale, 1);
+            return sprite;
+        }
+
+        /**
+         * Creates a 2D circle sprite for collected elements in the rack
+         * This prevents the egg-like appearance from perspective distortion
+         */
+        function createCollectedCircle(element, size) {
+            const canvas = document.createElement('canvas');
+            const canvasSize = 512;
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+            const ctx = canvas.getContext('2d');
+
+            // Transparent background
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+            // Get element color
+            const color = elementData[element].color;
+            const colorHex = `#${color.toString(16).padStart(6, '0')}`;
+            const textColor = getContrastColor(color);
+
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(canvasSize / 2, canvasSize / 2, canvasSize / 2 - 20, 0, Math.PI * 2);
+            ctx.fillStyle = colorHex;
+            ctx.fill();
+
+            // Add a darker border
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 10;
+            ctx.stroke();
+
+            // Element symbol with contrasting color
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 240px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(element, canvasSize / 2, canvasSize / 2);
+
+            // Add outline in opposite color
+            ctx.strokeStyle = textColor === '#ffffff' ? '#000000' : '#ffffff';
+            ctx.lineWidth = 8;
+            ctx.strokeText(element, canvasSize / 2, canvasSize / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true
+            });
+            const sprite = new THREE.Sprite(material);
+            // Smaller scale so rings remain visible
+            sprite.scale.set(size * 0.9, size * 0.9, 1);
+            return sprite;
+        }
+
+        /**
+         * Creates a sphere with the specified element
+         * Texture is mapped directly onto the sphere surface
+         * 70% chance it's a needed element, 30% chance it's random
+         */
+        function createSphere() {
+            let element;
+            
+            // Determine which element to spawn
+            if (Math.random() < 0.7) {
+                // Spawn a needed element
+                const neededElements = Object.keys(gameState.targetCompound.elements).filter(
+                    e => gameState.collected[e] < gameState.targetCompound.elements[e]
+                );
+                
+                if (neededElements.length > 0) {
+                    element = neededElements[Math.floor(Math.random() * neededElements.length)];
+                } else {
+                    // All needed elements collected, spawn random
+                    element = allElements[Math.floor(Math.random() * allElements.length)];
+                }
+            } else {
+                // Spawn a random element (could be wrong)
+                element = allElements[Math.floor(Math.random() * allElements.length)];
+            }
+            
+            const color = elementData[element].color;
+            const size = getElementSize(element);
+            
+            // Create sphere geometry with size based on atomic radius
+            const geometry = new THREE.SphereGeometry(size * 0.5, 32, 32);
+            
+            // Create texture with element symbol
+            const texture = createSphereTexture(element, color);
+            
+            // Create material with the texture mapped to the sphere
+            const material = new THREE.MeshLambertMaterial({ 
+                map: texture,
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.1
+            });
+
+            const sphere = new THREE.Mesh(geometry, material);
+
+            // Position the sphere randomly in space, far from the camera
+            sphere.position.x = (Math.random() - 0.5) * 15;
+            sphere.position.y = (Math.random() - 0.5) * 10;
+            sphere.position.z = -30 - Math.random() * 20; // Start far away
+
+            // Add rotation for visual effect
+            sphere.rotation.x = Math.random() * Math.PI;
+            sphere.rotation.y = Math.random() * Math.PI;
+
+            // Store metadata
+            sphere.userData = {
+                element: element,
+                speed: 0.04 + Math.random() * 0.06, // Random speed
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.015,
+                    y: (Math.random() - 0.5) * 0.015,
+                    z: (Math.random() - 0.5) * 0.015
+                },
+                size: size
+            };
+
+            return sphere;
+        }
+
+        /**
+         * Creates particle explosion effect for wrong elements
+         */
+        function createParticleExplosion(sphere, isCorrect) {
+            const particles = [];
+            const particleCount = 15;
+            const color = isCorrect ? 0x00ff88 : 0xff3333;
+
+            for (let i = 0; i < particleCount; i++) {
+                const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const material = new THREE.MeshLambertMaterial({ color: color });
+                const particle = new THREE.Mesh(geometry, material);
+
+                particle.position.copy(sphere.position);
+
+                particle.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.3,
+                        (Math.random() - 0.5) * 0.3,
+                        (Math.random() - 0.5) * 0.3
+                    ),
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.2,
+                        y: (Math.random() - 0.5) * 0.2,
+                        z: (Math.random() - 0.5) * 0.2
+                    },
+                    life: 60
+                };
+
+                scene.add(particle);
+                particles.push(particle);
+            }
+
+            return particles;
+        }
+
+        /**
+         * Removes a sphere from the scene and cleans up resources
+         */
+        function removeBrick(sphere) {
+            scene.remove(sphere);
+            const index = gameState.bricks.indexOf(sphere);
+            if (index > -1) {
+                gameState.bricks.splice(index, 1);
+            }
+            sphere.geometry.dispose();
+            if (sphere.material.map) {
+                sphere.material.map.dispose();
+            }
+            sphere.material.dispose();
+        }
+
+        // ==============================================
+        // GAME LOOP
+        // ==============================================
+
+        let spawnTimer = 0;
+        const spawnInterval = 40;
+
+        function spawnSpheres() {
+            if (gameState.isComplete) return;
+            
+            spawnTimer++;
+            if (spawnTimer >= spawnInterval) {
+                const sphere = createSphere();
+                scene.add(sphere);
+                gameState.bricks.push(sphere); // Still using 'bricks' array name for now
+                spawnTimer = 0;
+            }
+        }
+
+        function updateSpheres() {
+            for (let i = gameState.bricks.length - 1; i >= 0; i--) {
+                const sphere = gameState.bricks[i];
+
+                sphere.position.z += sphere.userData.speed;
+                sphere.rotation.x += sphere.userData.rotationSpeed.x;
+                sphere.rotation.y += sphere.userData.rotationSpeed.y;
+                sphere.rotation.z += sphere.userData.rotationSpeed.z;
+
+                // Remove if passed camera (and count as missed if needed)
+                if (sphere.position.z > 10) {
+                    const element = sphere.userData.element;
+                    const isNeeded = gameState.targetCompound.elements[element] && 
+                                   gameState.collected[element] < gameState.targetCompound.elements[element];
+                    
+                    if (isNeeded) {
+                        gameState.missed++;
+                    }
+                    
+                    removeBrick(sphere);
+                }
+            }
+        }
+
+        /**
+         * Updates spheres that are animating to their collection slots
+         */
+        function updateAnimatingSpheres() {
+            for (let i = gameState.animatingBricks.length - 1; i >= 0; i--) {
+                const animData = gameState.animatingBricks[i];
+                const sphere = animData.sphere;
+                const targetSlot = animData.targetSlot;
+                
+                // Lerp position to target
+                sphere.position.lerp(targetSlot.position, 0.1);
+                
+                // Slow down rotation as it approaches
+                sphere.userData.rotationSpeed.x *= 0.95;
+                sphere.userData.rotationSpeed.y *= 0.95;
+                sphere.userData.rotationSpeed.z *= 0.95;
+                
+                sphere.rotation.x += sphere.userData.rotationSpeed.x;
+                sphere.rotation.y += sphere.userData.rotationSpeed.y;
+                sphere.rotation.z += sphere.userData.rotationSpeed.z;
+                
+                // Check if close enough to snap into place
+                const distance = sphere.position.distanceTo(targetSlot.position);
+                if (distance < 0.1) {
+                    console.log('Sphere reached slot! Converting to circle for element:', sphere.userData.element);
+                    
+                    // Remove the 3D sphere
+                    scene.remove(sphere);
+                    sphere.geometry.dispose();
+                    if (sphere.material.map) sphere.material.map.dispose();
+                    sphere.material.dispose();
+                    
+                    // Create a 2D circle sprite in its place
+                    const element = sphere.userData.element;
+                    const size = sphere.userData.size;
+                    const circle = createCollectedCircle(element, size);
+                    // Position circle slightly in front (z=2.5)
+                    circle.position.set(targetSlot.position.x, targetSlot.position.y, 2.5);
+                    scene.add(circle);
+                    
+                    console.log('Circle created and added at position:', circle.position);
+                    console.log('Circle scale:', circle.scale);
+                    
+                    // Mark slot as filled
+                    targetSlot.filled = true;
+                    targetSlot.collectedSphere = circle;
+                    
+                    console.log('Slot marked as filled. Total filled slots:', gameState.collectionSlots.filter(s => s.filled).length);
+                    
+                    // Remove from animating array
+                    gameState.animatingBricks.splice(i, 1);
+                }
+            }
+        }
+
+        function updateParticles() {
+            for (let i = gameState.particles.length - 1; i >= 0; i--) {
+                const particle = gameState.particles[i];
+
+                particle.position.add(particle.userData.velocity);
+                particle.rotation.x += particle.userData.rotationSpeed.x;
+                particle.rotation.y += particle.userData.rotationSpeed.y;
+                particle.rotation.z += particle.userData.rotationSpeed.z;
+                particle.userData.velocity.y -= 0.01;
+                particle.userData.life--;
+                particle.material.opacity = particle.userData.life / 60;
+                particle.material.transparent = true;
+
+                if (particle.userData.life <= 0) {
+                    scene.remove(particle);
+                    particle.geometry.dispose();
+                    particle.material.dispose();
+                    gameState.particles.splice(i, 1);
+                }
+            }
+        }
+
+        // ==============================================
+        // INTERACTION
+        // ==============================================
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        /**
+         * Finds the next empty slot for a given element
+         */
+        function findEmptySlot(element) {
+            for (let slot of gameState.collectionSlots) {
+                if (slot.element === element && !slot.filled) {
+                    return slot;
+                }
+            }
+            return null;
+        }
+
+        function onBrickClick(event) {
+            if (gameState.isPaused || gameState.isComplete) return;
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(gameState.bricks);
+
+            if (intersects.length > 0) {
+                const hitSphere = intersects[0].object;
+                const element = hitSphere.userData.element;
+                
+                // Check if this is a needed element
+                const isNeeded = gameState.targetCompound.elements[element];
+                const stillNeed = isNeeded && gameState.collected[element] < gameState.targetCompound.elements[element];
+                
+                if (stillNeed) {
+                    // Correct element! Find an empty slot
+                    const emptySlot = findEmptySlot(element);
+                    
+                    if (emptySlot) {
+                        // Remove from active spheres array
+                        const index = gameState.bricks.indexOf(hitSphere);
+                        if (index > -1) {
+                            gameState.bricks.splice(index, 1);
+                        }
+                        
+                        // Add to animating spheres
+                        gameState.animatingBricks.push({
+                            sphere: hitSphere,
+                            targetSlot: emptySlot
+                        });
+                        
+                        // Update collection count
+                        gameState.collected[element]++;
+                        gameState.totalCollected++;
+                        
+                        // Check if compound is complete
+                        if (checkCompletion()) {
+                            completeGame();
+                        }
+                    }
+                } else {
+                    // Wrong element or already have enough
+                    gameState.missed++;
+                    
+                    // Red explosion
+                    const explosionParticles = createParticleExplosion(hitSphere, false);
+                    gameState.particles.push(...explosionParticles);
+                    
+                    // Remove the sphere
+                    removeBrick(hitSphere);
+                }
+                
+                updateUI();
+            }
+        }
+
+        function onKeyDown(event) {
+            switch(event.key) {
+                case ' ':
+                    event.preventDefault();
+                    if (!gameState.isComplete) {
+                        gameState.isPaused = !gameState.isPaused;
+                        if (!gameState.isPaused) {
+                            gameState.startTime = Date.now() - (gameState.elapsedTime * 1000);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        renderer.domElement.addEventListener('click', onBrickClick);
+        renderer.domElement.addEventListener('keydown', onKeyDown);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', onWindowResize);
+
+        // ==============================================
+        // CERTIFICATE GENERATION
+        // ==============================================
+
+        /**
+         * Creates a cylinder bond between two atoms
+         */
+        function createBond(pos1, pos2, color = 0xcccccc) {
+            const direction = new THREE.Vector3().subVectors(pos2, pos1);
+            const length = direction.length();
+            const midpoint = new THREE.Vector3().addVectors(pos1, pos2).multiplyScalar(0.5);
+            
+            const geometry = new THREE.CylinderGeometry(0.08, 0.08, length, 8);
+            const material = new THREE.MeshLambertMaterial({ color: color });
+            const cylinder = new THREE.Mesh(geometry, material);
+            
+            // Position at midpoint
+            cylinder.position.copy(midpoint);
+            
+            // Rotate to align with direction
+            cylinder.quaternion.setFromUnitVectors(
+                new THREE.Vector3(0, 1, 0),
+                direction.clone().normalize()
+            );
+            
+            return cylinder;
+        }
+
+        /**
+         * Renders a 3D molecular structure to a canvas
+         * Returns a data URL of the rendered molecule
+         * rotation: optional rotation in radians for Y-axis
+         */
+        function render3DMolecule(rotation = 0) {
+            try {
+                console.log('Starting 3D molecule render for:', gameState.targetCompound.formula, 'rotation:', rotation);
+                
+                // Create a temporary canvas for molecule rendering
+                const molCanvas = document.createElement('canvas');
+                molCanvas.width = 300;
+                molCanvas.height = 300;
+
+                // Create a separate scene for the molecule
+                const molScene = new THREE.Scene();
+                // Transparent background
+                molScene.background = null;
+
+                // Camera for molecule view
+                const molCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+                molCamera.position.z = 6;
+
+                // Renderer for molecule
+                const molRenderer = new THREE.WebGLRenderer({ 
+                    canvas: molCanvas,
+                    antialias: true,
+                    preserveDrawingBuffer: true, // CRITICAL for canvas capture
+                    alpha: true // Enable transparency
+                });
+                molRenderer.setSize(300, 300);
+                molRenderer.setClearColor(0x000000, 0); // Transparent clear color
+
+                // Lighting
+                const molAmbient = new THREE.AmbientLight(0xffffff, 0.7);
+                molScene.add(molAmbient);
+                const molDirectional = new THREE.DirectionalLight(0xffffff, 0.9);
+                molDirectional.position.set(5, 5, 5);
+                molScene.add(molDirectional);
+
+                // Create molecule based on compound
+                const compound = gameState.targetCompound;
+                
+                // Define basic molecular geometries for common compounds
+                const molecularGeometries = {
+                    'H₂O': {
+                        atoms: [
+                            { element: 'O', position: [0, 0, 0] },
+                            { element: 'H', position: [-0.96, 0.62, 0] },
+                            { element: 'H', position: [0.96, 0.62, 0] }
+                        ],
+                        bonds: [
+                            [0, 1], // O-H bond
+                            [0, 2]  // O-H bond
+                        ]
+                    },
+                    'CO₂': {
+                        atoms: [
+                            { element: 'C', position: [0, 0, 0] },
+                            { element: 'O', position: [-1.8, 0, 0] },
+                            { element: 'O', position: [1.8, 0, 0] }
+                        ],
+                        bonds: [
+                            [0, 1], // C=O double bond (shown as single for simplicity)
+                            [0, 2]  // C=O double bond
+                        ]
+                    },
+                    'NH₃': {
+                        atoms: [
+                            { element: 'N', position: [0, 0, 0] },
+                            { element: 'H', position: [0, 1.0, 0] },
+                            { element: 'H', position: [-0.87, -0.5, 0.5] },
+                            { element: 'H', position: [0.87, -0.5, 0.5] }
+                        ],
+                        bonds: [
+                            [0, 1], // N-H bond
+                            [0, 2], // N-H bond
+                            [0, 3]  // N-H bond
+                        ]
+                    },
+                    'CH₄': {
+                        atoms: [
+                            { element: 'C', position: [0, 0, 0] },
+                            { element: 'H', position: [0.89, 0.89, 0.89] },
+                            { element: 'H', position: [-0.89, -0.89, 0.89] },
+                            { element: 'H', position: [-0.89, 0.89, -0.89] },
+                            { element: 'H', position: [0.89, -0.89, -0.89] }
+                        ],
+                        bonds: [
+                            [0, 1], // C-H bond
+                            [0, 2], // C-H bond
+                            [0, 3], // C-H bond
+                            [0, 4]  // C-H bond
+                        ]
+                    },
+                    'NaCl': {
+                        atoms: [
+                            { element: 'Na', position: [-1.2, 0, 0] },
+                            { element: 'Cl', position: [1.2, 0, 0] }
+                        ],
+                        bonds: [
+                            [0, 1] // Ionic bond (shown as line)
+                        ]
+                    },
+                    'H₂SO₄': {
+                        atoms: [
+                            { element: 'S', position: [0, 0, 0] },
+                            { element: 'O', position: [0, 1.2, 0] },
+                            { element: 'O', position: [0, -1.2, 0] },
+                            { element: 'O', position: [1.04, 0, 0.6] },
+                            { element: 'O', position: [-1.04, 0, 0.6] },
+                            { element: 'H', position: [1.6, 0, 1.0] },
+                            { element: 'H', position: [-1.6, 0, 1.0] }
+                        ],
+                        bonds: [
+                            [0, 1], // S=O
+                            [0, 2], // S=O
+                            [0, 3], // S-O
+                            [0, 4], // S-O
+                            [3, 5], // O-H
+                            [4, 6]  // O-H
+                        ]
+                    },
+                    'C₆H₁₂O₆': {
+                        atoms: [
+                            { element: 'C', position: [0, 0, 0] },
+                            { element: 'C', position: [1.2, 0, 0] },
+                            { element: 'C', position: [1.8, 1.0, 0] },
+                            { element: 'C', position: [1.2, 2.0, 0] },
+                            { element: 'C', position: [0, 2.0, 0] },
+                            { element: 'C', position: [-0.6, 1.0, 0] },
+                            { element: 'O', position: [0.6, -0.8, 0.4] },
+                            { element: 'O', position: [1.2, 2.8, 0.4] },
+                            { element: 'O', position: [-0.6, 2.8, 0.4] },
+                            { element: 'O', position: [2.8, 1.0, 0.4] },
+                            { element: 'O', position: [1.8, 0.3, 0.4] },
+                            { element: 'O', position: [-1.6, 1.0, 0.4] }
+                        ],
+                        bonds: [
+                            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], // Ring
+                            [0, 6], [3, 7], [4, 8], [2, 9], [1, 10], [5, 11] // Oxygens
+                        ]
+                    }
+                };
+
+                let geometryData = molecularGeometries[compound.formula] || null;
+                
+                // If we don't have a predefined geometry, create a simple linear arrangement
+                if (!geometryData) {
+                    console.log('No predefined geometry, creating linear arrangement');
+                    const atoms = [];
+                    const bonds = [];
+                    let index = 0;
+                    for (let elem in compound.elements) {
+                        const count = compound.elements[elem];
+                        for (let i = 0; i < count; i++) {
+                            atoms.push({
+                                element: elem,
+                                position: [(index - 2) * 1.5, 0, 0]
+                            });
+                            if (index > 0) {
+                                bonds.push([index - 1, index]); // Connect to previous atom
+                            }
+                            index++;
+                        }
+                    }
+                    geometryData = { atoms, bonds };
+                } else {
+                    console.log('Using predefined geometry with', geometryData.atoms.length, 'atoms and', geometryData.bonds.length, 'bonds');
+                }
+
+                // Create a group to hold the entire molecule so we can rotate it
+                const moleculeGroup = new THREE.Group();
+
+                // Create spheres for each atom
+                const createdObjects = [];
+                const atomMeshes = []; // Keep track of atom positions for bonds
+                
+                geometryData.atoms.forEach((atom, idx) => {
+                    const element = atom.element;
+                    const size = getElementSize(element) * 0.3; // Smaller atoms for ball-and-stick
+                    const color = elementData[element].color;
+
+                    const sphereGeometry = new THREE.SphereGeometry(size, 16, 16);
+                    const texture = createSphereTexture(element, color);
+                    const material = new THREE.MeshLambertMaterial({ 
+                        map: texture,
+                        color: color
+                    });
+                    const sphere = new THREE.Mesh(sphereGeometry, material);
+                    sphere.position.set(atom.position[0], atom.position[1], atom.position[2]);
+                    moleculeGroup.add(sphere);
+                    createdObjects.push({ mesh: sphere, geometry: sphereGeometry, material: material });
+                    atomMeshes.push(sphere);
+                });
+
+                console.log('Created', atomMeshes.length, 'atoms');
+
+                // Create bonds between atoms
+                geometryData.bonds.forEach(bond => {
+                    const atom1 = atomMeshes[bond[0]];
+                    const atom2 = atomMeshes[bond[1]];
+                    const bondMesh = createBond(atom1.position, atom2.position);
+                    moleculeGroup.add(bondMesh);
+                    createdObjects.push({ mesh: bondMesh, geometry: bondMesh.geometry, material: bondMesh.material });
+                });
+
+                console.log('Created', geometryData.bonds.length, 'bonds');
+
+                // Apply rotation to the entire molecule
+                moleculeGroup.rotation.y = rotation;
+                moleculeGroup.rotation.x = Math.PI * 0.1; // Slight tilt for better view
+
+                // Add molecule group to scene
+                molScene.add(moleculeGroup);
+
+                // Render the molecule
+                molRenderer.render(molScene, molCamera);
+
+                // Get the data URL
+                const dataURL = molCanvas.toDataURL('image/png');
+                console.log('Generated molecule data URL, length:', dataURL.length);
+
+                // Clean up
+                createdObjects.forEach(obj => {
+                    obj.geometry.dispose();
+                    if (obj.material.map) obj.material.map.dispose();
+                    obj.material.dispose();
+                });
+                molScene.remove(moleculeGroup);
+                molScene.remove(molAmbient);
+                molScene.remove(molDirectional);
+                molRenderer.dispose();
+
+                return dataURL;
+            } catch (error) {
+                console.error('Error rendering 3D molecule:', error);
+                return null;
+            }
+        }
+
+        /**
+         * Generates a certificate image on canvas
+         */
+        function generateCertificate(playerName) {
+            const canvas = document.getElementById('certificateCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Border
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            
+            // Inner border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+            
+            // Title - responsive sizing
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('CERTIFICATE OF ACHIEVEMENT', canvas.width / 2, 100);
+            
+            // Subtitle
+            ctx.font = '22px Arial';
+            ctx.fillText('Compound Builder Mastery', canvas.width / 2, 135);
+            
+            // Divider
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(150, 160);
+            ctx.lineTo(canvas.width - 150, 160);
+            ctx.stroke();
+            
+            // "This certifies that"
+            ctx.font = 'italic 18px Arial';
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillText('This certifies that', canvas.width / 2, 195);
+            
+            // Player name
+            ctx.font = 'bold 48px Courier New';
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText(playerName, canvas.width / 2, 255);
+            
+            // Achievement text
+            ctx.font = 'italic 18px Arial';
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillText('has successfully constructed', canvas.width / 2, 305);
+            
+            // Compound name
+            ctx.font = 'bold 32px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(gameState.targetCompound.name, canvas.width / 2, 350);
+            
+            // Formula
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = '#00ff88';
+            ctx.fillText(`(${gameState.targetCompound.formula})`, canvas.width / 2, 385);
+            
+            // Try to render 3D molecules (two views)
+            try {
+                const moleculeLeftURL = render3DMolecule(Math.PI * 0.3); // Rotated 54 degrees
+                const moleculeRightURL = render3DMolecule(-Math.PI * 0.3); // Rotated -54 degrees
+                
+                console.log('Molecule left data URL generated:', moleculeLeftURL ? 'YES' : 'NO');
+                console.log('Molecule right data URL generated:', moleculeRightURL ? 'YES' : 'NO');
+                
+                if (moleculeLeftURL && moleculeRightURL) {
+                    let imagesLoaded = 0;
+                    
+                    const checkBothLoaded = () => {
+                        imagesLoaded++;
+                        if (imagesLoaded === 2) {
+                            // Both images loaded, finish certificate
+                            // Stats - moved higher up
+                            ctx.font = '18px Arial';
+                            ctx.fillStyle = '#f0f0f0';
+                            const minutes = Math.floor(gameState.elapsedTime / 60);
+                            const seconds = gameState.elapsedTime % 60;
+                            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            ctx.fillText(`Time: ${timeStr} | Accuracy: ${Math.round((gameState.totalCollected / (gameState.totalCollected + gameState.missed)) * 100)}%`, canvas.width / 2, 480);
+                            
+                            // Date
+                            ctx.font = '16px Arial';
+                            const date = new Date().toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            });
+                            ctx.fillText(`Awarded on ${date}`, canvas.width / 2, 515);
+                            
+                            console.log('Certificate complete with molecules!');
+                            updateCertificatePreview();
+                        }
+                    };
+                    
+                    // Load left molecule
+                    const moleculeImgLeft = new Image();
+                    moleculeImgLeft.onload = function() {
+                        console.log('Left molecule image loaded successfully!');
+                        // Draw left molecule - HUGE and positioned higher!
+                        ctx.drawImage(moleculeImgLeft, 30, 275, 340, 340);
+                        checkBothLoaded();
+                    };
+                    moleculeImgLeft.onerror = function(error) {
+                        console.error('Failed to load left molecule image:', error);
+                        finishCertificateWithoutMolecule(ctx);
+                    };
+                    moleculeImgLeft.src = moleculeLeftURL;
+                    
+                    // Load right molecule
+                    const moleculeImgRight = new Image();
+                    moleculeImgRight.onload = function() {
+                        console.log('Right molecule image loaded successfully!');
+                        // Draw right molecule - HUGE and positioned higher!
+                        ctx.drawImage(moleculeImgRight, canvas.width - 370, 275, 340, 340);
+                        checkBothLoaded();
+                    };
+                    moleculeImgRight.onerror = function(error) {
+                        console.error('Failed to load right molecule image:', error);
+                        finishCertificateWithoutMolecule(ctx);
+                    };
+                    moleculeImgRight.src = moleculeRightURL;
+                } else {
+                    console.log('Molecule rendering returned null, finishing without molecules');
+                    finishCertificateWithoutMolecule(ctx);
+                }
+            } catch (error) {
+                console.error('Error in certificate generation:', error);
+                finishCertificateWithoutMolecule(ctx);
+            }
+        }
+        
+        /**
+         * Helper function to finish certificate without molecule
+         */
+        function finishCertificateWithoutMolecule(ctx) {
+            console.log('Finishing certificate without molecule');
+            const canvas = document.getElementById('certificateCanvas');
+            
+            // Stats - moved higher up
+            ctx.font = '18px Arial';
+            ctx.fillStyle = '#f0f0f0';
+            const minutes = Math.floor(gameState.elapsedTime / 60);
+            const seconds = gameState.elapsedTime % 60;
+            const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            ctx.fillText(`Time: ${timeStr} | Accuracy: ${Math.round((gameState.totalCollected / (gameState.totalCollected + gameState.missed)) * 100)}%`, canvas.width / 2, 440);
+            
+            // Date
+            ctx.font = '16px Arial';
+            const date = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            ctx.fillText(`Awarded on ${date}`, canvas.width / 2, 475);
+            
+            console.log('Certificate complete without molecule');
+            // Update preview
+            updateCertificatePreview();
+        }
+        
+        /**
+         * Updates the certificate preview image
+         */
+        function updateCertificatePreview() {
+            const canvas = document.getElementById('certificateCanvas');
+            const preview = document.getElementById('certificatePreview');
+            preview.src = canvas.toDataURL('image/png');
+            preview.style.display = 'block';
+            
+            // Hide input section, show download button
+            document.getElementById('inputSection').classList.add('hidden');
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+        }
+
+        /**
+         * Downloads the certificate as PNG
+         */
+        function downloadCertificate() {
+            const canvas = document.getElementById('certificateCanvas');
+            const link = document.createElement('a');
+            const playerName = document.getElementById('nameInput').value || 'Player';
+            link.download = `${playerName}_${gameState.targetCompound.name}_Certificate.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // ==============================================
+        // EVENT LISTENERS FOR SPLASH SCREEN
+        // ==============================================
+
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (name) {
+                generateCertificate(name);
+            } else {
+                alert('Please enter your name first!');
+                document.getElementById('nameInput').focus();
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', downloadCertificate);
+
+        document.getElementById('playAgainBtn').addEventListener('click', function() {
+            // Hide splash screen
+            document.getElementById('splashScreen').classList.remove('show');
+            document.getElementById('certificatePreview').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('nameInput').value = '';
+            
+            // Show input section again
+            document.getElementById('inputSection').classList.remove('hidden');
+            
+            // Clear scene - active spheres
+            gameState.bricks.forEach(sphere => {
+                scene.remove(sphere);
+                sphere.geometry.dispose();
+                if (sphere.material.map) sphere.material.map.dispose();
+                sphere.material.dispose();
+            });
+            gameState.bricks = [];
+            
+            // Clear animating spheres
+            gameState.animatingBricks.forEach(animData => {
+                scene.remove(animData.sphere);
+                animData.sphere.geometry.dispose();
+                if (animData.sphere.material.map) animData.sphere.material.map.dispose();
+                animData.sphere.material.dispose();
+            });
+            gameState.animatingBricks = [];
+            
+            // Clear collection slots
+            gameState.collectionSlots.forEach(slot => {
+                // Remove collected sphere if present
+                if (slot.collectedSphere) {
+                    scene.remove(slot.collectedSphere);
+                    if (slot.collectedSphere.material.map) slot.collectedSphere.material.map.dispose();
+                    slot.collectedSphere.material.dispose();
+                }
+            });
+            gameState.collectionSlots = [];
+            
+            // Clear particles
+            gameState.particles.forEach(particle => {
+                scene.remove(particle);
+                particle.geometry.dispose();
+                particle.material.dispose();
+            });
+            gameState.particles = [];
+            
+            // Start new game
+            initializeGame();
+            gameState.isPaused = false;
+            renderer.domElement.focus();
+        });
+
+        // Allow Enter key to generate certificate
+        document.getElementById('nameInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                document.getElementById('generateBtn').click();
+            }
+        });
+
+        // ==============================================
+        // ANIMATION LOOP
+        // ==============================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (!gameState.isPaused) {
+                // Only spawn new spheres if game isn't complete
+                if (!gameState.isComplete) {
+                    spawnSpheres();
+                }
+                // Always update existing spheres and animations (even when complete)
+                updateSpheres();
+                updateAnimatingSpheres();
+                updateParticles();
+                updateUI();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // ==============================================
+        // START GAME
+        // ==============================================
+
+        initializeGame();
+        animate();
+
+        console.log('Compound Builder loaded! Build', gameState.targetCompound.name);
+        console.log('Spheres sized by atomic radius. Click correct elements to collect them!');
+    </script>
+</body>
+</html>
