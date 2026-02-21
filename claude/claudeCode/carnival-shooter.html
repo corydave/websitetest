@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎪 Carnival Shooter — Hand Tracking Game</title>
+
+  <style>
+    /* ── Reset & vars ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0520;   /* deep carnival night */
+      --surface:   #1a0a30;
+      --border:    #4a2080;
+      --gold:      #ffd700;
+      --red:       #e8001c;
+      --green:     #00e640;
+      --cyan:      #00e5ff;
+      --muted:     #9985bb;
+      --text:      #f0e6ff;
+      --radius:    10px;
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+
+    .hidden { display: none !important; }
+
+    kbd { display:inline-block; padding:1px 7px; font-family:monospace;
+      font-size:.78em; background:#2a1050; border:1px solid var(--border);
+      border-bottom-width:2px; border-radius:4px; color:var(--muted); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN 1 — CAMERA SELECT
+    ════════════════════════════════════════════════════════════════ */
+    #screen-select {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background: radial-gradient(ellipse at 50% 30%, #2a0a50 0%, #0d0520 70%);
+    }
+
+    .select-card {
+      width: 100%; max-width: 520px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 40px;
+      box-shadow: 0 0 60px #a020f040;
+    }
+
+    .select-header { display:flex; align-items:center; gap:16px; margin-bottom:28px; }
+    .select-header .logo { font-size:2.8rem; line-height:1; flex-shrink:0; }
+
+    .select-header h1 { font-size:1.7rem; font-weight:900; letter-spacing:-.5px;
+      text-shadow: 0 0 20px var(--gold); }
+    .select-header h1 .gold  { color: var(--gold); }
+    .select-header h1 .red   { color: var(--red);  }
+    .select-header .subtitle { font-size:.82rem; color:var(--muted); margin-top:3px; }
+
+    .scan-status { font-size:.9rem; color:var(--muted); margin-bottom:16px; min-height:22px; }
+
+    .camera-list { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+
+    .camera-card {
+      display:flex; align-items:center; gap:14px;
+      padding:14px 16px;
+      background:#0d0520;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      cursor:pointer;
+      transition: border-color .15s, background .15s;
+      user-select:none;
+    }
+    .camera-card:hover    { border-color:var(--gold); background:#ffd70010; }
+    .camera-card.selected { border-color:var(--gold); background:#ffd70018; }
+
+    .cam-icon  { font-size:1.4rem; flex-shrink:0; }
+    .cam-info  { flex:1; overflow:hidden; }
+    .cam-name  { font-weight:600; font-size:.9rem; color:var(--text);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cam-idx   { font-size:.78rem; color:var(--muted); margin-top:1px; }
+    .cam-radio { font-size:1.2rem; color:var(--gold); flex-shrink:0; }
+
+    .error-box { padding:12px 16px; background:#e8001c15; border:1px solid var(--red);
+      border-radius:var(--radius); color:var(--red); font-size:.87rem; margin-bottom:16px; }
+
+    .btn-primary {
+      width:100%; padding:14px;
+      font-size:1.05rem; font-weight:900; letter-spacing:.5px;
+      color:#0d0520;
+      background: linear-gradient(135deg, var(--gold), #ff9f00);
+      border:none; border-radius:var(--radius);
+      cursor:pointer;
+      transition: opacity .15s, transform .1s;
+      text-shadow: none;
+      margin-bottom:14px;
+      box-shadow: 0 4px 20px #ffd70050;
+    }
+    .btn-primary:hover:not(:disabled) { opacity:.9; transform:translateY(-2px); }
+    .btn-primary:disabled { opacity:.3; cursor:not-allowed; transform:none; }
+
+    .hint { text-align:center; font-size:.8rem; color:var(--muted); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN 2 — GAME
+    ════════════════════════════════════════════════════════════════ */
+    #screen-game {
+      position:fixed; inset:0;
+      display:flex; flex-direction:column;
+      background:#000;
+    }
+
+    /* ── HUD bar ─────────────────────────────────────────────────── */
+    #hud-bar {
+      height:54px; flex-shrink:0;
+      display:flex; align-items:center; padding:0 20px; gap:16px;
+      background:rgba(0,0,0,.85);
+      border-bottom:2px solid var(--gold);
+      position:relative; z-index:10;
+    }
+
+    .hud-title {
+      font-size:1rem; font-weight:900; letter-spacing:.5px;
+      color:var(--gold); text-shadow:0 0 12px var(--gold);
+      white-space:nowrap;
+    }
+
+    .hud-mid { flex:1; display:flex; align-items:center; justify-content:center; gap:28px; }
+
+    .hud-stat {
+      text-align:center;
+      line-height:1.2;
+    }
+    .hud-stat .label { font-size:.65rem; letter-spacing:.8px; text-transform:uppercase;
+      color:var(--muted); }
+    .hud-stat .value { font-size:1.3rem; font-weight:900; font-family:'Impact', sans-serif; }
+    .hud-stat .value.score-val  { color:var(--gold); text-shadow:0 0 10px var(--gold); }
+    .hud-stat .value.ammo-val   { color:#ff6040; text-shadow:0 0 10px #ff604080; }
+
+    .btn-quit {
+      padding:7px 14px; font-size:.82rem; font-weight:700;
+      color:#ff6040; background:#ff604015; border:1px solid #ff6040;
+      border-radius:8px; cursor:pointer; transition:background .15s;
+      flex-shrink:0;
+    }
+    .btn-quit:hover { background:#ff604030; }
+
+    /* ── Canvas viewport ─────────────────────────────────────────── */
+    #viewport {
+      flex:1; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      background:#000; position:relative;
+    }
+
+    #canvas { display:block; max-width:100%; max-height:100%; }
+
+    /* Loading overlay */
+    #loading-overlay {
+      position:absolute; inset:0;
+      background:rgba(13,5,32,.9);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:18px;
+      backdrop-filter:blur(4px); z-index:20;
+    }
+    .spinner { width:44px; height:44px;
+      border:3px solid rgba(255,215,0,.15);
+      border-top-color:var(--gold);
+      border-radius:50%; animation:spin .75s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    #loading-text { font-size:.92rem; color:var(--muted); text-align:center; }
+
+    /* ── Game over overlay ───────────────────────────────────────── */
+    #gameover {
+      position:absolute; inset:0; z-index:30;
+      background:rgba(13,5,32,.88);
+      backdrop-filter:blur(6px);
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    .go-card {
+      background:var(--surface);
+      border:2px solid var(--gold);
+      border-radius:16px;
+      padding:44px 52px;
+      text-align:center;
+      max-width:420px;
+      box-shadow:0 0 80px #ffd70040;
+    }
+    .go-title { font-size:2rem; font-weight:900; color:var(--gold);
+      text-shadow:0 0 20px var(--gold); margin-bottom:8px; }
+    .go-msg   { font-size:1rem; color:var(--muted); margin-bottom:20px; }
+    .go-stars { font-size:2.2rem; margin-bottom:12px; letter-spacing:4px; }
+    .go-score { font-size:3.5rem; font-weight:900; font-family:'Impact',sans-serif;
+      color:var(--gold); text-shadow:0 0 20px var(--gold);
+      line-height:1; margin-bottom:4px; }
+    .go-score-label { font-size:.8rem; color:var(--muted); margin-bottom:6px; }
+    .go-accuracy { font-size:.9rem; color:var(--muted); margin-bottom:28px; }
+
+    .go-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+    .go-btn {
+      padding:12px 24px; font-size:.95rem; font-weight:700;
+      border:none; border-radius:8px; cursor:pointer;
+      transition:opacity .15s, transform .1s;
+    }
+    .go-btn:hover { opacity:.9; transform:translateY(-1px); }
+    .go-btn.primary { background:linear-gradient(135deg,var(--gold),#ff9f00);
+      color:#0d0520; box-shadow:0 4px 16px #ffd70050; }
+    .go-btn.secondary { background:var(--surface-2,#2a1050);
+      color:var(--muted); border:1px solid var(--border); }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 1 — CAMERA SELECT
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-select">
+    <div class="select-card">
+      <div class="select-header">
+        <span class="logo">🎪</span>
+        <div>
+          <h1><span class="red">CARNIVAL</span> <span class="gold">SHOOTER</span></h1>
+          <p class="subtitle">Point your index finger · Pinch to shoot · Pop all 12 balloons!</p>
+        </div>
+      </div>
+
+      <p id="scan-status" class="scan-status">Requesting camera permission…</p>
+      <div id="camera-list" class="camera-list"></div>
+      <div id="error-box" class="error-box hidden"></div>
+
+      <button id="btn-start" class="btn-primary" disabled>🎯 Play!</button>
+      <p class="hint">Press <kbd>q</kbd> during play to quit.</p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 2 — GAME
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-game" class="hidden">
+
+    <!-- HUD bar -->
+    <div id="hud-bar">
+      <span class="hud-title">🎪 CARNIVAL SHOOTER</span>
+      <div class="hud-mid">
+        <div class="hud-stat">
+          <div class="label">Score</div>
+          <div class="value score-val" id="hud-score">0</div>
+        </div>
+        <div class="hud-stat">
+          <div class="label">Shots Left</div>
+          <div class="value ammo-val" id="hud-ammo">20</div>
+        </div>
+        <div class="hud-stat">
+          <div class="label">Balloons</div>
+          <div class="value" style="color:#a080ff" id="hud-targets">12</div>
+        </div>
+      </div>
+      <button id="btn-quit" class="btn-quit">✕ Quit <kbd>q</kbd></button>
+    </div>
+
+    <!-- Game viewport -->
+    <div id="viewport">
+      <canvas id="canvas"></canvas>
+
+      <!-- Loading overlay while MediaPipe downloads -->
+      <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-text">Initialising…</p>
+      </div>
+
+      <!-- Game-over overlay -->
+      <div id="gameover" class="hidden">
+        <div class="go-card">
+          <div class="go-title">🎪 GAME OVER!</div>
+          <div class="go-msg"  id="go-msg"></div>
+          <div class="go-stars" id="go-stars"></div>
+          <div class="go-score" id="go-score">0</div>
+          <div class="go-score-label">POINTS</div>
+          <div class="go-accuracy" id="go-accuracy"></div>
+          <div class="go-buttons">
+            <button class="go-btn primary" id="btn-retry">🎯 Play Again</button>
+            <button class="go-btn secondary" id="btn-camera">📷 Camera</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Hidden video — camera source for MediaPipe -->
+  <video id="video" playsinline style="display:none;"></video>
+
+
+  <!-- MediaPipe Hands (global `Hands` constructor) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+          crossorigin="anonymous"></script>
+
+
+  <script>
+  "use strict";
+
+  /* ════════════════════════════════════════════════════════════════
+     CONSTANTS
+  ════════════════════════════════════════════════════════════════ */
+
+  const IDX_TIP   = 8;   // Index Finger Tip
+  const IDX_MCP   = 5;   // Index Finger MCP
+  const THUMB_TIP = 4;   // Thumb Tip (used for pinch)
+  const WRIST     = 0;
+  const MID_MCP   = 9;   // Middle finger MCP (used as palm scale reference)
+
+  // MediaPipe hand bone pairs — same as tracking-js.html
+  const HAND_CONNECTIONS = [
+    [0,1],[1,2],[2,3],[3,4],
+    [0,5],[5,6],[6,7],[7,8],
+    [5,9],[9,10],[10,11],[11,12],
+    [9,13],[13,14],[14,15],[15,16],
+    [13,17],[17,18],[18,19],[19,20],
+    [0,17],
+  ];
+
+  // Game tuning
+  const MAX_AMMO          = 20;   // total shots per game
+  const POINTS_PER_HIT    = 10;
+  const SHOOT_COOLDOWN_MS = 550;  // min ms between shots (prevents rapid-fire)
+  const PINCH_THRESHOLD   = 0.38; // ratio (pinch_dist / palm_len) below which = pinching
+  const BALLOON_ROWS      = 2;
+  const BALLOON_COLS      = 6;    // 12 balloons total
+
+  // Balloon palette — vibrant carnival colours
+  const BALLOON_COLORS = [
+    '#e8001c', // red
+    '#2979ff', // blue
+    '#ffd700', // gold
+    '#00c851', // green
+    '#ff6d00', // orange
+    '#e040fb', // purple
+    '#00bcd4', // cyan
+    '#ff4081', // pink
+  ];
+
+  /* ════════════════════════════════════════════════════════════════
+     STATE
+  ════════════════════════════════════════════════════════════════ */
+  let videoEl, canvasEl, ctx;
+  let handsModel    = null;
+  let currentStream = null;
+  let selectedDeviceId = null;
+  let isRunning     = false;
+  let animFrameId   = null;
+  let processingFrame = false;
+
+  // ── Game ──
+  let gamePhase    = 'idle';   // 'idle' | 'playing' | 'gameover'
+  let score        = 0;
+  let ammo         = MAX_AMMO;
+  let hits         = 0;        // balloons popped
+  let shotsTaken   = 0;        // total shots fired
+  let targets      = [];       // array of balloon objects
+  let particles    = [];       // pop particle array
+  let popTexts     = [];       // floating score/miss text
+  let bangFlash    = 0;        // countdown frames to show "BANG!" near crosshair
+  let screenFlash  = 0;        // 0-1 white flash intensity after a hit
+  let lastShootTs  = 0;        // timestamp of last shot
+  let wasPinching  = false;    // previous-frame pinch state for edge detection
+  let audioCtx     = null;     // Web Audio context (init on first interaction)
+
+  // FPS
+  let lastFrameTs = 0;
+  let fpsSamples  = [];
+
+  /* ════════════════════════════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════════════════════════════ */
+  window.addEventListener('DOMContentLoaded', () => {
+    videoEl  = document.getElementById('video');
+    canvasEl = document.getElementById('canvas');
+    ctx      = canvasEl.getContext('2d');
+
+    document.getElementById('btn-start') .addEventListener('click', startTracking);
+    document.getElementById('btn-quit')  .addEventListener('click', () => stopTracking(true));
+    document.getElementById('btn-retry') .addEventListener('click', retryGame);
+    document.getElementById('btn-camera').addEventListener('click', () => stopTracking(true));
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.key === 'q' || e.key === 'Q') && isRunning) stopTracking(true);
+    });
+
+    initCameraSelect();
+  });
+
+  /* ════════════════════════════════════════════════════════════════
+     CAMERA SELECTION
+  ════════════════════════════════════════════════════════════════ */
+  async function initCameraSelect() {
+    const statusEl = document.getElementById('scan-status');
+    const errorEl  = document.getElementById('error-box');
+    try {
+      statusEl.textContent = 'Requesting camera permission…';
+      const tmp = await navigator.mediaDevices.getUserMedia({ video: true });
+      tmp.getTracks().forEach(t => t.stop());
+
+      statusEl.textContent = 'Scanning cameras…';
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(d => d.kind === 'videoinput');
+
+      if (!cameras.length) {
+        statusEl.textContent = 'No cameras found. Connect a webcam and refresh.';
+        return;
+      }
+
+      statusEl.textContent = cameras.length === 1
+        ? '🎪 One camera found — ready to play!'
+        : `🎪 Found ${cameras.length} cameras — choose one:`;
+
+      const listEl = document.getElementById('camera-list');
+      cameras.forEach((cam, i) => {
+        const label = cam.label || `Camera ${i}`;
+        const card  = document.createElement('div');
+        card.className        = 'camera-card';
+        card.dataset.deviceId = cam.deviceId;
+        card.innerHTML = `
+          <span class="cam-icon">📷</span>
+          <div class="cam-info">
+            <div class="cam-name">${escapeHTML(label)}</div>
+            <div class="cam-idx">Index ${i}</div>
+          </div>
+          <span class="cam-radio">○</span>`;
+        card.addEventListener('click', () => {
+          selectedDeviceId = cam.deviceId;
+          document.querySelectorAll('.camera-card').forEach(c => {
+            c.classList.remove('selected');
+            c.querySelector('.cam-radio').textContent = '○';
+          });
+          card.classList.add('selected');
+          card.querySelector('.cam-radio').textContent = '●';
+          document.getElementById('btn-start').disabled = false;
+        });
+        listEl.appendChild(card);
+        if (i === 0) card.click();
+      });
+
+      if (cameras.length === 1) setTimeout(() => document.getElementById('btn-start').click(), 400);
+
+    } catch (err) {
+      const msg = err.name === 'NotAllowedError'
+        ? 'Camera access denied — allow permission and reload.'
+        : `Error: ${err.message}`;
+      document.getElementById('scan-status').textContent = '';
+      errorEl.textContent = msg;
+      errorEl.classList.remove('hidden');
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     MEDIAPIPE INIT
+  ════════════════════════════════════════════════════════════════ */
+  async function initHands() {
+    setLoadingText('Downloading MediaPipe model…');
+    handsModel = new Hands({
+      locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`,
+    });
+    handsModel.setOptions({
+      maxNumHands:            2,
+      modelComplexity:        1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence:  0.7,
+    });
+    handsModel.onResults(onResults);
+    await handsModel.initialize();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     START / STOP / RETRY
+  ════════════════════════════════════════════════════════════════ */
+  async function startTracking() {
+    initAudio();                      // must happen on click (browser policy)
+    showScreen('game');
+    showLoading(true);
+    setLoadingText('Opening camera…');
+
+    try {
+      currentStream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: selectedDeviceId }, width:{ideal:1280}, height:{ideal:720} },
+        audio: false,
+      });
+      videoEl.srcObject = currentStream;
+      await new Promise(r => { videoEl.onloadedmetadata = r; });
+      await videoEl.play();
+
+      canvasEl.width  = videoEl.videoWidth  || 1280;
+      canvasEl.height = videoEl.videoHeight || 720;
+
+      await initHands();
+
+      initGame();           // set up balloon positions
+      showLoading(false);
+      isRunning = true;
+      gamePhase = 'playing';
+      frameLoop();
+
+    } catch (err) {
+      console.error(err);
+      setLoadingText(`Error: ${err.message} — click Quit to go back.`);
+    }
+  }
+
+  function stopTracking(goToSelect = false) {
+    isRunning = false;
+    processingFrame = false;
+    if (animFrameId)   { cancelAnimationFrame(animFrameId); animFrameId = null; }
+    if (handsModel)    { handsModel.close(); handsModel = null; }
+    if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
+    fpsSamples = []; lastFrameTs = 0;
+    if (goToSelect) {
+      document.getElementById('gameover').classList.add('hidden');
+      showScreen('select');
+    }
+  }
+
+  function retryGame() {
+    document.getElementById('gameover').classList.add('hidden');
+    initGame();
+    gamePhase = 'playing';
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     GAME INIT — lay out the 12 balloon targets
+  ════════════════════════════════════════════════════════════════ */
+  function initGame() {
+    score = 0; ammo = MAX_AMMO; hits = 0; shotsTaken = 0;
+    particles = []; popTexts = [];
+    bangFlash = 0; screenFlash = 0;
+    lastShootTs = 0; wasPinching = false;
+
+    const W = canvasEl.width;
+    const H = canvasEl.height;
+    const r = Math.round(W * 0.031);    // balloon radius (~40px at 1280)
+
+    // Target rows: y at 26% and 43% of canvas height
+    const rowYs = [H * 0.26, H * 0.43];
+    // X: 10% padding each side, evenly spread
+    const xPad  = W * 0.10;
+    const xStep = (W - 2 * xPad) / (BALLOON_COLS - 1);
+
+    targets = [];
+    rowYs.forEach((baseY, row) => {
+      for (let col = 0; col < BALLOON_COLS; col++) {
+        targets.push({
+          id:    row * BALLOON_COLS + col,
+          baseX: xPad + col * xStep,
+          baseY,
+          radius: r,
+          color:  BALLOON_COLORS[(row * BALLOON_COLS + col) % BALLOON_COLORS.length],
+          alive:  true,
+        });
+      }
+    });
+
+    updateHUD();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     FRAME LOOP
+  ════════════════════════════════════════════════════════════════ */
+  function frameLoop() {
+    if (!isRunning) return;
+
+    const now = performance.now();
+    if (lastFrameTs > 0) {
+      fpsSamples.push(1000 / (now - lastFrameTs));
+      if (fpsSamples.length > 10) fpsSamples.shift();
+    }
+    lastFrameTs = now;
+
+    if (!processingFrame && videoEl.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      processingFrame = true;
+      handsModel.send({ image: videoEl })
+        .catch(e => console.warn('[MP]', e))
+        .finally(() => { processingFrame = false; });
+    }
+
+    animFrameId = requestAnimationFrame(frameLoop);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     RESULTS CALLBACK — called by MediaPipe after each frame
+  ════════════════════════════════════════════════════════════════ */
+  function onResults(results) {
+    const W = canvasEl.width;
+    const H = canvasEl.height;
+    const now = Date.now();
+
+    // ── 1. Draw mirrored video frame ───────────────────────────────
+    ctx.save();
+    ctx.translate(W, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(results.image, 0, 0, W, H);
+    ctx.restore();
+
+    // ── 2. Carnival backdrop (upper portion, behind targets) ────────
+    drawBackdrop(W, H);
+
+    // ── 3. Bunting flags along the top of the backdrop ─────────────
+    drawBunting(W, H * 0.08);
+
+    // ── 4. String lights at the bottom of the backdrop ─────────────
+    drawLights(W, H * 0.55, now);
+
+    // ── 5. Balloons (alive ones, with gentle bobbing) ───────────────
+    for (const t of targets) {
+      if (!t.alive) continue;
+      const bobY = Math.sin(now * 0.0012 + t.id * 0.9) * 7;
+      drawBalloon(t.baseX, t.baseY + bobY, t.radius, t.color);
+    }
+
+    // ── 6. Particles from balloon pops ─────────────────────────────
+    updateAndDrawParticles();
+
+    // ── 7. Floating "+10" / "MISS!" text ──────────────────────────
+    updateAndDrawPopTexts();
+
+    // ── 8. Screen flash (white hit feedback) ──────────────────────
+    if (screenFlash > 0.01) {
+      ctx.fillStyle = `rgba(255,255,220,${screenFlash * 0.4})`;
+      ctx.fillRect(0, 0, W, H);
+      screenFlash *= 0.75;
+    }
+
+    // ── 9. Hand skeleton + crosshair + pinch detection ─────────────
+    let anyPinching = false;
+    let shootX = 0, shootY = 0;
+
+    if (results.multiHandLandmarks && gamePhase === 'playing') {
+      for (const lms of results.multiHandLandmarks) {
+        // Subtle skeleton (30% opacity, so targets remain readable)
+        drawSkeletonFaint(lms, W, H);
+
+        const tip = lmPx(lms[IDX_TIP], W, H);
+        const pinching = detectPinch(lms);
+        if (pinching) { anyPinching = true; shootX = tip.x; shootY = tip.y; }
+
+        drawCrosshair(tip.x, tip.y, pinching, bangFlash > 0);
+      }
+
+      // Rising-edge pinch → fire
+      if (anyPinching && !wasPinching) {
+        tryShoot(shootX, shootY);
+        bangFlash = 18;   // show BANG for ~18 frames
+      }
+      wasPinching = anyPinching;
+    }
+
+    if (bangFlash > 0) bangFlash--;
+
+    // ── 10. "Point your finger!" hint when no hand detected ─────────
+    if ((!results.multiHandLandmarks || results.multiHandLandmarks.length === 0)
+        && gamePhase === 'playing') {
+      drawHint(W, H);
+    }
+
+    // ── 11. Footer ────────────────────────────────────────────────
+    ctx.font = '13px monospace';
+    ctx.fillStyle = 'rgba(180,180,180,0.45)';
+    ctx.fillText("Pinch to shoot  ·  Press 'q' to quit", 12, H - 10);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     PINCH DETECTION
+     Measures thumb-tip to index-tip distance, normalised by palm size.
+  ════════════════════════════════════════════════════════════════ */
+  function detectPinch(lms) {
+    const thumb   = lms[THUMB_TIP];
+    const index   = lms[IDX_TIP];
+    const wrist   = lms[WRIST];
+    const midMcp  = lms[MID_MCP];
+    const palmLen = Math.hypot(midMcp.x - wrist.x, midMcp.y - wrist.y);
+    if (palmLen < 0.01) return false;
+    const pinchDist = Math.hypot(thumb.x - index.x, thumb.y - index.y);
+    return (pinchDist / palmLen) < PINCH_THRESHOLD;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     SHOOT LOGIC
+  ════════════════════════════════════════════════════════════════ */
+  function tryShoot(cx, cy) {
+    if (gamePhase !== 'playing') return;
+    const now = Date.now();
+    if (now - lastShootTs < SHOOT_COOLDOWN_MS) return;
+    if (ammo <= 0) return;
+
+    lastShootTs = now;
+    ammo--;
+    shotsTaken++;
+
+    let hit = false;
+    for (const t of targets) {
+      if (!t.alive) continue;
+      const dist = Math.hypot(cx - t.baseX, cy - t.baseY);
+      if (dist < t.radius * 1.5) {      // slightly generous hit radius
+        t.alive = false;
+        score  += POINTS_PER_HIT;
+        hits++;
+        spawnPop(cx, cy, t.color);      // particle burst
+        spawnText(cx, cy - 50, `+${POINTS_PER_HIT}`, '#ffd700');
+        screenFlash = 0.7;
+        playPop();
+        hit = true;
+
+        // All balloons cleared?
+        if (targets.every(t => !t.alive)) {
+          setTimeout(() => endGame(true), 900);
+        }
+        break;
+      }
+    }
+
+    if (!hit) {
+      spawnText(cx, cy - 35, 'MISS!', '#ff4040');
+      playMiss();
+    }
+
+    updateHUD();
+
+    // Out of ammo?
+    if (ammo <= 0 && gamePhase === 'playing' && targets.some(t => t.alive)) {
+      setTimeout(() => endGame(false), 900);
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     GAME OVER
+  ════════════════════════════════════════════════════════════════ */
+  function endGame(allCleared) {
+    gamePhase = 'gameover';
+
+    const accuracy = shotsTaken > 0 ? Math.round((hits / shotsTaken) * 100) : 0;
+    const stars    = score >= 100 ? 3 : score >= 60 ? 2 : score >= 20 ? 1 : 0;
+    const starStr  = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+
+    document.getElementById('go-msg').textContent = allCleared
+      ? '🎉 You popped all the balloons!'
+      : `💨 Out of shots! ${12 - hits} balloon${12 - hits !== 1 ? 's' : ''} survived.`;
+    document.getElementById('go-stars').textContent   = starStr;
+    document.getElementById('go-score').textContent   = score;
+    document.getElementById('go-accuracy').textContent =
+      `${accuracy}% accuracy  ·  ${hits} / 12 balloons  ·  ${shotsTaken} shots`;
+
+    document.getElementById('gameover').classList.remove('hidden');
+    if (allCleared) playWin();
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     LANDMARK → PIXEL (flipped x for selfie / mirror view)
+  ════════════════════════════════════════════════════════════════ */
+  function lmPx(lm, W, H) {
+    return { x: (1 - lm.x) * W, y: lm.y * H };
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: CARNIVAL BACKDROP (wooden shooting-gallery look)
+  ════════════════════════════════════════════════════════════════ */
+  function drawBackdrop(W, H) {
+    const backdropH = H * 0.57;     // covers targets + some headroom
+
+    // Dark semi-transparent overlay so the wood reads on any video bg
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(0, 0, W, backdropH);
+
+    // Wood planks gradient
+    const woodGrad = ctx.createLinearGradient(0, 0, 0, backdropH);
+    woodGrad.addColorStop(0,   'rgba(90,52,20,0.75)');
+    woodGrad.addColorStop(0.5, 'rgba(120,75,30,0.65)');
+    woodGrad.addColorStop(1,   'rgba(70,40,12,0.70)');
+    ctx.fillStyle = woodGrad;
+    ctx.fillRect(0, 0, W, backdropH);
+
+    // Horizontal grain lines
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.strokeStyle = '#2a1000';
+    ctx.lineWidth = 1.5;
+    for (let gy = 14; gy < backdropH; gy += 16) {
+      ctx.beginPath();
+      ctx.moveTo(0,  gy + Math.sin(gy * 0.07) * 3);
+      ctx.lineTo(W,  gy + Math.sin((gy + W) * 0.05) * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Gold trim at top and bottom of backdrop
+    ctx.strokeStyle = 'rgba(255,215,0,0.8)';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(0, 0);      ctx.lineTo(W, 0);      ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, backdropH); ctx.lineTo(W, backdropH); ctx.stroke();
+
+    // Shelf edge highlight (bottom of backdrop looks like a wooden shelf)
+    const shelfGrad = ctx.createLinearGradient(0, backdropH - 12, 0, backdropH + 8);
+    shelfGrad.addColorStop(0,   'rgba(200,140,60,0.9)');
+    shelfGrad.addColorStop(0.5, 'rgba(255,190,80,0.7)');
+    shelfGrad.addColorStop(1,   'rgba(100,60,20,0.3)');
+    ctx.fillStyle = shelfGrad;
+    ctx.fillRect(0, backdropH - 12, W, 20);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: BUNTING / FESTIVAL FLAGS
+  ════════════════════════════════════════════════════════════════ */
+  function drawBunting(W, roofY) {
+    const flagW = 38;
+    const flagH = 28;
+    const colors = ['#e8001c','#ffd700','#2979ff','#00c851','#e040fb','#ff6d00'];
+
+    // String
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, roofY + 4);
+    ctx.lineTo(W, roofY + 4);
+    ctx.stroke();
+
+    // Triangular flags
+    for (let x = -flagW / 2; x < W + flagW; x += flagW + 4) {
+      const ci = Math.floor(x / (flagW + 4)) % colors.length;
+      const fc = colors[((ci % colors.length) + colors.length) % colors.length];
+      ctx.beginPath();
+      ctx.moveTo(x,            roofY);
+      ctx.lineTo(x + flagW,    roofY);
+      ctx.lineTo(x + flagW/2,  roofY + flagH);
+      ctx.closePath();
+      ctx.fillStyle = fc;
+      ctx.fill();
+      // Flag outline
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: STRING LIGHTS along the bottom of the backdrop
+  ════════════════════════════════════════════════════════════════ */
+  function drawLights(W, y, now) {
+    const bulbR  = 6;
+    const spacing = 44;
+    const colors = ['#ff4040','#ffd700','#40ff80','#4090ff','#ff40ff','#40ffff'];
+
+    // Sagging string
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += spacing) {
+      const nx = x + spacing;
+      const midX = (x + nx) / 2;
+      const sag  = 6;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(midX, y + sag, Math.min(nx, W), y + (nx < W ? 0 : sag * 0.5));
+      ctx.stroke();
+    }
+
+    // Bulbs
+    for (let i = 0, x = spacing / 2; x < W; x += spacing, i++) {
+      const ci     = i % colors.length;
+      const pulse  = 0.7 + 0.3 * Math.sin(now * 0.002 + i * 1.1);
+      const color  = colors[ci];
+
+      // Glow
+      ctx.save();
+      ctx.shadowColor = color;
+      ctx.shadowBlur  = 14 * pulse;
+      ctx.beginPath();
+      ctx.arc(x, y, bulbR, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = pulse;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: BALLOON
+  ════════════════════════════════════════════════════════════════ */
+  function drawBalloon(cx, cy, r, color) {
+    // Shadow
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur  = 12;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 5;
+
+    // Body ellipse (slightly taller than wide)
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r, r * 1.18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+
+    // Sheen (radial gradient highlight top-left)
+    const hl = ctx.createRadialGradient(
+      cx - r * 0.28, cy - r * 0.35, r * 0.04,
+      cx - r * 0.28, cy - r * 0.35, r * 0.55
+    );
+    hl.addColorStop(0, 'rgba(255,255,255,0.70)');
+    hl.addColorStop(1, 'rgba(255,255,255,0.00)');
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r, r * 1.18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = hl;
+    ctx.fill();
+
+    // Dark outline
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r, r * 1.18, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Knot (small triangle at bottom)
+    const knotY = cy + r * 1.18;
+    ctx.beginPath();
+    ctx.moveTo(cx - 5, knotY - 2);
+    ctx.lineTo(cx + 5, knotY - 2);
+    ctx.lineTo(cx,     knotY + 9);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // String (wavy bezier to shelf)
+    ctx.beginPath();
+    ctx.moveTo(cx, knotY + 9);
+    ctx.quadraticCurveTo(cx + 14, knotY + 30, cx + 6, knotY + 54);
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: CROSSHAIR at fingertip
+  ════════════════════════════════════════════════════════════════ */
+  function drawCrosshair(x, y, isPinching, bang) {
+    const r       = 22;
+    const gap     = 7;
+    const ext     = 18;
+    const color   = isPinching ? '#ff2800' : '#00ff99';
+
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur  = isPinching ? 22 : 10;
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = isPinching ? 3 : 2;
+    ctx.lineCap     = 'round';
+
+    // Outer circle
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Four hair lines
+    [[x - r - ext, y, x - r - gap, y],
+     [x + r + gap, y, x + r + ext, y],
+     [x, y - r - ext, x, y - r - gap],
+     [x, y + r + gap, x, y + r + ext]
+    ].forEach(([x1,y1,x2,y2]) => {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    });
+
+    // Centre dot
+    ctx.beginPath();
+    ctx.arc(x, y, isPinching ? 5 : 3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.shadowBlur = 0;
+    ctx.fill();
+
+    // BANG! label (brief after shot)
+    if (bang) {
+      ctx.shadowBlur  = 0;
+      ctx.font        = 'bold 22px Impact, Arial Black, sans-serif';
+      ctx.lineJoin    = 'round';
+      const bw = ctx.measureText('BANG!').width;
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth   = 4;
+      ctx.strokeText('BANG!', x + r + 10, y - 4);
+      ctx.fillStyle   = '#ff2800';
+      ctx.fillText   ('BANG!', x + r + 10, y - 4);
+    }
+
+    ctx.restore();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: FAINT HAND SKELETON (visible but not distracting)
+  ════════════════════════════════════════════════════════════════ */
+  function drawSkeletonFaint(lms, W, H) {
+    ctx.save();
+    ctx.globalAlpha = 0.30;
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+
+    HAND_CONNECTIONS.forEach(([i, j]) => {
+      const pa = lmPx(lms[i], W, H);
+      const pb = lmPx(lms[j], W, H);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+    });
+
+    for (let i = 0; i < lms.length; i++) {
+      if (i === IDX_TIP) continue;    // crosshair handles this one
+      const p = lmPx(lms[i], W, H);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#aaaaff';
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAW: "POINT YOUR FINGER" HINT
+  ════════════════════════════════════════════════════════════════ */
+  function drawHint(W, H) {
+    const text  = '☝  Point your index finger at the camera';
+    const text2 = '  then pinch thumb + index to shoot  ';
+    ctx.save();
+    ctx.font        = 'bold 18px "Segoe UI", sans-serif';
+    ctx.textAlign   = 'center';
+    ctx.lineJoin    = 'round';
+    ctx.lineWidth   = 5;
+    ctx.strokeStyle = '#000';
+    ctx.strokeText(text,  W / 2, H * 0.78);
+    ctx.strokeText(text2, W / 2, H * 0.78 + 28);
+    ctx.fillStyle   = '#ffd700';
+    ctx.fillText(text,  W / 2, H * 0.78);
+    ctx.fillStyle   = 'rgba(255,215,0,0.7)';
+    ctx.fillText(text2, W / 2, H * 0.78 + 28);
+    ctx.restore();
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     PARTICLE SYSTEM — balloon pop burst
+  ════════════════════════════════════════════════════════════════ */
+  function spawnPop(cx, cy, color) {
+    const count = 16;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const speed = 4 + Math.random() * 7;
+      particles.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        life: 1.0,
+        color: Math.random() < 0.5 ? color : (Math.random() < 0.5 ? '#fff' : '#ffd700'),
+        r: 3 + Math.random() * 5,
+      });
+    }
+  }
+
+  function updateAndDrawParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy += 0.35;         // gravity
+      p.vx *= 0.96;         // air drag
+      p.life -= 0.028;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur  = 6;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     POP TEXT SYSTEM — "+10" / "MISS!" floating up
+  ════════════════════════════════════════════════════════════════ */
+  function spawnText(x, y, text, color) {
+    popTexts.push({ x, y, text, color, life: 1.0 });
+  }
+
+  function updateAndDrawPopTexts() {
+    for (let i = popTexts.length - 1; i >= 0; i--) {
+      const t = popTexts[i];
+      t.y    -= 2.2;
+      t.life -= 0.022;
+      if (t.life <= 0) { popTexts.splice(i, 1); continue; }
+
+      const size = 28 + (1 - t.life) * 14;
+      ctx.save();
+      ctx.globalAlpha = t.life;
+      ctx.font        = `900 ${size}px Impact, Arial Black, sans-serif`;
+      ctx.textAlign   = 'center';
+      ctx.lineJoin    = 'round';
+      ctx.lineWidth   = 5;
+      ctx.strokeStyle = '#000';
+      ctx.strokeText(t.text, t.x, t.y);
+      ctx.fillStyle   = t.color;
+      ctx.fillText   (t.text, t.x, t.y);
+      ctx.restore();
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     HUD UPDATE
+  ════════════════════════════════════════════════════════════════ */
+  function updateHUD() {
+    document.getElementById('hud-score').textContent   = score;
+    document.getElementById('hud-ammo').textContent    = ammo;
+    document.getElementById('hud-targets').textContent = targets.filter(t => t.alive).length;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     AUDIO — simple Web Audio API beeps
+  ════════════════════════════════════════════════════════════════ */
+  function initAudio() {
+    if (audioCtx) return;
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+
+  function playTone(freq, type, dur, vol, startOffset = 0) {
+    if (!audioCtx) return;
+    try {
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = type; osc.frequency.value = freq;
+      const t0 = audioCtx.currentTime + startOffset;
+      gain.gain.setValueAtTime(vol, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.start(t0); osc.stop(t0 + dur);
+    } catch(e) {}
+  }
+
+  function playPop() {
+    // Two-tone crack: high click then airy pop
+    playTone(900,  'square', 0.06, 0.35, 0);
+    playTone(1800, 'sine',   0.10, 0.18, 0.04);
+  }
+
+  function playMiss() {
+    // Low dull thud
+    playTone(120, 'sine', 0.22, 0.18);
+  }
+
+  function playWin() {
+    // Short cheerful fanfare
+    [523, 659, 784, 1047, 1047].forEach((f, i) =>
+      playTone(f, 'square', 0.18, 0.25, i * 0.13)
+    );
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     UI HELPERS
+  ════════════════════════════════════════════════════════════════ */
+  function showScreen(name) {
+    document.getElementById('screen-select').classList.toggle('hidden', name !== 'select');
+    document.getElementById('screen-game') .classList.toggle('hidden', name !== 'game');
+  }
+
+  function showLoading(visible) {
+    document.getElementById('loading-overlay').style.display = visible ? 'flex' : 'none';
+  }
+
+  function setLoadingText(msg) {
+    document.getElementById('loading-text').textContent = msg;
+  }
+
+  function escapeHTML(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  </script>
+</body>
+</html>

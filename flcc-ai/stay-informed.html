@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay Informed | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        .mailchimp-wrap {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .mailchimp-wrap iframe {
+            width: 100%;
+            max-width: 760px;
+            height: 1100px;
+            border: none;
+            border-radius: var(--radius);
+        }
+
+        .why-subscribe {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem auto 0;
+            max-width: 900px;
+        }
+
+        .why-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            background: white;
+            border: 1px solid #e8eaed;
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .why-icon {
+            width: 44px;
+            height: 44px;
+            background: #eff6ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .why-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .why-item p {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.55;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'stay-informed';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Keep Up</span>
+            <h1>Stay in the Know</h1>
+            <p class="hero-sub">Sign up to stay informed about what FLCC's FLX AI Hub is doing — new webinars, resources, and insights delivered right to your inbox.</p>
+        </div>
+    </section>
+
+    <!-- Why Subscribe -->
+    <section class="page-section" style="padding-bottom: 1rem;">
+        <div class="container">
+            <div class="why-subscribe">
+                <div class="why-item">
+                    <div class="why-icon"><i data-lucide="calendar" width="22"></i></div>
+                    <div>
+                        <h4>Upcoming Events</h4>
+                        <p>Be the first to know about new webinars and workshops before spots fill up.</p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-icon"><i data-lucide="lightbulb" width="22"></i></div>
+                    <div>
+                        <h4>Practical Insights</h4>
+                        <p>Real stories and takeaways from the AI projects we're working on across the region.</p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-icon"><i data-lucide="wrench" width="22"></i></div>
+                    <div>
+                        <h4>New Tools &amp; Resources</h4>
+                        <p>Get notified when we release new tools, guides, and hands-on experiences.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mailchimp Form -->
+    <section class="page-section" style="padding-top: 2rem;">
+        <div class="container">
+            <div class="mailchimp-wrap">
+                <iframe src="https://mailchi.mp/flcc/flxaihub" title="FLX AI Hub Newsletter Signup"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

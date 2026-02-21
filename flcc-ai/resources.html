@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        /* Search bar for resources */
+        .search-wrapper {
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-gray);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3rem;
+            border-radius: var(--radius-pill);
+            border: 1px solid #e5e7eb;
+            font-family: 'Rubik', sans-serif;
+            font-size: 0.975rem;
+            outline: none;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,70,173,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'resources';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Explore &amp; Experiment</span>
+            <h1>The Innovation Lab</h1>
+            <p class="hero-sub">Interactive tools and curated resources to sharpen your AI skills and put concepts into immediate practice.</p>
+        </div>
+    </section>
+
+    <!-- Resources Grid -->
+    <section class="page-section">
+        <div class="container">
+            <div class="search-wrapper">
+                <i data-lucide="search" class="search-icon" width="18"></i>
+                <input type="text" id="resource-search" class="search-input" placeholder="Search resources...">
+            </div>
+            <div class="cards-grid" id="resource-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+    <script>
+        const resources = [
+            {
+                id: 1,
+                title: "AI Tool Aggregator",
+                icon: "search",
+                desc: "Searchable database of AI tools vetted for education and business use.",
+                link: "https://www.aicollections.org/",
+                thumbnail: "images/aicollections.png",
+                tags: ["database", "finder", "collection"]
+            },
+            {
+                id: 2,
+                title: "AI Policy Generator",
+                icon: "clipboard-list",
+                desc: "Generate clear, customizable AI policies and guidelines for your classroom or organization.",
+                link: "tools/policy-generator.html",
+                thumbnail: "images/policyGenerator.png",
+                tags: ["syllabus", "rules", "guidelines", "policy"]
+            },
+            {
+                id: 3,
+                title: "AI or Not?",
+                icon: "check-circle",
+                desc: "Test your instincts: can you tell the difference between human-created and AI-generated content?",
+                link: "https://inlineteaching.com/ai/aiornot/aiornot.html",
+                thumbnail: "images/aiornot.png",
+                tags: ["fake", "quiz", "game", "turing", "detection"]
+            },
+            {
+                id: 4,
+                title: "Prompt Crafter",
+                icon: "sparkles",
+                desc: "Interactive prompt-builder that helps you structure clear, effective prompts for any AI tool.",
+                link: "https://inlineteaching.com/ai/promptApp/",
+                thumbnail: "images/promptapp.png",
+                tags: ["prompting", "engineering", "chatgpt", "builder"]
+            },
+            {
+                id: 5,
+                title: "The AI Challenge",
+                icon: "brain-circuit",
+                desc: "An AI literacy experience you can roll out across your institution or organization.",
+                link: "https://aichallenges.org/",
+                thumbnail: "images/aichallenge.png",
+                tags: ["literacy", "student", "faculty", "challenge"]
+            },
+            {
+                id: 6,
+                title: "Iceberg Index",
+                icon: "mountain-snow",
+                desc: "Explore localized AI disruption data interactively — see what's below the surface in your region.",
+                link: "tools/iceberg-index.html",
+                thumbnail: "images/iceberg.png",
+                tags: ["data", "jobs", "future", "work", "workforce"]
+            }
+        ];
+
+        let searchTerm = '';
+
+        function renderResources() {
+            const grid = document.getElementById('resource-grid');
+            if (!grid) return;
+
+            const filtered = resources.filter(r => {
+                const q = searchTerm.toLowerCase();
+                return r.title.toLowerCase().includes(q) ||
+                       r.desc.toLowerCase().includes(q) ||
+                       r.tags.some(t => t.toLowerCase().includes(q));
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p>No resources match "<strong>${searchTerm}</strong>".</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(r => {
+                const thumbHTML = r.thumbnail
+                    ? `<div class="card-thumb-wrap"><img src="${r.thumbnail}" alt="${r.title}" loading="lazy"></div>`
+                    : `<div class="card-thumb-placeholder"><i data-lucide="${r.icon}" width="40"></i></div>`;
+
+                return `
+                    <a href="${r.link}" target="_blank" rel="noopener" class="resource-card">
+                        ${thumbHTML}
+                        <div class="card-body">
+                            <div class="resource-header-row">
+                                <h2 class="card-title">${r.title}</h2>
+                                <i data-lucide="${r.icon}" width="22" style="color:var(--primary-green); flex-shrink:0;"></i>
+                            </div>
+                            <p class="card-desc">${r.desc}</p>
+                            <span class="resource-launch">Launch <i data-lucide="external-link" width="14"></i></span>
+                        </div>
+                    </a>`;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderResources();
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+            const searchEl = document.getElementById('resource-search');
+            if (searchEl) {
+                searchEl.addEventListener('input', function (e) {
+                    searchTerm = e.target.value;
+                    renderResources();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

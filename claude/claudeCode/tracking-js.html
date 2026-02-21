@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Tracker JS — MediaPipe in the Browser</title>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STYLES
+  ════════════════════════════════════════════════════════════════ -->
+  <style>
+    /* ── Reset & base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface-2: #21262d;
+      --border:    #30363d;
+      --accent:    #00e5ff;
+      --green:     #00e640;
+      --red:       #ff2828;
+      --yellow:    #ffd700;
+      --muted:     #8b949e;
+      --text:      #e6edf3;
+      --radius:    8px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Keyboard key chip ─────────────────────────────────────── */
+    kbd {
+      display: inline-block;
+      padding: 1px 6px;
+      font-family: monospace;
+      font-size: .78em;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      color: var(--muted);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SCREEN 1 — CAMERA SELECT
+    ══════════════════════════════════════════════════════════════ */
+    #screen-select {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .select-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 40px;
+    }
+
+    /* Header row inside the card */
+    .select-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .select-header .logo {
+      font-size: 2.6rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .select-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -.4px;
+      line-height: 1.2;
+    }
+
+    .select-header h1 .accent { color: var(--accent); }
+
+    .select-header .subtitle {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Status message above camera list */
+    .scan-status {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      min-height: 22px;
+    }
+
+    /* Camera card list */
+    .camera-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      min-height: 60px;
+    }
+
+    .camera-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+
+    .camera-card:hover    { border-color: var(--accent); background: #00e5ff08; }
+    .camera-card.selected { border-color: var(--accent); background: #00e5ff12; }
+
+    .cam-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    .cam-info   { flex: 1; overflow: hidden; }
+    .cam-name   { font-weight: 600; font-size: .9rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cam-idx    { font-size: .78rem; color: var(--muted); margin-top: 1px; }
+
+    .cam-radio  { font-size: 1.2rem; color: var(--accent); flex-shrink: 0; }
+
+    /* Error box */
+    .error-box {
+      padding: 12px 16px;
+      background: #ff282815;
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      color: var(--red);
+      font-size: .87rem;
+      margin-bottom: 16px;
+    }
+
+    /* Primary action button */
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      margin-bottom: 14px;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+    .hint {
+      text-align: center;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SCREEN 2 — TRACKING
+    ══════════════════════════════════════════════════════════════ */
+    #screen-track {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      /* Hidden by default — toggled by JS */
+    }
+
+    /* ── Top HUD bar ────────────────────────────────────────────── */
+    #hud-bar {
+      height: 50px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .hud-icon  { font-size: 1.2rem; }
+    .hud-title { font-weight: 700; font-size: .95rem; white-space: nowrap; }
+
+    .hud-center { flex: 1; text-align: center; }
+
+    /* FPS badge */
+    .fps {
+      display: inline-block;
+      font-family: 'Consolas', monospace;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: #00e5ff15;
+      border: 1px solid #00e5ff40;
+      border-radius: 20px;
+      padding: 3px 12px;
+      min-width: 72px;
+      text-align: center;
+    }
+
+    .hud-right { flex-shrink: 0; }
+
+    /* Stop button */
+    .btn-stop {
+      padding: 7px 14px;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--red);
+      background: #ff282810;
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-stop:hover { background: #ff282830; }
+
+    /* ── Viewport (canvas lives here) ──────────────────────────── */
+    #viewport {
+      flex: 1;
+      background: #000;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* The canvas is sized in JS to match the video dimensions.
+       CSS scales it down to fit the viewport without stretching. */
+    #overlay {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* ── Loading overlay (shown while model downloads) ─────────── */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(13,17,23,.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      backdrop-filter: blur(3px);
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(0,229,255,.18);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading-text {
+      font-size: .92rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 260px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 1 — CAMERA SELECT
+       Mirrors find_available_cameras() + select_camera() from Python.
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-select">
+    <div class="select-card">
+
+      <div class="select-header">
+        <span class="logo">🖐</span>
+        <div>
+          <h1>Hand Tracker <span class="accent">JS</span></h1>
+          <p class="subtitle">MediaPipe Hands — browser port of hand_tracker.py</p>
+        </div>
+      </div>
+
+      <p id="scan-status" class="scan-status">Requesting camera permission…</p>
+
+      <div id="camera-list" class="camera-list"></div>
+
+      <div id="error-box" class="error-box hidden"></div>
+
+      <button id="btn-start" class="btn-primary" disabled>▶ Start Tracking</button>
+
+      <p class="hint">Press <kbd>q</kbd> during tracking to stop.</p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCREEN 2 — TRACKING
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="screen-track" class="hidden">
+
+    <!-- Top HUD bar — mirrors the "Press q to quit" footer + FPS display -->
+    <div id="hud-bar">
+      <div class="hud-left">
+        <span class="hud-icon">🖐</span>
+        <span class="hud-title">Hand Tracker JS</span>
+      </div>
+      <div class="hud-center">
+        <span id="fps-counter" class="fps">-- FPS</span>
+      </div>
+      <div class="hud-right">
+        <button id="btn-stop" class="btn-stop">■ Stop <kbd>q</kbd></button>
+      </div>
+    </div>
+
+    <!-- Video canvas viewport -->
+    <div id="viewport">
+      <!-- The canvas receives the mirrored video frame + all overlays.
+           The hidden <video> element below is used purely as a MediaPipe source. -->
+      <canvas id="overlay"></canvas>
+
+      <!-- Shown while the MediaPipe WASM + model files download from CDN -->
+      <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loading-text">Initialising MediaPipe…</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       HIDDEN VIDEO ELEMENT
+       Used as input to MediaPipe — never shown to the user directly.
+       The canvas renders both the (mirrored) frame and overlays.
+  ══════════════════════════════════════════════════════════════ -->
+  <video id="video" playsinline style="display:none;"></video>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MEDIAPIPE HANDS — loaded from CDN
+       Provides the global `Hands` constructor.
+  ══════════════════════════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+          crossorigin="anonymous"></script>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       APPLICATION SCRIPT
+  ══════════════════════════════════════════════════════════════ -->
+  <script>
+  "use strict";
+
+  /* ════════════════════════════════════════════════════════════════
+     CONSTANTS
+     All values mirror hand_tracker.py so behaviour is identical.
+  ════════════════════════════════════════════════════════════════ */
+
+  /** MediaPipe landmark indices used for direction calculation. */
+  const IDX_TIP = 8;   // Index Finger Tip  — same as Python IDX_TIP
+  const IDX_MCP = 5;   // Index Finger MCP  — same as Python IDX_MCP
+
+  /**
+   * All 21 hand bone connections as [a, b] landmark-index pairs.
+   * JS equivalent of mp_hands.HAND_CONNECTIONS.
+   */
+  const HAND_CONNECTIONS = [
+    // Thumb  (CMC → MCP → IP → Tip)
+    [0, 1], [1, 2], [2, 3], [3, 4],
+    // Index  (wrist → MCP → PIP → DIP → Tip)
+    [0, 5], [5, 6], [6, 7], [7, 8],
+    // Middle
+    [5, 9], [9, 10], [10, 11], [11, 12],
+    // Ring
+    [9, 13], [13, 14], [14, 15], [15, 16],
+    // Pinky
+    [13, 17], [17, 18], [18, 19], [19, 20],
+    // Palm edge (wrist → pinky MCP)
+    [0, 17],
+  ];
+
+  /**
+   * Per-connection colours — mimics MediaPipe's default coloured skeleton.
+   * Order matches HAND_CONNECTIONS above (one colour per connection).
+   */
+  const CONN_COLORS = [
+    /* Thumb  */ '#ff9500', '#ff9500', '#ff9500', '#ff9500',
+    /* Index  */ 'rgba(255,255,255,.35)', '#00c8ff', '#00c8ff', '#00c8ff',
+    /* Middle */ '#00ff80', '#00ff80', '#00ff80', '#00ff80',
+    /* Ring   */ '#df80ff', '#df80ff', '#df80ff', '#df80ff',
+    /* Pinky  */ '#ffff40', '#ffff40', '#ffff40', '#ffff40',
+    /* Palm   */ 'rgba(255,255,255,.25)',
+  ];
+
+  // ── Visual constants — Python BGR converted to CSS hex / rgba ──
+  // TIP_FILL_CLR  = (0, 230, 0)   BGR   → bright green
+  const TIP_FILL_CLR  = '#00e600';
+  // TIP_RING_CLR  = (0, 0, 0)     BGR   → black
+  const TIP_RING_CLR  = '#000000';
+  // RAY_CLR       = (0, 40, 255)  BGR   → bold red
+  const RAY_CLR       = '#ff2800';
+  // TEXT_CLR      = (0, 255, 255) BGR   → cyan
+  const TEXT_CLR      = '#00ffff';
+
+  const TIP_RADIUS = 13;    // px — matches Python TIP_RADIUS
+  const RAY_LEN    = 130;   // px — matches Python RAY_LEN
+
+
+  /* ════════════════════════════════════════════════════════════════
+     STATE
+  ════════════════════════════════════════════════════════════════ */
+  let videoEl          = null;   // hidden <video> source
+  let canvasEl         = null;   // visible output canvas
+  let ctx              = null;   // 2-D rendering context
+
+  let handsModel       = null;   // MediaPipe Hands instance
+  let currentStream    = null;   // active MediaStream
+  let selectedDeviceId = null;   // deviceId chosen on the select screen
+
+  let isRunning        = false;  // true while the tracking loop is active
+  let animFrameId      = null;   // requestAnimationFrame handle
+  let processingFrame  = false;  // guard — prevents overlapping send() calls
+
+  // FPS: rolling average over the last 10 inter-frame deltas
+  const FPS_WINDOW  = 10;
+  let   fpsSamples  = [];
+  let   lastFrameTs = 0;
+
+
+  /* ════════════════════════════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════════════════════════════ */
+  window.addEventListener('DOMContentLoaded', () => {
+    videoEl  = document.getElementById('video');
+    canvasEl = document.getElementById('overlay');
+    ctx      = canvasEl.getContext('2d');
+
+    document.getElementById('btn-start').addEventListener('click', startTracking);
+    document.getElementById('btn-stop').addEventListener('click', stopTracking);
+
+    // 'q' key to stop — mirrors "if cv2.waitKey(1) & 0xFF == ord('q'): break"
+    window.addEventListener('keydown', (e) => {
+      if ((e.key === 'q' || e.key === 'Q') && isRunning) stopTracking();
+    });
+
+    initCameraSelect();
+  });
+
+
+  /* ════════════════════════════════════════════════════════════════
+     CAMERA SELECTION
+     JS equivalent of find_available_cameras() + select_camera().
+  ════════════════════════════════════════════════════════════════ */
+
+  /**
+   * Request camera permission, enumerate video devices, and build
+   * the clickable camera-card list.
+   */
+  async function initCameraSelect() {
+    const statusEl = document.getElementById('scan-status');
+    const errorEl  = document.getElementById('error-box');
+
+    try {
+      // Step 1 — request permission so enumerateDevices() returns labels.
+      // Without this, most browsers give back empty/generic labels.
+      statusEl.textContent = 'Requesting camera permission…';
+      const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      tempStream.getTracks().forEach(t => t.stop());   // release immediately
+
+      // Step 2 — enumerate all video-input devices
+      statusEl.textContent = 'Scanning for cameras…';
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(d => d.kind === 'videoinput');
+
+      if (cameras.length === 0) {
+        statusEl.textContent = 'No cameras detected. Connect a webcam and refresh.';
+        return;
+      }
+
+      // Mirror the Python console output style
+      statusEl.textContent = cameras.length === 1
+        ? 'Single camera found — using it automatically.'
+        : `Found ${cameras.length} cameras — select one to begin:`;
+
+      renderCameraList(cameras);
+
+      // Auto-select the first card (mirrors Python's single-camera auto-pick)
+      const firstCard = document.querySelector('.camera-card');
+      if (firstCard) firstCard.click();
+
+      // Auto-start when there's only one camera
+      if (cameras.length === 1) {
+        setTimeout(() => document.getElementById('btn-start').click(), 350);
+      }
+
+    } catch (err) {
+      const msg = err.name === 'NotAllowedError'
+        ? 'Camera access denied — allow camera permission and reload.'
+        : `Error: ${err.message}`;
+      statusEl.textContent = '';
+      errorEl.textContent  = msg;
+      errorEl.classList.remove('hidden');
+    }
+  }
+
+  /** Build the camera-card DOM from a list of MediaDeviceInfo objects. */
+  function renderCameraList(cameras) {
+    const listEl = document.getElementById('camera-list');
+    listEl.innerHTML = '';
+
+    cameras.forEach((cam, i) => {
+      const label = cam.label || `Camera ${i}`;
+      const card  = document.createElement('div');
+      card.className          = 'camera-card';
+      card.dataset.deviceId   = cam.deviceId;
+      card.innerHTML = `
+        <span class="cam-icon">📷</span>
+        <div class="cam-info">
+          <div class="cam-name">${escapeHTML(label)}</div>
+          <div class="cam-idx">Index ${i}</div>
+        </div>
+        <span class="cam-radio">○</span>
+      `;
+      card.addEventListener('click', () => selectCamera(cam.deviceId, card));
+      listEl.appendChild(card);
+    });
+  }
+
+  /** Mark a camera card as selected and enable the Start button. */
+  function selectCamera(deviceId, cardEl) {
+    selectedDeviceId = deviceId;
+
+    // Deselect all cards
+    document.querySelectorAll('.camera-card').forEach(c => {
+      c.classList.remove('selected');
+      c.querySelector('.cam-radio').textContent = '○';
+    });
+
+    // Activate the chosen card
+    cardEl.classList.add('selected');
+    cardEl.querySelector('.cam-radio').textContent = '●';
+    document.getElementById('btn-start').disabled = false;
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     MEDIAPIPE INIT
+     JS equivalent of the mp_hands.Hands() context in run().
+  ════════════════════════════════════════════════════════════════ */
+
+  /**
+   * Create, configure, and pre-initialise a MediaPipe Hands instance.
+   * The `locateFile` callback tells MediaPipe where to fetch its WASM
+   * and model files — we point it at the same CDN package.
+   */
+  async function initHands() {
+    setLoadingText('Downloading MediaPipe model…');
+
+    handsModel = new Hands({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+    });
+
+    // Mirror hand_tracker.py options exactly
+    handsModel.setOptions({
+      maxNumHands:            2,
+      modelComplexity:        1,      // 0 = lite, 1 = full
+      minDetectionConfidence: 0.75,   // matches Python
+      minTrackingConfidence:  0.75,   // matches Python
+    });
+
+    // Register the results callback — fires after every hands.send() call
+    handsModel.onResults(onResults);
+
+    // Pre-load the WASM runtime and model weights
+    await handsModel.initialize();
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     START / STOP
+  ════════════════════════════════════════════════════════════════ */
+
+  /** Open the selected camera, download MediaPipe, and begin the loop. */
+  async function startTracking() {
+    if (!selectedDeviceId) return;
+
+    showScreen('track');
+    showLoading(true);
+    setLoadingText('Opening camera…');
+
+    try {
+      // Open the camera at HD resolution (camera may cap lower)
+      currentStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { exact: selectedDeviceId },
+          width:    { ideal: 1280 },
+          height:   { ideal: 720  },
+        },
+        audio: false,
+      });
+
+      videoEl.srcObject = currentStream;
+
+      // Wait until we know the real frame dimensions
+      await new Promise((resolve) => { videoEl.onloadedmetadata = resolve; });
+      await videoEl.play();
+
+      // Size the canvas to the actual video resolution
+      canvasEl.width  = videoEl.videoWidth  || 1280;
+      canvasEl.height = videoEl.videoHeight || 720;
+
+      // Download and warm up the MediaPipe model
+      await initHands();
+
+      // All systems go
+      showLoading(false);
+      isRunning = true;
+      frameLoop();
+
+    } catch (err) {
+      console.error('[Hand Tracker JS]', err);
+      setLoadingText(`Error: ${err.message} — click Stop to go back.`);
+    }
+  }
+
+  /**
+   * Clean up all resources and return to the camera select screen.
+   * Mirrors cap.release() + cv2.destroyAllWindows() from Python.
+   */
+  function stopTracking() {
+    isRunning       = false;
+    processingFrame = false;
+
+    if (animFrameId)   { cancelAnimationFrame(animFrameId); animFrameId = null; }
+    if (handsModel)    { handsModel.close();                 handsModel  = null; }
+    if (currentStream) {
+      currentStream.getTracks().forEach(t => t.stop());
+      currentStream = null;
+    }
+
+    // Reset FPS display
+    fpsSamples    = [];
+    lastFrameTs   = 0;
+    document.getElementById('fps-counter').textContent = '-- FPS';
+
+    showScreen('select');
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     FRAME LOOP
+     JS equivalent of the while-loop in run() — drives hands.send().
+  ════════════════════════════════════════════════════════════════ */
+
+  function frameLoop() {
+    if (!isRunning) return;
+
+    // ── Rolling FPS average ────────────────────────────────────────
+    const now = performance.now();
+    if (lastFrameTs > 0) {
+      fpsSamples.push(1000 / (now - lastFrameTs));
+      if (fpsSamples.length > FPS_WINDOW) fpsSamples.shift();
+      const avg = fpsSamples.reduce((a, b) => a + b, 0) / fpsSamples.length;
+      document.getElementById('fps-counter').textContent =
+        `${Math.round(avg)} FPS`;
+    }
+    lastFrameTs = now;
+
+    // ── Send frame to MediaPipe ────────────────────────────────────
+    // Guard against sending before the previous frame's callback fires.
+    // readyState >= HAVE_CURRENT_DATA means the video has a frame ready.
+    if (
+      !processingFrame &&
+      videoEl.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+    ) {
+      processingFrame = true;
+      handsModel
+        .send({ image: videoEl })
+        .catch((err) => console.warn('[MP send]', err))
+        .finally(() => { processingFrame = false; });
+    }
+
+    animFrameId = requestAnimationFrame(frameLoop);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     RESULTS CALLBACK
+     JS equivalent of the frame-rendering block inside run().
+     Fires once per frame after MediaPipe has run inference.
+  ════════════════════════════════════════════════════════════════ */
+
+  function onResults(results) {
+    const W = canvasEl.width;
+    const H = canvasEl.height;
+
+    // ── Draw mirrored video frame ──────────────────────────────────
+    // Mirrors: frame = cv2.flip(frame, 1)   (selfie / mirror view)
+    // We translate+scale the context so drawImage renders flipped.
+    ctx.save();
+    ctx.translate(W, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(results.image, 0, 0, W, H);
+    ctx.restore();
+
+    // ── Per-hand rendering ─────────────────────────────────────────
+    // Mirrors: for hand_lms in results.multi_hand_landmarks:
+    if (results.multiHandLandmarks) {
+      for (const landmarks of results.multiHandLandmarks) {
+        renderHand(landmarks, W, H);
+      }
+    }
+
+    // ── Footer HUD ─────────────────────────────────────────────────
+    // Mirrors: draw_text(frame, "Press 'q' to quit", (10, h - 12), ...)
+    ctx.font      = '14px monospace';
+    ctx.fillStyle = 'rgba(180,180,180,0.65)';
+    ctx.fillText("Press 'q' to quit", 10, H - 10);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     LANDMARK → PIXEL CONVERSION
+
+     MediaPipe normalises landmark coordinates to [0, 1] relative to
+     the original (non-flipped) camera frame.  Because we mirror the
+     video with ctx.scale(-1, 1), we must also flip the X axis here
+     so overlays align with what the user sees.
+
+     Mirrors:
+       tip_px = (int(lm_tip.x * w), int(lm_tip.y * h))
+     Plus the flip that results from cv2.flip(frame, 1).
+  ════════════════════════════════════════════════════════════════ */
+
+  function lmPx(lm, W, H) {
+    return {
+      x: (1 - lm.x) * W,   // flip X to match the mirrored frame
+      y: lm.y * H,
+    };
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     RENDER ONE HAND
+     The 7-step block from run() — drawn onto the canvas.
+  ════════════════════════════════════════════════════════════════ */
+
+  function renderHand(landmarks, W, H) {
+
+    /* ── Step 1: Full MediaPipe skeleton ─────────────────────────
+       Mirrors: mp_drawing.draw_landmarks(frame, hand_lms,
+                  mp_hands.HAND_CONNECTIONS, ...)
+    ────────────────────────────────────────────────────────────── */
+    ctx.lineCap   = 'round';
+    ctx.lineJoin  = 'round';
+    ctx.lineWidth = 2.5;
+
+    // Bone connections — each pair gets its finger's colour
+    HAND_CONNECTIONS.forEach(([i, j], idx) => {
+      const pa = lmPx(landmarks[i], W, H);
+      const pb = lmPx(landmarks[j], W, H);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = CONN_COLORS[idx] ?? 'rgba(255,255,255,.4)';
+      ctx.stroke();
+    });
+
+    // Joint dots — skip landmark 8 (we draw the tip marker instead)
+    for (let i = 0; i < landmarks.length; i++) {
+      if (i === IDX_TIP) continue;
+      const p = lmPx(landmarks[i], W, H);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#aaaaff';
+      ctx.fill();
+    }
+
+    /* ── Step 2: Landmark pixel positions ───────────────────────
+       Mirrors: tip_px / mcp_px conversions
+    ────────────────────────────────────────────────────────────── */
+    const tip = lmPx(landmarks[IDX_TIP], W, H);  // Landmark 8
+    const mcp = lmPx(landmarks[IDX_MCP], W, H);  // Landmark 5
+
+    /* ── Step 3: Direction vector and 2-D angle ──────────────────
+       Mirrors compute_direction(mcp_px, tip_px) exactly:
+         dx = tip_px[0] - mcp_px[0]
+         dy = tip_px[1] - mcp_px[1]
+         angle_deg = degrees(atan2(-dy, dx))  ← negate dy for y↑
+    ────────────────────────────────────────────────────────────── */
+    const dx  = tip.x - mcp.x;   // +ve → rightward
+    const dy  = tip.y - mcp.y;   // +ve → downward (image space)
+    const mag = Math.hypot(dx, dy) || 1e-9;
+    const ux  = dx / mag;         // unit vector X
+    const uy  = dy / mag;         // unit vector Y
+
+    // Negate dy so the convention matches standard maths:
+    // "pointing up" in the frame → angle ≈ +90°
+    const angleDeg = Math.atan2(-dy, dx) * (180 / Math.PI);
+
+    /* ── Step 4: Ray endpoint ────────────────────────────────────
+       Mirrors ray_endpoint(tip_px, unit_vec, RAY_LEN)
+    ────────────────────────────────────────────────────────────── */
+    const rayEnd = {
+      x: tip.x + ux * RAY_LEN,
+      y: tip.y + uy * RAY_LEN,
+    };
+
+    /* ── Step 5: Direction ray ───────────────────────────────────
+       Mirrors: cv2.arrowedLine(frame, tip_px, ray_end,
+                  RAY_CLR, RAY_THICK, tipLength=0.28)
+    ────────────────────────────────────────────────────────────── */
+    drawArrow(tip, rayEnd, RAY_CLR, 3);
+
+    /* ── Step 6: Distinct fingertip marker ───────────────────────
+       Mirrors:
+         cv2.circle(frame, tip_px, TIP_RADIUS+3, TIP_RING_CLR, -1)
+         cv2.circle(frame, tip_px, TIP_RADIUS,   TIP_FILL_CLR, -1)
+    ────────────────────────────────────────────────────────────── */
+    // Outer black ring
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, TIP_RADIUS + 3, 0, Math.PI * 2);
+    ctx.fillStyle = TIP_RING_CLR;
+    ctx.fill();
+
+    // Inner green fill
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, TIP_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = TIP_FILL_CLR;
+    ctx.fill();
+
+    /* ── Step 7: HUD labels ──────────────────────────────────────
+       Mirrors the draw_text() calls with label_x / label_y clamping:
+         label_x = min(tip_px[0] + 18, w - 200)
+         label_y = max(tip_px[1] - 18, 20)
+    ────────────────────────────────────────────────────────────── */
+    const lx = Math.min(tip.x + 18, W - 210);
+    const ly = Math.max(tip.y - 18, 20);
+
+    const sign = angleDeg >= 0 ? '+' : '';
+    drawHUDText(`Tip: (${Math.round(tip.x)}, ${Math.round(tip.y)})`, lx, ly);
+    drawHUDText(`Angle: ${sign}${angleDeg.toFixed(1)}\u00b0`,        lx, ly + 26);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     DRAWING HELPERS
+  ════════════════════════════════════════════════════════════════ */
+
+  /**
+   * Draw an arrowed line from `from` to `to`.
+   * Mirrors cv2.arrowedLine() with a filled triangular head.
+   *
+   * @param {{ x:number, y:number }} from  Start point (fingertip).
+   * @param {{ x:number, y:number }} to    End point (ray terminus).
+   * @param {string} color  CSS colour string.
+   * @param {number} width  Stroke width in pixels.
+   */
+  function drawArrow(from, to, color, width) {
+    const angle   = Math.atan2(to.y - from.y, to.x - from.x);
+    const headLen = Math.max(14, width * 5);  // proportional to line width
+    const headA   = Math.PI / 5.5;            // half-angle of arrowhead
+
+    // ── Shaft ────────────────────────────────────────────────────
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x,   to.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = width;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // ── Filled arrowhead ─────────────────────────────────────────
+    ctx.beginPath();
+    ctx.moveTo(to.x, to.y);
+    ctx.lineTo(
+      to.x - headLen * Math.cos(angle - headA),
+      to.y - headLen * Math.sin(angle - headA)
+    );
+    ctx.lineTo(
+      to.x - headLen * Math.cos(angle + headA),
+      to.y - headLen * Math.sin(angle + headA)
+    );
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  /**
+   * Render text with a black shadow pass for legibility on any background.
+   * Mirrors draw_text() in hand_tracker.py (shadow + coloured foreground).
+   *
+   * @param {string} text  The string to display.
+   * @param {number} x     Canvas X position.
+   * @param {number} y     Canvas Y position (baseline).
+   */
+  function drawHUDText(text, x, y) {
+    ctx.font    = '600 15px "Segoe UI", monospace';
+    ctx.lineJoin = 'round';
+
+    // Shadow pass — thicker black stroke (matches cv2.putText thick+2 pass)
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth   = 4;
+    ctx.strokeText(text, x, y);
+
+    // Foreground pass — cyan (TEXT_CLR = (0,255,255) BGR)
+    ctx.fillStyle = TEXT_CLR;
+    ctx.fillText(text, x, y);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     UI HELPERS
+  ════════════════════════════════════════════════════════════════ */
+
+  /** Show either the 'select' or 'track' screen, hiding the other. */
+  function showScreen(name) {
+    document.getElementById('screen-select')
+      .classList.toggle('hidden', name !== 'select');
+    document.getElementById('screen-track')
+      .classList.toggle('hidden', name !== 'track');
+  }
+
+  /** Show or hide the loading overlay that sits over the canvas. */
+  function showLoading(visible) {
+    document.getElementById('loading-overlay').style.display =
+      visible ? 'flex' : 'none';
+  }
+
+  /** Update the text inside the loading overlay. */
+  function setLoadingText(msg) {
+    document.getElementById('loading-text').textContent = msg;
+  }
+
+  /** Escape HTML special chars to safely inject user-supplied strings. */
+  function escapeHTML(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../shared.css">
+
+    <style>
+        .podcast-layout {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .podcast-about {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2.5rem;
+            align-items: start;
+            margin-bottom: 3.5rem;
+        }
+
+        .podcast-cover {
+            width: 200px;
+            height: 200px;
+            border-radius: var(--radius);
+            object-fit: cover;
+            box-shadow: var(--shadow-hover);
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .podcast-about h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .podcast-tagline {
+            font-size: 1.05rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .podcast-about p {
+            font-size: 0.975rem;
+            color: #374151;
+            line-height: 1.75;
+            margin-bottom: 0.9rem;
+        }
+
+        .podcast-hosts {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.25rem;
+        }
+
+        .host-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f0f4ff;
+            color: var(--primary-blue);
+            padding: 0.35rem 0.85rem 0.35rem 0.5rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .host-chip .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .player-section {
+            background: var(--light-bg);
+            border-radius: var(--radius);
+            border: 1px solid #e8eaed;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .player-section h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            color: var(--dark-gray);
+        }
+
+        .player-placeholder {
+            background: white;
+            border: 2px dashed #d1d5db;
+            border-radius: var(--radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--neutral-gray);
+        }
+
+        .player-placeholder p {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .podcast-about {
+                grid-template-columns: 1fr;
+            }
+
+            .podcast-cover {
+                width: 140px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = '../'; window.ACTIVE_PAGE = 'media';</script>
+    <script src="../navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Media / Podcast</span>
+            <h1>The Immersive Lens</h1>
+            <p class="hero-sub">A podcast exploring AI through the lens of education, creativity, and real-world application — honest conversations, practical takeaways.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="page-section">
+        <div class="container">
+            <div class="podcast-layout">
+
+                <!-- About the Podcast -->
+                <div class="podcast-about">
+                    <div class="podcast-cover">
+                        <i data-lucide="mic" width="72" style="opacity:0.9;"></i>
+                    </div>
+
+                    <div>
+                        <span class="section-label">About the Show</span>
+                        <h2>The Immersive Lens</h2>
+                        <p class="podcast-tagline">AI Conversations Worth Having</p>
+
+                        <p>The Immersive Lens goes beyond the headlines to explore what AI is actually doing in classrooms, businesses, and communities. Each episode features candid conversations with practitioners, educators, and innovators who are working with these tools every day — not theorists, but people in the trenches.</p>
+
+                        <p>Whether you're just getting started with AI or you're knee-deep in implementation, every episode is designed to give you something you can actually use. We dig into the wins, the failures, and the surprising moments in between.</p>
+
+                        <div class="podcast-hosts">
+                            <div class="host-chip">
+                                <div class="avatar">DG</div>
+                                Dave Ghidiu
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Episode Player -->
+                <div class="player-section">
+                    <h3><i data-lucide="headphones" width="20" style="display:inline;vertical-align:middle;margin-right:6px;color:var(--primary-blue);"></i>Listen Now</h3>
+
+                    <!--
+                        PASTE YOUR PODCAST WIDGET EMBED CODE BELOW.
+                        Replace the placeholder div with your embed (Spotify, Apple, Buzzsprout, etc.)
+                    -->
+                    <div class="player-placeholder">
+                        <i data-lucide="radio" width="40" style="color:var(--neutral-gray); margin:0 auto 0.5rem; display:block;"></i>
+                        <strong>Podcast player goes here</strong>
+                        <p>Replace this block with your embed widget (Spotify, Apple Podcasts, Buzzsprout, etc.)</p>
+                    </div>
+                </div>
+
+                <!-- Where to Listen -->
+                <div style="text-align:center; margin-top:1rem;">
+                    <p style="font-size:0.875rem; color:var(--neutral-gray); margin-bottom:1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;">Listen on your favorite platform</p>
+                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
+                            <i data-lucide="music" width="16"></i> Spotify
+                        </a>
+                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
+                            <i data-lucide="headphones" width="16"></i> Apple Podcasts
+                        </a>
+                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
+                            <i data-lucide="rss" width="16"></i> RSS Feed
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="../index.html" class="footer-logo">
+                <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

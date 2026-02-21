@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webinars | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = '../'; window.ACTIVE_PAGE = 'media';</script>
+    <script src="../navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Media / Webinars</span>
+            <h1>Webinars</h1>
+            <p class="hero-sub">Watch recordings from our past sessions and register for what's coming up next. Each webinar is practical, hands-on, and designed to be immediately useful.</p>
+        </div>
+    </section>
+
+    <!-- PAST WEBINARS -->
+    <section class="page-section">
+        <div class="container">
+            <div class="section-header" style="text-align:left; margin-bottom:2rem;">
+                <span class="section-label">On Demand</span>
+                <h2 class="text-blue">Past Webinars</h2>
+            </div>
+            <div class="cards-grid" id="past-webinars-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- UPCOMING WEBINARS -->
+    <section class="page-section bg-light">
+        <div class="container">
+            <div class="section-header" style="text-align:left; margin-bottom:2rem;">
+                <span class="section-label">Coming Up</span>
+                <h2 class="text-green">Upcoming Webinars</h2>
+                <p style="margin-top:0.5rem;">Reserve your spot — these fill up fast.</p>
+            </div>
+            <div class="cards-grid" id="upcoming-webinars-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="../index.html" class="footer-logo">
+                <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+    <script>
+        /**
+         * PAST / DELIVERED WEBINARS
+         * Add a new entry when you publish a webinar recording page in media/
+         *
+         * Fields:
+         *   title       - Webinar title
+         *   date        - Date delivered (display string)
+         *   presenter   - Presenter name(s)
+         *   description - Short description shown on the card
+         *   thumbnail   - Path relative to site root, or null for placeholder
+         *   url         - Path to the webinar subpage (relative to this file)
+         */
+        const pastWebinars = [
+            {
+                title: "AI Bias",
+                date: "October 2025",
+                presenter: "Dave Ghidiu",
+                description: "Explore the five dimensions of bias in AI systems — from training data to algorithmic design — and walk away with concrete mitigation strategies you can apply immediately.",
+                thumbnail: null,
+                url: "ai-bias.html"
+            },
+            {
+                title: "Virtual Focus Groups",
+                date: "November 2025",
+                presenter: "Dave Ghidiu &amp; Debora Ortloff",
+                description: "Learn how AI tools are transforming the way organizations design, facilitate, and analyze virtual focus groups — saving time while surfacing deeper insights.",
+                thumbnail: null,
+                url: "virtual-focus-groups.html"
+            }
+            // Add new past webinars above this line:
+            // {
+            //     title: "Webinar Title",
+            //     date: "Month Year",
+            //     presenter: "Presenter Name",
+            //     description: "Brief description.",
+            //     thumbnail: "../images/webinar-thumb.jpg",
+            //     url: "webinar-slug.html"
+            // },
+        ];
+
+        /**
+         * UPCOMING WEBINARS
+         * Cards with registration links. Update registerUrl when registration opens.
+         *
+         * Fields:
+         *   title       - Webinar title
+         *   presenter   - Presenter name(s)
+         *   date        - Date/time string (use "TBD" until confirmed)
+         *   description - What attendees will learn / get out of it
+         *   registerUrl - Link to registration page ("#" until ready)
+         */
+        const upcomingWebinars = [
+            {
+                title: "NotebookLM: AI-Powered Research",
+                presenter: "Dave Ghidiu",
+                date: "Date TBD",
+                description: "Discover how Google's NotebookLM transforms the way you interact with documents, lecture notes, and research materials — turning them into a personalized AI knowledge base.",
+                registerUrl: "#"
+            },
+            {
+                title: "Chatbots for Your Organization",
+                presenter: "Dave Ghidiu &amp; Debora Ortloff",
+                date: "Date TBD",
+                description: "From concept to deployment: learn how to build and customize AI chatbots that genuinely serve your organization's needs without requiring a background in coding.",
+                registerUrl: "#"
+            },
+            {
+                title: "The Prompting Experience",
+                presenter: "Dave Ghidiu",
+                date: "Date TBD",
+                description: "A hands-on session designed to level up your AI prompting skills — from clear basics to advanced techniques that get dramatically better results from any AI tool.",
+                registerUrl: "#"
+            }
+        ];
+
+        function renderPastWebinars() {
+            const grid = document.getElementById('past-webinars-grid');
+            if (!grid) return;
+
+            if (pastWebinars.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><p>Recordings coming soon.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = pastWebinars.map(w => {
+                const thumbHTML = w.thumbnail
+                    ? `<div class="card-thumb-wrap">
+                           <img src="${w.thumbnail}" alt="${w.title}" loading="lazy">
+                           <div class="play-overlay"><i data-lucide="play-circle" width="56"></i></div>
+                       </div>`
+                    : `<div class="card-thumb-placeholder" style="position:relative;">
+                           <i data-lucide="play-circle" width="56" style="opacity:0.35;"></i>
+                       </div>`;
+
+                return `
+                    <a href="${w.url}" class="content-card webinar-card">
+                        ${thumbHTML}
+                        <div class="card-body">
+                            <div class="card-date">${w.date} &bull; ${w.presenter}</div>
+                            <h2 class="card-title">${w.title}</h2>
+                            <p class="card-desc">${w.description}</p>
+                            <span class="card-read-link">Watch Recording &rarr;</span>
+                        </div>
+                    </a>`;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        function renderUpcomingWebinars() {
+            const grid = document.getElementById('upcoming-webinars-grid');
+            if (!grid) return;
+
+            if (upcomingWebinars.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><p>No upcoming webinars scheduled yet — check back soon.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = upcomingWebinars.map(w => `
+                <div class="upcoming-card">
+                    <span class="upcoming-badge">Upcoming</span>
+                    <h3>${w.title}</h3>
+                    <p class="upcoming-presenter"><i data-lucide="user" width="13" style="display:inline;vertical-align:middle;margin-right:3px;"></i>${w.presenter}</p>
+                    <p class="card-date" style="font-size:0.8rem; color:var(--neutral-gray);">${w.date}</p>
+                    <p class="card-desc">${w.description}</p>
+                    <a href="${w.registerUrl}" class="register-btn">
+                        Register Now <i data-lucide="arrow-right" width="14"></i>
+                    </a>
+                </div>`
+            ).join('');
+
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderPastWebinars();
+            renderUpcomingWebinars();
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!--
+    BLOG POST TEMPLATE
+    ==================
+    1. Copy this file and rename it: my-post-title.html
+    2. Fill in the meta tags below (used by the blog listing page)
+    3. Write your content in the <main> section
+    4. Save the file here in blog/  — it will appear on the listing automatically
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ============================================================
+         LISTING META TAGS  (required for blog/index.php to pick up)
+         ============================================================ -->
+
+    <!-- Date the post was published — YYYY-MM-DD format -->
+    <meta name="date" content="YYYY-MM-DD">
+
+    <!-- One-sentence excerpt shown on the listing card -->
+    <meta name="description" content="Your short excerpt here.">
+
+    <!-- Optional: thumbnail image shown on the listing card.
+         Path is relative to this file (i.e. relative to blog/).
+         Example: articles/images/my-photo.jpg -->
+    <meta name="thumbnail" content="">
+
+    <!-- ============================================================ -->
+
+    <title>Post Title | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = '../'; window.ACTIVE_PAGE = 'blog';</script>
+    <script src="../navbar.js"></script>
+
+    <!-- Article Layout -->
+    <main class="article-layout">
+
+        <!-- Breadcrumb -->
+        <nav class="article-breadcrumb">
+            <a href="../blog/">&larr; Blog</a>
+            <span>/</span>
+            <span>Post Title</span>
+        </nav>
+
+        <!-- Title block -->
+        <span class="section-label">From the Hub</span>
+        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">Post Title</h1>
+        <p class="article-meta" style="color:var(--neutral-gray); font-size:0.9rem; margin-bottom:2rem;">
+            Month DD, YYYY
+        </p>
+
+        <!-- ============================================================
+             YOUR CONTENT GOES HERE
+             ============================================================ -->
+
+        <p>Introduction paragraph...</p>
+
+        <h2>Section Heading</h2>
+        <p>Body text...</p>
+
+        <!-- ============================================================ -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="../index.html" class="footer-logo">
+                <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

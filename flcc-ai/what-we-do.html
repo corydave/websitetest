@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What We're Doing | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        /* ---- Initiatives section ---- */
+        .initiatives {
+            padding: 4.5rem 0;
+            background: var(--light-bg);
+        }
+
+        .initiatives-layout {
+            display: grid;
+            grid-template-columns: 5fr 6fr;
+            gap: 4rem;
+            align-items: start;
+            margin-top: 0;
+        }
+
+        .initiatives-right-wrap {
+            position: sticky;
+            top: 5rem;
+        }
+
+        .initiative-display {
+            background: white;
+            border-radius: var(--radius);
+            border: 2px dashed #d1d5db;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        .initiative-display.fading { opacity: 0; }
+
+        .init-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: center;
+            padding: 2.5rem;
+            color: var(--neutral-gray);
+        }
+
+        .init-placeholder .ph-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            opacity: 0.55;
+        }
+
+        /* Accordion */
+        .accordion-item { border-bottom: 1px solid #e8eaed; }
+        .accordion-item:first-child { border-top: 1px solid #e8eaed; }
+
+        .accordion-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 0;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            transition: color 0.2s;
+            user-select: none;
+        }
+
+        .accordion-btn:hover { color: var(--primary-blue); }
+        .accordion-btn.active { color: var(--primary-blue); }
+
+        .accordion-chevron {
+            flex-shrink: 0;
+            color: var(--neutral-gray);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-btn.active .accordion-chevron {
+            transform: rotate(180deg);
+            color: var(--primary-blue);
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .accordion-body-inner {
+            padding-bottom: 1.25rem;
+            font-size: 0.925rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .initiative-display-inline {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .initiatives-layout {
+                grid-template-columns: 1fr;
+            }
+            .initiatives-right {
+                display: none;
+            }
+            .initiative-display-inline {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'flcc';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">FLCC</span>
+            <h1>What We're Doing</h1>
+            <p class="hero-sub">A look at the programs and initiatives FLCC is running to bring practical AI education to the Finger Lakes region.</p>
+        </div>
+    </section>
+
+    <!-- Initiatives -->
+    <section class="initiatives" id="initiatives">
+        <div class="container">
+            <div class="initiatives-layout">
+                <div class="initiatives-left">
+                    <div id="initiatives-accordion">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+                <div class="initiatives-right">
+                    <div class="initiatives-right-wrap">
+                        <div class="initiative-display" id="initiative-display">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>
+        /**
+         * INITIATIVES — Add/edit entries here to update the accordion section.
+         *
+         * Fields:
+         *   title       - Shown as the accordion button label
+         *   description - Paragraph shown when the item is open
+         *   contentHTML - HTML rendered in the right-hand container (image, video, slider, etc.)
+         */
+        const initiatives = [
+            {
+                title: 'Initiative A',
+                description: 'Placeholder description for Initiative A. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="layout" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative A</span></div>`
+            },
+            {
+                title: 'Initiative B',
+                description: 'Placeholder description for Initiative B. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="zap" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative B</span></div>`
+            },
+            {
+                title: 'Initiative C',
+                description: 'Placeholder description for Initiative C. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="globe" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative C</span></div>`
+            },
+            {
+                title: 'Initiative D',
+                description: 'Placeholder description for Initiative D. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="book-open" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative D</span></div>`
+            },
+            {
+                title: 'Initiative E',
+                description: 'Placeholder description for Initiative E. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="users" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative E</span></div>`
+            },
+            {
+                title: 'Initiative F',
+                description: 'Placeholder description for Initiative F. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="bar-chart-2" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative F</span></div>`
+            },
+            {
+                title: 'Initiative G',
+                description: 'Placeholder description for Initiative G. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                contentHTML: `<div class="init-placeholder"><i data-lucide="lightbulb" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative G</span></div>`
+            }
+        ];
+
+        function renderInitiatives() {
+            const accordion = document.getElementById('initiatives-accordion');
+            const display   = document.getElementById('initiative-display');
+            if (!accordion || !display) return;
+
+            // Build accordion HTML (first item open by default)
+            accordion.innerHTML = initiatives.map((item, i) => `
+                <div class="accordion-item">
+                    <button class="accordion-btn${i === 0 ? ' active' : ''}" data-index="${i}" aria-expanded="${i === 0}">
+                        ${item.title}
+                        <i data-lucide="chevron-down" width="20" class="accordion-chevron"></i>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            ${item.description}
+                            <div class="initiative-display initiative-display-inline">${item.contentHTML}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Set initial content and open first body
+            display.innerHTML = initiatives[0].contentHTML;
+            const firstBody = accordion.querySelector('.accordion-body');
+            firstBody.style.maxHeight = firstBody.scrollHeight + 'px';
+
+            // Accordion click handler
+            accordion.querySelectorAll('.accordion-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const idx       = parseInt(this.dataset.index);
+                    const isActive  = this.classList.contains('active');
+                    const allBtns   = accordion.querySelectorAll('.accordion-btn');
+                    const allBodies = accordion.querySelectorAll('.accordion-body');
+
+                    // Close all
+                    allBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-expanded', 'false'); });
+                    allBodies.forEach(b => { b.style.maxHeight = '0'; });
+
+                    if (!isActive) {
+                        // Open clicked item
+                        this.classList.add('active');
+                        this.setAttribute('aria-expanded', 'true');
+                        this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 'px';
+
+                        // Swap right-side content with fade
+                        display.classList.add('fading');
+                        setTimeout(() => {
+                            display.innerHTML = initiatives[idx].contentHTML;
+                            display.classList.remove('fading');
+                            lucide.createIcons();
+                        }, 200);
+                    }
+                });
+            });
+        }
+
+        renderInitiatives();
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

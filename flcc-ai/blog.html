@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'blog';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">From the Hub</span>
+            <h1>Blog</h1>
+            <p class="hero-sub">Behind-the-scenes stories, project spotlights, and practical insights on AI in the real world.</p>
+        </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <section class="page-section">
+        <div class="container">
+            <div class="cards-grid" id="blog-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+    <script>
+        /**
+         * BLOG POSTS — Add a new entry here whenever you add a .html file to blog/
+         *
+         * Fields:
+         *   title       - Post title shown on the card
+         *   date        - Display date string
+         *   description - Short excerpt shown on the card
+         *   thumbnail   - Path from site root (or null for placeholder icon)
+         *   url         - Path to the full post
+         */
+        const blogPosts = [
+            {
+                title: "Holiday Greetings — Behind the Scenes",
+                date: "December 14, 2025",
+                description: "FLCC's holiday video used AI (Nano Banana, Veo3, Flow) as an accelerator. Human expertise fixed its limits: character consistency, door issues, and audio/timing (ADR). AI is an accelerator, not autopilot.",
+                thumbnail: "articles/images/bts-over-the-shoulder-paul-jeff.png",
+                url: "blog/holiday-card-behind-the-scenes.html"
+            }
+            // Add new posts above this line:
+            // {
+            //     title: "Your Post Title",
+            //     date: "January 1, 2026",
+            //     description: "A short summary shown on the card.",
+            //     thumbnail: "articles/images/your-image.jpg",
+            //     url: "blog/your-post-file.html"
+            // },
+        ];
+
+        function renderBlog() {
+            const grid = document.getElementById('blog-grid');
+            if (!grid) return;
+
+            if (blogPosts.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="file-text" width="48" style="color:var(--neutral-gray); margin:0 auto 1rem; display:block;"></i>
+                        <h3 style="font-size:1.25rem;">No posts yet</h3>
+                        <p>Check back soon — we&rsquo;re always writing!</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            grid.innerHTML = blogPosts.map(post => {
+                const thumbHTML = post.thumbnail
+                    ? `<div class="card-thumb-wrap"><img src="${post.thumbnail}" alt="${post.title}" loading="lazy"></div>`
+                    : `<div class="card-thumb-placeholder"><i data-lucide="image" width="40"></i></div>`;
+
+                return `
+                    <a href="${post.url}" class="content-card">
+                        ${thumbHTML}
+                        <div class="card-body">
+                            <div class="card-date">${post.date}</div>
+                            <h2 class="card-title">${post.title}</h2>
+                            <p class="card-desc">${post.description}</p>
+                            <span class="card-read-link">Read Article &rarr;</span>
+                        </div>
+                    </a>`;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderBlog();
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>

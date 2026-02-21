@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Tracker POC — OpenCV &amp; MediaPipe</title>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       STYLES
+       Dark terminal aesthetic matching the "computer vision lab" vibe.
+  ════════════════════════════════════════════════════════════════════ -->
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --surface-2:   #21262d;
+      --border:      #30363d;
+      --accent:      #00e5ff;    /* cyan — maps to TEXT_CLR in the Python */
+      --green:       #00e640;    /* green — maps to TIP_FILL_CLR           */
+      --red:         #ff2828;    /* red   — maps to RAY_CLR                */
+      --yellow:      #ffd700;
+      --muted:       #8b949e;
+      --text:        #e6edf3;
+      --radius:      8px;
+      --code-bg:     #0d1117;
+      --keyword:     #ff7b72;
+      --string:      #a5d6ff;
+      --comment:     #8b949e;
+      --func:        #d2a8ff;
+      --number:      #79c0ff;
+      --builtin:     #ffa657;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 36px;
+      text-align: center;
+    }
+
+    header .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .badge-cv    { color: var(--accent);  border-color: var(--accent);  background: #00e5ff15; }
+    .badge-mp    { color: var(--green);   border-color: var(--green);   background: #00e64015; }
+    .badge-poc   { color: var(--yellow);  border-color: var(--yellow);  background: #ffd70015; }
+    .badge-py    { color: var(--builtin); border-color: var(--builtin); background: #ffa65715; }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.5px;
+    }
+
+    header h1 span.accent { color: var(--accent); }
+
+    header p.subtitle {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Section scaffolding ──────────────────────────────────────── */
+    section { margin-top: 56px; }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2 .icon { font-size: 1.1rem; }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 28px 0 10px;
+    }
+
+    p { margin-bottom: 14px; color: var(--muted); }
+    p strong { color: var(--text); }
+
+    /* ── Cards / feature grid ─────────────────────────────────────── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .15s;
+    }
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .feature-card .icon-large {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .feature-card h4 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: .82rem;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* ── Two-column layout ────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* ── Landmark diagram (SVG canvas) ───────────────────────────── */
+    .landmark-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .landmark-wrap svg {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+    }
+
+    /* ── Info table ───────────────────────────────────────────────── */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .86rem;
+    }
+    .info-table th {
+      background: var(--surface-2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .75rem;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .info-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .info-table tr:last-child td { border-bottom: none; }
+    .info-table tr:hover td { background: var(--surface-2); }
+    .info-table .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+    .tag-lm  { background: #00e64020; color: var(--green);  border: 1px solid var(--green); }
+    .tag-vis { background: #00e5ff20; color: var(--accent); border: 1px solid var(--accent); }
+    .tag-cfg { background: #ffa65720; color: var(--builtin);border: 1px solid var(--builtin);}
+
+    /* ── Math box ─────────────────────────────────────────────────── */
+    .math-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: .88rem;
+      line-height: 2;
+    }
+    .math-box .formula { color: var(--accent); }
+    .math-box .comment-inline { color: var(--comment); font-style: italic; }
+
+    /* ── Canvas live demo ─────────────────────────────────────────── */
+    .demo-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .demo-wrap canvas {
+      display: block;
+      width: 100%;
+      background: #0a0c0f;
+    }
+
+    .demo-label {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .4px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ── Code block ───────────────────────────────────────────────── */
+    .code-wrap {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .code-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      gap: 10px;
+    }
+
+    .code-header .dots { display: flex; gap: 6px; }
+    .code-header .dot  { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .code-header .file-name {
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: 'Consolas', monospace;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+    .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    pre {
+      overflow-x: auto;
+      padding: 20px;
+      font-family: 'Consolas', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: .82rem;
+      line-height: 1.75;
+      tab-size: 4;
+    }
+
+    /* Syntax tokens */
+    .kw  { color: var(--keyword);  font-weight: 600; }
+    .fn  { color: var(--func); }
+    .st  { color: var(--string); }
+    .nm  { color: var(--number); }
+    .cm  { color: var(--comment); font-style: italic; }
+    .bi  { color: var(--builtin); }
+    .tx  { color: var(--text); }
+    .ac  { color: var(--accent); }
+
+    /* line numbers */
+    .code-line { display: flex; }
+    .ln {
+      user-select: none;
+      color: #484f58;
+      min-width: 38px;
+      padding-right: 14px;
+      text-align: right;
+      font-size: .78rem;
+    }
+
+    /* ── Pipeline flow ────────────────────────────────────────────── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      text-align: center;
+      flex: 1;
+      min-width: 110px;
+      max-width: 160px;
+      transition: border-color .2s;
+    }
+    .step:hover { border-color: var(--accent); }
+    .step .step-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+    .step .step-title { font-size: .78rem; font-weight: 700; color: var(--text); }
+    .step .step-sub   { font-size: .72rem; color: var(--muted); margin-top: 3px; }
+
+    .arrow-right {
+      color: var(--accent);
+      font-size: 1.2rem;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── Setup tab ────────────────────────────────────────────────── */
+    .setup-list {
+      list-style: none;
+      counter-reset: setup-counter;
+    }
+    .setup-list li {
+      counter-increment: setup-counter;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .setup-list li::before {
+      content: counter(setup-counter);
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .setup-list li .setup-content strong {
+      display: block;
+      color: var(--text);
+      font-size: .9rem;
+      margin-bottom: 4px;
+    }
+    .setup-list li .setup-content p {
+      margin: 0;
+      font-size: .85rem;
+    }
+
+    code.inline {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-family: 'Consolas', monospace;
+      font-size: .82em;
+      color: var(--accent);
+    }
+
+    /* ── Visual constants table ───────────────────────────────────── */
+    .swatch {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 6px;
+      border: 1px solid #ffffff30;
+    }
+
+    /* ── Callout / note box ───────────────────────────────────────── */
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: .87rem;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout .callout-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .callout strong { color: var(--text); }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      margin-top: 72px;
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    footer span.hi { color: var(--accent); }
+  </style>
+</head>
+
+<body>
+<div class="page-wrap">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════════════════════════ -->
+  <header>
+    <div class="badge-row">
+      <span class="badge badge-py">Python 3</span>
+      <span class="badge badge-cv">OpenCV</span>
+      <span class="badge badge-mp">MediaPipe</span>
+      <span class="badge badge-poc">POC</span>
+    </div>
+    <h1>Real-Time <span class="accent">Hand Tracker</span></h1>
+    <p class="subtitle">
+      A proof-of-concept that captures a webcam feed, detects hands with
+      MediaPipe, and overlays live index-finger direction data using OpenCV.
+    </p>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       OVERVIEW — FEATURE CARDS
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="overview">
+    <h2><span class="icon">✦</span> What It Does</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="icon-large">📷</span>
+        <h4>Camera Selection</h4>
+        <p>Scans indices 0–5 at startup, tests each one for a live frame, and lets the user pick via the terminal.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-large">🖐</span>
+        <h4>Hand Skeleton</h4>
+        <p>Draws the full 21-landmark MediaPipe hand skeleton (bones + coloured joint dots) on every frame.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-large">🎯</span>
+        <h4>Tip Marker</h4>
+        <p>Highlights <strong>Landmark 8</strong> (Index Finger Tip) with a bright green filled circle inside a black ring.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-large">➡️</span>
+        <h4>Direction Ray</h4>
+        <p>Draws a bold red arrowed line from the fingertip outward, computed from the MCP → Tip vector.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-large">📐</span>
+        <h4>Live Angle</h4>
+        <p>Displays the 2-D pointing angle in degrees (CCW from +X, Y-flipped to math convention).</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-large">📍</span>
+        <h4>Pixel Coords</h4>
+        <p>Shows real-time <em>(x, y)</em> pixel coordinates of the fingertip as a HUD overlay on the video.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PROCESSING PIPELINE
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="pipeline">
+    <h2><span class="icon">⟳</span> Processing Pipeline</h2>
+    <p>Each frame follows this sequence before being displayed:</p>
+
+    <div class="pipeline">
+      <div class="step">
+        <span class="step-icon">📸</span>
+        <div class="step-title">Capture</div>
+        <div class="step-sub">cv2.VideoCapture</div>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="step">
+        <span class="step-icon">🔀</span>
+        <div class="step-title">Mirror</div>
+        <div class="step-sub">cv2.flip(frame, 1)</div>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="step">
+        <span class="step-icon">🎨</span>
+        <div class="step-title">BGR → RGB</div>
+        <div class="step-sub">cvtColor</div>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="step">
+        <span class="step-icon">🤖</span>
+        <div class="step-title">Inference</div>
+        <div class="step-sub">mp Hands.process</div>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="step">
+        <span class="step-icon">📐</span>
+        <div class="step-title">Maths</div>
+        <div class="step-sub">atan2 / hypot</div>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="step">
+        <span class="step-icon">🖼</span>
+        <div class="step-title">Render</div>
+        <div class="step-sub">cv2.imshow</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LANDMARK DIAGRAM + INTERACTIVE DEMO
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="landmarks">
+    <h2><span class="icon">🖐</span> Key Landmarks &amp; Visual Demo</h2>
+
+    <div class="two-col">
+
+      <!-- Landmark SVG diagram -->
+      <div class="landmark-wrap">
+        <p style="margin:0;font-size:.82rem;color:var(--muted);text-align:center;">
+          MediaPipe 21-landmark hand model — key points highlighted
+        </p>
+        <!-- SVG hand skeleton (schematic, not photorealistic) -->
+        <svg viewBox="0 0 340 420" fill="none" xmlns="http://www.w3.org/2000/svg"
+             aria-label="Hand landmark diagram">
+
+          <!-- Wrist (0) -->
+          <circle cx="170" cy="380" r="7" fill="#8b949e"/>
+          <text x="182" y="384" fill="#8b949e" font-size="11">0 — Wrist</text>
+
+          <!-- Palm connections -->
+          <line x1="170" y1="380" x2="110" y2="310" stroke="#30363d" stroke-width="2"/>
+          <line x1="170" y1="380" x2="145" y2="300" stroke="#30363d" stroke-width="2"/>
+          <line x1="170" y1="380" x2="170" y2="295" stroke="#30363d" stroke-width="2"/>
+          <line x1="170" y1="380" x2="198" y2="305" stroke="#30363d" stroke-width="2"/>
+          <line x1="170" y1="380" x2="226" y2="318" stroke="#30363d" stroke-width="2"/>
+
+          <!-- ── Thumb (1-4) ────────────────────────── -->
+          <line x1="110" y1="310" x2="85"  y2="280" stroke="#30363d" stroke-width="2"/>
+          <line x1="85"  y1="280" x2="65"  y2="255" stroke="#30363d" stroke-width="2"/>
+          <line x1="65"  y1="255" x2="50"  y2="232" stroke="#30363d" stroke-width="2"/>
+          <circle cx="110" cy="310" r="5" fill="#8b949e"/>
+          <circle cx="85"  cy="280" r="5" fill="#8b949e"/>
+          <circle cx="65"  cy="255" r="5" fill="#8b949e"/>
+          <circle cx="50"  cy="232" r="5" fill="#8b949e"/>
+
+          <!-- ── Index finger (5-8) ─────────────────── -->
+          <!-- MCP (5) to PIP (6) to DIP (7) to TIP (8) -->
+          <line x1="145" y1="300" x2="140" y2="255" stroke="#00e5ff" stroke-width="2.5"/>
+          <line x1="140" y1="255" x2="137" y2="215" stroke="#00e5ff" stroke-width="2.5"/>
+          <line x1="137" y1="215" x2="134" y2="175" stroke="#00e5ff" stroke-width="2.5"/>
+
+          <!-- MCP 5 — base reference for direction vector -->
+          <circle cx="145" cy="300" r="9" fill="#ffa65730" stroke="#ffa657" stroke-width="2"/>
+          <text x="155" y="304" fill="#ffa657" font-size="11" font-weight="bold">5 — MCP</text>
+
+          <!-- PIP 6, DIP 7 -->
+          <circle cx="140" cy="255" r="5" fill="#8b949e"/>
+          <text x="148" y="259" fill="#8b949e" font-size="10">6 PIP</text>
+          <circle cx="137" cy="215" r="5" fill="#8b949e"/>
+          <text x="145" y="219" fill="#8b949e" font-size="10">7 DIP</text>
+
+          <!-- TIP 8 — primary target landmark -->
+          <circle cx="134" cy="175" r="14" fill="#00000080" stroke="#000" stroke-width="3"/>
+          <circle cx="134" cy="175" r="11" fill="#00e640"/>
+          <text x="150" y="172" fill="#00e640" font-size="12" font-weight="bold">8 — TIP ★</text>
+
+          <!-- Direction ray from tip -->
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6"
+                    refX="6" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#ff2828"/>
+            </marker>
+          </defs>
+          <line x1="134" y1="175" x2="128" y2="108"
+                stroke="#ff2828" stroke-width="3"
+                marker-end="url(#arrowhead)"/>
+          <text x="70" y="102" fill="#ff2828" font-size="10">Direction Ray</text>
+
+          <!-- MCP → Tip vector label -->
+          <line x1="145" y1="300" x2="134" y2="175"
+                stroke="#ffa657" stroke-width="1" stroke-dasharray="5 4" opacity=".6"/>
+          <text x="106" y="238" fill="#ffa657" font-size="9" transform="rotate(-6,106,238)">
+            direction vector
+          </text>
+
+          <!-- ── Middle (9-12) ─────────────────────── -->
+          <line x1="170" y1="295" x2="168" y2="248" stroke="#30363d" stroke-width="2"/>
+          <line x1="168" y1="248" x2="167" y2="206" stroke="#30363d" stroke-width="2"/>
+          <line x1="167" y1="206" x2="166" y2="166" stroke="#30363d" stroke-width="2"/>
+          <circle cx="170" cy="295" r="5" fill="#8b949e"/>
+          <circle cx="168" cy="248" r="4" fill="#8b949e"/>
+          <circle cx="167" cy="206" r="4" fill="#8b949e"/>
+          <circle cx="166" cy="166" r="5" fill="#8b949e"/>
+
+          <!-- ── Ring (13-16) ────────────────────────  -->
+          <line x1="198" y1="305" x2="199" y2="258" stroke="#30363d" stroke-width="2"/>
+          <line x1="199" y1="258" x2="200" y2="217" stroke="#30363d" stroke-width="2"/>
+          <line x1="200" y1="217" x2="201" y2="179" stroke="#30363d" stroke-width="2"/>
+          <circle cx="198" cy="305" r="5" fill="#8b949e"/>
+          <circle cx="199" cy="258" r="4" fill="#8b949e"/>
+          <circle cx="200" cy="217" r="4" fill="#8b949e"/>
+          <circle cx="201" cy="179" r="5" fill="#8b949e"/>
+
+          <!-- ── Pinky (17-20) ────────────────────── -->
+          <line x1="226" y1="318" x2="230" y2="275" stroke="#30363d" stroke-width="2"/>
+          <line x1="230" y1="275" x2="233" y2="242" stroke="#30363d" stroke-width="2"/>
+          <line x1="233" y1="242" x2="236" y2="214" stroke="#30363d" stroke-width="2"/>
+          <circle cx="226" cy="318" r="5" fill="#8b949e"/>
+          <circle cx="230" cy="275" r="4" fill="#8b949e"/>
+          <circle cx="233" cy="242" r="4" fill="#8b949e"/>
+          <circle cx="236" cy="214" r="5" fill="#8b949e"/>
+
+          <!-- Legend -->
+          <rect x="10" y="10" width="148" height="70" rx="6"
+                fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <circle cx="28" cy="30" r="8" fill="#00e640"/>
+          <text x="42" y="34" fill="#e6edf3" font-size="11">Landmark 8 — Tip</text>
+          <circle cx="28" cy="52" r="7" fill="#ffa65730" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="42" y="56" fill="#e6edf3" font-size="11">Landmark 5 — MCP</text>
+          <line x1="20" y1="70" x2="36" y2="70" stroke="#ff2828" stroke-width="2.5"
+                marker-end="url(#arrowhead)"/>
+          <text x="42" y="74" fill="#e6edf3" font-size="11">Direction Ray</text>
+        </svg>
+      </div>
+
+      <!-- Animated canvas demo -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="demo-wrap">
+          <canvas id="demoCanvas" width="480" height="320"></canvas>
+          <span class="demo-label">Simulated overlay — showing tip marker, ray &amp; HUD labels</span>
+        </div>
+        <div class="callout">
+          <span class="callout-icon">💡</span>
+          <div>
+            <strong>Selfie mirror:</strong> the script calls
+            <code class="inline">cv2.flip(frame, 1)</code> so the feed behaves
+            like a front-camera — your right hand appears on the right side of
+            the window.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       DIRECTION MATHS
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="maths">
+    <h2><span class="icon">∠</span> Direction Vector Mathematics</h2>
+
+    <p>
+      The pointing direction is derived entirely from two pixel coordinates:
+      <strong>Landmark 5 (MCP)</strong> as the base and
+      <strong>Landmark 8 (Tip)</strong> as the head.
+    </p>
+
+    <div class="math-box">
+      <span class="comment-inline"># Raw vector (image space: y increases downward)</span><br>
+      <span class="formula">dx = tip_px.x − mcp_px.x</span> &nbsp;&nbsp;
+        <span class="comment-inline">← +ve → rightward</span><br>
+      <span class="formula">dy = tip_px.y − mcp_px.y</span> &nbsp;&nbsp;
+        <span class="comment-inline">← +ve → downward in image coords</span><br><br>
+
+      <span class="comment-inline"># Angle: negate dy so "pointing up" yields +90° (standard maths)</span><br>
+      <span class="formula">angle = atan2(−dy, dx)  →  degrees</span><br><br>
+
+      <span class="comment-inline"># Unit vector (used for the ray endpoint calculation)</span><br>
+      <span class="formula">magnitude = √(dx² + dy²)</span><br>
+      <span class="formula">unit = (dx / magnitude,  dy / magnitude)</span><br><br>
+
+      <span class="comment-inline"># Ray endpoint — extends RAY_LEN pixels beyond the tip</span><br>
+      <span class="formula">ray_end = (tip_x + unit.x × 130,  tip_y + unit.y × 130)</span>
+    </div>
+
+    <h3>Angle Reference</h3>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th>Finger Direction</th>
+          <th>Reported Angle</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pointing right →</td>
+          <td><code class="inline">  0°</code></td>
+          <td>dx&gt;0, dy≈0</td>
+        </tr>
+        <tr>
+          <td>Pointing up ↑</td>
+          <td><code class="inline">+90°</code></td>
+          <td>dy&lt;0 in image → atan2(+, 0)</td>
+        </tr>
+        <tr>
+          <td>Pointing left ←</td>
+          <td><code class="inline">±180°</code></td>
+          <td>dx&lt;0, dy≈0</td>
+        </tr>
+        <tr>
+          <td>Pointing down ↓</td>
+          <td><code class="inline">−90°</code></td>
+          <td>dy&gt;0 in image → atan2(−, 0)</td>
+        </tr>
+        <tr>
+          <td>Pointing upper-right ↗</td>
+          <td><code class="inline">+45°</code></td>
+          <td>dx&gt;0, dy&lt;0</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       VISUAL & CONFIG CONSTANTS
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="constants">
+    <h2><span class="icon">🎨</span> Visual &amp; Config Constants</h2>
+    <p>All tunable values are declared as module-level constants for easy tweaking:</p>
+
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Constant</th>
+          <th>Value</th>
+          <th>Purpose</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="inline">IDX_TIP</code></td>
+          <td>8</td>
+          <td>MediaPipe Index Finger Tip landmark index</td>
+          <td><span class="tag tag-lm">Landmark</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">IDX_MCP</code></td>
+          <td>5</td>
+          <td>Index Finger MCP (base knuckle) landmark index</td>
+          <td><span class="tag tag-lm">Landmark</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">TIP_RADIUS</code></td>
+          <td>13 px</td>
+          <td>Radius of the filled circle drawn on the fingertip</td>
+          <td><span class="tag tag-vis">Visual</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">TIP_FILL_CLR</code></td>
+          <td>
+            <span class="swatch" style="background:#00e640;"></span>(0, 230, 0)
+          </td>
+          <td>Bright green fill for the tip marker (BGR)</td>
+          <td><span class="tag tag-vis">Visual</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">RAY_CLR</code></td>
+          <td>
+            <span class="swatch" style="background:#ff2828;"></span>(0, 40, 255)
+          </td>
+          <td>Bold red colour for the direction arrow (BGR)</td>
+          <td><span class="tag tag-vis">Visual</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">RAY_LEN</code></td>
+          <td>130 px</td>
+          <td>How far the direction ray extends beyond the fingertip</td>
+          <td><span class="tag tag-vis">Visual</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">TEXT_CLR</code></td>
+          <td>
+            <span class="swatch" style="background:#00e5ff;"></span>(0, 255, 255)
+          </td>
+          <td>Cyan HUD label text colour (BGR)</td>
+          <td><span class="tag tag-vis">Visual</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">min_detection_confidence</code></td>
+          <td>0.75</td>
+          <td>MediaPipe minimum score to accept a new hand detection</td>
+          <td><span class="tag tag-cfg">Config</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">min_tracking_confidence</code></td>
+          <td>0.75</td>
+          <td>MediaPipe minimum score to keep tracking across frames</td>
+          <td><span class="tag tag-cfg">Config</span></td>
+        </tr>
+        <tr>
+          <td><code class="inline">model_complexity</code></td>
+          <td>1</td>
+          <td>0 = lite / fast, 1 = full accuracy (recommended)</td>
+          <td><span class="tag tag-cfg">Config</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SOURCE CODE
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="source">
+    <h2><span class="icon">{ }</span> Annotated Source Code</h2>
+    <p>The complete <code class="inline">hand_tracker.py</code> — every block commented:</p>
+
+    <!-- Block 1: Imports -->
+    <h3>Imports &amp; Module Setup</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <span class="file-name">hand_tracker.py — imports</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre><code
+><div class="code-line"><span class="ln"> 1</span><span class="kw">import</span> <span class="bi">cv2</span>           <span class="cm"># OpenCV — camera I/O, drawing, display</span></div>
+<div class="code-line"><span class="ln"> 2</span><span class="kw">import</span> <span class="bi">mediapipe</span> <span class="kw">as</span> <span class="bi">mp</span>  <span class="cm"># Hand landmark detection ML pipeline</span></div>
+<div class="code-line"><span class="ln"> 3</span><span class="kw">import</span> <span class="bi">math</span>         <span class="cm"># atan2, hypot, degrees — pure stdlib, no numpy needed</span></div>
+<div class="code-line"><span class="ln"> 4</span><span class="kw">import</span> <span class="bi">sys</span>          <span class="cm"># sys.exit for clean error termination</span></div>
+<div class="code-line"><span class="ln"> 5</span></div>
+<div class="code-line"><span class="ln"> 6</span><span class="cm"># Alias the three MediaPipe sub-modules we need</span></div>
+<div class="code-line"><span class="ln"> 7</span><span class="ac">mp_hands</span>   = <span class="bi">mp</span>.solutions.<span class="fn">hands</span>           <span class="cm"># model + landmark constants</span></div>
+<div class="code-line"><span class="ln"> 8</span><span class="ac">mp_drawing</span> = <span class="bi">mp</span>.solutions.<span class="fn">drawing_utils</span>   <span class="cm"># draw_landmarks helper</span></div>
+<div class="code-line"><span class="ln"> 9</span><span class="ac">mp_styles</span>  = <span class="bi">mp</span>.solutions.<span class="fn">drawing_styles</span>  <span class="cm"># default colour presets</span></div></code></pre>
+    </div>
+
+    <!-- Block 2: Camera detection -->
+    <h3>Camera Detection &amp; Selection</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <span class="file-name">hand_tracker.py — camera helpers</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre><code
+><div class="code-line"><span class="ln">22</span><span class="kw">def</span> <span class="fn">find_available_cameras</span>(max_index: <span class="bi">int</span> = <span class="nm">6</span>) -> <span class="bi">list</span>:</div>
+<div class="code-line"><span class="ln">23</span>    <span class="st">"""</span></div>
+<div class="code-line"><span class="ln">24</span>    <span class="st">Test camera indices 0 .. max_index-1.</span></div>
+<div class="code-line"><span class="ln">25</span>    <span class="st">Only return indices that both open AND return a real frame.</span></div>
+<div class="code-line"><span class="ln">26</span>    <span class="st">"""</span></div>
+<div class="code-line"><span class="ln">27</span>    available = []</div>
+<div class="code-line"><span class="ln">28</span>    <span class="kw">for</span> idx <span class="kw">in</span> <span class="bi">range</span>(max_index):</div>
+<div class="code-line"><span class="ln">29</span>        cap = <span class="bi">cv2</span>.<span class="fn">VideoCapture</span>(idx)   <span class="cm"># try to open the device</span></div>
+<div class="code-line"><span class="ln">30</span>        <span class="kw">if</span> cap.<span class="fn">isOpened</span>():</div>
+<div class="code-line"><span class="ln">31</span>            ret, _ = cap.<span class="fn">read</span>()        <span class="cm"># attempt a real frame read</span></div>
+<div class="code-line"><span class="ln">32</span>            <span class="kw">if</span> ret:                    <span class="cm"># only trust it if we got a frame</span></div>
+<div class="code-line"><span class="ln">33</span>                available.<span class="fn">append</span>(idx)</div>
+<div class="code-line"><span class="ln">34</span>            cap.<span class="fn">release</span>()             <span class="cm"># always release before next index</span></div>
+<div class="code-line"><span class="ln">35</span>    <span class="kw">return</span> available</div>
+<div class="code-line"><span class="ln">36</span></div>
+<div class="code-line"><span class="ln">44</span><span class="kw">def</span> <span class="fn">select_camera</span>(available: <span class="bi">list</span>) -> <span class="bi">int</span>:</div>
+<div class="code-line"><span class="ln">45</span>    <span class="kw">if not</span> available:                    <span class="cm"># guard — no cameras at all</span></div>
+<div class="code-line"><span class="ln">46</span>        <span class="bi">sys</span>.<span class="fn">exit</span>(<span class="nm">1</span>)</div>
+<div class="code-line"><span class="ln">47</span>    <span class="kw">if</span> <span class="bi">len</span>(available) == <span class="nm">1</span>:             <span class="cm"># skip prompt for single camera</span></div>
+<div class="code-line"><span class="ln">48</span>        <span class="kw">return</span> available[<span class="nm">0</span>]</div>
+<div class="code-line"><span class="ln">49</span>    <span class="kw">while True</span>:</div>
+<div class="code-line"><span class="ln">50</span>        <span class="kw">try</span>:</div>
+<div class="code-line"><span class="ln">51</span>            choice = <span class="bi">int</span>(<span class="bi">input</span>(<span class="st">"Select camera index: "</span>).<span class="fn">strip</span>())</div>
+<div class="code-line"><span class="ln">52</span>            <span class="kw">if</span> choice <span class="kw">in</span> available:</div>
+<div class="code-line"><span class="ln">53</span>                <span class="kw">return</span> choice</div>
+<div class="code-line"><span class="ln">54</span>        <span class="kw">except</span> <span class="bi">ValueError</span>:              <span class="cm"># non-integer input — loop again</span></div>
+<div class="code-line"><span class="ln">55</span>            <span class="kw">pass</span></div></code></pre>
+    </div>
+
+    <!-- Block 3: Maths -->
+    <h3>Direction &amp; Ray Helpers</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <span class="file-name">hand_tracker.py — compute_direction / ray_endpoint</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre><code
+><div class="code-line"><span class="ln">100</span><span class="kw">def</span> <span class="fn">compute_direction</span>(mcp_px: <span class="bi">tuple</span>, tip_px: <span class="bi">tuple</span>):</div>
+<div class="code-line"><span class="ln">101</span>    <span class="st">"""</span></div>
+<div class="code-line"><span class="ln">102</span>    <span class="st">Vector runs MCP (base knuckle) → Tip (fingertip).</span></div>
+<div class="code-line"><span class="ln">103</span>    <span class="st">Returns (unit_vector, angle_degrees) using standard CCW convention.</span></div>
+<div class="code-line"><span class="ln">104</span>    <span class="st">"""</span></div>
+<div class="code-line"><span class="ln">105</span>    dx = tip_px[<span class="nm">0</span>] - mcp_px[<span class="nm">0</span>]   <span class="cm"># +ve = finger points right</span></div>
+<div class="code-line"><span class="ln">106</span>    dy = tip_px[<span class="nm">1</span>] - mcp_px[<span class="nm">1</span>]   <span class="cm"># +ve = finger points DOWN (image space)</span></div>
+<div class="code-line"><span class="ln">107</span></div>
+<div class="code-line"><span class="ln">108</span>    <span class="cm"># Flip dy sign so angle follows standard maths (y↑ positive)</span></div>
+<div class="code-line"><span class="ln">109</span>    <span class="cm"># "pointing up" in the image → angle ≈ +90°</span></div>
+<div class="code-line"><span class="ln">110</span>    angle_deg = <span class="bi">math</span>.<span class="fn">degrees</span>(<span class="bi">math</span>.<span class="fn">atan2</span>(-dy, dx))</div>
+<div class="code-line"><span class="ln">111</span></div>
+<div class="code-line"><span class="ln">112</span>    magnitude = <span class="bi">math</span>.<span class="fn">hypot</span>(dx, dy)</div>
+<div class="code-line"><span class="ln">113</span>    <span class="kw">if</span> magnitude < <span class="nm">1e-6</span>:             <span class="cm"># guard against zero-length vector</span></div>
+<div class="code-line"><span class="ln">114</span>        <span class="kw">return</span> (<span class="nm">0.0</span>, <span class="nm">0.0</span>), <span class="nm">0.0</span></div>
+<div class="code-line"><span class="ln">115</span></div>
+<div class="code-line"><span class="ln">116</span>    <span class="kw">return</span> (dx / magnitude, dy / magnitude), angle_deg</div>
+<div class="code-line"><span class="ln">117</span></div>
+<div class="code-line"><span class="ln">128</span><span class="kw">def</span> <span class="fn">ray_endpoint</span>(tip_px: <span class="bi">tuple</span>, unit_vec: <span class="bi">tuple</span>, length: <span class="bi">int</span>) -> <span class="bi">tuple</span>:</div>
+<div class="code-line"><span class="ln">129</span>    <span class="st">"""Extend the direction vector `length` pixels beyond the fingertip."""</span></div>
+<div class="code-line"><span class="ln">130</span>    ex = <span class="bi">int</span>(tip_px[<span class="nm">0</span>] + unit_vec[<span class="nm">0</span>] * length)</div>
+<div class="code-line"><span class="ln">131</span>    ey = <span class="bi">int</span>(tip_px[<span class="nm">1</span>] + unit_vec[<span class="nm">1</span>] * length)</div>
+<div class="code-line"><span class="ln">132</span>    <span class="kw">return</span> (ex, ey)</div></code></pre>
+    </div>
+
+    <!-- Block 4: Main loop -->
+    <h3>Main Tracking Loop (core render pass)</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <span class="file-name">hand_tracker.py — render pass per hand</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre><code
+><div class="code-line"><span class="ln">204</span><span class="kw">if</span> results.multi_hand_landmarks:</div>
+<div class="code-line"><span class="ln">205</span>    <span class="kw">for</span> hand_lms <span class="kw">in</span> results.multi_hand_landmarks:</div>
+<div class="code-line"><span class="ln">206</span></div>
+<div class="code-line"><span class="ln">207</span>        <span class="cm"># 1) Full skeleton — bones + coloured joint dots</span></div>
+<div class="code-line"><span class="ln">208</span>        mp_drawing.<span class="fn">draw_landmarks</span>(</div>
+<div class="code-line"><span class="ln">209</span>            frame, hand_lms, mp_hands.HAND_CONNECTIONS,</div>
+<div class="code-line"><span class="ln">210</span>            mp_styles.<span class="fn">get_default_hand_landmarks_style</span>(),</div>
+<div class="code-line"><span class="ln">211</span>            mp_styles.<span class="fn">get_default_hand_connections_style</span>(),</div>
+<div class="code-line"><span class="ln">212</span>        )</div>
+<div class="code-line"><span class="ln">213</span></div>
+<div class="code-line"><span class="ln">214</span>        <span class="cm"># 2) Normalised coords → pixel coords (landmarks are 0..1 floats)</span></div>
+<div class="code-line"><span class="ln">215</span>        tip_px = (<span class="bi">int</span>(hand_lms.landmark[<span class="nm">8</span>].x * w),</div>
+<div class="code-line"><span class="ln">216</span>                  <span class="bi">int</span>(hand_lms.landmark[<span class="nm">8</span>].y * h))</div>
+<div class="code-line"><span class="ln">217</span>        mcp_px = (<span class="bi">int</span>(hand_lms.landmark[<span class="nm">5</span>].x * w),</div>
+<div class="code-line"><span class="ln">218</span>                  <span class="bi">int</span>(hand_lms.landmark[<span class="nm">5</span>].y * h))</div>
+<div class="code-line"><span class="ln">219</span></div>
+<div class="code-line"><span class="ln">220</span>        <span class="cm"># 3) Compute unit vector and 2-D angle</span></div>
+<div class="code-line"><span class="ln">221</span>        unit_vec, angle_deg = <span class="fn">compute_direction</span>(mcp_px, tip_px)</div>
+<div class="code-line"><span class="ln">222</span></div>
+<div class="code-line"><span class="ln">223</span>        <span class="cm"># 4) Ray endpoint — 130 px beyond the tip in the pointing direction</span></div>
+<div class="code-line"><span class="ln">224</span>        ray_end = <span class="fn">ray_endpoint</span>(tip_px, unit_vec, <span class="nm">130</span>)</div>
+<div class="code-line"><span class="ln">225</span></div>
+<div class="code-line"><span class="ln">226</span>        <span class="cm"># 5) Draw direction arrow  tip → ray_end</span></div>
+<div class="code-line"><span class="ln">227</span>        <span class="bi">cv2</span>.<span class="fn">arrowedLine</span>(frame, tip_px, ray_end,</div>
+<div class="code-line"><span class="ln">228</span>                        (<span class="nm">0</span>, <span class="nm">40</span>, <span class="nm">255</span>), <span class="nm">3</span>,                 <span class="cm"># BGR red</span></div>
+<div class="code-line"><span class="ln">229</span>                        line_type=<span class="bi">cv2</span>.LINE_AA,</div>
+<div class="code-line"><span class="ln">230</span>                        tipLength=<span class="nm">0.28</span>)</div>
+<div class="code-line"><span class="ln">231</span></div>
+<div class="code-line"><span class="ln">232</span>        <span class="cm"># 6) Filled tip marker — black shadow ring + bright green fill</span></div>
+<div class="code-line"><span class="ln">233</span>        <span class="bi">cv2</span>.<span class="fn">circle</span>(frame, tip_px, <span class="nm">16</span>, (<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">0</span>),   -<span class="nm">1</span>)  <span class="cm"># shadow</span></div>
+<div class="code-line"><span class="ln">234</span>        <span class="bi">cv2</span>.<span class="fn">circle</span>(frame, tip_px, <span class="nm">13</span>, (<span class="nm">0</span>,<span class="nm">230</span>,<span class="nm">0</span>), -<span class="nm">1</span>)  <span class="cm"># green fill</span></div>
+<div class="code-line"><span class="ln">235</span></div>
+<div class="code-line"><span class="ln">236</span>        <span class="cm"># 7) HUD label — clamped so it never goes off-screen</span></div>
+<div class="code-line"><span class="ln">237</span>        lx = <span class="bi">min</span>(tip_px[<span class="nm">0</span>] + <span class="nm">18</span>, w - <span class="nm">200</span>)</div>
+<div class="code-line"><span class="ln">238</span>        ly = <span class="bi">max</span>(tip_px[<span class="nm">1</span>] - <span class="nm">18</span>, <span class="nm">20</span>)</div>
+<div class="code-line"><span class="ln">239</span>        <span class="fn">draw_text</span>(frame, <span class="bi">f</span><span class="st">"Tip: ({tip_px[0]}, {tip_px[1]})"</span>,  (lx, ly))</div>
+<div class="code-line"><span class="ln">240</span>        <span class="fn">draw_text</span>(frame, <span class="bi">f</span><span class="st">"Angle: {angle_deg:+.1f} deg"</span>, (lx, ly + <span class="nm">26</span>))</div></code></pre>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SETUP / INSTALLATION
+  ══════════════════════════════════════════════════════════════ -->
+  <section id="setup">
+    <h2><span class="icon">⚙</span> Setup &amp; Usage</h2>
+
+    <ol class="setup-list">
+      <li>
+        <div class="setup-content">
+          <strong>Create a virtual environment (recommended)</strong>
+          <p>Isolates the MediaPipe + OpenCV packages from your system Python.</p>
+          <div class="code-wrap" style="margin-top:8px;">
+            <pre style="padding:12px 16px;"><code><span class="bi">python</span> -m venv .venv
+<span class="cm"># Windows</span>  .venv\Scripts\activate
+<span class="cm"># macOS/Linux</span>  source .venv/bin/activate</code></pre>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="setup-content">
+          <strong>Install dependencies</strong>
+          <p>Only three packages needed — all available from PyPI.</p>
+          <div class="code-wrap" style="margin-top:8px;">
+            <pre style="padding:12px 16px;"><code><span class="bi">pip</span> install opencv-python mediapipe</code></pre>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="setup-content">
+          <strong>Run the script</strong>
+          <p>It will scan for cameras, print which ones it found, and ask you to pick one.</p>
+          <div class="code-wrap" style="margin-top:8px;">
+            <pre style="padding:12px 16px;"><code><span class="bi">python</span> hand_tracker.py</code></pre>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="setup-content">
+          <strong>Interact &amp; quit</strong>
+          <p>Hold your hand in front of the webcam — the skeleton, green tip dot, and red direction
+          arrow should appear immediately. Press <code class="inline">q</code> in the video window to
+          release the camera and exit cleanly.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout" style="margin-top:24px;">
+      <span class="callout-icon">⚠️</span>
+      <div>
+        <strong>macOS users:</strong> grant camera access to Terminal / your IDE in
+        <em>System Settings → Privacy &amp; Security → Camera</em> before running.
+        On Linux, your user may need to be in the <code class="inline">video</code> group
+        (<code class="inline">sudo usermod -aG video $USER</code>).
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════════ -->
+  <footer>
+    <span class="hi">hand_tracker.py</span> &nbsp;·&nbsp;
+    OpenCV &amp; MediaPipe POC &nbsp;·&nbsp;
+    Press <code class="inline">q</code> to quit
+  </footer>
+
+</div><!-- /page-wrap -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCRIPTS
+     1. Animated canvas demo — simulates the live overlay visuals.
+     2. Copy-button helper.
+════════════════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Animated canvas demo ─────────────────────────────────────────
+     Draws a fake "video frame" with a simulated hand skeleton,
+     tip marker, direction ray, and HUD labels — no real webcam needed.
+     The finger angle oscillates so you can see the live data update.
+  ──────────────────────────────────────────────────────────────────── */
+  (function () {
+    const canvas = document.getElementById('demoCanvas');
+    const ctx    = canvas.getContext('2d');
+
+    /* Logical dimensions — canvas attribute size drives pixel buffer */
+    const W = 480, H = 320;
+
+    /* Oscillation state for the animated pointing angle */
+    let t = 0;
+
+    /* ── Simplified 21-landmark hand (normalised 0..1) ─────────────
+       Positions represent a rough right-hand palm-facing-camera pose.
+       We'll animate by rotating the fingertip slightly.
+    ─────────────────────────────────────────────────────────────── */
+    function getHandLandmarks(angle) {
+      // Wrist at bottom-centre, rough proportions
+      const base = { x: 0.48, y: 0.82 };
+
+      // MCPs (knuckle row)
+      const mcp1 = { x: 0.36, y: 0.68 }; // thumb CMC → approximate
+      const mcp5 = { x: 0.40, y: 0.60 }; // index MCP  — LM 5
+      const mcp9 = { x: 0.48, y: 0.57 }; // middle MCP
+      const mcp13= { x: 0.56, y: 0.59 }; // ring MCP
+      const mcp17= { x: 0.62, y: 0.64 }; // pinky MCP
+
+      // Index finger chain: MCP(5) → PIP(6) → DIP(7) → TIP(8)
+      // Animate TIP position by rotating around MCP
+      const len  = 0.28;  // finger length in normalised units
+      const tipX = mcp5.x + Math.cos(angle) * len;
+      const tipY = mcp5.y - Math.sin(angle) * len; // y↑ in normalised
+
+      return {
+        wrist:  base,
+        mcp5,
+        pip6:  { x: mcp5.x + (tipX - mcp5.x) * 0.38,
+                  y: mcp5.y + (tipY - mcp5.y) * 0.38 },
+        dip7:  { x: mcp5.x + (tipX - mcp5.x) * 0.70,
+                  y: mcp5.y + (tipY - mcp5.y) * 0.70 },
+        tip8:  { x: tipX, y: tipY },
+        mcp9, mcp13, mcp17,
+        // Static stubs for the other fingers (palm only, no animation)
+        stubMid:  [mcp9,
+                   { x:mcp9.x - 0.01, y:mcp9.y - 0.25 },
+                   { x:mcp9.x - 0.01, y:mcp9.y - 0.36 },
+                   { x:mcp9.x - 0.01, y:mcp9.y - 0.45 }],
+        stubRing: [mcp13,
+                   { x:mcp13.x,       y:mcp13.y - 0.21 },
+                   { x:mcp13.x,       y:mcp13.y - 0.31 },
+                   { x:mcp13.x,       y:mcp13.y - 0.39 }],
+        stubPink: [mcp17,
+                   { x:mcp17.x + 0.02,y:mcp17.y - 0.17 },
+                   { x:mcp17.x + 0.03,y:mcp17.y - 0.24 },
+                   { x:mcp17.x + 0.04,y:mcp17.y - 0.30 }],
+        thumb: [
+          { x:0.36, y:0.68 }, { x:0.30, y:0.60 },
+          { x:0.26, y:0.52 }, { x:0.23, y:0.45 }
+        ],
+      };
+    }
+
+    /** Convert normalised (0..1) coords to canvas pixels. */
+    function px(lm) { return { x: lm.x * W, y: lm.y * H }; }
+
+    /** Draw a thin bone between two normalised landmarks. */
+    function bone(a, b, color = '#4a90d9', width = 2) {
+      const pa = px(a), pb = px(b);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = width;
+      ctx.stroke();
+    }
+
+    /** Draw a joint dot. */
+    function joint(lm, r = 4, fill = '#8b949e') {
+      const p = px(lm);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
+
+    /** Draw an arrowed line (simulating cv2.arrowedLine). */
+    function arrowedLine(ax, ay, bx, by, color, width) {
+      const angle  = Math.atan2(by - ay, bx - ax);
+      const headL  = 16;
+      const headA  = Math.PI / 6;
+
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = width;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+
+      // Arrowhead
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(bx - headL * Math.cos(angle - headA),
+                 by - headL * Math.sin(angle - headA));
+      ctx.lineTo(bx - headL * Math.cos(angle + headA),
+                 by - headL * Math.sin(angle + headA));
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    /** Shadowed text — mirrors draw_text() in the Python script. */
+    function hudText(text, x, y) {
+      ctx.font         = '13px "Segoe UI", monospace';
+      ctx.lineWidth    = 4;
+      ctx.strokeStyle  = '#000';
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle    = '#00e5ff';  // cyan — TEXT_CLR
+      ctx.fillText(text, x, y);
+    }
+
+    /** Main render loop — called via requestAnimationFrame. */
+    function draw() {
+      t += 0.012;
+
+      // Oscillate between ~30° and ~110° so the ray sweeps visibly
+      const angle = (Math.PI / 6) + Math.sin(t) * (Math.PI / 4);
+
+      const lm = getHandLandmarks(angle);
+
+      /* ── Background (dark camera feed simulation) ─────────────── */
+      ctx.fillStyle = '#0a0c0f';
+      ctx.fillRect(0, 0, W, H);
+
+      /* ── Subtle scanline texture ───────────────────────────────── */
+      for (let y = 0; y < H; y += 4) {
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillRect(0, y, W, 1);
+      }
+
+      /* ── Palm connections (wrist → MCPs) ──────────────────────── */
+      bone(lm.wrist, lm.mcp5,  '#30363d', 2);
+      bone(lm.wrist, lm.mcp9,  '#30363d', 2);
+      bone(lm.wrist, lm.mcp13, '#30363d', 2);
+      bone(lm.wrist, lm.mcp17, '#30363d', 2);
+
+      /* ── Thumb bones ───────────────────────────────────────────── */
+      for (let i = 0; i < lm.thumb.length - 1; i++)
+        bone(lm.thumb[i], lm.thumb[i+1], '#30363d', 2);
+      lm.thumb.forEach(j => joint(j, 4, '#8b949e'));
+
+      /* ── Other fingers (static stubs) ─────────────────────────── */
+      [lm.stubMid, lm.stubRing, lm.stubPink].forEach(chain => {
+        for (let i = 0; i < chain.length - 1; i++)
+          bone(chain[i], chain[i+1], '#30363d', 2);
+        chain.forEach(j => joint(j, 4, '#8b949e'));
+      });
+
+      /* ── Index finger bones — highlighted in cyan ─────────────── */
+      bone(lm.mcp5, lm.pip6, '#00e5ff50', 2.5);
+      bone(lm.pip6, lm.dip7, '#00e5ff50', 2.5);
+      bone(lm.dip7, lm.tip8, '#00e5ff50', 2.5);
+      joint(lm.pip6, 4, '#4a90d9');
+      joint(lm.dip7, 4, '#4a90d9');
+
+      /* ── Direction ray  (tip → beyond) ────────────────────────── */
+      const TIP = px(lm.tip8);
+      const MCP = px(lm.mcp5);
+
+      // Unit vector
+      const dx  = TIP.x - MCP.x;
+      const dy  = TIP.y - MCP.y;
+      const mag = Math.hypot(dx, dy) || 1;
+      const ux  = dx / mag, uy = dy / mag;
+      const RAY_LEN = 100;
+
+      arrowedLine(
+        TIP.x, TIP.y,
+        TIP.x + ux * RAY_LEN,
+        TIP.y + uy * RAY_LEN,
+        '#ff2828', 3  // bold red — RAY_CLR
+      );
+
+      /* ── MCP marker (orange ring) ──────────────────────────────── */
+      ctx.beginPath();
+      ctx.arc(MCP.x, MCP.y, 9, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffa657';
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+
+      /* ── Fingertip marker — black ring + green fill ────────────── */
+      ctx.beginPath();
+      ctx.arc(TIP.x, TIP.y, 16, 0, Math.PI * 2);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(TIP.x, TIP.y, 13, 0, Math.PI * 2);
+      ctx.fillStyle = '#00e640';  // TIP_FILL_CLR
+      ctx.fill();
+
+      /* ── Wrist joint ───────────────────────────────────────────── */
+      joint(lm.wrist, 6, '#8b949e');
+
+      /* ── HUD labels ────────────────────────────────────────────── */
+      // Pixel coords (multiply back from normalised)
+      const tipPxX = Math.round(TIP.x);
+      const tipPxY = Math.round(TIP.y);
+
+      // 2D angle — negate dy for standard convention
+      const angleDeg = (Math.atan2(-(TIP.y - MCP.y), TIP.x - MCP.x)
+                        * 180 / Math.PI);
+
+      let lx = Math.min(TIP.x + 18, W - 150);
+      let ly = Math.max(TIP.y - 18, 16);
+
+      hudText(`Tip: (${tipPxX}, ${tipPxY})`,    lx, ly);
+      hudText(`Angle: ${angleDeg >= 0 ? '+' : ''}${angleDeg.toFixed(1)} deg`,
+              lx, ly + 20);
+
+      /* ── Footer HUD (matches the Python "Press q to quit" label) ─ */
+      ctx.font      = '11px monospace';
+      ctx.fillStyle = '#484f58';
+      ctx.fillText("Press 'q' to quit", 10, H - 10);
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+
+
+  /* ── Copy-button helper ───────────────────────────────────────────
+     Selects all text inside the nearest <pre> sibling and copies it
+     to the clipboard, giving the user visual feedback.
+  ─────────────────────────────────────────────────────────────────── */
+  function copyCode(btn) {
+    // Walk up from the button to the .code-wrap, then find the <pre>
+    const wrap = btn.closest('.code-wrap');
+    const pre  = wrap.querySelector('pre');
+
+    // Strip HTML tags to get plain text
+    const text = pre.innerText;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+      setTimeout(() => {
+        btn.textContent  = original;
+        btn.style.color  = '';
+        btn.style.borderColor = '';
+      }, 1800);
+    });
+  }
+</script>
+</body>
+</html>

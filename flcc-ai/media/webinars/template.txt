@@ -1,0 +1,117 @@
+<!--
+    WEBINAR PAGE TEMPLATE
+    =====================
+    1. Copy this file and rename it: my-webinar-title.html
+    2. Fill in the meta tags below (used by the webinars listing page)
+    3. Add your recording embed and content in the <main> section
+    4. IMPORTANT: Save the finished file in media/  (one level up from here),
+       NOT in this media/webinars/ folder.
+       The listing page scans media/*.html to find webinar pages.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ============================================================
+         LISTING META TAGS  (required for media/webinars/index.php to pick up)
+         ============================================================ -->
+
+    <!-- Date the webinar was recorded — YYYY-MM-DD format -->
+    <meta name="date" content="YYYY-MM-DD">
+
+    <!-- One-sentence description shown on the listing card -->
+    <meta name="description" content="What this webinar covers, in one sentence.">
+
+    <!-- Presenter name(s) shown on the listing card -->
+    <meta name="presenter" content="Presenter Name">
+
+    <!-- Optional: thumbnail image shown on the listing card.
+         Path is relative to this file (i.e. relative to media/).
+         Example: webinar-images/my-thumbnail.jpg -->
+    <meta name="thumbnail" content="">
+
+    <!-- ============================================================ -->
+
+    <title>Webinar Title | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = '../'; window.ACTIVE_PAGE = 'media';</script>
+    <script src="../navbar.js"></script>
+
+    <!-- Article Layout -->
+    <main class="article-layout">
+
+        <!-- Breadcrumb -->
+        <nav class="article-breadcrumb">
+            <a href="webinars/">&larr; Webinars</a>
+            <span>/</span>
+            <span>Webinar Title</span>
+        </nav>
+
+        <!-- Title block -->
+        <span class="section-label">Recorded Webinar</span>
+        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">Webinar Title</h1>
+        <p class="article-meta" style="color:var(--neutral-gray); font-size:0.9rem; margin-bottom:2rem;">
+            Month YYYY &bull; Presenter Name
+        </p>
+
+        <!-- ============================================================
+             VIDEO EMBED — paste your YouTube/Vimeo embed code here
+             ============================================================ -->
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--radius); margin-bottom:2rem;">
+            <iframe
+                src="https://www.youtube.com/embed/VIDEO_ID"
+                title="Webinar Title"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="position:absolute; top:0; left:0; width:100%; height:100%;">
+            </iframe>
+        </div>
+        <!-- ============================================================ -->
+
+        <!-- ============================================================
+             DESCRIPTION / NOTES / RESOURCES
+             ============================================================ -->
+
+        <h2>About This Webinar</h2>
+        <p>Description paragraph...</p>
+
+        <!-- ============================================================ -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="../index.html" class="footer-logo">
+                <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

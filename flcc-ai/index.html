@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLX AI Hub | Innovate &amp; Educate</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        /* ---- Home-specific styles ---- */
+        .hero {
+            text-align: center;
+            padding: 6rem 1.5rem 5rem;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--white);
+            background-image:
+                radial-gradient(circle at 75% 20%, rgba(0,70,173,0.07), transparent 50%),
+                radial-gradient(circle at 25% 80%, rgba(88,166,24,0.07), transparent 50%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='104' viewBox='0 0 60 104' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60L4.02 45V15z' fill='none' stroke='%23939598' stroke-width='1' stroke-opacity='0.07'/%3E%3Cpath d='M30 52l25.98 15v30L30 112L4.02 97V67z' fill='none' stroke='%23939598' stroke-width='1' stroke-opacity='0.07'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        /* Decorative hexagons */
+        .deco-hex { position: absolute; opacity: 0.08; pointer-events: none; }
+        .deco-hex svg { width: 100%; height: 100%; fill: none; }
+        .hex-tl { top: -60px; left: -60px; width: 320px; height: 320px; color: var(--primary-green); transform: rotate(-10deg); }
+        .hex-br { bottom: -80px; right: -60px; width: 400px; height: 400px; color: var(--primary-blue); transform: rotate(15deg); }
+
+        .hero .container { position: relative; z-index: 1; }
+
+        .hero-eyebrow {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-size: 3.25rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            color: var(--neutral-gray);
+            max-width: 680px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Charter cards */
+        .charters {
+            padding: 4.5rem 0;
+            background: var(--light-bg);
+        }
+
+        .charters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 1.75rem;
+            margin-top: 2.5rem;
+        }
+
+        .charter-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #e8eaed;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .charter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .charter-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+        }
+
+        .charter-card.blue::before  { background: var(--primary-blue); }
+        .charter-card.green::before { background: var(--primary-green); }
+
+        .hex-icon {
+            width: 64px; height: 64px;
+            background: var(--light-bg);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .charter-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .charter-card p {
+            font-size: 0.925rem;
+            color: #6b7280;
+            line-height: 1.65;
+        }
+
+        /* Quick-access links */
+        .quick-links {
+            padding: 4rem 0;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2.5rem;
+        }
+
+        .quick-link-tile {
+            background: white;
+            border: 1px solid #e8eaed;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 1.25rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            text-decoration: none;
+            color: var(--dark-gray);
+        }
+
+        .quick-link-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: #c8d4ee;
+            color: var(--primary-blue);
+        }
+
+        .quick-link-tile .ql-icon {
+            width: 48px; height: 48px;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            transition: background 0.2s;
+        }
+
+        .quick-link-tile:hover .ql-icon {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .quick-link-tile .ql-icon.green {
+            background: #f0fdf4;
+            color: var(--primary-green);
+        }
+
+        .quick-link-tile:hover .ql-icon.green {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .quick-link-tile span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.25rem; }
+            .deco-hex { display: none; }
+            .cta-row { flex-direction: column; align-items: center; }
+            .quick-links-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar (injected by navbar.js) -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'home';</script>
+    <script src="navbar.js"></script>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="deco-hex hex-tl">
+            <svg viewBox="0 0 100 115"><path d="M50 0 L100 28.75 L100 86.25 L50 115 L0 86.25 L0 28.75 Z" stroke="currentColor"/></svg>
+        </div>
+        <div class="deco-hex hex-br">
+            <svg viewBox="0 0 100 115"><path d="M50 0 L100 28.75 L100 86.25 L50 115 L0 86.25 L0 28.75 Z" stroke="currentColor"/></svg>
+        </div>
+
+        <div class="container">
+            <span class="hero-eyebrow">FLCC's FLX AI Hub</span>
+            <h1>AI is Here.<br><span class="text-gradient">Let's Make It Work for You.</span></h1>
+            <p class="hero-sub">We partner with schools, businesses, and community organizations across the Finger Lakes region — delivering practical, hands-on AI education that demystifies the technology and makes it immediately useful.</p>
+            <div class="cta-row">
+                <a href="media/webinars/" class="btn btn-primary">
+                    <i data-lucide="play-circle" width="18"></i> Watch Our Webinars
+                </a>
+                <a href="stay-informed.html" class="btn btn-outline">
+                    Stay in the Loop
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT WE DO -->
+    <section class="charters">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Our Focus Areas</span>
+                <h2>Who We Work With</h2>
+                <p>From classrooms to boardrooms to community centers, we meet people where they are and show them what AI can do for them — right now.</p>
+            </div>
+
+            <div class="charters-grid">
+                <div class="charter-card blue">
+                    <div class="hex-icon">
+                        <i data-lucide="monitor" width="28" style="color:var(--primary-blue)"></i>
+                    </div>
+                    <h3>K–12 Education</h3>
+                    <p>We work with educators to integrate AI tools thoughtfully — helping teachers save time, build AI-literate students, and navigate policy questions with confidence.</p>
+                </div>
+
+                <div class="charter-card green">
+                    <div class="hex-icon">
+                        <i data-lucide="briefcase" width="28" style="color:var(--primary-green)"></i>
+                    </div>
+                    <h3>Business &amp; Workforce</h3>
+                    <p>We help organizations identify real AI opportunities, develop practical workflows, and build a workforce that's ready to adapt as the technology continues to evolve.</p>
+                </div>
+
+                <div class="charter-card blue">
+                    <div class="hex-icon">
+                        <i data-lucide="users" width="28" style="color:var(--primary-blue)"></i>
+                    </div>
+                    <h3>Community Education</h3>
+                    <p>AI literacy shouldn't be a privilege. We offer accessible workshops and resources for anyone who wants to understand what AI is, what it isn't, and how to use it well.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK LINKS -->
+    <section class="quick-links">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Explore</span>
+                <h2>Everything in One Place</h2>
+                <p>Recordings, tools, articles, and resources — organized so you can find what you need fast.</p>
+            </div>
+
+            <div class="quick-links-grid">
+                <a href="media/webinars/" class="quick-link-tile">
+                    <div class="ql-icon"><i data-lucide="video" width="22"></i></div>
+                    <span>Webinars</span>
+                </a>
+                <a href="media/podcast.html" class="quick-link-tile">
+                    <div class="ql-icon"><i data-lucide="mic" width="22"></i></div>
+                    <span>Podcast</span>
+                </a>
+                <a href="blog/" class="quick-link-tile">
+                    <div class="ql-icon"><i data-lucide="newspaper" width="22"></i></div>
+                    <span>Blog</span>
+                </a>
+                <a href="tools/" class="quick-link-tile">
+                    <div class="ql-icon green"><i data-lucide="wrench" width="22"></i></div>
+                    <span>Tools</span>
+                </a>
+                <a href="resources.html" class="quick-link-tile">
+                    <div class="ql-icon green"><i data-lucide="layers" width="22"></i></div>
+                    <span>Resources</span>
+                </a>
+                <a href="stay-informed.html" class="quick-link-tile">
+                    <div class="ql-icon"><i data-lucide="mail" width="22"></i></div>
+                    <span>Stay Informed</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
