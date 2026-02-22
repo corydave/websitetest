@@ -2,8 +2,8 @@
 /**
  * Webinars listing
  *
- * PAST WEBINARS — auto-scanned from ../  (the media/ directory)
- * Each webinar page in media/ should include in <head>:
+ * PAST WEBINARS — auto-scanned from media/webinars/ (same directory as this file)
+ * Each webinar page in media/webinars/ should include in <head>:
  *   <meta name="date"        content="YYYY-MM-DD">
  *   <meta name="description" content="Short description">
  *   <meta name="presenter"   content="Presenter Name">
@@ -40,14 +40,12 @@ $upcomingWebinars = [
 ];
 
 // -----------------------------------------------------------------------
-// PAST WEBINARS — auto-scanned from parent media/ directory
+// PAST WEBINARS — auto-scanned from webinars/ directory (same dir as this file)
 // -----------------------------------------------------------------------
-$exclude   = ['podcast.html', 'webinars.html', 'webinars.php'];
-$allFiles  = glob(__DIR__ . '/../*.html') ?: [];
+$allFiles  = glob(__DIR__ . '/*.html') ?: [];
 $pastWebinars = [];
 
 foreach ($allFiles as $file) {
-    if (in_array(basename($file), $exclude)) continue;
 
     $content = file_get_contents($file);
 
@@ -74,11 +72,16 @@ foreach ($allFiles as $file) {
     preg_match('/<meta\s+name="thumbnail"\s+content="([^"]*)"/i', $content, $m);
     $thumbnail = $m[1] ?? null;
 
+    // Time
+    preg_match('/<meta\s+name="time"\s+content="([^"]*)"/i', $content, $m);
+    $time = html_entity_decode($m[1] ?? '', ENT_QUOTES, 'UTF-8');
+
     $pastWebinars[] = [
-        'url'         => '../' . basename($file),
+        'url'         => basename($file),
         'title'       => $title,
         'description' => $description,
         'presenter'   => $presenter,
+        'time'        => $time,
         'dateRaw'     => $dateRaw,
         'dateDisplay' => $dateDisplay,
         'thumbnail'   => $thumbnail,
@@ -149,6 +152,9 @@ usort($pastWebinars, function ($a, $b) {
                             <div class="card-body">
                                 <div class="card-date">
                                     <?= htmlspecialchars($w['dateDisplay']) ?>
+                                    <?php if ($w['time']): ?>
+                                        &bull; <?= htmlspecialchars($w['time']) ?>
+                                    <?php endif; ?>
                                     <?php if ($w['presenter']): ?>
                                         &bull; <?= htmlspecialchars($w['presenter']) ?>
                                     <?php endif; ?>

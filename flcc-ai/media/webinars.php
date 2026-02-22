@@ -17,25 +17,18 @@
 // -----------------------------------------------------------------------
 $upcomingWebinars = [
     [
-        'title'       => 'NotebookLM: AI-Powered Research',
-        'presenter'   => 'Dave Ghidiu',
-        'date'        => 'Date TBD',
-        'description' => 'Discover how Google\'s NotebookLM transforms the way you interact with documents, lecture notes, and research materials — turning them into a personalized AI knowledge base.',
-        'registerUrl' => '#',
+        'title'       => 'NotebookLM: Summarize, Analyze, and Create in Seconds',
+        'presenter'   => 'Lindsey Chamberlain',
+        'date'        => 'March 10',
+        'description' => 'NotebookLM is a Google product that acts as a source of truth for projects. Upload documents, URLs, YouTube videos and create a knowledge base. When you "chat" with the AI in your notebook, all the responses will be taken directly from the sources you selected.',
+        'registerUrl' => 'https://www.flcc.edu/events/all-events/2026/march/flx-ai-hub-webinar-notebooklm---summarize-analyze-and-create-in-seconds.php',
     ],
     [
-        'title'       => 'Chatbots for Your Organization',
-        'presenter'   => 'Dave Ghidiu & Debora Ortloff',
-        'date'        => 'Date TBD',
-        'description' => 'From concept to deployment: learn how to build and customize AI chatbots that genuinely serve your organization\'s needs without requiring a background in coding.',
-        'registerUrl' => '#',
-    ],
-    [
-        'title'       => 'The Prompting Experience',
-        'presenter'   => 'Dave Ghidiu',
-        'date'        => 'Date TBD',
-        'description' => 'A hands-on session designed to level up your AI prompting skills — from clear basics to advanced techniques that get dramatically better results from any AI tool.',
-        'registerUrl' => '#',
+        'title'       => 'Chatbots: What They Are, How to Use Them, and How to Make Them',
+        'presenter'   => 'TBD',
+        'date'        => 'April 14',
+        'description' => 'Whether you\'re wondering "what\'s the difference between ChatGPT and a chatbot?" or thinking about how a chatbot might help your organization, this session is built for you. WeDave will cover the fundamentals, walk through practical examples, and demonstrate creating a chatbot from scratch.',
+        'registerUrl' => 'https://www.flcc.edu/events/all-events/2026/april/webinar-chatbots-what-they-are-how-to-use-them-and-how-to-make-them.php',
     ],
 ];
 
@@ -43,7 +36,7 @@ $upcomingWebinars = [
 // PAST WEBINARS — auto-scanned
 // -----------------------------------------------------------------------
 $exclude = ['webinars.php', 'webinars.html', 'podcast.html'];
-$allFiles = glob(__DIR__ . '/*.html') ?: [];
+$allFiles = glob(__DIR__ . '/webinars/*.html') ?: [];
 
 $pastWebinars = [];
 
@@ -75,14 +68,19 @@ foreach ($allFiles as $file) {
     preg_match('/<meta\s+name="thumbnail"\s+content="([^"]*)"/i', $content, $m);
     $thumbnail = $m[1] ?? null;
 
+    // Time
+    preg_match('/<meta\s+name="time"\s+content="([^"]*)"/i', $content, $m);
+    $time = html_entity_decode($m[1] ?? '', ENT_QUOTES, 'UTF-8');
+
     $pastWebinars[] = [
-        'url'         => basename($file),
+        'url'         => 'webinars/' . basename($file),
         'title'       => $title,
         'description' => $description,
         'presenter'   => $presenter,
+        'time'        => $time,
         'dateRaw'     => $dateRaw,
         'dateDisplay' => $dateDisplay,
-        'thumbnail'   => $thumbnail,
+        'thumbnail'   => $thumbnail ? 'webinars/' . $thumbnail : null,
     ];
 }
 
@@ -144,12 +142,15 @@ usort($pastWebinars, function ($a, $b) {
                                 </div>
                             <?php else: ?>
                                 <div class="card-thumb-placeholder" style="position:relative;">
-                                    <i data-lucide="play-circle" width="56" style="opacity:0.35;"></i>
+                                    <i data-lucide="podcast" width="56" style="opacity:0.35;"></i>
                                 </div>
                             <?php endif; ?>
                             <div class="card-body">
                                 <div class="card-date">
                                     <?= htmlspecialchars($w['dateDisplay']) ?>
+                                    <?php if ($w['time']): ?>
+                                        &bull; <?= htmlspecialchars($w['time']) ?>
+                                    <?php endif; ?>
                                     <?php if ($w['presenter']): ?>
                                         &bull; <?= htmlspecialchars($w['presenter']) ?>
                                     <?php endif; ?>

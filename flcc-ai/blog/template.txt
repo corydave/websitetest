@@ -1,36 +1,34 @@
 <!--
-    BLOG POST TEMPLATE
-    ==================
-    1. Copy this file and rename it: my-post-title.html
-    2. Fill in the meta tags below (used by the blog listing page)
-    3. Write your content in the <main> section
-    4. Save the file here in blog/  — it will appear on the listing automatically
+  BLOG POST TEMPLATE
+  ==================
+  1. Copy this file to blog/your-post-slug.html
+  2. Fill in the meta tags (date, description, thumbnail)
+  3. Update the <title>, breadcrumb span, h1, and article-meta-row
+  4. Replace the article-body content
+  5. Place any images in blog/images/
+
+  REQUIRED META TAGS (used by blog.php auto-scanner):
+    name="date"        content="YYYY-MM-DD"
+    name="description" content="One or two sentence excerpt shown on the listing card"
+    name="thumbnail"   content="images/your-thumbnail.jpg"   (relative to blog/)
+
+  LIGHTBOX: all <img> inside .article-body are automatically lightbox-enabled.
+  No extra markup needed — just use plain <img> tags.
+
+  CAPTION: use <span class="caption">...</span> directly after an <img>.
+  Supports <strong>, <code>, and <br> inside captions.
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- ============================================================
-         LISTING META TAGS  (required for blog/index.php to pick up)
-         ============================================================ -->
-
-    <!-- Date the post was published — YYYY-MM-DD format -->
-    <meta name="date" content="YYYY-MM-DD">
-
-    <!-- One-sentence excerpt shown on the listing card -->
-    <meta name="description" content="Your short excerpt here.">
-
-    <!-- Optional: thumbnail image shown on the listing card.
-         Path is relative to this file (i.e. relative to blog/).
-         Example: articles/images/my-photo.jpg -->
-    <meta name="thumbnail" content="">
-
-    <!-- ============================================================ -->
-
-    <title>Post Title | FLX AI Hub</title>
+    <title>POST TITLE | FLX AI Hub</title>
     <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
+
+    <meta name="date"        content="YYYY-MM-DD">
+    <meta name="description" content="Short excerpt shown on the blog listing card.">
+    <meta name="thumbnail"   content="images/your-thumbnail.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,35 +49,50 @@
 
         <!-- Breadcrumb -->
         <nav class="article-breadcrumb">
-            <a href="../blog/">&larr; Blog</a>
+            <a href="../blog.php">&larr; Blog</a>
             <span>/</span>
-            <span>Post Title</span>
+            <span>POST TITLE</span>
         </nav>
 
         <!-- Title block -->
-        <span class="section-label">From the Hub</span>
-        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">Post Title</h1>
-        <p class="article-meta" style="color:var(--neutral-gray); font-size:0.9rem; margin-bottom:2rem;">
-            Month DD, YYYY
-        </p>
+        <span class="section-label">Blog Post</span>
+        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">POST TITLE</h1>
 
-        <!-- ============================================================
-             YOUR CONTENT GOES HERE
-             ============================================================ -->
+        <div class="article-meta-row">
+            <span><i data-lucide="calendar" width="15"></i> Month YYYY</span>
+            <span><i data-lucide="user" width="15"></i> Author Name</span>
+        </div>
 
-        <p>Introduction paragraph...</p>
+        <!-- Content -->
+        <div class="article-body">
 
-        <h2>Section Heading</h2>
-        <p>Body text...</p>
+            <img src="images/hero-image.jpg" alt="Descriptive alt text">
 
-        <!-- ============================================================ -->
+            <p>Opening paragraph...</p>
+
+            <h2>Section Heading</h2>
+            <p>Section content...</p>
+
+            <img src="images/another-image.jpg" alt="Descriptive alt text">
+            <span class="caption">Caption text. Supports <strong>bold</strong> and <code>inline code</code>.</span>
+
+            <p>More content...</p>
+
+        </div>
+
+        <!-- Back link -->
+        <div style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid #e8eaed;">
+            <a href="../blog.php" style="color:var(--primary-blue); font-weight:600; display:inline-flex; align-items:center; gap:0.4rem;">
+                <i data-lucide="arrow-left" width="16"></i> Back to All Posts
+            </a>
+        </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="site-footer">
+    <footer class="site-footer" style="margin-top:2rem;">
         <div class="container footer-inner">
-            <a href="../index.html" class="footer-logo">
+            <a href="../index.php" class="footer-logo">
                 <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
                 <div class="logo-text">
                     <span class="logo-title">FLX AI Hub</span>
@@ -90,10 +103,82 @@
         </div>
     </footer>
 
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1}' crossorigin="anonymous"></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
     <script>
         lucide.createIcons();
         document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        // Lightbox — works automatically for all .article-body img; copy as-is
+        (function () {
+            const imgs = Array.from(document.querySelectorAll('.article-body img'));
+            if (!imgs.length) return;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'lightbox-overlay';
+            overlay.innerHTML = `
+                <button class="lightbox-close" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <button class="lightbox-btn lightbox-prev" aria-label="Previous">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <img class="lightbox-img" src="" alt="">
+                <button class="lightbox-btn lightbox-next" aria-label="Next">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <div class="lightbox-counter"></div>
+            `;
+            document.body.appendChild(overlay);
+
+            const lb      = overlay.querySelector('.lightbox-img');
+            const counter = overlay.querySelector('.lightbox-counter');
+            const btnPrev = overlay.querySelector('.lightbox-prev');
+            const btnNext = overlay.querySelector('.lightbox-next');
+            let current   = 0;
+
+            function show(i) {
+                current = (i + imgs.length) % imgs.length;
+                lb.src  = imgs[current].src;
+                lb.alt  = imgs[current].alt;
+                counter.textContent = (current + 1) + ' / ' + imgs.length;
+                btnPrev.style.display = imgs.length > 1 ? '' : 'none';
+                btnNext.style.display = imgs.length > 1 ? '' : 'none';
+            }
+
+            function open(i) {
+                show(i);
+                overlay.classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function close() {
+                overlay.classList.remove('visible');
+                document.body.style.overflow = '';
+            }
+
+            imgs.forEach(function (img, i) {
+                img.addEventListener('click', function () { open(i); });
+            });
+
+            overlay.querySelector('.lightbox-close').addEventListener('click', close);
+            btnPrev.addEventListener('click', function (e) { e.stopPropagation(); show(current - 1); });
+            btnNext.addEventListener('click', function (e) { e.stopPropagation(); show(current + 1); });
+            overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+
+            document.addEventListener('keydown', function (e) {
+                if (!overlay.classList.contains('visible')) return;
+                if (e.key === 'Escape')      close();
+                if (e.key === 'ArrowLeft')   show(current - 1);
+                if (e.key === 'ArrowRight')  show(current + 1);
+            });
+
+            var touchStartX = 0;
+            overlay.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+            overlay.addEventListener('touchend',   function (e) {
+                var dx = e.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(dx) > 50) dx < 0 ? show(current + 1) : show(current - 1);
+            });
+        })();
     </script>
 </body>
 </html>

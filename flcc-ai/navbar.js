@@ -2,8 +2,12 @@
  * FLX AI Hub — Shared Navbar
  *
  * Each page sets these before loading this script:
- *   window.BASE_PATH   = ''      (root pages) or '../' (one level deep)
- *   window.ACTIVE_PAGE = 'home' | 'media' | 'blog' | 'tools' | 'resources' | 'stay-informed' | 'flcc'
+ *   window.BASE_PATH   = ''      (root pages) or '../' (one level deep) or '../../' (two levels deep)
+ *   window.ACTIVE_PAGE = 'home' | 'media' | 'blog' | 'what-we-do' | 'tools' | 'stay-informed'
+ *
+ * Group rules (for dropdown highlighting):
+ *   Media tab highlights when ap is: 'media', 'blog'
+ *   What We Do tab highlights when ap is: 'what-we-do'
  *
  * Include on every page:
  *   <div id="navbar-placeholder"></div>
@@ -17,20 +21,28 @@
     // Fallback: auto-detect active page from URL
     if (!ap) {
         var p = window.location.pathname.toLowerCase();
-        if (p.includes('/media/'))        ap = 'media';
-        else if (p.includes('/blog'))     ap = 'blog';
-        else if (p.includes('/tools'))    ap = 'tools';
-        else if (p.includes('resources')) ap = 'resources';
-        else if (p.includes('stay-informed')) ap = 'stay-informed';
-        else if (p.includes('what-we-do'))  ap = 'flcc';
-        else                              ap = 'home';
+        if      (p.includes('/blog'))              ap = 'blog';
+        else if (p.includes('/media/'))            ap = 'media';
+        else if (p.includes('flcc')    ||
+                 p.includes('for-organizations') ||
+                 p.includes('resources')          ||
+                 p.includes('events'))             ap = 'what-we-do';
+        else if (p.includes('tools'))              ap = 'tools';
+        else if (p.includes('stay-informed'))      ap = 'stay-informed';
+        else                                       ap = 'home';
     }
+
+    var mediaGroup   = ['media', 'blog'];
+    var whatWeDoGroup = ['what-we-do'];
 
     function cls(page) {
-        return 'nav-link' + (ap === page ? ' active' : '');
+        var active = ap === page ||
+                     (page === 'media'    && mediaGroup.indexOf(ap)    !== -1) ||
+                     (page === 'what-we-do' && whatWeDoGroup.indexOf(ap) !== -1);
+        return 'nav-link' + (active ? ' active' : '');
     }
 
-    // Inline SVGs so this script has zero external dependencies
+    // Inline SVGs — zero external dependencies
     var iconExternal = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
     var iconChevron  = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
     var iconMenu     = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
@@ -53,30 +65,38 @@
 
         '      <a href="' + bp + 'index.html" class="' + cls('home') + '">Home</a>',
 
+        // Media dropdown: Webinars, Blog, Podcast
         '      <div class="nav-dropdown" id="flx-media-dd">',
         '        <span class="' + cls('media') + ' dropdown-trigger">',
         '          Media <span class="chevron">' + iconChevron + '</span>',
         '        </span>',
         '        <div class="dropdown-menu">',
-        '          <a href="' + bp + 'media/webinars/">Webinars</a>',
+        '          <a href="' + bp + 'media/webinars.php">Webinars</a>',
+        '          <a href="' + bp + 'blog.php">Blog</a>',
         '          <a href="' + bp + 'media/podcast.html">Podcast</a>',
         '        </div>',
         '      </div>',
 
-        '      <a href="' + bp + 'blog/"               class="' + cls('blog') + '">Blog</a>',
-        '      <a href="' + bp + 'tools/"             class="' + cls('tools') + '">Tools</a>',
-        '      <a href="' + bp + 'resources.html"     class="' + cls('resources') + '">Resources</a>',
-        '      <a href="' + bp + 'stay-informed.html" class="' + cls('stay-informed') + '">Stay Informed</a>',
-
-        '      <div class="nav-dropdown" id="flx-flcc-dd">',
-        '        <span class="' + cls('flcc') + ' dropdown-trigger">',
-        '          FLCC <span class="chevron">' + iconChevron + '</span>',
+        // What We Do dropdown: At FLCC, For Organizations, Resources, Events
+        '      <div class="nav-dropdown" id="flx-whatwedo-dd">',
+        '        <span class="' + cls('what-we-do') + ' dropdown-trigger">',
+        '          What We Do <span class="chevron">' + iconChevron + '</span>',
         '        </span>',
         '        <div class="dropdown-menu">',
-        '          <a href="' + bp + 'what-we-do.html">What We\'re Doing</a>',
-        '          <a href="https://www.flcc.edu/ai/" target="_blank" rel="noopener">FLX AI Hub &nbsp;' + iconExternal + '</a>',
+        '          <a href="' + bp + 'flcc.html">At FLCC</a>',
+        '          <a href="' + bp + 'for-organizations.html">For Organizations</a>',
+        '          <a href="' + bp + 'resources.html">Resources</a>',
+        '          <a href="' + bp + 'events.html">Events</a>',
         '        </div>',
         '      </div>',
+
+        '      <a href="' + bp + 'tools.php"         class="' + cls('tools') + '">Tools</a>',
+        '      <a href="' + bp + 'stay-informed.html" class="' + cls('stay-informed') + '">Stay Informed</a>',
+
+        // Standalone FLX AI Hub pill
+        '      <a href="https://www.flcc.edu/ai/" target="_blank" rel="noopener" class="official-link">',
+        '        FLX AI Hub &nbsp;' + iconExternal,
+        '      </a>',
 
         '    </nav>',
         '  </div>',

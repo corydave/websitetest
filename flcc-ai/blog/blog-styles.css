@@ -1,0 +1,255 @@
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
+:root {
+    --primary-color: #002f56;  /* Deep Navy (Adjust to match FLCC brand) */
+    --accent-color: #0099cc;   /* Bright Blue for links/highlights */
+    --text-main: #333333;
+    --text-muted: #666666;
+    --bg-light: #f9f9f9;
+    --white: #ffffff;
+    --font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-stack);
+    color: var(--text-main);
+    line-height: 1.6;
+    background-color: var(--white);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+p > a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* =========================================
+   2. HEADER & NAVIGATION
+   ========================================= */
+
+
+/* The '>' symbol means "Only select a header that is a DIRECT child of the body" */
+/* This will skip the header nested inside your article tag */
+body > header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 1rem 0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Branding Section */
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    height: 50px; /* Adjust based on your actual logo file */
+    width: auto;
+}
+
+.branding {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.site-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.site-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Navigation Links */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+nav a {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+nav a:hover {
+    color: var(--accent-color);
+}
+
+/* Mobile Nav Tweak (Optional) */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    nav ul {
+        gap: 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* =========================================
+   3. ARTICLE SPECIFIC STYLES
+   ========================================= */
+.article-container {
+    max-width: 800px; /* Optimal reading width */
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+    min-height: 80vh; /* Ensures footer stays at bottom on short pages */
+}
+
+/* Article Header Area */
+.article-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.article-header h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.article-meta {
+    font-family: var(--font-stack);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Article Body Content */
+.article-content {
+    font-size: 1.1rem; /* Slightly larger for easier reading */
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+
+/* The "Lead" paragraph - meant to stand out */
+.article-content .lead {
+    font-size: 1.25rem;
+    color: #444;
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
+
+.article-content h2 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.article-content h3 {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: #444;
+}
+
+.article-content ul, 
+.article-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Back Link Button */
+.back-link {
+    display: inline-block;
+    margin-top: 3rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.back-link:hover {
+    background-color: var(--bg-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.caption {
+    display: block;            /* Ensures it takes up full width for centering */
+    text-align: center;        /* Centers the text */
+    font-size: 0.9rem;         /* Slightly smaller than your normal 1rem/1.1rem text */
+    font-style: italic;        /* Italicized */
+    color: #666;               /* A softer gray (or use var(--text-muted) if you kept those vars) */
+    margin-top: 0.5rem;        /* Spacing between the image and the caption */
+    margin-bottom: 1.5rem;     /* Spacing before the next paragraph starts */
+}
+
+
+/* =========================================
+   4. FOOTER
+   ========================================= */
+footer {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.footer-branding .site-title {
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.copyright {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}

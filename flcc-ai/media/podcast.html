@@ -95,7 +95,7 @@
         }
 
         .player-section {
-            background: var(--light-bg);
+            background: #f5f7fa;
             border-radius: var(--radius);
             border: 1px solid #e8eaed;
             padding: 2rem;
@@ -147,7 +147,7 @@
         <div class="container">
             <span class="section-label">Media / Podcast</span>
             <h1>The Immersive Lens</h1>
-            <p class="hero-sub">A podcast exploring AI through the lens of education, creativity, and real-world application — honest conversations, practical takeaways.</p>
+            <p class="hero-sub">A podcast exploring AI through the lens of education, creativity, and real-world application - honest conversations, practical takeaways.</p>
         </div>
     </section>
 
@@ -159,7 +159,10 @@
                 <!-- About the Podcast -->
                 <div class="podcast-about">
                     <div class="podcast-cover">
-                        <i data-lucide="mic" width="72" style="opacity:0.9;"></i>
+                        <!-- <i data-lucide="mic" width="72" style="opacity:0.9;"></i> -->
+                         <a href="https://theimmersivelens.com/" target="_blank">
+                            <img src="TIL.png" style="border-radius: 15px;" />
+                        </a>                            
                     </div>
 
                     <div>
@@ -167,15 +170,17 @@
                         <h2>The Immersive Lens</h2>
                         <p class="podcast-tagline">AI Conversations Worth Having</p>
 
-                        <p>The Immersive Lens goes beyond the headlines to explore what AI is actually doing in classrooms, businesses, and communities. Each episode features candid conversations with practitioners, educators, and innovators who are working with these tools every day — not theorists, but people in the trenches.</p>
+                        <p>The Immersive Lens goes beyond the headlines to explore what AI is actually doing in classrooms, businesses, and communities. Each episode features candid conversations with practitioners, educators, and innovators who are working with these tools every day - not theorists, but people in the trenches.</p>
 
                         <p>Whether you're just getting started with AI or you're knee-deep in implementation, every episode is designed to give you something you can actually use. We dig into the wins, the failures, and the surprising moments in between.</p>
 
                         <div class="podcast-hosts">
-                            <div class="host-chip">
-                                <div class="avatar">DG</div>
-                                Dave Ghidiu
-                            </div>
+                            <a href="https://theimmersivelens.com/" target="_blank">
+                                <div class="host-chip">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-arrow-out-up-right-icon lucide-square-arrow-out-up-right"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/><path d="m21 3-9 9"/><path d="M15 3h6v6"/></svg>
+                                    Official website
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -184,30 +189,28 @@
                 <div class="player-section">
                     <h3><i data-lucide="headphones" width="20" style="display:inline;vertical-align:middle;margin-right:6px;color:var(--primary-blue);"></i>Listen Now</h3>
 
-                    <!--
-                        PASTE YOUR PODCAST WIDGET EMBED CODE BELOW.
-                        Replace the placeholder div with your embed (Spotify, Apple, Buzzsprout, etc.)
-                    -->
-                    <div class="player-placeholder">
-                        <i data-lucide="radio" width="40" style="color:var(--neutral-gray); margin:0 auto 0.5rem; display:block;"></i>
-                        <strong>Podcast player goes here</strong>
-                        <p>Replace this block with your embed widget (Spotify, Apple Podcasts, Buzzsprout, etc.)</p>
-                    </div>
+                    <iframe src="https://inlineteaching.com/til/feed.html?lightmode=true&embed=true" class="podcast-embed"></iframe>
                 </div>
 
                 <!-- Where to Listen -->
                 <div style="text-align:center; margin-top:1rem;">
                     <p style="font-size:0.875rem; color:var(--neutral-gray); margin-bottom:1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;">Listen on your favorite platform</p>
                     <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
+                        <a href="https://open.spotify.com/show/714ICl55i6hcvtHYa1Nh90" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;" target="_blank">
                             <i data-lucide="music" width="16"></i> Spotify
                         </a>
-                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
+                        <a href="https://podcasts.apple.com/us/podcast/the-immersive-lens/id1867670604" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;" target="_blank">
                             <i data-lucide="headphones" width="16"></i> Apple Podcasts
                         </a>
-                        <a href="#" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;">
-                            <i data-lucide="rss" width="16"></i> RSS Feed
+                        <a href="https://music.amazon.com/podcasts/089a012a-7534-49a8-a9ab-79d7ba9d1f2a/the-immersive-lens" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;" target="_blank">
+                            <i data-lucide="headphones" width="16"></i> Amazon
                         </a>
+                        <a href="https://www.youtube.com/playlist?list=PLXZue83IQWVRSK0sqMId2TuTgGQNJ9zj2" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;" target="_blank">
+                            <i data-lucide="headphones" width="16"></i> YouTube
+                        </a>
+                        <a href="https://reflect-fingerlakestv.cablecast.tv/internetchannel/gallery/14?site=1" class="btn btn-outline" style="font-size:0.875rem; padding:0.6rem 1.25rem;" target="_blank">
+                            <i data-lucide="headphones" width="16"></i> Finger Lakes TV
+                        </a>                                                                        
                     </div>
                 </div>
 

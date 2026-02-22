@@ -32,9 +32,9 @@ foreach ((array) $files as $file) {
     $dateRaw     = $m[1] ?? date('Y-m-d', filemtime($file));
     $dateDisplay = date('F Y', strtotime($dateRaw));
 
-    // Thumbnail
+    // Thumbnail — meta tag path is relative to tools/, so prefix with tools/
     preg_match('/<meta\s+name="thumbnail"\s+content="([^"]*)"/i', $content, $m);
-    $thumbnail = $m[1] ?? null;
+    $thumbnail = isset($m[1]) ? 'tools/' . $m[1] : null;
 
     $tools[] = [
         'url'         => 'tools/' . basename($file),

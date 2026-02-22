@@ -29,9 +29,9 @@ foreach ((array) $files as $file) {
     $dateRaw     = $m[1] ?? date('Y-m-d', filemtime($file));
     $dateDisplay = date('F j, Y', strtotime($dateRaw));
 
-    // Thumbnail
+    // Thumbnail — meta tag path is relative to blog/, so prefix with blog/
     preg_match('/<meta\s+name="thumbnail"\s+content="([^"]*)"/i', $content, $m);
-    $thumbnail = $m[1] ?? null;
+    $thumbnail = isset($m[1]) ? 'blog/' . $m[1] : null;
 
     $posts[] = [
         'url'         => 'blog/' . basename($file),

@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Bias | FLX AI Hub Webinars</title>
+    <title>Virtual Focus Groups | FLX AI Hub Webinars</title>
     <link rel="icon" type="image/x-icon" href="../images/HubLogo.png">
 
-    <meta name="date" content="2025-10-01">
-    <meta name="description" content="Explore the five dimensions of bias in AI systems — from training data to algorithmic design — and walk away with concrete mitigation strategies you can apply immediately.">
-    <meta name="presenter" content="Dave Ghidiu">
+    <meta name="date" content="2025-11-01">
+    <meta name="description" content="Learn how AI tools are transforming the way organizations design, facilitate, and analyze virtual focus groups — saving time while surfacing deeper insights.">
+    <meta name="presenter" content="Dave Ghidiu &amp; Debora Ortloff">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link rel="stylesheet" href="../shared.css">
+    <link rel="stylesheet" href="../../shared.css">
 </head>
 <body>
 
@@ -31,17 +31,17 @@
         <nav class="article-breadcrumb">
             <a href="webinars.html">&larr; Webinars</a>
             <span>/</span>
-            <span>AI Bias</span>
+            <span>Virtual Focus Groups</span>
         </nav>
 
         <!-- Title block -->
         <span class="section-label">Recorded Webinar</span>
-        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">AI Bias</h1>
+        <h1 style="font-size:2.25rem; font-weight:800; margin:0.5rem 0 1rem; line-height:1.2;">Virtual Focus Groups</h1>
 
         <div class="article-meta-row">
-            <span><i data-lucide="calendar" width="15"></i> October 2025</span>
-            <span><i data-lucide="user" width="15"></i> Dave Ghidiu</span>
-            <span><i data-lucide="clock" width="15"></i> ~60 minutes</span>
+            <span><i data-lucide="calendar" width="15"></i> November 2025</span>
+            <span><i data-lucide="users" width="15"></i> Dave Ghidiu &amp; Debora Ortloff</span>
+            <span><i data-lucide="clock" width="15"></i> ~75 minutes</span>
         </div>
 
         <!-- Video Embed -->
@@ -52,7 +52,7 @@
             -->
             <iframe
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                title="AI Bias Webinar Recording"
+                title="Virtual Focus Groups Webinar Recording"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
             </iframe>
@@ -62,43 +62,50 @@
         <div class="article-body">
 
             <h2>About This Webinar</h2>
-            <p>AI systems don't come from nowhere — they're built by people, trained on human-generated data, and deployed into complex social contexts. That means the biases present in our world have a way of sneaking into our AI tools, sometimes in obvious ways and sometimes in deeply subtle ones.</p>
-            <p>In this session, we unpacked the <strong>five dimensions of AI bias</strong> — from how training data is collected to how algorithms weight certain outcomes — and looked at concrete case studies where bias showed up in high-stakes applications like hiring, healthcare, and criminal justice.</p>
-            <p>More importantly, we didn't stop at "here's the problem." Attendees left with a practical framework for identifying bias risks in the tools they use and a set of mitigation strategies they could start applying immediately — whether they're educators, administrators, or business leaders.</p>
+            <p>Focus groups have always been a powerful tool for gathering qualitative insights — but they're also time-consuming, expensive to facilitate, and challenging to analyze at scale. AI is changing that equation, and not in a way that replaces human judgment, but in a way that amplifies it.</p>
+            <p>In this session, Dave Ghidiu and Debora Ortloff walked through how AI tools are being used at every stage of the virtual focus group process — from designing effective discussion guides to facilitating sessions more smoothly to synthesizing hours of qualitative data into actionable themes.</p>
+            <p>This wasn't a theoretical overview. The session was grounded in real examples from projects the FLX AI Hub team has worked on, and attendees had the chance to ask questions and explore how these tools might apply to their own research and organizational needs.</p>
 
             <h2>What We Covered</h2>
-            <p><strong>The five dimensions of AI bias:</strong> Historical bias, representation bias, measurement bias, aggregation bias, and evaluation bias — each with real-world examples drawn from education, business, and government.</p>
-            <p><strong>Why "neutral" data isn't neutral:</strong> A look at how seemingly objective datasets carry embedded assumptions, and how those assumptions get amplified at scale.</p>
-            <p><strong>Mitigation strategies:</strong> Practical techniques for auditing AI tools you're already using, questions to ask vendors, and how to build bias awareness into your team's AI decision-making process.</p>
-            <p><strong>Live demonstration:</strong> We ran a live demo comparing outputs from popular AI tools on identical prompts to surface where bias shows up in practice.</p>
+            <p><strong>Designing better focus groups with AI:</strong> How to use AI to stress-test your discussion guide, identify potential blind spots, and develop probing questions that surface deeper insights.</p>
+            <p><strong>AI-assisted facilitation:</strong> Tools and techniques for real-time support during sessions — including live transcription, sentiment tracking, and flags for emerging themes.</p>
+            <p><strong>Synthesis at scale:</strong> How to use AI tools to analyze transcripts, identify patterns across multiple sessions, and generate structured reports — cutting synthesis time from days to hours.</p>
+            <p><strong>Ethical considerations:</strong> Participant consent, data privacy, and ensuring AI analysis doesn't flatten the nuance that makes qualitative research valuable in the first place.</p>
+            <p><strong>Live walkthrough:</strong> A step-by-step demonstration using a sample transcript processed through multiple AI tools, showing exactly how to prompt for useful qualitative analysis.</p>
 
             <h2>Who It's For</h2>
-            <p>This webinar is designed for educators, administrators, HR professionals, and organizational leaders — anyone who is using or evaluating AI tools and wants to use them more responsibly. No technical background required.</p>
+            <p>Researchers, program evaluators, HR teams, marketing professionals, and anyone who conducts qualitative research or community listening sessions. Especially valuable for organizations that need to move quickly on insights but still care about doing it right.</p>
 
             <h2>Session Resources</h2>
             <ul class="asset-list">
                 <li>
                     <a href="#" target="_blank" rel="noopener">
                         <i data-lucide="presentation" width="16"></i>
-                        Slide Deck — AI Bias (Google Slides)
+                        Slide Deck — Virtual Focus Groups with AI (Google Slides)
                     </a>
                 </li>
                 <li>
                     <a href="#" target="_blank" rel="noopener">
                         <i data-lucide="file-text" width="16"></i>
-                        Bias Audit Worksheet (PDF)
+                        Discussion Guide Template (PDF)
+                    </a>
+                </li>
+                <li>
+                    <a href="#" target="_blank" rel="noopener">
+                        <i data-lucide="file-text" width="16"></i>
+                        AI Synthesis Prompt Library — Focus Groups (PDF)
                     </a>
                 </li>
                 <li>
                     <a href="#" target="_blank" rel="noopener">
                         <i data-lucide="link" width="16"></i>
-                        Curated Reading List — AI Bias &amp; Fairness
+                        Recommended AI Tools for Qualitative Research
                     </a>
                 </li>
                 <li>
                     <a href="#" target="_blank" rel="noopener">
                         <i data-lucide="file-text" width="16"></i>
-                        Five Dimensions of AI Bias — Reference Card (PDF)
+                        Participant Consent Language for AI-Assisted Sessions (PDF)
                     </a>
                 </li>
             </ul>
