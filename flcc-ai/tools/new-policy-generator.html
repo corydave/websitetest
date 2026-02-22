@@ -7,17 +7,18 @@
     
     <!-- FIX: Updated CSP to allow data images, Cloudflare beacon (to stop errors), and CDN scripts -->
     <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com blob: data:; 
-        style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; 
-        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com; 
-        connect-src 'self' https://cloudflareinsights.com; 
+        default-src 'self' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com blob: data:;
+        style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';
+        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com;
+        connect-src 'self' https://cloudflareinsights.com;
         img-src 'self' data: blob: https://cdnjs.cloudflare.com;
+        frame-src https://www.youtube-nocookie.com 'self';
     ">
     
     <!-- FIX: Added Favicon to prevent 404 error -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     
-    <title>AI Policy Statement Generator</title>
+    <title>FLCC AI Policy Statement Generator</title>
     
     <!-- External Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,7 +29,7 @@
     <style>
         /* --- MERGED CSS START --- */
         :root {
-            --primary-color: #0066cc;
+            --primary-color: #0046ad;
             --secondary-color: #f5f5f5;
             --text-color: #333;
             --border-radius: 0.5rem;
@@ -291,7 +292,7 @@
         }
 
         .btn:hover {
-            background-color: #0052a3;
+            background-color: #003a90;
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -427,7 +428,7 @@
         .other-documentation-input textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 70, 173, 0.2);
         }
 
         /* Citation Format Selector */
@@ -465,7 +466,7 @@
         .citation-select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 70, 173, 0.2);
         }
 
         .other-citation-format {
@@ -489,7 +490,7 @@
         .other-citation-format input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 70, 173, 0.2);
         }
 
         /* Documentation Section Styles */
@@ -668,15 +669,15 @@
 
         /* Footer Styles */
         .app-footer {
-            margin-top: 3rem;
-            padding-top: 2rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
             border-top: 1px solid #ddd;
             flex-shrink: 0; /* Prevent footer shrink in flex container */
         }
 
         .footer-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             gap: 2rem;
             flex-wrap: wrap;
@@ -684,7 +685,6 @@
 
         .acknowledgement {
             flex: 1;
-            min-width: 300px;
         }
 
         .acknowledgement p {
@@ -716,19 +716,11 @@
                 align-items: stretch;
                 text-align: center;
             }
-
-            .acknowledgement {
-                margin-bottom: 1rem;
-            }
-
-            #embedBtn {
-                width: 100%;
-            }
         }
 
         .policy-header {
             background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #0046ad;
             padding: 1rem;
             margin-bottom: 1.5rem;
             border-radius: 4px;
@@ -740,7 +732,7 @@
         }
 
         .policy-header.policy-permitted {
-            border-left-color: #28a745;
+            border-left-color: #58a618;
         }
 
         .policy-header.policy-limited {
@@ -759,7 +751,7 @@
         }
 
         .policy-header i {
-            color: #007bff;
+            color: #0046ad;
             margin-right: 0.5rem;
             font-size: 1.25rem;
         }
@@ -820,7 +812,7 @@
         .download-option:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 70, 173, 0.1);
         }
 
         .option-icon {
@@ -885,9 +877,9 @@
         textarea:focus,
         select:focus,
         [role="button"]:focus {
-            outline: 3px solid #007bff;
+            outline: 3px solid #0046ad;
             outline-offset: 2px;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 4px rgba(0, 70, 173, 0.25);
         }
 
         /* Remove default focus outline and add custom one */
@@ -897,23 +889,23 @@
 
         /* Ensure focus is visible even when using mouse */
         *:focus-visible {
-            outline: 3px solid #007bff;
+            outline: 3px solid #0046ad;
             outline-offset: 2px;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 4px rgba(0, 70, 173, 0.25);
         }
 
         /* Custom focus styles for radio and checkbox inputs */
         input[type="radio"]:focus,
         input[type="checkbox"]:focus {
-            outline: 3px solid #007bff;
+            outline: 3px solid #0046ad;
             outline-offset: 2px;
         }
 
         /* Ensure focus is visible on the option cards */
         .option-card:focus-within {
-            outline: 3px solid #007bff;
+            outline: 3px solid #0046ad;
             outline-offset: 2px;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 4px rgba(0, 70, 173, 0.25);
         }
 
         .icon {
@@ -958,7 +950,7 @@
         .alt-text-area:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 70, 173, 0.2);
         }
         
         .copy-alt-btn {
@@ -1055,13 +1047,64 @@
             padding: 1px 4px;
             border-radius: 3px;
         }
+
+        /* Modal action row (Done/Cancel buttons) */
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+
+        /* YouTube embed — responsive 16:9 */
+        .info-video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border-radius: var(--border-radius);
+            background: #000;
+        }
+        .info-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .info-text p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        /* FA icon spacing inside buttons */
+        .btn i, .copy-alt-btn i {
+            margin-right: 0.35em;
+        }
+
+        /* Share modal section heading */
+        .share-section-heading {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #888;
+            margin: 1rem 0 0.5rem;
+        }
+        .share-section-heading:first-child {
+            margin-top: 0;
+        }
         /* --- MERGED CSS END --- */
     </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <main id="main-content" class="container" role="main" tabindex="-1">
-        <h1>AI Policy Statement Generator</h1>
+        <h1>FLCC AI Policy Statement Generator</h1>
         
         <div class="form-container">
             <!-- Left Column: Questions -->
@@ -1084,7 +1127,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">✅</span>
                                     <h3>Open Use</h3>
-                                    <p id="encouraged-desc">Learners are welcome to explore AI tools freely throughout this assignment.</p>
+                                    <p id="encouraged-desc">You are welcome to explore AI tools freely throughout this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1092,7 +1135,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">💡</span>
                                     <h3>Brainstorming</h3>
-                                    <p id="brainstorming-desc">AI can help you peek over the hill and surface ideas you might not have considered — giving you more raw material to evaluate, discard, or build on.</p>
+                                    <p id="brainstorming-desc">AI can help you peek over the hill and surface ideas you might not have considered - giving you more raw material to evaluate, discard, or build on.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1116,7 +1159,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">📝</span>
                                     <h3>Content Generation</h3>
-                                    <p id="content-desc">AI-generated drafts give you something concrete to react to and revise — often a faster path to finding your own voice than staring at a blank page.</p>
+                                    <p id="content-desc">AI-generated drafts give you something concrete to react to and revise - often a faster path to finding your own voice than staring at a blank page.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1124,7 +1167,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">🗨️</span>
                                     <h3>Critique and Peer Review</h3>
-                                    <p id="critique-desc">AI can spot gaps in logic, unclear phrasing, or missing evidence — acting like a tireless first reader before you share your work with others.</p>
+                                    <p id="critique-desc">AI can spot gaps in logic, unclear phrasing, or missing evidence - acting like a tireless first reader before you share your work with others.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1151,34 +1194,6 @@
                             </div>
                         </div>
 
-                        <!-- Shown only when "No AI Use" is selected -->
-                        <div id="prohibitionReasonContainer" class="hidden">
-                            <label>Why is AI not permitted for this assignment? <span style="font-weight: normal; color: #666;">(optional, but helpful for learners)</span></label>
-                            <div class="options-grid" style="margin-bottom: 0.75rem;">
-                                <label class="option-card">
-                                    <input type="radio" name="prohibitionReason" value="Learners should demonstrate their own knowledge and skills without AI assistance.">
-                                    <div class="card-content">
-                                        <h3>Demonstrate Own Skills</h3>
-                                        <p>Learners should demonstrate their own knowledge and skills without AI assistance.</p>
-                                    </div>
-                                </label>
-                                <label class="option-card">
-                                    <input type="radio" name="prohibitionReason" value="This is an in-class or timed assessment where AI tools are not available.">
-                                    <div class="card-content">
-                                        <h3>In-Class Assessment</h3>
-                                        <p>This is an in-class or timed assessment where AI tools are not available.</p>
-                                    </div>
-                                </label>
-                                <label class="option-card">
-                                    <input type="radio" name="prohibitionReason" value="The learning objectives for this assignment require learners to develop their own original ideas.">
-                                    <div class="card-content">
-                                        <h3>Original Thinking Required</h3>
-                                        <p>The learning objectives require learners to develop their own original ideas.</p>
-                                    </div>
-                                </label>
-                            </div>
-                            <textarea id="prohibitionReasonText" name="prohibitionReasonText" placeholder="Or write your own explanation for learners…"></textarea>
-                        </div>
                     </div>
 
                     <!-- Question 2: Documentation Requirements -->
@@ -1190,7 +1205,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">❌</span>
                                     <h3>No Disclosure Required</h3>
-                                    <p id="none-doc-desc">Learners are not required to disclose or document their use of AI for this assignment.</p>
+                                    <p id="none-doc-desc">Learners are not required to disclose or document their use of AI for this assignment. AI use is fully permitted - keep the focus on the task itself.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1198,7 +1213,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">📝</span>
                                     <h3>Document Platforms</h3>
-                                    <p id="tools-desc">Please document which AI platforms and tools you used.</p>
+                                    <p id="tools-desc">Please document which AI platforms and tools you used. Be intentional about tool choice, and help me understand the AI landscape you find valuable.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1214,7 +1229,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">📤</span>
                                     <h3>Submit Prompts & Outputs</h3>
-                                    <p id="prompts-desc">Please include your prompts and AI outputs with your submission.</p>
+                                    <p id="prompts-desc">Please include your prompts and AI outputs with your submission. This makes visible how you shape questions and evaluate responses - skills that are as important as the output itself.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1222,7 +1237,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">🧾</span>
                                     <h3>Formal Citation Required</h3>
-                                    <p id="citation-desc">Please include formal citations for any AI-generated content you use.</p>
+                                    <p id="citation-desc">Please include formal citations for any AI-generated content you use. Reinforces information literacy: provenance matters regardless of source, and AI-generated content deserves the same scrutiny as any other reference.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1230,7 +1245,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">🧠</span>
                                     <h3>Additional Reflection</h3>
-                                    <p id="reflection-desc">Please include a brief reflection on your AI usage and what you learned from the experience.</p>
+                                    <p id="reflection-desc">Please include a brief reflection on your AI usage and what you learned from the experience. Metacognitive writing strengthens ownership of the final work by helping you articulate what you changed, what you kept, and why.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1238,7 +1253,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">🔎</span>
                                     <h3>Fact Check</h3>
-                                    <p id="factcheck-desc">Please verify AI-generated information against trusted sources and document your fact-checking process.</p>
+                                    <p id="factcheck-desc">Please verify AI-generated information against trusted sources and document your fact-checking process. AI can confidently produce inaccurate information. Requiring verification reinforces that accuracy is your responsibility, not the tool's.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1246,7 +1261,7 @@
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">🔄</span>
                                     <h3>Compare Multiple Tools</h3>
-                                    <p id="multitools-desc">Please compare results from at least two AI tools and reflect on the differences.</p>
+                                    <p id="multitools-desc">Please compare results from at least two AI tools and reflect on the differences. Seeing that responses vary across tools builds critical perspective and helps you resist treating any single AI answer as authoritative.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
@@ -1276,10 +1291,10 @@
                         <!-- Policy statement will be generated here -->
                     </div>
                     <div class="action-buttons">
-                        <button type="button" id="startOverBtn" class="btn btn-secondary" aria-label="Start over and clear all selections">Start Over</button>
-                        <button type="button" id="downloadRTF" class="btn" aria-label="Download policy in multiple formats">Download</button>
-                        <button type="button" id="copyBtn" class="btn" aria-label="Copy policy text to clipboard">Copy Text</button>
-                        <button type="button" id="shareBtn" class="btn" aria-label="Share policy configuration">Share</button>
+                        <button type="button" id="infoBtn" class="btn btn-secondary" aria-label="About this tool"><i class="fas fa-circle-info" aria-hidden="true"></i> Info</button>
+                        <button type="button" id="startOverBtn" class="btn btn-secondary" aria-label="Start over and clear all selections"><i class="fas fa-rotate-left" aria-hidden="true"></i> Restart</button>
+                        <button type="button" id="shareBtn" class="btn" aria-label="Share or download policy"><i class="fas fa-share-nodes" aria-hidden="true"></i> Share</button>
+                        <button type="button" id="embedBtn" class="btn" aria-label="Open embed code modal"><i class="fas fa-code" aria-hidden="true"></i> Embed</button>
                     </div>
                     
                     <!-- New Alt Text Container -->
@@ -1287,7 +1302,7 @@
                         <div class="alt-text-header">
                             <h3>Alt Text for Accessibility</h3>
                             <button type="button" id="copyAltBtn" class="copy-alt-btn" aria-label="Copy Alt Text to clipboard">
-                                <span class="icon" aria-hidden="true">📋</span> Copy
+                                <i class="fas fa-copy" aria-hidden="true"></i> Copy
                             </button>
                         </div>
                         <textarea id="altTextArea" class="alt-text-area" readonly aria-label="Alt Text Representation of the Policy"></textarea>
@@ -1302,10 +1317,79 @@
                     <p>This AI Policy Generator was built on the original work created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <i class="fab fa-creative-commons" aria-hidden="true"></i> <i class="fab fa-creative-commons-by" aria-hidden="true"></i></a>.</p>
                     <p>Source code is available on <a href="https://github.com/corydave/websitetest/tree/main/claude/aiPolicyGenerator" target="_blank">GitHub <i class="fab fa-github" aria-hidden="true"></i></a> and was forked from <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed Beck's pioneering work.</a></p>
                 </div>
-                <button id="embedBtn" class="btn btn-secondary" aria-label="Open embed code modal">Embed</button>
             </div>
         </footer>
     </main>
+
+    <!-- No AI Use — Reason Modal -->
+    <div id="noAiModal" class="modal hidden" role="dialog" aria-labelledby="no-ai-modal-title" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="no-ai-modal-title">Why is AI not permitted?</h2>
+                <button class="no-ai-cancel" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;padding:0.5rem;line-height:1;" aria-label="Cancel and uncheck No AI Use">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:#666;margin-bottom:1rem;font-size:0.9rem;">Optional — but a brief explanation helps learners understand your reasoning.</p>
+                <div id="prohibitionReasonContainer">
+                    <div class="options-grid" style="margin-bottom:0.75rem;">
+                        <label class="option-card">
+                            <input type="radio" name="prohibitionReason" value="Learners should demonstrate their own knowledge and skills without AI assistance.">
+                            <div class="card-content">
+                                <h3>Demonstrate Own Skills</h3>
+                                <p>Learners should demonstrate their own knowledge and skills without AI assistance.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="prohibitionReason" value="This is an in-class or timed assessment where AI tools are not available.">
+                            <div class="card-content">
+                                <h3>In-Class Assessment</h3>
+                                <p>This is an in-class or timed assessment where AI tools are not available.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="prohibitionReason" value="The learning objectives for this assignment require learners to develop their own original ideas.">
+                            <div class="card-content">
+                                <h3>Original Thinking Required</h3>
+                                <p>The learning objectives require learners to develop their own original ideas.</p>
+                            </div>
+                        </label>
+                    </div>
+                    <textarea id="prohibitionReasonText" name="prohibitionReasonText" placeholder="Or write your own explanation for learners…" style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:var(--border-radius);font-size:clamp(0.8rem,1.25vw,0.9rem);resize:vertical;min-height:60px;margin-top:0.5rem;"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="noAiCancelBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="button" id="noAiDoneBtn" class="btn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal hidden" role="dialog" aria-labelledby="info-modal-title" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="info-modal-title">About This Tool</h2>
+                <button class="close-modal" aria-label="Close modal">
+                    <span class="icon" aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="info-video-container">
+                    <iframe
+                        src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+                        title="About the AI Policy Generator"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="info-text">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Embed Modal -->
     <div id="embedModal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
@@ -1341,18 +1425,28 @@
         </div>
     </div>
 
-    <!-- Download Format Modal -->
+    <!-- Share & Download Modal -->
     <div id="downloadModal" class="modal hidden" role="dialog" aria-labelledby="download-modal-title" aria-modal="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="download-modal-title">Choose Download Format</h2>
+                <h2 id="download-modal-title">Share & Download</h2>
                 <button class="close-modal" aria-label="Close modal">
                     <span class="icon" aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Select the format you'd like to download your AI policy statement:</p>
-                <div class="download-options">
+                <p class="share-section-heading">Share</p>
+                <div class="download-options" style="margin-bottom: 1rem;">
+                    <button id="copyUrlBtn" class="download-option">
+                        <div class="option-icon">🔗</div>
+                        <div class="option-content">
+                            <h3>Copy URL</h3>
+                            <p>Copy a shareable link that restores this exact policy configuration.</p>
+                        </div>
+                    </button>
+                </div>
+                <p class="share-section-heading">Download</p>
+                <div class="download-options" id="downloadOptionsGrid">
                     <button id="downloadHTML" class="download-option">
                         <div class="option-icon">🌐</div>
                         <div class="option-content">
@@ -1416,9 +1510,8 @@
             const form = document.getElementById('policyForm');
             const previewContainer = document.getElementById('previewContainer');
             const startOverBtn = document.getElementById('startOverBtn');
-            const copyBtn = document.getElementById('copyBtn');
             const shareBtn = document.getElementById('shareBtn');
-            const downloadRTFBtn = document.getElementById('downloadRTF');
+            const infoBtn = document.getElementById('infoBtn');
             const otherDocumentationContainer = document.getElementById('otherDocumentationContainer');
 
             // Alt Text Elements
@@ -1436,8 +1529,17 @@
             const embedCode = document.getElementById('embedCode');
             const copyEmbedBtn = document.getElementById('copyEmbedBtn');
 
-            // Download Modal Elements
+            // Info Modal
+            const infoModal = document.getElementById('infoModal');
+
+            // No AI Use Modal
+            const noAiModal = document.getElementById('noAiModal');
+            const noAiDoneBtn = document.getElementById('noAiDoneBtn');
+            const noAiCancelBtn = document.getElementById('noAiCancelBtn');
+
+            // Share/Download Modal Elements
             const downloadModal = document.getElementById('downloadModal');
+            const copyUrlBtn = document.getElementById('copyUrlBtn');
             const downloadHTMLBtn = document.getElementById('downloadHTML');
             const downloadMarkdownBtn = document.getElementById('downloadMarkdown');
             const downloadTextBtn = document.getElementById('downloadText');
@@ -1475,11 +1577,6 @@
                             document.querySelectorAll('input[name="useCases"]').forEach(c => c.closest('.option-card').classList.remove('grayed-out'));
                         }
                     });
-                }
-                // Show / hide prohibition reason block
-                const prohibContainer = document.getElementById('prohibitionReasonContainer');
-                if (prohibContainer) {
-                    prohibContainer.classList.toggle('hidden', !document.querySelector('input[name="useCases"][value="prohibited"]:checked'));
                 }
             }
 
@@ -1678,7 +1775,7 @@
             }
 
             function generateAltText() {
-                const parts = ['AI Policy Statement'];
+                const parts = ['AI POLICY STATEMENT'];
                 const headerEl = previewContainer.querySelector('.policy-header h2');
                 if (headerEl) parts.push(headerEl.textContent.trim());
                 previewContainer.querySelectorAll('.policy-section').forEach(s => {
@@ -1722,7 +1819,9 @@
                     const reasonText = document.getElementById('prohibitionReasonText')?.value?.trim();
                     const reasonRadio = document.querySelector('input[name="prohibitionReason"]:checked');
                     const reason = reasonText || reasonRadio?.value || '';
-                    if (reason) sections.push({ text: reason, iconHTML: '<span class="icon" aria-hidden="true">🚫</span>' });
+                    const noAiBaseText = 'This assignment is designed to be completed without AI tools.';
+                    const noAiText = reason ? `${noAiBaseText} ${reason}` : noAiBaseText;
+                    sections.push({ text: noAiText, iconHTML: '<span class="icon" aria-hidden="true">🚫</span>' });
                 } else if (aiUsage === 'limited') {
                     const text = getUseCasesText();
                     if (text) sections.push({ text, iconHTML: '<span class="icon" aria-hidden="true">✔️</span>', isDocumentation: true });
@@ -1759,16 +1858,26 @@
                     handleUseCaseExclusivity(e.target);
                     handleConditionalQuestions();
                     toggleOtherUseCases();
+                    // Open modal when "No AI Use" is checked
+                    if (e.target.value === 'prohibited' && e.target.checked) {
+                        noAiModal.classList.remove('hidden');
+                        document.body.classList.add('modal-open');
+                        return; // preview updates when Done is clicked
+                    }
                 } else if (e.target.name === 'documentation') {
                     handleDocumentationExclusivity(e.target);
                     toggleOtherDocumentation();
-                } else if (e.target.name === 'prohibitionReason') {
-                    // Clear custom textarea when a suggestion is picked
-                    const ta = document.getElementById('prohibitionReasonText');
-                    if (ta) ta.value = '';
                 }
                 updatePolicyPreview();
                 updateURL();
+            });
+
+            // Prohibition reason radio/textarea live in the modal (outside the form)
+            noAiModal.addEventListener('change', function(e) {
+                if (e.target.name === 'prohibitionReason') {
+                    const ta = document.getElementById('prohibitionReasonText');
+                    if (ta) ta.value = '';
+                }
             });
 
             ['customUseCases', 'customDocumentation', 'prohibitionReasonText'].forEach(id => {
@@ -1800,18 +1909,51 @@
                 setTimeout(() => { modalCopyAltBtn.innerHTML = orig; }, 2000);
             });
 
+            // ─── No AI Use modal helpers ───────────────────────────────────────
+            function cancelNoAi() {
+                const prohibCb = document.querySelector('input[name="useCases"][value="prohibited"]');
+                if (prohibCb && prohibCb.checked) {
+                    prohibCb.checked = false;
+                    document.querySelectorAll('input[name="useCases"]').forEach(cb => cb.closest('.option-card').classList.remove('grayed-out'));
+                }
+                document.querySelectorAll('input[name="prohibitionReason"]').forEach(r => r.checked = false);
+                const prt = document.getElementById('prohibitionReasonText');
+                if (prt) prt.value = '';
+                noAiModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                handleConditionalQuestions();
+                updatePolicyPreview();
+                updateURL();
+            }
+
+            noAiDoneBtn.addEventListener('click', function() {
+                noAiModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                updatePolicyPreview();
+                updateURL();
+            });
+            noAiCancelBtn.addEventListener('click', cancelNoAi);
+            document.querySelectorAll('.no-ai-cancel').forEach(btn => btn.addEventListener('click', cancelNoAi));
+            noAiModal.addEventListener('click', function(e) { if (e.target === noAiModal) cancelNoAi(); });
+
             // Start Over
             startOverBtn.addEventListener('click', function() {
                 previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';
                 altTextArea.value = '';
                 form.reset();
+                // Also clear prohibition reason (lives outside the form now)
+                document.querySelectorAll('input[name="prohibitionReason"]').forEach(r => r.checked = false);
+                const prt = document.getElementById('prohibitionReasonText');
+                if (prt) prt.value = '';
                 // Restore grayed-out cards
                 document.querySelectorAll('.option-card.grayed-out').forEach(c => c.classList.remove('grayed-out'));
                 // Hide conditional containers
                 if (otherDocumentationContainer) otherDocumentationContainer.classList.add('hidden');
                 document.getElementById('otherUseCasesContainer').classList.add('hidden');
-                const prohibContainer = document.getElementById('prohibitionReasonContainer');
-                if (prohibContainer) prohibContainer.classList.add('hidden');
+                // Close any open modals
+                noAiModal.classList.add('hidden');
+                infoModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
                 // Restore question visibility
                 document.getElementById('question4').classList.remove('hidden');
                 document.getElementById('question5').classList.remove('hidden');
@@ -1822,25 +1964,19 @@
                 setTimeout(() => { previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>'; altTextArea.value = ''; }, 0);
             });
 
-            // Copy text
-            copyBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText(extractPlainText()).then(() => {
-                    const orig = copyBtn.textContent;
-                    copyBtn.textContent = 'Copied!';
-                    setTimeout(() => { copyBtn.textContent = 'Copy Text'; }, 2000);
-                });
+
+            // Share button → open Share & Download modal
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                try { downloadModal.classList.remove('hidden'); document.body.classList.add('modal-open'); }
+                catch(err) { console.error('Failed to open share modal:', err); }
             });
 
-            // Share
-            shareBtn.addEventListener('click', function() {
-                const url = window.location.href;
-                navigator.clipboard.writeText(url).then(() => {
-                    shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000);
-                }).catch(() => {
-                    const ta = document.createElement('textarea'); ta.value = url;
-                    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-                    shareBtn.textContent = 'Copied!'; setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000);
-                });
+            // Info button → open Info modal
+            infoBtn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                try { infoModal.classList.remove('hidden'); document.body.classList.add('modal-open'); }
+                catch(err) { console.error('Failed to open info modal:', err); }
             });
 
             function extractPlainText() {
@@ -1861,11 +1997,20 @@
                 return parts.join('\n\n');
             }
 
-            // Download modal open
-            downloadRTFBtn.addEventListener('click', function(e) {
+            // Copy URL (inside Share modal)
+            copyUrlBtn.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation();
-                try { downloadModal.classList.remove('hidden'); document.body.classList.add('modal-open'); }
-                catch(err) { console.error('Failed to open download modal:', err); }
+                const url = window.location.href;
+                const h3 = copyUrlBtn.querySelector('h3');
+                navigator.clipboard.writeText(url).then(() => {
+                    const orig = h3.textContent; h3.textContent = 'Copied!';
+                    setTimeout(() => { h3.textContent = orig; }, 2000);
+                }).catch(() => {
+                    const ta = document.createElement('textarea'); ta.value = url;
+                    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                    const orig = h3.textContent; h3.textContent = 'Copied!';
+                    setTimeout(() => { h3.textContent = orig; }, 2000);
+                });
             });
 
             // Embed modal open
@@ -1878,22 +2023,25 @@
                 } catch(err) { console.error('Failed to open embed modal:', err); }
             });
 
-            // Close all modals
+            // Close all standard modals via X button
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault(); e.stopPropagation();
-                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden'); pngReminderModal.classList.add('hidden');
+                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden');
+                    pngReminderModal.classList.add('hidden'); infoModal.classList.add('hidden');
                     document.body.classList.remove('modal-open');
                 });
             });
-            [embedModal, downloadModal, pngReminderModal].forEach(modal => {
+            [embedModal, downloadModal, pngReminderModal, infoModal].forEach(modal => {
                 modal.addEventListener('click', function(e) {
                     if (e.target === modal) { modal.classList.add('hidden'); document.body.classList.remove('modal-open'); }
                 });
             });
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden'); pngReminderModal.classList.add('hidden');
+                    if (!noAiModal.classList.contains('hidden')) { cancelNoAi(); return; }
+                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden');
+                    pngReminderModal.classList.add('hidden'); infoModal.classList.add('hidden');
                     document.body.classList.remove('modal-open');
                 }
             });
@@ -1991,9 +2139,9 @@
                 });
                 return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Policy Statement</title><style>
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;margin:2rem auto;max-width:800px;color:#333}
-h1{color:#0066cc;border-bottom:2px solid #0066cc;padding-bottom:.5rem;margin-bottom:2rem}
-.policy-header{background:#f8f9fa;border-left:4px solid #007bff;padding:1rem;margin-bottom:1.5rem;border-radius:4px}
-.policy-header.policy-permitted{border-left-color:#28a745}.policy-header.policy-limited{border-left-color:#ffc107}.policy-header.policy-prohibited{border-left-color:#dc3545}
+h1{color:#0046ad;border-bottom:2px solid #0046ad;padding-bottom:.5rem;margin-bottom:2rem}
+.policy-header{background:#f8f9fa;border-left:4px solid #0046ad;padding:1rem;margin-bottom:1.5rem;border-radius:4px}
+.policy-header.policy-permitted{border-left-color:#58a618}.policy-header.policy-limited{border-left-color:#ffc107}.policy-header.policy-prohibited{border-left-color:#dc3545}
 .policy-header h2{margin:0;font-size:1.5rem;color:#2c3e50;font-weight:600}
 .policy-section{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem}
 .policy-section .icon{font-size:1.5em;flex-shrink:0;margin-top:.25rem}
@@ -2028,9 +2176,24 @@ h1{color:#0066cc;border-bottom:2px solid #0066cc;padding-bottom:.5rem;margin-bot
 
             // ─── Event delegation fallback (WordPress/Brightspace iframes) ────
             document.addEventListener('click', function(e) {
-                if (e.target.closest('#downloadRTF')) {
+                if (e.target.closest('#shareBtn')) {
                     e.preventDefault(); e.stopPropagation();
                     try { downloadModal.classList.remove('hidden'); document.body.classList.add('modal-open'); } catch(err) {}
+                    return;
+                }
+                if (e.target.closest('#infoBtn')) {
+                    e.preventDefault(); e.stopPropagation();
+                    try { infoModal.classList.remove('hidden'); document.body.classList.add('modal-open'); } catch(err) {}
+                    return;
+                }
+                if (e.target.closest('#noAiDoneBtn')) {
+                    e.preventDefault(); e.stopPropagation();
+                    try { noAiModal.classList.add('hidden'); document.body.classList.remove('modal-open'); updatePolicyPreview(); updateURL(); } catch(err) {}
+                    return;
+                }
+                if (e.target.closest('.no-ai-cancel')) {
+                    e.preventDefault(); e.stopPropagation();
+                    try { cancelNoAi(); } catch(err) {}
                     return;
                 }
                 if (e.target.closest('#embedBtn')) {
@@ -2044,8 +2207,26 @@ h1{color:#0066cc;border-bottom:2px solid #0066cc;padding-bottom:.5rem;margin-bot
                 }
                 if (e.target.closest('.close-modal')) {
                     e.preventDefault(); e.stopPropagation();
-                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden'); pngReminderModal.classList.add('hidden');
+                    embedModal.classList.add('hidden'); downloadModal.classList.add('hidden');
+                    pngReminderModal.classList.add('hidden'); infoModal.classList.add('hidden');
                     document.body.classList.remove('modal-open'); return;
+                }
+                if (e.target.closest('#copyUrlBtn')) {
+                    e.preventDefault(); e.stopPropagation();
+                    try {
+                        const url = window.location.href;
+                        const h3 = document.querySelector('#copyUrlBtn h3');
+                        navigator.clipboard.writeText(url).then(() => {
+                            const orig = h3.textContent; h3.textContent = 'Copied!';
+                            setTimeout(() => { h3.textContent = orig; }, 2000);
+                        }).catch(() => {
+                            const ta = document.createElement('textarea'); ta.value = url;
+                            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                            const orig = h3.textContent; h3.textContent = 'Copied!';
+                            setTimeout(() => { h3.textContent = orig; }, 2000);
+                        });
+                    } catch(err) {}
+                    return;
                 }
                 if (e.target.closest('#downloadHTML'))     { e.preventDefault(); e.stopPropagation(); try { downloadHTML(); downloadModal.classList.add('hidden'); document.body.classList.remove('modal-open'); } catch(err) {} return; }
                 if (e.target.closest('#downloadMarkdown')) { e.preventDefault(); e.stopPropagation(); try { downloadMarkdown(); downloadModal.classList.add('hidden'); document.body.classList.remove('modal-open'); } catch(err) {} return; }
