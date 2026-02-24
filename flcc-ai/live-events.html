@@ -207,36 +207,25 @@
          */
         const events = [
             {
-                title:       'NotebookLM: Summarize, Analyze, and Create in Seconds',
-                date:        '2026-03-10',
-                dateDisplay: 'March 10, 2026',
-                time:        '12:00 PM – 12:45 PM',
-                location:    'Online (Zoom)',
-                description: 'NotebookLM is a Google product that acts as a source of truth for projects. Upload documents, URLs, YouTube videos and create a knowledge base. When you "chat" with the AI in your notebook, all responses are taken directly from your sources.',
-                signupUrl:   'https://www.flcc.edu/events/all-events/2026/march/flx-ai-hub-webinar-notebooklm---summarize-analyze-and-create-in-seconds.php',
+                title:       'AI for Marketing and Communication',
+                date:        '2026-03-19',
+                dateDisplay: 'March 19, 2026',
+                time:        '8:00 AM – 1:30 PM',
+                location:    'FLCC',
+                description: 'Join us for a free half-day workshop for marketing professionals, communicators, and business leaders. Whether you\'re a small business owner who handles your own marketing, work at an agency, or are part of an organization\'s in-house team, everyone will leave with practical advice on how to use AI to strengthen your communication strategies.',
+                signupUrl:   'https://flcc.formstack.com/forms/ai_for_marketing_and_communications',
                 signupLabel: 'Register Now',
                 image:       '',
             },
             {
-                title:       'Chatbots: What They Are, How to Use Them, and How to Make Them',
-                date:        '2026-04-14',
-                dateDisplay: 'April 14, 2026',
-                time:        '12:00 PM – 12:45 PM',
-                location:    'Online (Zoom)',
-                description: 'Whether you\'re wondering "what\'s the difference between ChatGPT and a chatbot?" or thinking about how a chatbot might help your organization — this session is built for you. We\'ll cover the fundamentals, walk through practical examples, and demonstrate creating a chatbot from scratch.',
-                signupUrl:   'https://www.flcc.edu/events/all-events/2026/april/webinar-chatbots-what-they-are-how-to-use-them-and-how-to-make-them.php',
-                signupLabel: 'Register Now',
-                image:       '',
-            },
-            {
-                title:       'AI Bias',
-                date:        '2026-01-13',
-                dateDisplay: 'January 13, 2026',
-                time:        '12:00 PM – 12:45 PM',
-                location:    'Online (Zoom)',
-                description: 'Explore the five dimensions of bias in AI systems — from training data to algorithmic design — and walk away with concrete mitigation strategies you can apply immediately.',
-                signupUrl:   'media/webinars/ai-bias.html',
-                signupLabel: 'Watch Recording',
+                title:       'FLX AI Hub Community Convening',
+                date:        '2026-06-10',
+                dateDisplay: 'June 10, 2026',
+                time:        '8:00 AM – 1:00 PM',
+                location:    'FLCC',
+                description: 'The FLX AI Hub will address the state of AI in the workplace with a new series of talks and workshops. The next FLX AI Hub community convening is scheduled for Wednesday, June 10, from 8 a.m. to 1 p.m. at the FLCC main campus. The schedule and registration details will be available in spring 2026.',
+                signupUrl:   'https://www.flcc.edu/events/all-events/2026/june/flx-ai-hub-community-convening.php',
+                signupLabel: 'Save the date',
                 image:       '',
             },
         ];
@@ -247,9 +236,8 @@
         const today = new Date().toISOString().slice(0, 10);
 
         const upcoming = events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date));
-        const past     = events.filter(e => e.date <  today).sort((a, b) => b.date.localeCompare(a.date));
 
-        function cardHTML(ev, isPast) {
+        function cardHTML(ev) {
             const imgBlock = ev.image
                 ? `<img src="${ev.image}" alt="${ev.title}">`
                 : `<i data-lucide="calendar-days" width="56" style="opacity:0.25;"></i>`;
@@ -258,16 +246,16 @@
                 ? `<span><i data-lucide="clock" width="13"></i> ${ev.time}</span>` : '';
 
             const cta = ev.signupUrl
-                ? `<a href="${ev.signupUrl}" class="btn btn-primary" style="font-size:0.875rem; padding:0.6rem 1.4rem;" ${isPast ? '' : 'target="_blank" rel="noopener"'}>
-                       ${ev.signupLabel || (isPast ? 'Learn More' : 'Register Now')}
+                ? `<a href="${ev.signupUrl}" class="btn btn-primary" style="font-size:0.875rem; padding:0.6rem 1.4rem;" target="_blank" rel="noopener">
+                       ${ev.signupLabel || 'Register Now'}
                        <i data-lucide="arrow-right" width="15"></i>
                    </a>` : '';
 
             return `
-                <div class="event-card${isPast ? ' is-past' : ''}">
+                <div class="event-card">
                     <div class="event-card-img-wrap">${imgBlock}</div>
                     <div class="event-card-body">
-                        <span class="event-badge ${isPast ? 'past' : 'upcoming'}">${isPast ? 'Past Event' : 'Upcoming'}</span>
+                        <span class="event-badge upcoming">Upcoming</span>
                         <h2 class="event-card-title">${ev.title}</h2>
                         <div class="event-card-details">
                             <span><i data-lucide="calendar" width="13"></i> ${ev.dateDisplay}</span>
@@ -282,19 +270,10 @@
 
         const container = document.getElementById('events-list');
 
-        if (upcoming.length === 0 && past.length === 0) {
+        if (upcoming.length === 0) {
             container.innerHTML = '<div class="empty-state"><p>No events scheduled yet — check back soon.</p></div>';
         } else {
-            let html = '';
-            if (upcoming.length) {
-                html += '<div class="events-section-label">Upcoming</div>';
-                html += upcoming.map(e => cardHTML(e, false)).join('');
-            }
-            if (past.length) {
-                html += '<div class="events-section-label">Past Events</div>';
-                html += past.map(e => cardHTML(e, true)).join('');
-            }
-            container.innerHTML = html;
+            container.innerHTML = upcoming.map(e => cardHTML(e)).join('');
         }
 
         lucide.createIcons();

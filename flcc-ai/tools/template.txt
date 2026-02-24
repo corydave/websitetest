@@ -23,9 +23,9 @@
     <meta name="description" content="What this tool does, in one sentence.">
 
     <!-- Optional: thumbnail image shown on the listing card.
-         Path is relative to this file (i.e. relative to tools/).
-         Example: my-tool-banner.png  (if the image is in tools/) -->
-    <meta name="thumbnail" content="">
+         Path is relative to tools/ — put images in tools/images/.
+         Example: images/my-tool-banner.png -->
+    <meta name="thumbnail" content="images/">
 
     <!-- ============================================================ -->
 

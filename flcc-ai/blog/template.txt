@@ -7,7 +7,7 @@
   4. Replace the article-body content
   5. Place any images in blog/images/
 
-  REQUIRED META TAGS (used by blog.php auto-scanner):
+  REQUIRED META TAGS (used by blog/index.php auto-scanner):
     name="date"        content="YYYY-MM-DD"
     name="description" content="One or two sentence excerpt shown on the listing card"
     name="thumbnail"   content="images/your-thumbnail.jpg"   (relative to blog/)
@@ -49,7 +49,7 @@
 
         <!-- Breadcrumb -->
         <nav class="article-breadcrumb">
-            <a href="../blog.php">&larr; Blog</a>
+            <a href="./">&larr; Blog</a>
             <span>/</span>
             <span>POST TITLE</span>
         </nav>
@@ -82,7 +82,7 @@
 
         <!-- Back link -->
         <div style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid #e8eaed;">
-            <a href="../blog.php" style="color:var(--primary-blue); font-weight:600; display:inline-flex; align-items:center; gap:0.4rem;">
+            <a href="./" style="color:var(--primary-blue); font-weight:600; display:inline-flex; align-items:center; gap:0.4rem;">
                 <i data-lucide="arrow-left" width="16"></i> Back to All Posts
             </a>
         </div>
@@ -92,7 +92,7 @@
     <!-- Footer -->
     <footer class="site-footer" style="margin-top:2rem;">
         <div class="container footer-inner">
-            <a href="../index.php" class="footer-logo">
+            <a href="../index.html" class="footer-logo">
                 <img src="../images/HubLogo.png" alt="FLX AI Hub Logo">
                 <div class="logo-text">
                     <span class="logo-title">FLX AI Hub</span>

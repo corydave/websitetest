@@ -1,97 +1,66 @@
 <?php
 /**
- * Webinars listing
+ * Webinars listing — fully auto-scanned from media/webinars/*.html
  *
- * PAST WEBINARS — auto-scanned from media/webinars/ (same directory as this file)
- * Each webinar page in media/webinars/ should include in <head>:
- *   <meta name="date"        content="YYYY-MM-DD">
- *   <meta name="description" content="Short description">
- *   <meta name="presenter"   content="Presenter Name">
- *   <meta name="thumbnail"   content="path/to/image.jpg">  (optional)
+ * Each webinar page needs in <head>:
+ *   <meta name="date"         content="YYYY-MM-DD">         ← required
+ *   <meta name="description"  content="Short description">  ← recommended
+ *   <meta name="presenter"    content="Presenter Name">     ← recommended
+ *   <meta name="time"         content="12:00 PM – 12:45 PM"> ← optional
+ *   <meta name="location"     content="Online (Zoom)">      ← optional
+ *   <meta name="thumbnail"    content="path/to/image.jpg">  ← optional
+ *   <meta name="register-url" content="https://...">        ← optional (upcoming only)
  *
- * UPCOMING WEBINARS — edit the $upcomingWebinars array below.
+ * Upcoming vs past is determined automatically by date vs today.
  */
 
-// -----------------------------------------------------------------------
-// UPCOMING WEBINARS — update manually until registration pages exist
-// -----------------------------------------------------------------------
-$upcomingWebinars = [
-    [
-        'title'       => 'NotebookLM: AI-Powered Research',
-        'presenter'   => 'Dave Ghidiu',
-        'date'        => 'Date TBD',
-        'description' => 'Discover how Google\'s NotebookLM transforms the way you interact with documents, lecture notes, and research materials — turning them into a personalized AI knowledge base.',
-        'registerUrl' => '#',
-    ],
-    [
-        'title'       => 'Chatbots for Your Organization',
-        'presenter'   => 'Dave Ghidiu & Debora Ortloff',
-        'date'        => 'Date TBD',
-        'description' => 'From concept to deployment: learn how to build and customize AI chatbots that genuinely serve your organization\'s needs without requiring a background in coding.',
-        'registerUrl' => '#',
-    ],
-    [
-        'title'       => 'The Prompting Experience',
-        'presenter'   => 'Dave Ghidiu',
-        'date'        => 'Date TBD',
-        'description' => 'A hands-on session designed to level up your AI prompting skills — from clear basics to advanced techniques that get dramatically better results from any AI tool.',
-        'registerUrl' => '#',
-    ],
-];
+$today = date('Y-m-d');
+$upcomingWebinars = [];
+$pastWebinars     = [];
 
-// -----------------------------------------------------------------------
-// PAST WEBINARS — auto-scanned from webinars/ directory (same dir as this file)
-// -----------------------------------------------------------------------
-$allFiles  = glob(__DIR__ . '/*.html') ?: [];
-$pastWebinars = [];
-
-foreach ($allFiles as $file) {
-
+foreach (glob(__DIR__ . '/*.html') ?: [] as $file) {
     $content = file_get_contents($file);
 
-    // Only include files that have a date meta tag
+    // Must have a date meta tag
     if (!preg_match('/<meta\s+name="date"\s+content="([^"]*)"/i', $content, $m)) continue;
-    $dateRaw     = $m[1];
-    $dateDisplay = date('F Y', strtotime($dateRaw));
+    $dateRaw = trim($m[1]);
 
-    // Title — strip site suffix
+    // Helper to extract a meta tag value
+    $meta = function(string $name) use ($content): string {
+        if (preg_match('/<meta\s+name="' . preg_quote($name, '/') . '"\s+content="([^"]*)"/i', $content, $m)) {
+            return html_entity_decode(trim($m[1]), ENT_QUOTES, 'UTF-8');
+        }
+        return '';
+    };
+
     preg_match('/<title>(.*?)<\/title>/is', $content, $m);
     $title = isset($m[1])
         ? trim(preg_replace('/\s*\|\s*FLX AI Hub.*$/i', '', $m[1]))
         : 'Untitled';
 
-    // Description
-    preg_match('/<meta\s+name="description"\s+content="([^"]*)"/i', $content, $m);
-    $description = html_entity_decode($m[1] ?? '', ENT_QUOTES, 'UTF-8');
-
-    // Presenter
-    preg_match('/<meta\s+name="presenter"\s+content="([^"]*)"/i', $content, $m);
-    $presenter = html_entity_decode($m[1] ?? '', ENT_QUOTES, 'UTF-8');
-
-    // Thumbnail
-    preg_match('/<meta\s+name="thumbnail"\s+content="([^"]*)"/i', $content, $m);
-    $thumbnail = $m[1] ?? null;
-
-    // Time
-    preg_match('/<meta\s+name="time"\s+content="([^"]*)"/i', $content, $m);
-    $time = html_entity_decode($m[1] ?? '', ENT_QUOTES, 'UTF-8');
-
-    $pastWebinars[] = [
+    $entry = [
         'url'         => basename($file),
         'title'       => $title,
-        'description' => $description,
-        'presenter'   => $presenter,
-        'time'        => $time,
+        'description' => $meta('description'),
+        'presenter'   => $meta('presenter'),
+        'time'        => $meta('time'),
+        'location'    => $meta('location'),
+        'thumbnail'   => $meta('thumbnail') ?: null,
+        'registerUrl' => $meta('register-url'),
         'dateRaw'     => $dateRaw,
-        'dateDisplay' => $dateDisplay,
-        'thumbnail'   => $thumbnail,
+        'dateDisplay' => date('F j, Y', strtotime($dateRaw)),
     ];
+
+    if ($dateRaw >= $today) {
+        $upcomingWebinars[] = $entry;
+    } else {
+        $pastWebinars[] = $entry;
+    }
 }
 
-// Newest first
-usort($pastWebinars, function ($a, $b) {
-    return strtotime($b['dateRaw']) - strtotime($a['dateRaw']);
-});
+// Upcoming: soonest first; Past: newest first
+usort($upcomingWebinars, fn($a, $b) => strcmp($a['dateRaw'], $b['dateRaw']));
+usort($pastWebinars,     fn($a, $b) => strcmp($b['dateRaw'], $a['dateRaw']));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,6 +92,48 @@ usort($pastWebinars, function ($a, $b) {
             <p class="hero-sub">Watch recordings from our past sessions and register for what's coming up next. Each webinar is practical, hands-on, and designed to be immediately useful.</p>
         </div>
     </section>
+
+    <!-- UPCOMING WEBINARS -->
+    <section class="page-section bg-light">
+        <div class="container">
+            <div class="section-header" style="text-align:left; margin-bottom:2rem;">
+                <span class="section-label">Coming Up</span>
+                <h2 class="text-green">Upcoming Webinars</h2>
+                <p style="margin-top:0.5rem;">Reserve your spot &mdash; these fill up fast.</p>
+            </div>
+            <div class="cards-grid">
+                <?php if (empty($upcomingWebinars)): ?>
+                    <div class="empty-state"><p>No upcoming webinars scheduled yet &mdash; check back soon.</p></div>
+                <?php else: ?>
+                    <?php foreach ($upcomingWebinars as $w):
+                        $registerHref  = $w['registerUrl'] !== '' ? $w['registerUrl'] : $w['url'];
+                        $registerAttrs = $w['registerUrl'] !== '' ? ' target="_blank" rel="noopener"' : '';
+                    ?>
+                        <div class="upcoming-card">
+                            <span class="upcoming-badge">Upcoming</span>
+                            <h3><?= htmlspecialchars($w['title']) ?></h3>
+                            <?php if ($w['presenter']): ?>
+                            <p class="upcoming-presenter">
+                                <i data-lucide="user" width="13" style="display:inline;vertical-align:middle;margin-right:3px;"></i>
+                                <?= htmlspecialchars($w['presenter']) ?>
+                            </p>
+                            <?php endif; ?>
+                            <p class="card-date" style="font-size:0.8rem; color:var(--neutral-gray);">
+                                <?= htmlspecialchars($w['dateDisplay']) ?>
+                                <?php if ($w['time']): ?> &bull; <?= htmlspecialchars($w['time']) ?><?php endif; ?>
+                            </p>
+                            <p class="card-desc"><?= htmlspecialchars($w['description']) ?></p>
+                            <a href="<?= htmlspecialchars($registerHref) ?>" class="register-btn"<?= $registerAttrs ?>>
+                                Register Now <i data-lucide="arrow-right" width="14"></i>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <hr class="section-divider">
 
     <!-- PAST WEBINARS -->
     <section class="page-section">
@@ -164,40 +175,6 @@ usort($pastWebinars, function ($a, $b) {
                                 <span class="card-read-link">Watch Recording &rarr;</span>
                             </div>
                         </a>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-
-    <hr class="section-divider">
-
-    <!-- UPCOMING WEBINARS -->
-    <section class="page-section bg-light">
-        <div class="container">
-            <div class="section-header" style="text-align:left; margin-bottom:2rem;">
-                <span class="section-label">Coming Up</span>
-                <h2 class="text-green">Upcoming Webinars</h2>
-                <p style="margin-top:0.5rem;">Reserve your spot &mdash; these fill up fast.</p>
-            </div>
-            <div class="cards-grid">
-                <?php if (empty($upcomingWebinars)): ?>
-                    <div class="empty-state"><p>No upcoming webinars scheduled yet &mdash; check back soon.</p></div>
-                <?php else: ?>
-                    <?php foreach ($upcomingWebinars as $w): ?>
-                        <div class="upcoming-card">
-                            <span class="upcoming-badge">Upcoming</span>
-                            <h3><?= htmlspecialchars($w['title']) ?></h3>
-                            <p class="upcoming-presenter">
-                                <i data-lucide="user" width="13" style="display:inline;vertical-align:middle;margin-right:3px;"></i>
-                                <?= htmlspecialchars($w['presenter']) ?>
-                            </p>
-                            <p class="card-date" style="font-size:0.8rem; color:var(--neutral-gray);"><?= htmlspecialchars($w['date']) ?></p>
-                            <p class="card-desc"><?= htmlspecialchars($w['description']) ?></p>
-                            <a href="<?= htmlspecialchars($w['registerUrl']) ?>" class="register-btn">
-                                Register Now <i data-lucide="arrow-right" width="14"></i>
-                            </a>
-                        </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>

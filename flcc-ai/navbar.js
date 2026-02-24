@@ -71,13 +71,13 @@
         '          Media <span class="chevron">' + iconChevron + '</span>',
         '        </span>',
         '        <div class="dropdown-menu">',
-        '          <a href="' + bp + 'media/webinars.php">Webinars</a>',
-        '          <a href="' + bp + 'blog.php">Blog</a>',
+        '          <a href="' + bp + 'media/webinars/">Webinars</a>',
+        '          <a href="' + bp + 'blog/">Blog</a>',
         '          <a href="' + bp + 'media/podcast.html">Podcast</a>',
         '        </div>',
         '      </div>',
 
-        // What We Do dropdown: At FLCC, For Organizations, Resources, Events
+        // What We Do dropdown: At FLCC, For Organizations, Resources, Live Events, Calendar
         '      <div class="nav-dropdown" id="flx-whatwedo-dd">',
         '        <span class="' + cls('what-we-do') + ' dropdown-trigger">',
         '          What We Do <span class="chevron">' + iconChevron + '</span>',
@@ -86,11 +86,12 @@
         '          <a href="' + bp + 'flcc.html">At FLCC</a>',
         '          <a href="' + bp + 'for-organizations.html">For Organizations</a>',
         '          <a href="' + bp + 'resources.html">Resources</a>',
-        '          <a href="' + bp + 'events.html">Events</a>',
+        '          <a href="' + bp + 'live-events.html">Live Events</a>',
+        '          <a href="' + bp + 'calendar/">Calendar</a>',
         '        </div>',
         '      </div>',
 
-        '      <a href="' + bp + 'tools.php"         class="' + cls('tools') + '">Tools</a>',
+        '      <a href="' + bp + 'tools/"             class="' + cls('tools') + '">Tools</a>',
         '      <a href="' + bp + 'stay-informed.html" class="' + cls('stay-informed') + '">Stay Informed</a>',
 
         // Standalone FLX AI Hub pill
