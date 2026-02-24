@@ -71,9 +71,9 @@
         '          Media <span class="chevron">' + iconChevron + '</span>',
         '        </span>',
         '        <div class="dropdown-menu">',
-        '          <a href="' + bp + 'media/webinars/">Webinars</a>',
         '          <a href="' + bp + 'blog/">Blog</a>',
         '          <a href="' + bp + 'media/podcast.html">Podcast</a>',
+        '          <a href="' + bp + 'media/webinars/">Webinars</a>',
         '        </div>',
         '      </div>',
 
@@ -91,7 +91,7 @@
         '        </div>',
         '      </div>',
 
-        '      <a href="' + bp + 'tools/"             class="' + cls('tools') + '">Tools</a>',
+        // '      <a href="' + bp + 'tools/"             class="' + cls('tools') + '">Tools</a>',
         '      <a href="' + bp + 'stay-informed.html" class="' + cls('stay-informed') + '">Stay Informed</a>',
 
         // Standalone FLX AI Hub pill

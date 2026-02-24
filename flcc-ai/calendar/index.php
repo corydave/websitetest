@@ -299,7 +299,7 @@ usort($events, fn($a, $b) => strcmp($a['date'], $b['date']));
         <div class="container">
             <span class="section-label">What We Do</span>
             <h1>Upcoming Events</h1>
-            <p class="hero-sub">Webinars, workshops, and live events from the FLX AI Hub &mdash; register ahead and join us.</p>
+            <p class="hero-sub">Webinars, workshops, and live events from the FLX AI Hub - register ahead and join us.</p>
         </div>
     </section>
 

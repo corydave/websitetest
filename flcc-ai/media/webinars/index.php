@@ -99,7 +99,7 @@ usort($pastWebinars,     fn($a, $b) => strcmp($b['dateRaw'], $a['dateRaw']));
             <div class="section-header" style="text-align:left; margin-bottom:2rem;">
                 <span class="section-label">Coming Up</span>
                 <h2 class="text-green">Upcoming Webinars</h2>
-                <p style="margin-top:0.5rem;">Reserve your spot &mdash; these fill up fast.</p>
+                <p style="margin-top:0.5rem;">Reserve your spot - these fill up fast.</p>
             </div>
             <div class="cards-grid">
                 <?php if (empty($upcomingWebinars)): ?>
