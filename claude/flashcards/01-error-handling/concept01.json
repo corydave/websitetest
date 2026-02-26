@@ -1,0 +1,138 @@
+{
+  "deck-name": "CONCEPT - Error Handling",
+  "title": "Week 01 - Error Handling in Python",
+  "cards": [
+    {
+      "front": "What is an exception?",
+      "back": "An exception is an error that occurs during program execution. When Python encounters a problem it can't handle - like dividing by zero or opening a missing file - it raises an exception, which stops normal execution unless it is caught."
+    },
+    {
+      "front": "What is the basic structure of a try/except block?",
+      "back": "Put the code that might fail inside try. Put the code that handles the failure inside except. If the try block succeeds, except is skipped entirely.",
+      "code": "try:\n    result = int(input('Enter a number: '))\nexcept ValueError:\n    print('That was not a number.')"
+    },
+    {
+      "front": "What is a ValueError?",
+      "back": "Raised when a function receives an argument of the right type but an inappropriate value. The most common example: int('hello') - the argument is a string (correct type for int()), but its value cannot be converted.",
+      "code": "int('42')     # → 42, no error\nint('hello')  # → ValueError\nint('')       # → ValueError"
+    },
+    {
+      "front": "What is a ZeroDivisionError?",
+      "back": "Raised when you attempt to divide (or take the modulo of) any number by zero. Python raises this because the result is mathematically undefined.",
+      "code": "10 / 0    # → ZeroDivisionError: division by zero\n10 // 0   # → ZeroDivisionError\n10 % 0    # → ZeroDivisionError"
+    },
+    {
+      "front": "What is a FileNotFoundError?",
+      "back": "Raised when you try to open a file that doesn't exist. A subclass of OSError. Common when reading grade data or configuration files - the file may have been moved, renamed, or never created.",
+      "code": "try:\n    with open('scores.txt', 'r') as f:\n        data = f.read()\nexcept FileNotFoundError:\n    print('File not found.')"
+    },
+    {
+      "front": "How do you catch multiple different exception types?",
+      "back": "Use multiple except blocks, one per exception type. Python checks them in order and runs the first one that matches. Put more specific exceptions before more general ones.",
+      "code": "try:\n    value = int(input('Number: '))\n    result = 10 / value\nexcept ValueError:\n    print('Not a number.')\nexcept ZeroDivisionError:\n    print('Cannot divide by zero.')"
+    },
+    {
+      "front": "How do you catch multiple exceptions in a single except block?",
+      "back": "List them as a tuple in the except clause. Useful when two exceptions should produce the same response.",
+      "code": "try:\n    result = int(input()) / int(input())\nexcept (ValueError, ZeroDivisionError) as e:\n    print(f'Error: {e}')"
+    },
+    {
+      "front": "What does 'as e' do in an except clause?",
+      "back": "It binds the exception object to the variable e, letting you access the error message and details. Useful for logging or displaying what went wrong.",
+      "code": "try:\n    int('hello')\nexcept ValueError as e:\n    print(f'Caught: {e}')\n    # Prints: Caught: invalid literal for int() with base 10: 'hello'"
+    },
+    {
+      "front": "What does the else clause do in a try/except block?",
+      "back": "The else block runs only if the try block completed without raising any exception. It's where you put code that should execute on success - keeping it separate from the try block makes it clear that code only runs if everything went fine.",
+      "code": "try:\n    result = int(input('Number: '))\nexcept ValueError:\n    print('Not a number.')\nelse:\n    print(f'You entered {result}.')  # only runs if no error"
+    },
+    {
+      "front": "What does the finally clause do?",
+      "back": "The finally block always runs - whether an exception was raised or not, whether it was caught or not. Used for cleanup that must happen regardless: closing files, releasing resources, printing a goodbye message.",
+      "code": "try:\n    f = open('data.txt')\n    data = f.read()\nexcept FileNotFoundError:\n    print('File missing.')\nfinally:\n    print('Done - this always runs.')"
+    },
+    {
+      "front": "What is the full try/except/else/finally order?",
+      "back": "try → runs the risky code\nexcept → runs if an exception is raised\nelse → runs if no exception was raised\nfinally → always runs, regardless",
+      "code": "try:\n    ...\nexcept SomeError:\n    ...\nelse:\n    ...\nfinally:\n    ..."
+    },
+    {
+      "front": "What is a bare except clause? Why should you avoid it?",
+      "back": "except: with no exception type catches everything, including KeyboardInterrupt (Ctrl+C) and SystemExit - things you usually don't want to suppress. Always specify the exception type so only the errors you expect are handled.",
+      "code": "# Avoid this:\nexcept:\n    print('Something went wrong.')\n\n# Prefer this:\nexcept ValueError:\n    print('Invalid input.')"
+    },
+    {
+      "front": "What does 'except Exception as e' catch?",
+      "back": "Almost everything - all exceptions that inherit from Exception. It misses BaseException subclasses like SystemExit and KeyboardInterrupt. A reasonable catch-all for unexpected errors when you want to log the message without crashing.",
+      "code": "except Exception as e:\n    print(f'Unexpected error: {e}')"
+    },
+    {
+      "front": "How do you raise your own exception?",
+      "back": "Use the raise keyword followed by an exception class or instance. Useful when you detect an invalid state that Python wouldn't catch automatically - like negative minutes in a study log.",
+      "code": "def add_minutes(minutes):\n    if minutes <= 0:\n        raise ValueError(f'Minutes must be positive. Got: {minutes}')\n    ..."
+    },
+    {
+      "front": "What is the difference between raise and raise e?",
+      "back": "raise (bare) re-raises the current exception with its original traceback - useful inside an except block. raise ValueError('message') raises a new exception. raise e also re-raises but may alter the traceback.",
+      "code": "try:\n    risky()\nexcept ValueError:\n    log_error()\n    raise   # re-raise the same ValueError"
+    },
+    {
+      "front": "What does open('file.txt', 'r') do if the file doesn't exist?",
+      "back": "It raises FileNotFoundError. The 'r' mode (read) requires the file to already exist. To create a file if missing, use 'w' (write) or 'a' (append) mode instead."
+    },
+    {
+      "front": "What is a 'with' statement and why is it used with file I/O?",
+      "back": "A with statement is a context manager that automatically runs cleanup code when the block exits - even if an exception is raised. For files, it closes the file handle automatically, preventing resource leaks.",
+      "code": "with open('scores.txt', 'r') as f:\n    data = f.read()\n# File is automatically closed here, even if read() raised an error"
+    },
+    {
+      "front": "What happens to code after an unhandled exception?",
+      "back": "Python stops executing immediately, prints a traceback showing where the error occurred and the chain of function calls that led there, and exits with a non-zero status code. No more code in that thread runs."
+    },
+    {
+      "front": "What is a traceback?",
+      "back": "The error report Python prints when an exception is unhandled. It shows the chain of calls (most recent last) leading to the error, the file, line number, and the exception type and message. Reading it bottom-up leads you to the actual problem."
+    },
+    {
+      "front": "What is the difference between a syntax error and an exception?",
+      "back": "A syntax error (SyntaxError) is detected before the program runs - Python can't parse the code at all. An exception occurs during execution when code that is syntactically correct encounters a problem at runtime, like bad input or a missing file."
+    },
+    {
+      "front": "What does int(value) raise if value is '3.14'?",
+      "back": "ValueError - because '3.14' is a string that cannot be directly converted to int. To convert it, use float() first: int(float('3.14')) → 3.",
+      "code": "int('3.14')           # → ValueError\nint(float('3.14'))    # → 3"
+    },
+    {
+      "front": "What is input validation?",
+      "back": "Checking that user input meets expected requirements before processing it. Combines exception handling (catching conversion errors) with conditional logic (checking ranges, formats, lengths). The input validator lab validated age, email, phone number, and ZIP code."
+    },
+    {
+      "front": "How do you build a loop that keeps asking for input until it's valid?",
+      "back": "Use a while True loop with try/except inside. If input is valid, break out of the loop. If it raises an exception, print an error and the loop continues.",
+      "code": "while True:\n    try:\n        age = int(input('Enter your age: '))\n        if 0 <= age <= 120:\n            break\n        print('Age must be 0–120.')\n    except ValueError:\n        print('Please enter a number.')"
+    },
+    {
+      "front": "What does f.readlines() return?",
+      "back": "A list of strings, one per line, each ending with '\\n' (except possibly the last). Useful for processing a file line by line. Use strip() to remove the newline from each line.",
+      "code": "with open('scores.txt') as f:\n    lines = f.readlines()\n# lines = ['85\\n', '92\\n', '78\\n']"
+    },
+    {
+      "front": "What does str.strip() do?",
+      "back": "Removes leading and trailing whitespace - including spaces, tabs, and newlines - from a string. Essential when reading lines from a file, which often end with '\\n'.",
+      "code": "'  hello\\n'.strip()   # → 'hello'\n'42\\n'.strip()        # → '42'"
+    },
+    {
+      "front": "How do you skip blank lines when reading a file?",
+      "back": "After stripping each line, check if it's truthy (non-empty) before processing. An empty string is falsy in Python.",
+      "code": "with open('scores.txt') as f:\n    for line in f:\n        line = line.strip()\n        if line:           # skip blank lines\n            process(line)"
+    },
+    {
+      "front": "What does 'except ValueError: continue' do inside a loop?",
+      "back": "When a ValueError is raised (e.g. int() on a bad line in a file), the except block runs 'continue', which skips the rest of the current loop iteration and moves to the next one. Bad lines are ignored rather than crashing the program."
+    },
+    {
+      "front": "What is the difference between printing an error and raising an exception?",
+      "back": "Printing an error displays a message but lets execution continue as if nothing happened - the function returns normally (usually None). Raising an exception stops execution and forces the caller to handle the problem - it can't be silently ignored."
+    }
+  ]
+}

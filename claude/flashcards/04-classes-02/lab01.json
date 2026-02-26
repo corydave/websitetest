@@ -1,0 +1,102 @@
+{
+  "deck-name": "LAB 1 - Bingo Class",  
+  "title": "OOP Arc · Lab 01 - Classes & __init__",
+  "cards": [
+    {
+      "front": "What is a class in Python?",
+      "back": "A blueprint for creating objects. It bundles data (attributes) and behaviour (methods) together so they travel as one unit - nothing needs to be passed around separately.",
+      "code": "class BingoCard:\n    def __init__(self):\n        self.grid = []"
+    },
+    {
+      "front": "What is an instance?",
+      "back": "A specific object built from a class blueprint. Each instance has its own copy of the instance variables. You can make as many instances as you want from one class.",
+      "code": "card1 = BingoCard()   # one instance\ncard2 = BingoCard()   # another, completely separate instance"
+    },
+    {
+      "front": "What does __init__ do?",
+      "back": "__init__ is the initialiser method. Python calls it automatically the moment you create an instance. It's where you set up the starting state - all instance variables are typically created here."
+    },
+    {
+      "front": "What is self?",
+      "back": "self is how a method refers to the specific instance it belongs to. When you call card.mark_number(42), Python passes card as self automatically. Every instance method must list self as its first parameter."
+    },
+    {
+      "front": "What is an instance variable?",
+      "back": "A variable that belongs to one specific instance. Created inside methods using self.name = value. Each instance has its own copy - changing one doesn't affect others.",
+      "code": "def __init__(self):\n    self.grid = []   # instance variable\n    self.star = '☆'  # another instance variable"
+    },
+    {
+      "front": "What is an instance method?",
+      "back": "A function defined inside a class that takes self as its first parameter. It can read and modify the instance's own data via self. Called with dot notation: card.print_card()"
+    },
+    {
+      "front": "What's the difference between a class and an instance?",
+      "back": "A class is the blueprint (BingoCard). An instance is an actual object built from that blueprint (card = BingoCard()). The class exists once; you can create unlimited instances from it."
+    },
+    {
+      "front": "What happens step-by-step when you write: card = BingoCard()",
+      "back": "1. Python sees BingoCard() and knows to create a new instance.\n2. It creates an empty object in memory.\n3. It calls __init__(self) with that object as self.\n4. __init__ sets up all the instance variables.\n5. The finished object is assigned to card."
+    },
+    {
+      "front": "How do you access an instance variable from outside the class?",
+      "back": "Using dot notation: object.attribute.\n\nExample: card.grid reads the grid attribute of card.\n\nNote: this is also how you'd modify it from outside, though encapsulation (Lab 03) will show why letting the class control its own data is better."
+    },
+    {
+      "front": "How do you call an instance method?",
+      "back": "Using dot notation: object.method(arguments).\n\nYou don't pass self - Python passes it automatically.",
+      "code": "card = BingoCard()\ncard.print_card()          # Python calls print_card(card)\ncard.mark_number(42)       # Python calls mark_number(card, 42)"
+    },
+    {
+      "front": "What does self.grid = [] inside __init__ do?",
+      "back": "It creates an instance variable called grid on this specific instance and gives it an empty list as its starting value. Every new BingoCard gets its own fresh empty list."
+    },
+    {
+      "front": "Can two instances of the same class have different attribute values?",
+      "back": "Yes - that's the whole point. Each instance has its own separate copy of its instance variables. card1.grid and card2.grid are completely independent lists."
+    },
+    {
+      "front": "What is the problem with passing numlist to every function?",
+      "back": "The data (numlist) and the behaviour (get_Card, draw, check_bingo) are separated. Every function must receive the data as a parameter. A class solves this by keeping the data and behaviour together on one object."
+    },
+    {
+      "front": "What does random.sample(range(10, 100), 25) return?",
+      "back": "A list of 25 unique integers randomly chosen from the range 10–99. Unlike random.randint in a loop, sample guarantees no duplicates - an important fix from the original bingo.py.",
+      "code": "numbers = random.sample(range(10, 100), 25)\n# e.g. [45, 72, 13, 88, 34, 61, ...]"
+    },
+    {
+      "front": "What does all(cell == self.star for cell in row) do?",
+      "back": "It returns True only if every cell in row equals self.star. The generator expression inside all() produces a boolean for each cell; all() requires every one of them to be True.",
+      "code": "row = ['☆ ', '☆ ', '☆ ', '☆ ', '☆ ']\nall(cell == '☆ ' for cell in row)  # → True"
+    },
+    {
+      "front": "How does self know which instance it refers to?",
+      "back": "Python passes the instance automatically when you call a method. card.mark_number(42) is equivalent to BingoCard.mark_number(card, 42). Python binds self to card for that call."
+    },
+    {
+      "front": "Can you call __init__ directly after an object is created?",
+      "back": "Technically yes, but you shouldn't. Calling card.__init__() again would overwrite the instance's data with fresh starting values - essentially resetting it. Instead, add a dedicated reset() method if you need that behaviour."
+    },
+    {
+      "front": "What is refactoring?",
+      "back": "Rewriting existing code to improve its structure - without changing what the code does. The bingo lab is a refactoring exercise: the game logic stays the same, but the organisation moves from procedural functions to a class."
+    },
+    {
+      "front": "What is the correct diagonal check for a 5×5 grid?",
+      "back": "Top-left → bottom-right: grid[i][i] for i in range(5)\nTop-right → bottom-left: grid[i][4-i] for i in range(5)\n\nThe original bingo.py incorrectly checked grid[row][0] and grid[row][-1], which are column checks, not diagonal checks.",
+      "code": "# Correct diagonals:\nif all(self.grid[i][i] == self.star for i in range(5)):\n    return True\nif all(self.grid[i][4-i] == self.star for i in range(5)):\n    return True"
+    },
+    {
+      "front": "What does this code do?\n\nself.grid = [numbers[r*5:(r+1)*5] for r in range(5)]",
+      "back": "It splits a flat list of 25 numbers into 5 rows of 5, creating a 2D list (the bingo grid). For r=0: numbers[0:5], for r=1: numbers[5:10], and so on.",
+      "code": "numbers = [1,2,3,4,5,6,7,8,9,10, ...]\ngrid = [numbers[r*5:(r+1)*5] for r in range(5)]\n# → [[1,2,3,4,5],[6,7,8,9,10], ...]"
+    },
+    {
+      "front": "What is the first parameter of every instance method?",
+      "back": "self - by convention. Python doesn't enforce the name 'self', but it's a universal convention. Never use anything else. It refers to the instance the method was called on."
+    },
+    {
+      "front": "What happens if you define a function inside a class without self?",
+      "back": "If called as an instance method, Python will raise a TypeError because it tries to pass the instance as the first argument but the function doesn't accept one. The function would need @staticmethod to work without self."
+    }
+  ]
+}

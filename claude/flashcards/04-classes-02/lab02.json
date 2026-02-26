@@ -1,0 +1,99 @@
+{
+  "deck-name": "LAB 2 - str",  
+  "title": "OOP Arc · Lab 02 - __str__ & __repr__",
+  "cards": [
+    {
+      "front": "What does __str__ do?",
+      "back": "It defines the human-readable string representation of an object. Python calls it automatically when you pass an object to print() or str(). It should return a nicely formatted string - never print directly."
+    },
+    {
+      "front": "When does Python call __str__ automatically?",
+      "back": "When you call print(obj), str(obj), or use an object in an f-string like f\"{obj}\". You define it once and Python handles the rest - no separate print function needed.",
+      "code": "game = GameMap(hidden)\nprint(game)         # calls game.__str__()\nf\"Map: {game}\"     # also calls __str__"
+    },
+    {
+      "front": "Should __str__ print or return?",
+      "back": "Return - always. __str__ must return a string. If you print inside it, print() can't do anything useful with the return value (None). Returning gives callers flexibility: they can print it, log it, store it, or embed it in another string."
+    },
+    {
+      "front": "What does __repr__ do?",
+      "back": "It defines a developer-facing representation of an object - typically enough detail to understand or reconstruct the object's state. Shown in the REPL, debuggers, and log output. Should be unambiguous."
+    },
+    {
+      "front": "When does Python call __repr__ automatically?",
+      "back": "In the interactive Python REPL when you evaluate an expression, when using repr(obj), and when an object appears inside a container like a list printed with print([obj])."
+    },
+    {
+      "front": "What's the difference between __str__ and __repr__?",
+      "back": "__str__ is for humans - readable and pretty. __repr__ is for developers - precise and unambiguous. If only one is defined, Python falls back to __repr__ when __str__ is needed, but not the other way around.",
+      "code": "# __str__ - pretty:\n'GameMap(5x5)  ❤️ HP: 5'\n\n# __repr__ - precise:\n'GameMap(size=5x5, hp=5, won=False)'"
+    },
+    {
+      "front": "What are dunder methods?",
+      "back": "Methods with double underscore prefix and suffix (e.g. __init__, __str__, __repr__). Also called 'magic methods' or 'special methods'. Python calls them automatically in specific situations - you define them, Python decides when to invoke them."
+    },
+    {
+      "front": "What does \"\\n\".join(lines) do?",
+      "back": "It combines all strings in the lines list into one string, with a newline character between each pair. Much more efficient than building a string with += in a loop because join() allocates memory only once.",
+      "code": "lines = ['r0  ☁  ☁', 'r1  ☁  ☁', 'r2  ☁  ·']\nresult = '\\n'.join(lines)\n# → 'r0  ☁  ☁\\nr1  ☁  ☁\\nr2  ☁  ·'"
+    },
+    {
+      "front": "Why use a list + join() instead of string concatenation in __str__?",
+      "back": "String concatenation (+=) creates a new string object every time, which is slow for many lines. Building a list of strings and calling join() at the end allocates memory exactly once. It's faster and more Pythonic."
+    },
+    {
+      "front": "What happens if you define __str__ but not __repr__?",
+      "back": "print(obj) uses your __str__. repr(obj) and the REPL fall back to the default __repr__, which shows something like <GameMap object at 0x10a2b3c40> - not very informative. Define both when debugging matters."
+    },
+    {
+      "front": "What happens if you define neither __str__ nor __repr__?",
+      "back": "Python uses the inherited default from object, which shows the class name and memory address: <GameMap object at 0x10a2b3c40>. Functional but useless for debugging."
+    },
+    {
+      "front": "How do you call __str__ explicitly (two ways)?",
+      "back": "str(obj) calls __str__ and returns the result.\nobj.__str__() also works but is not recommended - calling dunder methods directly is considered bad style. Use the built-in function or just print(obj)."
+    },
+    {
+      "front": "What should __repr__ ideally contain?",
+      "back": "Enough information to understand the object's current state - class name, key attributes, and anything that distinguishes this instance. A good rule: if you read __repr__ output in a log, you should understand what the object is and what it was doing."
+    },
+    {
+      "front": "What does f\"GameMap({self.rows}x{self.cols})\" produce if rows=5, cols=5?",
+      "back": "The string 'GameMap(5x5)'. The f-string evaluates self.rows and self.cols and inserts their values. This is a typical __repr__ format: class name followed by key state in parentheses."
+    },
+    {
+      "front": "What built-in function calls __str__?",
+      "back": "str(obj) calls obj.__str__(). print(obj) also calls __str__ internally before printing the result."
+    },
+    {
+      "front": "What built-in function calls __repr__?",
+      "back": "repr(obj) calls obj.__repr__(). The interactive REPL also calls __repr__ when it displays the result of an expression."
+    },
+    {
+      "front": "Can __str__ call other methods of the same class?",
+      "back": "Yes - self is available inside __str__ just like any other method. You can call self.total_minutes(), self.unique_activities(), or any other method to build the output string.",
+      "code": "def __str__(self):\n    return (\n        f\"StudyLog: {len(self._entries)} entries, \"\n        f\"{self.total_minutes()} total minutes\"\n    )"
+    },
+    {
+      "front": "What does \"  \".join(row) produce if row = [\"☁ \", \"☁ \", \"· \"]?",
+      "back": "The string '☁   ☁   · ' - each element joined with two spaces between them. join() inserts the separator between elements, not after the last one."
+    },
+    {
+      "front": "What does enumerate(self.revealed) do inside __str__?",
+      "back": "It produces pairs of (index, row) for each row in self.revealed, so you can use the row number as a label without maintaining a manual counter.",
+      "code": "for r, row in enumerate(self.revealed):\n    line = f\"r{r}  \" + \"  \".join(row)"
+    },
+    {
+      "front": "Why is it better to return from __str__ than to print inside it?",
+      "back": "Returning makes __str__ composable - the caller decides what to do with the string. It can be printed, logged, written to a file, or embedded in a larger string. Printing inside the method takes that control away from the caller."
+    },
+    {
+      "front": "What does this __str__ pattern produce?\n\nlines = [header] + rows\nreturn \"\\n\".join(lines)",
+      "back": "It creates one final string by joining the header (a single string) with all the row strings, separated by newlines. The + operator here concatenates two lists before join() combines their elements into one string."
+    },
+    {
+      "front": "If GameMap has both __str__ and __repr__, which one does print() use?",
+      "back": "print() uses __str__. Only if __str__ is not defined does Python fall back to __repr__."
+    }
+  ]
+}

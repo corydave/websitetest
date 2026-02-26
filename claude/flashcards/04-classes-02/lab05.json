@@ -1,0 +1,105 @@
+{
+  "deck-name": "LAB 5 - classmethod",
+  "title": "OOP Arc · Lab 05 - @classmethod & @staticmethod",
+  "cards": [
+    {
+      "front": "What is a class variable?",
+      "back": "A variable defined at the class level (outside any method). It is shared by ALL instances of the class - not owned by any one object. Changing it via the class affects every instance.",
+      "code": "class BingoCard:\n    _cards_created = 0   # class variable - shared\n\n    def __init__(self):\n        self.grid = []   # instance variable - per object"
+    },
+    {
+      "front": "What is the difference between a class variable and an instance variable?",
+      "back": "A class variable is shared across all instances (defined at class level). An instance variable belongs to one specific object (defined on self inside a method). One blueprint shares class variables; every instance has its own instance variables."
+    },
+    {
+      "front": "What is a @classmethod?",
+      "back": "A method decorated with @classmethod that receives cls (the class itself) as its first parameter instead of self (an instance). It can access and modify class variables, and can create new instances. No object needed to call it.",
+      "code": "@classmethod\ndef how_many_cards(cls):\n    return cls._cards_created\n\nBingoCard.how_many_cards()   # no instance needed"
+    },
+    {
+      "front": "What does cls refer to inside a @classmethod?",
+      "back": "cls refers to the class itself - BingoCard, not any particular card object. Through cls you can access class variables (cls._cards_created) and create new instances (cls()) without naming the class explicitly."
+    },
+    {
+      "front": "What is a factory method?",
+      "back": "A @classmethod that creates and returns a new instance of the class, often accepting different input formats than __init__ does. The 'factory' creates objects - you don't call the constructor directly.",
+      "code": "@classmethod\ndef from_list(cls, numbers):\n    return cls(numbers)   # creates and returns a new instance"
+    },
+    {
+      "front": "Why use cls() inside a factory method instead of BingoCard()?",
+      "back": "Using cls() means the method works correctly if the class is subclassed. If a subclass SpecialCard inherits from_list(), cls() will create a SpecialCard, not a BingoCard. Hard-coding BingoCard() would always create the parent class."
+    },
+    {
+      "front": "What is a @staticmethod?",
+      "back": "A method decorated with @staticmethod that takes neither self nor cls. It's a plain function that lives inside the class for organisational purposes - it's logically related to the class but needs no access to any instance or the class itself.",
+      "code": "@staticmethod\ndef is_valid_number(n):\n    return isinstance(n, int) and 10 <= n <= 99\n\nBingoCard.is_valid_number(42)   # True"
+    },
+    {
+      "front": "When would you use @staticmethod instead of just a module-level function?",
+      "back": "When the function is logically part of the class's responsibility but doesn't need access to the class or any instance. Putting it inside the class groups it with related code and makes it findable via BingoCard.is_valid_number()."
+    },
+    {
+      "front": "What are the three types of methods in Python? How do their first parameters differ?",
+      "back": "1. Instance method - first param is self (the instance)\n2. Class method (@classmethod) - first param is cls (the class)\n3. Static method (@staticmethod) - no implicit first param",
+      "code": "class Demo:\n    def instance_method(self): ...      # self\n    @classmethod\n    def class_method(cls): ...          # cls\n    @staticmethod\n    def static_method(): ...            # nothing"
+    },
+    {
+      "front": "How does the factory method pattern let you create an instance without calling __init__ directly?",
+      "back": "The factory classmethod calls cls() (which triggers __init__) with the right arguments assembled from the factory's input. The caller calls BingoCard.from_list(numbers) - the factory handles the conversion.",
+      "code": "@classmethod\ndef from_list(cls, numbers):\n    # validates, then delegates to __init__:\n    return cls(numbers)"
+    },
+    {
+      "front": "How do you increment a class variable inside __init__?",
+      "back": "Reference it via the class name (ClassName.variable += 1) or via cls if inside a classmethod. Using self.variable += 1 inside __init__ would create a new instance variable shadowing the class variable - avoid this.",
+      "code": "def __init__(self):\n    BingoCard._cards_created += 1   # correct\n    # self._cards_created += 1      # creates instance var!"
+    },
+    {
+      "front": "What does BingoCard.how_many_cards() return before any instances are created?",
+      "back": "0 - the initial value of _cards_created = 0 at the class level. No instances need to exist to call a classmethod."
+    },
+    {
+      "front": "What is name mangling in Python?",
+      "back": "Using double underscore prefix (__name) causes Python to rename the attribute to _ClassName__name, making it harder to access from outside the class. Rarely needed - single underscore convention is usually enough."
+    },
+    {
+      "front": "What does from_string(cls, text) do differently from from_list(cls, numbers)?",
+      "back": "from_string accepts a comma-separated string (like CSV), splits and converts it to integers, then delegates to from_list(). It's another factory method - two different input formats, one class.",
+      "code": "@classmethod\ndef from_string(cls, text):\n    numbers = [int(n.strip()) for n in text.split(',')]\n    return cls.from_list(numbers)"
+    },
+    {
+      "front": "How does to_list(self) pair with from_list(cls, numbers)?",
+      "back": "to_list() serialises a card's grid to a flat list. from_list() deserialises a flat list back into a card. Together they form a save/restore pair - the card can be stored and reconstructed.",
+      "code": "original = BingoCard()\nflat = original.to_list()           # save\nrestored = BingoCard.from_list(flat) # restore\nassert original.grid == restored.grid  # True"
+    },
+    {
+      "front": "Can you call a @classmethod on an instance as well as on the class?",
+      "back": "Yes - card.how_many_cards() works just like BingoCard.how_many_cards(). Python passes the class as cls either way. Calling it on an instance is valid but unconventional - most style guides prefer calling classmethods on the class."
+    },
+    {
+      "front": "Can you call a @staticmethod on an instance as well as on the class?",
+      "back": "Yes - card.is_valid_number(42) works the same as BingoCard.is_valid_number(42). There's no self or cls to pass, so the calling style doesn't matter functionally. On-class calls are preferred for clarity."
+    },
+    {
+      "front": "What is the difference between @classmethod and @staticmethod at a practical level?",
+      "back": "@classmethod gets cls - it can read/write class variables and create new instances. @staticmethod gets nothing - it can't access the class or any instance. Choose @classmethod when you need class-level state; @staticmethod when you need neither."
+    },
+    {
+      "front": "What does raise ValueError(...) do?",
+      "back": "It raises an exception that stops execution and propagates up the call stack until something catches it. In from_list(), raising ValueError if len(numbers) != 25 tells the caller they passed the wrong data - more informative than silently returning None.",
+      "code": "if len(numbers) != cls.SIZE ** 2:\n    raise ValueError(\n        f'Expected 25 numbers, got {len(numbers)}'\n    )"
+    },
+    {
+      "front": "What does reset_count(cls) enable in testing?",
+      "back": "It sets _cards_created back to 0, allowing tests to start fresh. Without it, the counter from one test would carry into the next, making test results depend on execution order.",
+      "code": "@classmethod\ndef reset_count(cls):\n    cls._cards_created = 0"
+    },
+    {
+      "front": "Complete the arc: what concept does each lab in the OOP arc introduce?",
+      "back": "Lab 01: class, __init__, self - data and behaviour bundled\nLab 02: __str__, __repr__ - objects represent themselves\nLab 03: Encapsulation - objects protect their own data\nLab 04: Multiple instances, composition - one blueprint, many objects\nLab 05: @classmethod, @staticmethod - some things belong to the class, not any instance"
+    },
+    {
+      "front": "Why is BingoCard.SIZE = 5 better than hard-coding 5 everywhere in the class?",
+      "back": "The SIZE constant is defined once. Changing it propagates automatically - the list comprehension, center calculation, and loop ranges all reference SIZE. Hard-coding 5 everywhere means a change requires finding and updating every occurrence."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "deck-name": "LAB 4 - Instances",  
+  "title": "OOP Arc · Lab 04 - Multiple Instances & Composition",
+  "cards": [
+    {
+      "front": "What does it mean that instances are independent?",
+      "back": "Each instance has its own copy of its instance variables. Modifying one object's data has no effect on any other object of the same class.",
+      "code": "card1 = BingoCard()\ncard2 = BingoCard()\ncard1.mark_number(42)  # only card1 changes\n# card2 is completely unaffected"
+    },
+    {
+      "front": "What is composition in OOP?",
+      "back": "When one class contains an instance of another class as one of its attributes. The containing class uses the inner object's behaviour without re-implementing it.",
+      "code": "class Player:\n    def __init__(self, name):\n        self.name = name\n        self.card = BingoCard()  # composition"
+    },
+    {
+      "front": "What is delegation in OOP?",
+      "back": "When one class forwards a responsibility to another class it contains, rather than re-implementing the logic itself. Player.has_bingo() delegates to self.card.check_bingo() - Player doesn't know how bingo is detected.",
+      "code": "def has_bingo(self):\n    return self.card.check_bingo()  # delegating"
+    },
+    {
+      "front": "How many BingoCard objects exist after this code runs?\n\nplayers = [Player('Alice'), Player('Bob')]",
+      "back": "Two - one per Player. Each Player's __init__ calls BingoCard(), creating a separate, independent instance stored as self.card on each player."
+    },
+    {
+      "front": "What does player1.card.mark_number(42) mean?\nHow many dots are there and what does each mean?",
+      "back": "Two dots. The first (player1.card) accesses the card attribute on the player1 instance - a BingoCard object. The second (.mark_number(42)) calls the mark_number method on that BingoCard."
+    },
+    {
+      "front": "Why store players in a list rather than separate variables?",
+      "back": "A list lets you iterate over all players with one loop, regardless of how many there are. player1, player2 requires separate handling for each. With a list, adding a third player requires zero changes to the game loop.",
+      "code": "# Scales to any number of players:\nfor player in players:\n    player.card.mark_number(number)"
+    },
+    {
+      "front": "What is a list comprehension, and how is it used to create multiple Player objects?",
+      "back": "A compact way to build a list by applying an expression to each item in an iterable. Here it creates one Player per name in one readable line.",
+      "code": "names = ['Alice', 'Bob', 'Charlie']\nplayers = [Player(name) for name in names]"
+    },
+    {
+      "front": "What does [p for p in players if p.has_bingo()] do?",
+      "back": "It filters the players list, keeping only those where has_bingo() returns True. The result is a list of Player objects who have achieved bingo - could be one, two, or zero.",
+      "code": "winners = [p for p in players if p.has_bingo()]\nif len(winners) > 1:\n    print('Tie!')\nelif winners:\n    print(f'{winners[0].name} wins!')"
+    },
+    {
+      "front": "Why doesn't Player re-implement the bingo checking logic?",
+      "back": "Because BingoCard already does it correctly. Duplicating logic creates two places to maintain - if you fix a bug in one, you might miss the other. Delegation means the logic lives in exactly one place."
+    },
+    {
+      "front": "What is the difference between inheritance and composition?",
+      "back": "Inheritance: Player IS-A BingoCard (extends it). Composition: Player HAS-A BingoCard (contains one). Composition is often preferred - it's more flexible and doesn't create tight coupling between classes."
+    },
+    {
+      "front": "What does self.wins = 0 in Player.__init__ track across a session?",
+      "back": "A count of how many games this specific Player instance has won. Because it's an instance variable, each player has their own counter. Incrementing player1.wins doesn't affect player2.wins."
+    },
+    {
+      "front": "How do you give each player a fresh card for a new round?",
+      "back": "Replace self.card with a new BingoCard() instance. The old card is garbage-collected. A clean new_card() method on Player makes this explicit.",
+      "code": "def new_card(self):\n    self.card = BingoCard()  # replaces the old card"
+    },
+    {
+      "front": "What does enumerate(draw_pool, start=1) do?",
+      "back": "It produces pairs of (count, number) where count starts at 1 and increments with each step. Useful for labelling draw numbers without a manual counter variable.",
+      "code": "for count, number in enumerate(draw_pool, start=1):\n    print(f'Draw {count}: {number}')"
+    },
+    {
+      "front": "In a list comprehension that creates players, when exactly does each BingoCard get created?",
+      "back": "When each Player's __init__ runs - one per iteration. [Player(name) for name in names] runs Player('Alice'), Player('Bob') etc. in sequence, each calling BingoCard() inside __init__."
+    },
+    {
+      "front": "What does {p.name: hit for p in players} produce?",
+      "back": "A dictionary where each key is a player's name and each value is whether they got a hit on this draw. A dict comprehension - like a list comprehension but for dictionaries.",
+      "code": "results = {p.name: p.card.mark_number(n) for p in players}\n# e.g. {'Alice': True, 'Bob': False}"
+    },
+    {
+      "front": "What does ' & '.join(w.name for w in winners) produce if winners are Alice and Bob?",
+      "back": "The string 'Alice & Bob'. join() inserts the separator (' & ') between each element, not after the last one. The generator expression produces just the names from the winner objects."
+    },
+    {
+      "front": "Why is it safer to use random.sample for the draw pool than random.randint in a loop?",
+      "back": "random.sample guarantees no repeated numbers - important for fair bingo. random.randint in a loop can produce the same number multiple times, which would mean a number is 'called' twice - not how bingo works.",
+      "code": "draw_pool = random.sample(range(10, 100), 90)"
+    },
+    {
+      "front": "If BingoCard has a __str__ method, how do you print a player's card?",
+      "back": "print(player.card) - Python calls __str__ on the BingoCard instance stored in player.card. No print_card() helper needed.",
+      "code": "print(f\"--- {player.name}'s card ---\")\nprint(player.card)   # calls BingoCard.__str__"
+    },
+    {
+      "front": "What is the shape of 'has-a' vs 'is-a' in plain English?",
+      "back": "Has-a (composition): 'A Player has a BingoCard.' The player contains a card.\nIs-a (inheritance): 'A Warrior is a Character.' The warrior extends and specialises the character. Lab 04 is composition. Inheritance comes later in the course."
+    },
+    {
+      "front": "How would you find the player with the most wins from a list?",
+      "back": "Use max() with a key function that returns each player's win count.",
+      "code": "best = max(players, key=lambda p: p.wins)\nprint(f'{best.name} leads with {best.wins} wins')"
+    },
+    {
+      "front": "What is a class designed to manage multiple instances of another class called?",
+      "back": "Often called a 'manager' or 'container' class - or in game contexts, a 'game' or 'session' class. BingoGame in the optimal solution manages a list of Player objects and coordinates the game loop."
+    }
+  ]
+}

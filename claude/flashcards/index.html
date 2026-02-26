@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards</title>
+  <style>
+    /* ============================================================
+       IMPORTS & DESIGN TOKENS
+       Warm dark "coder's lamp" aesthetic — like studying at night
+       with good lighting. Amber accents match the lab files.
+    ============================================================ */
+    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg:          #100e0a;
+      --surface:     #1a1611;
+      --surface2:    #221e17;
+      --border:      #332d22;
+      --text:        #e8ddc8;
+      --muted:       #7a6e58;
+      --amber:       #c0540a;
+      --amber-light: #e8721a;
+      --green:       #2a6b4a;
+      --green-light: #3d9e6e;
+      --red:         #8b2c2c;
+      --card-front:  #1e1a13;
+      --card-back:   #141210;
+      --mono:        'JetBrains Mono', 'Courier New', monospace;
+      --serif:       'Lora', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--serif);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+      /* Subtle noise texture for depth */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 1.5rem;
+    }
+
+    .deck-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.3rem;
+    }
+
+    #deck-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: flex;
+      gap: 1rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .stat-known  { color: var(--green-light); }
+    .stat-unsure { color: var(--amber); }
+
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Card stage — 3D perspective container ── */
+    .card-stage {
+      width: 100%;
+      max-width: 720px;
+      perspective: 1200px;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* The card itself — uses CSS 3D transform for flip */
+    .card {
+      width: 100%;
+      min-height: 340px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 12px;
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* Both faces share this base */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 2.5rem;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    /* Front face */
+    .card-front {
+      background: var(--card-front);
+      /* Subtle amber glow on the top edge */
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 1px 0 0 rgba(192, 84, 10, 0.3),
+        0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    /* Back face — rotated 180deg so it's hidden at start */
+    .card-back {
+      background: var(--card-back);
+      transform: rotateY(180deg);
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 1px 0 0 rgba(42, 107, 74, 0.3),
+        0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    /* Face label (QUESTION / ANSWER) */
+    .face-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1.25rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    .card-front .face-label {
+      color: var(--amber);
+      border: 1px solid rgba(192, 84, 10, 0.4);
+      background: rgba(192, 84, 10, 0.08);
+    }
+
+    .card-back .face-label {
+      color: var(--green-light);
+      border: 1px solid rgba(42, 107, 74, 0.4);
+      background: rgba(42, 107, 74, 0.08);
+    }
+
+    /* Question text */
+    .card-question {
+      font-size: clamp(1.1rem, 3vw, 1.45rem);
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text);
+      max-width: 56ch;
+    }
+
+    /* Answer text */
+    .card-answer {
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      line-height: 1.65;
+      color: var(--text);
+      max-width: 58ch;
+    }
+
+    /* Code block inside card */
+    .card-code {
+      margin-top: 1.25rem;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #c8b89a;
+      white-space: pre;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    /* Flip hint */
+    .flip-hint {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 2rem;
+      opacity: 0.6;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Know-it row */
+    .know-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    /* Navigation row */
+    .nav-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* Base button style */
+    button {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0.6rem 1rem;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 2px;
+    }
+
+    /* "Got it" button */
+    #btn-known {
+      flex: 1;
+      background: rgba(42, 107, 74, 0.12);
+      border-color: var(--green);
+      color: var(--green-light);
+    }
+    #btn-known:hover { background: rgba(42, 107, 74, 0.25); }
+
+    /* "Still learning" button */
+    #btn-unsure {
+      flex: 1;
+      background: rgba(192, 84, 10, 0.1);
+      border-color: var(--amber);
+      color: var(--amber-light);
+    }
+    #btn-unsure:hover { background: rgba(192, 84, 10, 0.22); }
+
+    /* Prev / Next */
+    #btn-prev, #btn-next {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--muted);
+      padding: 0.6rem 1.25rem;
+    }
+    #btn-prev:hover, #btn-next:hover {
+      border-color: var(--amber);
+      color: var(--amber-light);
+    }
+    #btn-prev:disabled, #btn-next:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Card counter */
+    #card-counter {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Shuffle & Reset */
+    .utility-row {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    #btn-shuffle, #btn-reset {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+    #btn-shuffle:hover, #btn-reset:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* ── Keyboard hint bar ── */
+    .keyboard-hints {
+      width: 100%;
+      max-width: 720px;
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .hint {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text);
+    }
+
+    /* ── Error / Loading states ── */
+    #state-message {
+      width: 100%;
+      max-width: 720px;
+      padding: 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    #state-message.visible { display: block; }
+
+    .state-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .state-text {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .state-code {
+      margin-top: 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--amber);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      display: inline-block;
+    }
+
+    /* ── Complete screen ── */
+    #complete-screen {
+      width: 100%;
+      max-width: 720px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      display: none;
+    }
+
+    #complete-screen.visible { display: block; }
+
+    .complete-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .complete-stats {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 1rem 0 1.5rem;
+      line-height: 1.8;
+    }
+
+    .complete-stats .hl-green { color: var(--green-light); }
+    .complete-stats .hl-amber { color: var(--amber); }
+
+    /* ── Deck picker ── */
+    .deck-picker-wrap {
+      width: 100%;
+      max-width: 720px;
+      position: relative;
+      margin-bottom: 1.75rem;
+    }
+
+    .deck-picker-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--amber);
+      font-size: 0.75rem;
+      pointer-events: none;
+    }
+
+    #deck-select {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0.6rem 2.2rem 0.6rem 0.9rem;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+
+    #deck-select:hover,
+    #deck-select:focus {
+      border-color: var(--amber);
+      outline: none;
+    }
+
+    #deck-select option,
+    #deck-select optgroup {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .card-face { padding: 1.75rem 1.25rem; }
+      .card-question { font-size: 1rem; }
+      .card-answer { font-size: 0.9rem; }
+      .know-row, .nav-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════
+       DECK PICKER
+  ════════════════════════════════════════════════════════ -->
+  <div class="deck-picker-wrap">
+    <select id="deck-select" aria-label="Select a flashcard deck">
+      <option value="">— Select a deck —</option>
+
+      <optgroup label="01 · Error Handling">
+        <option value="01-error-handling/concept01.json">CONCEPT — Error Handling</option>
+      </optgroup>
+
+      <optgroup label="02 · OOP">
+        <option value="02-oop/concept01.json">CONCEPT — Procedural to OOP</option>
+      </optgroup>
+
+      <optgroup label="03 · 2D Lists">
+        <option value="03-2d-lists/concept01.json">CONCEPT — 2D Lists</option>
+      </optgroup>
+
+      <optgroup label="04 · Classes (Arc 02)">
+        <option value="04-classes-02/lab01.json">LAB 1 — Bingo Class</option>
+        <option value="04-classes-02/lab02.json">LAB 2 — str</option>
+        <option value="04-classes-02/lab03.json">LAB 3 — Encapsulation</option>
+        <option value="04-classes-02/lab04.json">LAB 4 — Instances</option>
+        <option value="04-classes-02/lab05.json">LAB 5 — classmethod</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════════════════ -->
+  <header>
+    <p class="deck-label">Flashcard Deck</p>
+    <h1 id="deck-title">Loading…</h1>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════
+       PROGRESS
+  ════════════════════════════════════════════════════════ -->
+  <div class="progress-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-row">
+      <span class="progress-label" id="progress-label">Card 1 of 0</span>
+      <div class="stats">
+        <span class="stat-known" id="stat-known">✓ 0 known</span>
+        <span class="stat-unsure" id="stat-unsure">↻ 0 learning</span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       STATE MESSAGE (error / loading)
+  ════════════════════════════════════════════════════════ -->
+  <div id="state-message">
+    <div class="state-icon" id="state-icon">⏳</div>
+    <div class="state-text" id="state-text">Loading deck…</div>
+    <div class="state-code" id="state-code" style="display:none"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       CARD STAGE
+  ════════════════════════════════════════════════════════ -->
+  <div class="card-stage" id="card-stage" style="display:none"
+       role="button"
+       aria-label="Flashcard — click to flip"
+       tabindex="0">
+    <div class="card" id="card">
+
+      <!-- Front face -->
+      <div class="card-face card-front" aria-hidden="false" id="card-front">
+        <span class="face-label">Question</span>
+        <p class="card-question" id="card-question"></p>
+        <p class="flip-hint">click or press Space to reveal</p>
+      </div>
+
+      <!-- Back face -->
+      <div class="card-face card-back" aria-hidden="true" id="card-back">
+        <span class="face-label">Answer</span>
+        <p class="card-answer" id="card-answer"></p>
+        <pre class="card-code" id="card-code" style="display:none"></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       CONTROLS
+  ════════════════════════════════════════════════════════ -->
+  <div class="controls" id="controls" style="display:none">
+
+    <!-- Know-it row — only shown when card is flipped -->
+    <div class="know-row" id="know-row" style="display:none">
+      <button id="btn-known"  aria-label="Mark as known">✓ Got it</button>
+      <button id="btn-unsure" aria-label="Mark as still learning">↻ Still learning</button>
+    </div>
+
+    <!-- Navigation row -->
+    <div class="nav-row">
+      <button id="btn-prev" aria-label="Previous card" disabled>← Prev</button>
+      <span   id="card-counter"></span>
+      <button id="btn-next" aria-label="Next card">Next →</button>
+    </div>
+
+    <!-- Utility row -->
+    <div class="utility-row">
+      <button id="btn-shuffle">⇄ Shuffle</button>
+      <button id="btn-reset">↺ Reset progress</button>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       COMPLETE SCREEN
+  ════════════════════════════════════════════════════════ -->
+  <div id="complete-screen">
+    <div class="complete-title">🎉 Deck complete!</div>
+    <div class="complete-stats" id="complete-stats"></div>
+    <button id="btn-restart" style="background:var(--surface2);border-color:var(--amber);color:var(--amber-light);padding:0.75rem 2rem;">
+      ↺ Go again
+    </button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       KEYBOARD HINTS
+  ════════════════════════════════════════════════════════ -->
+  <div class="keyboard-hints" id="keyboard-hints" style="display:none">
+    <span class="hint"><kbd>Space</kbd> flip</span>
+    <span class="hint"><kbd>←</kbd><kbd>→</kbd> navigate</span>
+    <span class="hint"><kbd>K</kbd> got it</span>
+    <span class="hint"><kbd>L</kbd> still learning</span>
+    <span class="hint"><kbd>S</kbd> shuffle</span>
+  </div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+"use strict";
+
+/* ──────────────────────────────────────────────
+   STATE
+   Everything the app knows lives here.
+   We never store mutable data in the DOM.
+────────────────────────────────────────────── */
+const state = {
+  deck:       [],        // the full array of card objects from JSON
+  order:      [],        // indices into deck — we shuffle this, not the deck
+  current:    0,         // index into order[] that we're showing
+  flipped:    false,     // is the current card face-down (showing answer)?
+  known:      new Set(), // indices of cards the user marked as "got it"
+  unsure:     new Set(), // indices of cards marked "still learning"
+};
+
+/* ──────────────────────────────────────────────
+   DOM REFERENCES
+   Grab everything once at startup.
+────────────────────────────────────────────── */
+const els = {
+  deckTitle:      document.getElementById('deck-title'),
+  progressWrap:   document.getElementById('progress-wrap'),
+  progressLabel:  document.getElementById('progress-label'),
+  progressFill:   document.getElementById('progress-fill'),
+  statKnown:      document.getElementById('stat-known'),
+  statUnsure:     document.getElementById('stat-unsure'),
+  stateMessage:   document.getElementById('state-message'),
+  stateIcon:      document.getElementById('state-icon'),
+  stateText:      document.getElementById('state-text'),
+  stateCode:      document.getElementById('state-code'),
+  cardStage:      document.getElementById('card-stage'),
+  card:           document.getElementById('card'),
+  cardFront:      document.getElementById('card-front'),
+  cardBack:       document.getElementById('card-back'),
+  cardQuestion:   document.getElementById('card-question'),
+  cardAnswer:     document.getElementById('card-answer'),
+  cardCode:       document.getElementById('card-code'),
+  controls:       document.getElementById('controls'),
+  knowRow:        document.getElementById('know-row'),
+  btnKnown:       document.getElementById('btn-known'),
+  btnUnsure:      document.getElementById('btn-unsure'),
+  btnPrev:        document.getElementById('btn-prev'),
+  btnNext:        document.getElementById('btn-next'),
+  cardCounter:    document.getElementById('card-counter'),
+  btnShuffle:     document.getElementById('btn-shuffle'),
+  btnReset:       document.getElementById('btn-reset'),
+  completeScreen: document.getElementById('complete-screen'),
+  completeStats:  document.getElementById('complete-stats'),
+  btnRestart:     document.getElementById('btn-restart'),
+  keyboardHints:  document.getElementById('keyboard-hints'),
+};
+
+/* ──────────────────────────────────────────────
+   SHOW ERROR / LOADING STATES
+────────────────────────────────────────────── */
+function showState(icon, message, code = null) {
+  els.stateMessage.classList.add('visible');
+  els.stateIcon.textContent = icon;
+  els.stateText.textContent = message;
+  if (code) {
+    els.stateCode.textContent = code;
+    els.stateCode.style.display = 'inline-block';
+  }
+}
+
+function hideState() {
+  els.stateMessage.classList.remove('visible');
+}
+
+/* ──────────────────────────────────────────────
+   LOAD DECK FROM URL PARAMETER
+   Usage: flashcards.html?deck=lab01.json
+   The JSON file must be served from the same
+   server (or CORS-enabled origin).
+────────────────────────────────────────────── */
+async function loadDeck() {
+  // Read the ?deck= parameter from the URL
+  const params   = new URLSearchParams(window.location.search);
+  const deckPath = params.get('deck');
+
+  // No parameter provided — show instructions
+  if (!deckPath) {
+    document.title = 'Flashcards — No Deck';
+    els.deckTitle.textContent = 'No deck loaded';
+    showState(
+      '📂',
+      'Add a ?deck= parameter to the URL to load a flashcard deck.\nExample: flashcards.html?deck=deck_lab01.json'
+    );
+    return;
+  }
+
+  // Show loading state while we fetch
+  showState('⏳', `Loading ${deckPath}…`);
+
+  let data;
+  try {
+    // fetch() requires a server — won't work from file:// protocol
+    const response = await fetch(deckPath);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} — ${response.statusText}`);
+    }
+    data = await response.json();
+  } catch (err) {
+    // Show a helpful error with the actual message
+    showState(
+      '⚠️',
+      `Could not load "${deckPath}".\n${err.message}\n\nMake sure the file is on the same server and the path is correct.`,
+      deckPath
+    );
+    return;
+  }
+
+  // Basic validation — the JSON must have a cards array
+  if (!data.cards || !Array.isArray(data.cards) || data.cards.length === 0) {
+    showState('⚠️', 'The deck JSON must have a "cards" array with at least one card.');
+    return;
+  }
+
+  hideState();
+  initDeck(data);
+}
+
+/* ──────────────────────────────────────────────
+   INITIALISE DECK
+   Called once after JSON loads successfully.
+────────────────────────────────────────────── */
+function initDeck(data) {
+  // Store the deck and build a sequential order array [0, 1, 2, …]
+  state.deck    = data.cards;
+  state.order   = data.cards.map((_, i) => i);
+  state.current = 0;
+  state.flipped = false;
+  state.known.clear();
+  state.unsure.clear();
+
+  // Update the page title and header
+  const title = data.title || 'Flashcard Deck';
+  document.title = title;
+  els.deckTitle.textContent = title;
+
+  // Show the UI elements that were hidden during load
+  els.progressWrap.style.display  = 'block';
+  els.cardStage.style.display     = 'block';
+  els.controls.style.display      = 'flex';
+  els.keyboardHints.style.display = 'flex';
+
+  renderCard();
+  updateProgress();
+}
+
+/* ──────────────────────────────────────────────
+   RENDER CURRENT CARD
+   Reads state.order[state.current] to find
+   which card object to display.
+────────────────────────────────────────────── */
+function renderCard() {
+  const cardIndex = state.order[state.current];
+  const card      = state.deck[cardIndex];
+
+  // Reset flip to show front
+  state.flipped = false;
+  els.card.classList.remove('is-flipped');
+  els.knowRow.style.display = 'none';
+
+  // Front face content
+  els.cardQuestion.textContent = card.front;
+
+  // Back face content
+  els.cardAnswer.textContent = card.back;
+
+  // Optional code block — shown only if the card has a "code" field
+  if (card.code) {
+    els.cardCode.textContent = card.code;
+    els.cardCode.style.display = 'block';
+  } else {
+    els.cardCode.style.display = 'none';
+  }
+
+  // Update navigation buttons
+  els.btnPrev.disabled = (state.current === 0);
+  els.btnNext.disabled = (state.current === state.order.length - 1);
+  els.cardCounter.textContent = `${state.current + 1} / ${state.order.length}`;
+
+  // Update card stage aria-label for screen readers
+  els.cardStage.setAttribute('aria-label',
+    `Card ${state.current + 1} of ${state.order.length}: ${card.front}`);
+}
+
+/* ──────────────────────────────────────────────
+   FLIP THE CARD
+────────────────────────────────────────────── */
+function flipCard() {
+  state.flipped = !state.flipped;
+  els.card.classList.toggle('is-flipped', state.flipped);
+
+  // Show the "got it / still learning" buttons only when answer is visible
+  els.knowRow.style.display = state.flipped ? 'flex' : 'none';
+}
+
+/* ──────────────────────────────────────────────
+   MARK CARD AS KNOWN / STILL LEARNING
+────────────────────────────────────────────── */
+function markKnown() {
+  if (!state.flipped) return;  // must see the answer first
+  const cardIndex = state.order[state.current];
+  state.known.add(cardIndex);
+  state.unsure.delete(cardIndex);
+  updateProgress();
+  goNext();
+}
+
+function markUnsure() {
+  if (!state.flipped) return;
+  const cardIndex = state.order[state.current];
+  state.unsure.add(cardIndex);
+  state.known.delete(cardIndex);
+  updateProgress();
+  goNext();
+}
+
+/* ──────────────────────────────────────────────
+   NAVIGATE BETWEEN CARDS
+────────────────────────────────────────────── */
+function goPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderCard();
+    updateProgress();
+  }
+}
+
+function goNext() {
+  if (state.current < state.order.length - 1) {
+    state.current++;
+    renderCard();
+    updateProgress();
+  } else {
+    // Reached the end — show completion screen
+    showComplete();
+  }
+}
+
+/* ──────────────────────────────────────────────
+   SHUFFLE
+   Fisher-Yates shuffle on state.order so the
+   deck cards themselves stay in place.
+────────────────────────────────────────────── */
+function shuffleDeck() {
+  const arr = state.order;
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  state.current = 0;
+  renderCard();
+  updateProgress();
+}
+
+/* ──────────────────────────────────────────────
+   RESET PROGRESS
+   Clears known/unsure and restores original order.
+────────────────────────────────────────────── */
+function resetProgress() {
+  state.order   = state.deck.map((_, i) => i);
+  state.current = 0;
+  state.known.clear();
+  state.unsure.clear();
+
+  // Hide complete screen if visible
+  els.completeScreen.classList.remove('visible');
+  els.cardStage.style.display   = 'block';
+  els.controls.style.display    = 'flex';
+  els.progressWrap.style.display = 'block';
+
+  renderCard();
+  updateProgress();
+}
+
+/* ──────────────────────────────────────────────
+   UPDATE PROGRESS BAR + STATS
+────────────────────────────────────────────── */
+function updateProgress() {
+  const total   = state.order.length;
+  const seen    = state.current + 1;
+  const pct     = Math.round((seen / total) * 100);
+  const knownN  = state.known.size;
+  const unsureN = state.unsure.size;
+
+  els.progressLabel.textContent = `Card ${seen} of ${total}`;
+  els.progressFill.style.width  = `${pct}%`;
+  els.statKnown.textContent     = `✓ ${knownN} known`;
+  els.statUnsure.textContent    = `↻ ${unsureN} learning`;
+}
+
+/* ──────────────────────────────────────────────
+   COMPLETION SCREEN
+────────────────────────────────────────────── */
+function showComplete() {
+  const total   = state.deck.length;
+  const knownN  = state.known.size;
+  const unsureN = state.unsure.size;
+  const unmarked = total - knownN - unsureN;
+
+  els.completeStats.innerHTML = `
+    <span class="hl-green">✓ ${knownN} cards marked as known</span><br>
+    <span class="hl-amber">↻ ${unsureN} cards still learning</span><br>
+    ${unmarked > 0 ? `${unmarked} cards not yet rated` : ''}
+  `;
+
+  els.cardStage.style.display    = 'none';
+  els.controls.style.display     = 'none';
+  els.progressWrap.style.display = 'none';
+  els.completeScreen.classList.add('visible');
+}
+
+/* ──────────────────────────────────────────────
+   EVENT LISTENERS — mouse / touch
+────────────────────────────────────────────── */
+els.cardStage.addEventListener('click', flipCard);
+
+els.btnKnown.addEventListener('click',  (e) => { e.stopPropagation(); markKnown();  });
+els.btnUnsure.addEventListener('click', (e) => { e.stopPropagation(); markUnsure(); });
+
+els.btnPrev.addEventListener('click',    (e) => { e.stopPropagation(); goPrev();         });
+els.btnNext.addEventListener('click',    (e) => { e.stopPropagation(); goNext();         });
+els.btnShuffle.addEventListener('click', (e) => { e.stopPropagation(); shuffleDeck();    });
+els.btnReset.addEventListener('click',   (e) => { e.stopPropagation(); resetProgress();  });
+els.btnRestart.addEventListener('click', resetProgress);
+
+/* ──────────────────────────────────────────────
+   EVENT LISTENERS — keyboard
+   Space/Enter  → flip
+   ArrowLeft    → previous
+   ArrowRight   → next
+   K            → mark known
+   L            → mark still learning
+   S            → shuffle
+────────────────────────────────────────────── */
+document.addEventListener('keydown', (e) => {
+  // Don't intercept if a button or interactive element has focus
+  // (other than our card stage)
+  const tag = document.activeElement.tagName;
+  if (tag === 'BUTTON' && document.activeElement !== els.cardStage) return;
+
+  switch (e.key) {
+    case ' ':
+    case 'Enter':
+      e.preventDefault();
+      flipCard();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      goPrev();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      goNext();
+      break;
+    case 'k':
+    case 'K':
+      markKnown();
+      break;
+    case 'l':
+    case 'L':
+      markUnsure();
+      break;
+    case 's':
+    case 'S':
+      shuffleDeck();
+      break;
+  }
+});
+
+/* ──────────────────────────────────────────────
+   DECK PICKER — select handler
+────────────────────────────────────────────── */
+const deckSelect = document.getElementById('deck-select');
+
+function switchDeck(deckFile) {
+  const url = new URL(window.location);
+  url.searchParams.set('deck', deckFile);
+  window.history.pushState({}, '', url);
+  // Hide stale UI before loading
+  els.completeScreen.classList.remove('visible');
+  els.cardStage.style.display      = 'none';
+  els.controls.style.display       = 'none';
+  els.progressWrap.style.display   = 'none';
+  els.keyboardHints.style.display  = 'none';
+  loadDeck();
+}
+
+deckSelect.addEventListener('change', () => {
+  if (deckSelect.value) switchDeck(deckSelect.value);
+});
+
+/* ──────────────────────────────────────────────
+   BOOT — load the deck when the page opens
+────────────────────────────────────────────── */
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const deck   = params.get('deck');
+  if (deck) {
+    deckSelect.value = deck;  // sync select to URL on direct link
+    loadDeck();
+  }
+}());
+</script>
+</body>
+</html>

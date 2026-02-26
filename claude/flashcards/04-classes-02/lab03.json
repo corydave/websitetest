@@ -1,0 +1,101 @@
+{
+  "deck-name": "LAB 3 - Encapsulation",  
+  "title": "OOP Arc · Lab 03 - Encapsulation",
+  "cards": [
+    {
+      "front": "What is encapsulation?",
+      "back": "The principle that an object manages its own data through controlled methods. Instead of allowing outside code to reach in and change data directly, all changes go through methods that can validate, compute, and protect."
+    },
+    {
+      "front": "What does the _ prefix convention mean in Python?",
+      "back": "A single underscore (e.g. self._entries) signals 'this is internal - please use the provided methods instead of accessing this directly.' It's a convention between programmers, not an enforced rule."
+    },
+    {
+      "front": "Does Python enforce the _ prefix rule?",
+      "back": "No. Python doesn't prevent you from accessing self._entries from outside the class. The underscore is a social contract - a warning to other programmers (including future you) to use the intended interface instead."
+    },
+    {
+      "front": "What is validation in a method?",
+      "back": "Checking that incoming data meets requirements before storing or processing it. In add_entry(), validation rejects negative minutes and empty activity names before they can corrupt the internal data."
+    },
+    {
+      "front": "What is a guard clause?",
+      "back": "An early return at the start of a method that exits immediately if the input is invalid. It keeps the 'happy path' unindented and makes error handling clear.",
+      "code": "def add_entry(self, activity, minutes):\n    if minutes <= 0:          # guard clause\n        print('Error: ...')\n        return                # exit early\n    self._entries.append(...) # happy path"
+    },
+    {
+      "front": "Why validate inside add_entry() rather than before calling it?",
+      "back": "Centralising validation inside the class means the rule is enforced everywhere, automatically. Any code that calls add_entry() gets the validation for free. If you validate outside, you must remember to do it every time."
+    },
+    {
+      "front": "What does sum(e[\"minutes\"] for e in self._entries) do?",
+      "back": "It adds up the 'minutes' value from every dict in self._entries. The expression inside sum() is a generator - it produces values one at a time without building an intermediate list, which is memory-efficient.",
+      "code": "total = sum(e[\"minutes\"] for e in self._entries)"
+    },
+    {
+      "front": "What is a generator expression?",
+      "back": "An expression like (x for x in iterable if condition) that produces values one at a time without building a full list in memory. Used inside sum(), any(), all(), and other built-ins that consume iterables.",
+      "code": "# List comprehension - builds the whole list first\n[e[\"minutes\"] for e in self._entries]\n\n# Generator expression - produces values one by one\n(e[\"minutes\"] for e in self._entries)"
+    },
+    {
+      "front": "What does set() do when given a list?",
+      "back": "It creates a set from the list, automatically removing all duplicates. Order is not preserved. Useful for getting unique values quickly.",
+      "code": "activities = ['Reading', 'LAB1', 'Reading', 'LAB2']\nset(activities)\n# → {'LAB1', 'LAB2', 'Reading'}"
+    },
+    {
+      "front": "How does activity_total(self, activity) replace five repetitive functions?",
+      "back": "The original code had reading_total(), lab_total(), own_lab_total(), etc. - each nearly identical. activity_total() accepts the activity name as a parameter, so one method handles every case. Less code, same result."
+    },
+    {
+      "front": "What does max(activities, key=self.activity_total) do?",
+      "back": "It finds the activity string in the activities list that produces the highest value when passed to self.activity_total(). The key= argument tells max() how to score each item for comparison.",
+      "code": "# Returns the activity name with the most total minutes\nmax(['Reading', 'LAB1', 'LAB3'], key=self.activity_total)"
+    },
+    {
+      "front": "What does isinstance(n, (int, float)) check?",
+      "back": "It returns True if n is an instance of either int or float. Passing a tuple of types to isinstance() checks against all of them at once. Used in add_entry() to reject strings or None passed as minutes."
+    },
+    {
+      "front": "What is the difference between self._entries and self.entries (no underscore)?",
+      "back": "Functionally identical in Python - both are accessible. The underscore is purely a naming convention signalling that _entries is an internal implementation detail. Without the underscore, there's no signal to other programmers that they shouldn't touch it directly."
+    },
+    {
+      "front": "What does sorted(set(e[\"activity\"] for e in self._entries)) produce?",
+      "back": "A sorted list of unique activity names from all entries. The generator gets all activity names, set() removes duplicates, and sorted() puts them in alphabetical order.",
+      "code": "# If entries include: Reading, LAB1, Reading, LAB3\nsorted(set(...)) → ['LAB1', 'LAB3', 'Reading']"
+    },
+    {
+      "front": "What does activity.strip() do?",
+      "back": "Removes leading and trailing whitespace from the activity string. Important for validation - '  Reading  ' and 'Reading' should be treated as the same activity, not stored as two different ones."
+    },
+    {
+      "front": "Can code outside the class access self._entries?",
+      "back": "Yes - Python doesn't block it. But by convention, you shouldn't. log._entries = 'oops' would break the class. The underscore is a warning, not a lock. (Python's __double_underscore causes name mangling but is rarely needed.)"
+    },
+    {
+      "front": "What's the benefit of storing data as a list of dicts vs. parallel lists?",
+      "back": "A list of dicts keeps related data together: one dict per entry with 'activity' and 'minutes' always paired. Parallel lists (one for activities, one for minutes) can get out of sync if you add to one but forget the other.",
+      "code": "# Good - related data travels together:\n[{'activity': 'Reading', 'minutes': 136}, ...]\n\n# Fragile - must stay in sync manually:\nactivities = ['Reading', ...]\nminutes    = [136, ...]"
+    },
+    {
+      "front": "What is the difference between return False and just return?",
+      "back": "return False returns the boolean value False to the caller. Plain return returns None. In a validation guard clause, return False is more useful because the caller can check if the entry was accepted. Plain return would make the result look the same as a None-returning method."
+    },
+    {
+      "front": "What does the 'days=7' default parameter in report(self, days=7) do?",
+      "back": "It makes days optional. Calling log.report() uses 7 days. Calling log.report(days=30) uses 30. Default parameters let a method be flexible without requiring callers to always specify every argument."
+    },
+    {
+      "front": "What's the encapsulation benefit over a plain list?",
+      "back": "A plain list lets anyone add any data in any format. The StudyLog class ensures all entries have the right structure, that minutes are positive, and that activity names are non-empty. The class is the single place where these rules live."
+    },
+    {
+      "front": "If you call log.add_entry(\"Reading\", -50), what happens?",
+      "back": "The validation inside add_entry() catches minutes <= 0, prints an error message, and returns without adding anything to self._entries. The bad data never reaches the internal list."
+    },
+    {
+      "front": "What does len(self._entries) return?",
+      "back": "The number of entries currently stored in the internal list. Used in __str__ to report how many study sessions have been logged."
+    }
+  ]
+}

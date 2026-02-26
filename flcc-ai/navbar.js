@@ -84,10 +84,10 @@
         '        </span>',
         '        <div class="dropdown-menu">',
         '          <a href="' + bp + 'flcc.html">At FLCC</a>',
-        '          <a href="' + bp + 'for-organizations.html">For Organizations</a>',
-        '          <a href="' + bp + 'resources.html">Resources</a>',
-        '          <a href="' + bp + 'live-events.html">Live Events</a>',
         '          <a href="' + bp + 'calendar/">Calendar</a>',
+        '          <a href="' + bp + 'for-organizations.html">For Organizations</a>',
+        '          <a href="' + bp + 'live-events.html">Live Events</a>',
+        '          <a href="' + bp + 'resources.html">Resources</a>',
         '        </div>',
         '      </div>',
 

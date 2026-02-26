@@ -1,0 +1,146 @@
+{
+  "deck-name": "CONCEPT - 2D Lists",    
+  "title": "2D Lists - Grids, Nested Loops & Patterns",
+  "cards": [
+    {
+      "front": "What is a 2D list?",
+      "back": "A list whose elements are themselves lists. Also called a nested list or a list of lists. Used to represent grids, tables, game boards, spreadsheets - anything with rows and columns.",
+      "code": "grid = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]"
+    },
+    {
+      "front": "How do you access a single element in a 2D list?",
+      "back": "Use two index brackets: grid[row][col]. The first index selects the row (a list), the second selects the element within that row. Both indices are zero-based.",
+      "code": "grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\ngrid[0][0]   # → 1  (top-left)\ngrid[1][2]   # → 6  (row 1, col 2)\ngrid[2][1]   # → 8  (bottom-middle)"
+    },
+    {
+      "front": "What does grid[row] return?",
+      "back": "The entire row at that index - a plain list. For a 3×3 grid, grid[1] returns [4, 5, 6]. You can then index into it: grid[1][2] → 6.",
+      "code": "grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\ngrid[1]      # → [4, 5, 6]\ngrid[1][2]   # → 6"
+    },
+    {
+      "front": "How do you find the number of rows in a 2D list?",
+      "back": "len(grid) - the outer list contains one element per row.",
+      "code": "grid = [[1,2,3],[4,5,6],[7,8,9]]\nlen(grid)        # → 3  (3 rows)"
+    },
+    {
+      "front": "How do you find the number of columns in a 2D list?",
+      "back": "len(grid[0]) - the length of the first row. This assumes all rows are the same length (a rectangular grid).",
+      "code": "grid = [[1,2,3],[4,5,6],[7,8,9]]\nlen(grid[0])     # → 3  (3 columns)"
+    },
+    {
+      "front": "How do you iterate over every element in a 2D list using nested loops?",
+      "back": "Use an outer loop for rows and an inner loop for columns. The outer variable gives you the row; the inner variable gives you the element.",
+      "code": "for row in range(len(grid)):\n    for col in range(len(grid[row])):\n        print(grid[row][col])\n\n# Or more Pythonically:\nfor row in grid:\n    for value in row:\n        print(value)"
+    },
+    {
+      "front": "What is the difference between iterating with indices vs. iterating directly?",
+      "back": "Iterating directly (for row in grid) is cleaner when you only need values. Iterating with indices (for r in range(len(grid))) is necessary when you also need to modify elements or know position.",
+      "code": "# Direct - values only:\nfor row in grid:\n    for val in row:\n        print(val)\n\n# With indices - needed for modification:\nfor r in range(len(grid)):\n    for c in range(len(grid[r])):\n        grid[r][c] *= 2"
+    },
+    {
+      "front": "How do you iterate column by column instead of row by row?",
+      "back": "Put the column loop on the outside and the row loop on the inside. For each column index, visit every row at that column.",
+      "code": "# Column by column:\nfor col in range(len(grid[0])):\n    for row in range(len(grid)):\n        print(grid[row][col])"
+    },
+    {
+      "front": "How do you create a 2D list filled with zeros?",
+      "back": "Use a list comprehension with an inner comprehension. Never use [[0] * cols] * rows - that creates rows that share the same list object.",
+      "code": "rows, cols = 3, 4\ngrid = [[0] * cols for _ in range(rows)]\n\n# DANGER - don't do this:\ngrid = [[0] * cols] * rows   # all rows are the SAME list!"
+    },
+    {
+      "front": "Why is [[0]*3]*3 dangerous for a 2D list?",
+      "back": "The * operator on a list repeats references, not copies. All three 'rows' point to the same inner list. Changing grid[0][1] also changes grid[1][1] and grid[2][1].",
+      "code": "bad = [[0]*3]*3\nbad[0][1] = 9\nprint(bad)\n# → [[0,9,0],[0,9,0],[0,9,0]]  ← all rows changed!"
+    },
+    {
+      "front": "How do you sum all elements in a 2D list?",
+      "back": "Nest sum() calls, or use a nested loop with a running total.",
+      "code": "# Nested sum() - most concise:\ntotal = sum(sum(row) for row in grid)\n\n# Manual loop:\ntotal = 0\nfor row in grid:\n    for val in row:\n        total += val"
+    },
+    {
+      "front": "How do you calculate the sum of a single row?",
+      "back": "sum(grid[row_index]) - each row is a plain list, so sum() works directly.",
+      "code": "grid = [[10, 20, 30], [40, 50, 60]]\nsum(grid[0])   # → 60\nsum(grid[1])   # → 150"
+    },
+    {
+      "front": "How do you calculate the sum of a single column?",
+      "back": "Sum the element at that column index across all rows using a generator or loop.",
+      "code": "# Sum column 1:\ncol_total = sum(grid[r][1] for r in range(len(grid)))\n\n# Or with a loop:\ncol_total = 0\nfor row in grid:\n    col_total += row[1]"
+    },
+    {
+      "front": "How do you find the maximum value in a 2D list?",
+      "back": "Use max() on a flattened generator, or nest max() calls.",
+      "code": "grid = [[3, 7, 2], [9, 1, 5]]\nmax_val = max(max(row) for row in grid)  # → 9\n\n# Alternative:\nmax_val = max(val for row in grid for val in row)"
+    },
+    {
+      "front": "How do you search for a value and return its position?",
+      "back": "Iterate with row and column indices. When the value is found, return a tuple (row, col). Return None if not found.",
+      "code": "def find_value(grid, target):\n    for r in range(len(grid)):\n        for c in range(len(grid[r])):\n            if grid[r][c] == target:\n                return (r, c)\n    return None"
+    },
+    {
+      "front": "What does enumerate() do, and why is it useful with 2D lists?",
+      "back": "enumerate() produces (index, value) pairs as it iterates. With 2D lists, it lets you get the row number alongside each row without a manual counter.",
+      "code": "for r, row in enumerate(grid):\n    for c, val in enumerate(row):\n        print(f'grid[{r}][{c}] = {val}')"
+    },
+    {
+      "front": "How do you create a new 2D list by transforming an existing one?",
+      "back": "Use a nested list comprehension - outer comprehension for rows, inner for elements. This builds a new grid without modifying the original.",
+      "code": "# Double every value:\ndoubled = [[val * 2 for val in row] for row in grid]\n\n# Apply a threshold:\nclamped = [[min(val, 100) for val in row] for row in grid]"
+    },
+    {
+      "front": "How do you transpose a 2D list (swap rows and columns)?",
+      "back": "Use zip(*grid) to transpose. zip() pairs up the i-th elements of each row, making them the new columns. Wrap in list(list(...)) to get a 2D list.",
+      "code": "grid = [[1,2,3],[4,5,6]]\ntransposed = [list(row) for row in zip(*grid)]\n# → [[1,4],[2,5],[3,6]]"
+    },
+    {
+      "front": "How do you count elements meeting a condition in a 2D list?",
+      "back": "Use sum() with a condition inside a generator. Python treats True as 1 and False as 0, so sum() effectively counts True values.",
+      "code": "# Count all values above 50:\ncount = sum(1 for row in grid for val in row if val > 50)\n\n# Or equivalently:\ncount = sum(val > 50 for row in grid for val in row)"
+    },
+    {
+      "front": "How do you check if any element in a 2D list meets a condition?",
+      "back": "Use any() with a generator. any() returns True as soon as one element satisfies the condition - it short-circuits and stops early.",
+      "code": "has_high = any(val > 90 for row in grid for val in row)\nhas_zero = any(val == 0 for row in grid for val in row)"
+    },
+    {
+      "front": "How do you check if all elements in a 2D list meet a condition?",
+      "back": "Use all() with a generator. all() returns False as soon as one element fails the condition.",
+      "code": "all_positive = all(val > 0 for row in grid for val in row)\nall_passing  = all(val >= 70 for row in grid for val in row)"
+    },
+    {
+      "front": "What does grid[r][c] = new_value do?",
+      "back": "It modifies the element at row r, column c in place. The 2D list itself is mutated - unlike creating a new list with a comprehension.",
+      "code": "grid = [[1, 2, 3], [4, 5, 6]]\ngrid[0][1] = 99\nprint(grid)  # → [[1, 99, 3], [4, 5, 6]]"
+    },
+    {
+      "front": "In the grade tracker labs, what do rows and columns each represent?",
+      "back": "Rows represent students (one row per student). Columns represent assignments or tests. grid[student_index][assignment_index] gives one student's score on one assignment.",
+      "code": "grades = [\n    [85, 92, 78],   # Student 0\n    [70, 68, 75],   # Student 1\n    [90, 95, 88],   # Student 2\n]\ngrades[1][2]   # → 75 (student 1, assignment 2)"
+    },
+    {
+      "front": "How do you calculate the average grade for one student (one row)?",
+      "back": "Sum the row and divide by its length. Handle the empty case.",
+      "code": "def student_average(grades, student_idx):\n    row = grades[student_idx]\n    if not row:\n        return 0\n    return sum(row) / len(row)"
+    },
+    {
+      "front": "How do you calculate the class average for one assignment (one column)?",
+      "back": "Sum the element at that column index across all rows, then divide by the number of rows.",
+      "code": "def assignment_average(grades, col):\n    total = sum(grades[r][col] for r in range(len(grades)))\n    return total / len(grades)"
+    },
+    {
+      "front": "How do you find all positions where a grade is below a threshold?",
+      "back": "Iterate with indices, collect (row, col) tuples where the condition is met, and return the list.",
+      "code": "def find_failing(grades, threshold=70):\n    failing = []\n    for r in range(len(grades)):\n        for c in range(len(grades[r])):\n            if grades[r][c] < threshold:\n                failing.append((r, c))\n    return failing"
+    },
+    {
+      "front": "In a game grid, how do you check the four neighbours of a cell?",
+      "back": "Define a list of direction offsets (up, down, left, right) and check that each neighbour's indices are within bounds before accessing.",
+      "code": "directions = [(-1,0),(1,0),(0,-1),(0,1)]\nfor dr, dc in directions:\n    nr, nc = r + dr, c + dc\n    if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]):\n        neighbour = grid[nr][nc]"
+    },
+    {
+      "front": "What is a flat list, and how do you flatten a 2D list into one?",
+      "back": "A flat list has no nesting - just one level. Flatten a 2D list by iterating over each row and each element with a single list comprehension.",
+      "code": "grid = [[1,2,3],[4,5,6],[7,8,9]]\nflat = [val for row in grid for val in row]\n# → [1,2,3,4,5,6,7,8,9]"
+    }
+  ]
+}

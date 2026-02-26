@@ -1,0 +1,115 @@
+{
+  "deck-name": "CONCEPT - Procedural to OOP",    
+  "title": "Week 02 - Procedural to Object-Oriented Programming",
+  "cards": [
+    {
+      "front": "What is the core difference between procedural and object-oriented programming?",
+      "back": "Procedural programming organises code around functions that operate on separate data. OOP organises code around objects that bundle data and the functions that operate on it together in one place."
+    },
+    {
+      "front": "What problem does OOP solve that procedural code struggles with?",
+      "back": "In procedural code, related data must be passed to every function that needs it. OOP eliminates this by keeping data on the object itself - methods access it via self without needing it as a parameter.",
+      "code": "# Procedural - student passed everywhere:\ncalculate_average(student)\nis_passing(student)\ndisplay_report(student)\n\n# OOP - data lives on the object:\nstudent.calculate_average()\nstudent.is_passing()\nstudent.display_report()"
+    },
+    {
+      "front": "What is a class?",
+      "back": "A blueprint for creating objects. It defines what data (attributes) and behaviour (methods) objects of that type will have. The class itself is not an object - it's the template used to create objects."
+    },
+    {
+      "front": "What is an object?",
+      "back": "A specific instance built from a class blueprint. It has its own copy of the attributes defined in the class. Also called an instance."
+    },
+    {
+      "front": "What are attributes?",
+      "back": "Variables that belong to an object. Defined inside __init__ using self.name = value. They store the object's data - the state that methods can read and modify.",
+      "code": "class Student:\n    def __init__(self, name):\n        self.name   = name    # attribute\n        self.grades = []      # attribute"
+    },
+    {
+      "front": "What are methods?",
+      "back": "Functions defined inside a class. They always take self as their first parameter, which gives them access to the object's own attributes and other methods.",
+      "code": "class Student:\n    def add_grade(self, grade):      # method\n        self.grades.append(grade)"
+    },
+    {
+      "front": "What is instantiation?",
+      "back": "The act of creating an object from a class. Python calls __init__ automatically when you do ClassName(). The result is a new instance.",
+      "code": "# Instantiation:\nalice = Student('Alice')   # creates one Student object\nbob   = Student('Bob')     # creates another, independent object"
+    },
+    {
+      "front": "What does it mean that 'everything in Python is an object'?",
+      "back": "Even built-in types like int, str, and list are instances of classes. 'hello'.upper() is a method call - str is a class with an upper() method. Python's object model is consistent all the way down."
+    },
+    {
+      "front": "How does the Book class demonstrate the basics of __init__ and self?",
+      "back": "Book.__init__ takes title, author, and total_pages, stores them as instance variables on self, and initialises current_page to 0. Every Book instance gets its own independent copy of these variables.",
+      "code": "class Book:\n    def __init__(self, title, author, total_pages):\n        self.title        = title\n        self.author       = author\n        self.total_pages  = total_pages\n        self.current_page = 0   # default starting value"
+    },
+    {
+      "front": "What method calculates reading progress as a percentage, and what edge case must it handle?",
+      "back": "progress_percent() divides current_page by total_pages and multiplies by 100. It must guard against division by zero when total_pages is 0.",
+      "code": "def progress_percent(self):\n    if self.total_pages == 0:\n        return 0\n    return (self.current_page / self.total_pages) * 100"
+    },
+    {
+      "front": "What is the difference between a method return value and printing inside a method?",
+      "back": "A method that returns a value gives the caller control - they can print it, store it, or use it in a calculation. A method that prints directly makes that decision itself. Returning is more flexible and testable."
+    },
+    {
+      "front": "How does the Student class demonstrate grade validation?",
+      "back": "add_grade() checks that the grade is between 0 and 100 before appending it. Invalid grades print an error and return False. Valid grades are appended and return True.",
+      "code": "def add_grade(self, grade):\n    if 0 <= grade <= 100:\n        self.grades.append(grade)\n        return True\n    print(f'Error: {grade} is invalid.')\n    return False"
+    },
+    {
+      "front": "How does calculate_average() handle an empty grades list?",
+      "back": "It checks if self.grades is empty (falsy) and returns 0 before attempting division. Without this guard, sum([]) / len([]) would raise ZeroDivisionError.",
+      "code": "def calculate_average(self):\n    if not self.grades:\n        return 0\n    return sum(self.grades) / len(self.grades)"
+    },
+    {
+      "front": "How is get_letter_grade() implemented as a method rather than a standalone function?",
+      "back": "It calls self.calculate_average() to get the current average - no data passed as a parameter. The grade thresholds are checked with if/elif, returning 'A' through 'F'.",
+      "code": "def get_letter_grade(self):\n    avg = self.calculate_average()\n    if avg >= 90: return 'A'\n    if avg >= 80: return 'B'\n    if avg >= 70: return 'C'\n    if avg >= 60: return 'D'\n    return 'F'"
+    },
+    {
+      "front": "What does refactoring mean?",
+      "back": "Rewriting existing code to improve its structure - without changing what it does. The Week 02 Level 2 lab is a refactoring: you take working procedural code and reorganise it into a class without altering the program's output."
+    },
+    {
+      "front": "What is composition? How does the Library system demonstrate it?",
+      "back": "Composition is when one class contains instances of another class. The Library class contains a list of Book objects. Library has-a collection of Books - it doesn't inherit from Book.",
+      "code": "class Library:\n    def __init__(self):\n        self.books = []   # a list of Book objects\n\n    def add_book(self, book):   # accepts a Book instance\n        self.books.append(book)"
+    },
+    {
+      "front": "What is separation of concerns in the Library system?",
+      "back": "Each class is responsible for one thing: Book manages its own data (title, author, checked-out status). Library manages a collection of Books (search, add, checkout). Neither does the other's job."
+    },
+    {
+      "front": "Why is it better to pass a Book object to Library.add_book() rather than passing individual fields?",
+      "back": "Passing the whole object keeps the interface stable - if Book gains new attributes, add_book() doesn't need to change. It also lets Library store a reference to the real object, so checkout() can update the Book's state directly."
+    },
+    {
+      "front": "What is an API in the context of a class?",
+      "back": "The set of public methods a class exposes to the outside world. In the Student class, the API is: add_grade(), calculate_average(), is_passing(), get_letter_grade(), display_report(). Internal data (self.grades) is implementation detail."
+    },
+    {
+      "front": "What does 'not self.grades' evaluate to when the grades list is empty?",
+      "back": "True - an empty list is falsy in Python. not [] → True. This is why 'if not self.grades: return 0' correctly catches the no-grades case.",
+      "code": "bool([])          # → False\nnot []            # → True\nbool([85, 90])    # → True\nnot [85, 90]      # → False"
+    },
+    {
+      "front": "What does sum(self.grades) / len(self.grades) compute?",
+      "back": "The arithmetic mean (average) of all grades in the list. sum() adds them all up; len() counts them; dividing gives the mean. Python 3 division always returns a float."
+    },
+    {
+      "front": "How does is_passing() use calculate_average() rather than repeating its logic?",
+      "back": "is_passing() calls self.calculate_average() and compares the result to 70. It delegates the calculation rather than duplicating the average logic - one place to maintain, fewer bugs.",
+      "code": "def is_passing(self):\n    return self.calculate_average() >= 70"
+    },
+    {
+      "front": "How would you search for a book by title in the Library class?",
+      "back": "Iterate over self.books and compare each book's title attribute. Return the first match, or None if not found.",
+      "code": "def find_by_title(self, title):\n    for book in self.books:\n        if book.title.lower() == title.lower():\n            return book\n    return None"
+    },
+    {
+      "front": "What is the key insight of the Week 02 refactoring exercise?",
+      "back": "Functionally identical programs can have very different structure. The procedural and OOP versions of the grade tracker produce the same output - but the OOP version is easier to extend, harder to misuse, and more intuitive to read."
+    }
+  ]
+}
