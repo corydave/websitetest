@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- v1.0p PRODUCTION RELEASE -->
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body { font-family: 'Roboto', sans-serif; padding: 20px; background-color: #f5f5f5; box-sizing: border-box; }
+      .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      h1 { color: #202124; margin-top: 0; font-size: 1.5rem; }
+      
+      .input-group { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+      input[type="text"] { flex-grow: 1; min-width: 250px; padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; }
+      
+      .action-btn { padding: 10px 20px; font-size: 16px; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; white-space: nowrap; }
+      #gradeBtn { background-color: #1a73e8; }
+      #gradeBtn:hover { background-color: #1557b0; }
+      #gradeBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+      .utility-buttons { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+      #copyBtn { background-color: #34a853; }
+      #copyBtn:hover { background-color: #2d8e47; }
+      #copyMissingBtn { background-color: #d93025; }
+      #copyMissingBtn:hover { background-color: #a50e0e; }
+
+      /* Responsive Grid for Results */
+      #resultsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .result-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .result-card.pass { border-left: 5px solid #1e8e3e; }
+      .result-card.fail { border-left: 5px solid #d93025; }
+
+      .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+      .criteria-name { font-weight: 500; color: #202124; font-size: 1rem; }
+      .status-badge { font-size: 0.85rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
+      .status-pass { color: #1e8e3e; background-color: #e6f4ea; }
+      .status-fail { color: #d93025; background-color: #fce8e6; }
+
+      .card-points { font-size: 0.9rem; color: #5f6368; margin-bottom: 8px; }
+      .card-notes { font-size: 0.85rem; color: #666; line-height: 1.4; flex-grow: 1; }
+
+      .score-box { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; text-align: center; color: #1a73e8; }
+      
+      .loader { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #1a73e8; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>FLCC Assignment Grader v1.0p</h1>
+      <p>Paste the Google Doc URL below.</p>
+      
+      <div class="input-group">
+        <input type="text" id="docUrl" placeholder="https://docs.google.com/document/d/..." />
+        <button onclick="runGrader()" id="gradeBtn" class="action-btn">Grade Document</button>
+        <div class="loader" id="loader"></div>
+      </div>
+
+      <div id="resultsArea" style="display:none;">
+        <div class="score-box" id="finalScore"></div>
+        
+        <div class="utility-buttons">
+          <button onclick="copyResults()" id="copyBtn" class="action-btn">Copy Summary</button>
+          <button onclick="copyMissing()" id="copyMissingBtn" class="action-btn">Copy Missing</button>
+        </div>
+
+        <div id="resultsGrid"></div>
+      </div>
+    </div>
+
+    <script>
+      var lastResultData = null; // Store data for copy function
+
+      document.getElementById('docUrl').focus();
+
+      function runGrader() {
+        var url = document.getElementById('docUrl').value;
+        if (!url) return alert("Please enter a URL");
+        
+        document.getElementById('gradeBtn').disabled = true;
+        document.getElementById('loader').style.display = 'inline-block';
+        document.getElementById('resultsArea').style.display = 'none';
+        
+        google.script.run
+          .withSuccessHandler(showResults)
+          .withFailureHandler(showError)
+          .gradeDocument(url);
+      }
+
+      function showResults(data) {
+        lastResultData = data; // Save for copying
+        document.getElementById('gradeBtn').disabled = false;
+        document.getElementById('loader').style.display = 'none';
+        
+        if (data.error) {
+          alert("Error: " + data.error);
+          return;
+        }
+
+        var grid = document.getElementById('resultsGrid');
+        grid.innerHTML = "";
+        
+        data.items.forEach(function(item) {
+          var card = document.createElement('div');
+          card.className = 'result-card ' + (item.status === "Pass" ? "pass" : "fail");
+          
+          var statusClass = item.status === "Pass" ? "status-pass" : "status-fail";
+          
+          card.innerHTML = `
+            <div class="card-header">
+              <div class="criteria-name">${item.criteria}</div>
+              <div class="status-badge ${statusClass}">${item.status.toUpperCase()}</div>
+            </div>
+            <div class="card-points">${item.earned} / ${item.points} Points</div>
+            <div class="card-notes">${item.note}</div>
+          `;
+          
+          grid.appendChild(card);
+        });
+
+        document.getElementById('finalScore').textContent = "Total Score: " + data.score + " / " + data.totalPossible;
+        document.getElementById('resultsArea').style.display = 'block';
+      }
+
+      function copyResults() {
+        if (!lastResultData) return;
+
+        var text = "";
+        lastResultData.items.forEach(function(item) {
+          if (item.criteria === "PDF Submitted") return; 
+          text += item.criteria + ": " + item.status.toUpperCase() + "\n\n";
+        });
+
+        copyToClipboard(text, 'copyBtn');
+      }
+
+      function copyMissing() {
+        if (!lastResultData) return;
+
+        var text = "";
+        lastResultData.items.forEach(function(item) {
+          if (item.criteria === "PDF Submitted") return; 
+          if (item.status === "Fail") {
+            text += item.criteria + ": " + item.status.toUpperCase() + "\n\n";
+          }
+        });
+
+        if (text === "") text = "Great job! No missing requirements found.";
+
+        copyToClipboard(text, 'copyMissingBtn');
+      }
+
+      function copyToClipboard(text, btnId) {
+        var tempInput = document.createElement("textarea");
+        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        var btn = document.getElementById(btnId);
+        var originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(function() { btn.textContent = originalText; }, 2000);
+      }
+
+      function showError(err) {
+        document.getElementById('gradeBtn').disabled = false;
+        document.getElementById('loader').style.display = 'none';
+        alert("System Error: " + err);
+      }
+    </script>
+  </body>
+</html>
