@@ -1,0 +1,742 @@
+<?php
+session_start();
+$action = $_GET['action'] ?? '';
+$view = $_GET['view'] ?? '';
+$id = $_GET['id'] ?? '';
+
+// Helper for temporary file storage
+function getFilePath($id) {
+    return sys_get_temp_dir() . '/telemetry_sim_' . preg_replace('/[^a-zA-Z0-9]/', '', $id) . '.json';
+}
+
+// API: Start a new session
+if ($action === 'start') {
+    $id = substr(md5(uniqid()), 0, 8);
+    $defaultState = [
+        'rhythm' => 'sinus', 'saNodeRate' => 80, 'ventricularRate' => 150,
+        'flutterRatio' => '1:2', 'svtRate' => 180, 'vtRate' => 160,
+        'torsadesRate' => 220, 'escapeRate' => 40, 'prProlongation' => 0.32,
+        'blockSeverity' => 2, 'spo2' => 98, 'rr' => 16, 'sysBp' => 120, 'diaBp' => 80,
+        'joules' => 150, 'shockThreshold' => 100, 'shockTrigger' => 0
+    ];
+    file_put_contents(getFilePath($id), json_encode($defaultState));
+    
+    $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    $base = explode('?', $actual_link)[0];
+    $simUrl = $base . "?view=sim&id=" . $id;
+    $ctrlUrl = $base . "?view=ctrl&id=" . $id;
+} 
+// API: Poll state
+elseif ($action === 'poll' && $id) {
+    $file = getFilePath($id);
+    if (file_exists($file)) {
+        header('Content-Type: application/json');
+        echo file_get_contents($file);
+    } else {
+        http_response_code(404);
+        echo json_encode(['error' => 'Not found']);
+    }
+    exit;
+} 
+// API: Update state
+elseif ($action === 'update' && $id) {
+    $file = getFilePath($id);
+    if (file_exists($file)) {
+        $current = json_decode(file_get_contents($file), true);
+        $input = json_decode(file_get_contents('php://input'), true);
+        $new = array_merge($current, $input);
+        file_put_contents($file, json_encode($new));
+        echo json_encode(['status' => 'ok']);
+    }
+    exit;
+}
+
+$isSim = ($view === 'sim');
+$isCtrl = ($view === 'ctrl');
+$isHome = (!$isSim && !$isCtrl && $action !== 'start');
+$isLinks = ($action === 'start');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry Monitor System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans min-h-screen flex flex-col items-center">
+
+    <?php if ($isHome): ?>
+        <!-- LANDING PAGE -->
+        <div class="flex-1 flex flex-col items-center justify-center p-6 text-center w-full max-w-2xl">
+            <svg class="w-24 h-24 text-indigo-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">Telemetry Simulator</h1>
+            <p class="text-slate-400 text-lg mb-10">Initialize a cloud synchronized session to generate independent URLs for the simulation viewer and the instructor control panel.</p>
+            <a href="?action=start" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-10 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] text-xl transition-all hover:scale-105">
+                Start New Session
+            </a>
+        </div>
+
+    <?php elseif ($isLinks): ?>
+        <!-- LINKS PAGE -->
+        <div class="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-4xl">
+            <div class="bg-slate-800 border-2 border-slate-700 p-8 rounded-2xl w-full shadow-2xl">
+                <h2 class="text-3xl font-bold mb-6 text-white flex items-center gap-3">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Session Established
+                </h2>
+                
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wider">Simulation Viewer URL (Patient Display)</label>
+                    <div class="flex gap-2">
+                        <input type="text" readonly value="<?= htmlspecialchars($simUrl) ?>" class="flex-1 bg-slate-900 text-cyan-400 font-mono border border-slate-600 rounded-lg p-3 outline-none" />
+                        <a href="<?= htmlspecialchars($simUrl) ?>" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">Open</a>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wider">Instructor Controller URL (Admin Panel)</label>
+                    <div class="flex gap-2">
+                        <input type="text" readonly value="<?= htmlspecialchars($ctrlUrl) ?>" class="flex-1 bg-slate-900 text-indigo-400 font-mono border border-slate-600 rounded-lg p-3 outline-none" />
+                        <a href="<?= htmlspecialchars($ctrlUrl) ?>" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Open</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <?php else: ?>
+        <!-- MAIN SIMULATION APP -->
+        <div class="w-full p-2 md:p-6 flex flex-col items-center">
+            <!-- MONITOR UI -->
+            <div class="w-full max-w-6xl bg-black border-4 border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col mb-8">
+                
+                <!-- Monitor Header -->
+                <div class="bg-slate-950 px-4 py-2 flex justify-between items-center border-b border-slate-800 text-sm md:text-base">
+                    <div class="flex gap-4 items-center">
+                        <span class="font-bold text-white tracking-widest">SIM-PAT-01</span>
+                        <span class="text-slate-400">SESSION: <?= htmlspecialchars($id) ?></span>
+                    </div>
+                    <div class="text-slate-400 flex gap-4">
+                        <span id="time-display">--:--:--</span>
+                        <span>PACED: NO</span>
+                    </div>
+                </div>
+
+                <!-- Monitor Body -->
+                <div class="flex flex-col lg:flex-row relative">
+                    
+                    <!-- Waves Area -->
+                    <div class="flex-1 relative h-[300px] md:h-[450px] overflow-hidden">
+                        <canvas id="bgCanvas" width="1200" height="450" class="absolute top-0 left-0 w-full h-full object-fill"></canvas>
+                        <canvas id="mainCanvas" width="1200" height="450" class="absolute top-0 left-0 w-full h-full object-fill z-10"></canvas>
+                        
+                        <!-- Trace Labels -->
+                        <div class="absolute top-4 left-4 z-20 text-green-500 font-bold text-sm">II <span class="text-xs ml-2">1 mV</span></div>
+                        <div class="absolute top-[180px] left-4 z-20 text-cyan-500 font-bold text-sm">SpO2</div>
+                        <div class="absolute top-[310px] left-4 z-20 text-yellow-500 font-bold text-sm">RESP</div>
+                    </div>
+
+                    <!-- Vitals Sidebar -->
+                    <div class="w-full lg:w-72 bg-slate-950 border-t lg:border-t-0 lg:border-l border-slate-800 p-4 flex flex-row lg:flex-col gap-4 lg:gap-6 justify-between overflow-x-auto">
+                        
+                        <!-- HR Box -->
+                        <div class="flex-1 lg:flex-none flex flex-col items-end text-green-500 border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[120px]">
+                            <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
+                                <span>HR</span>
+                                <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </div>
+                            <div id="val-hr" class="text-5xl lg:text-7xl font-bold font-mono tracking-tighter">---</div>
+                            <div class="w-full flex justify-end text-xs opacity-70 gap-2 mt-1">
+                                <span>120</span>
+                                <span>50</span>
+                            </div>
+                        </div>
+
+                        <!-- SpO2 Box -->
+                        <div class="flex-1 lg:flex-none flex flex-col items-end text-cyan-500 border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[120px]">
+                            <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
+                                <span>SpO2 %</span>
+                                <span>PR <span id="val-pr">-</span></span>
+                            </div>
+                            <div id="val-spo2" class="text-4xl lg:text-5xl font-bold font-mono tracking-tighter">---</div>
+                        </div>
+
+                        <!-- NIBP Box -->
+                        <div class="flex-1 lg:flex-none flex flex-col items-end text-white border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[150px]">
+                            <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
+                                <span>NIBP mmHg</span>
+                                <span class="opacity-70">Auto</span>
+                            </div>
+                            <div class="text-2xl lg:text-3xl font-bold font-mono">
+                                <span id="val-sysBp">---</span>/<span id="val-diaBp">---</span>
+                            </div>
+                            <div class="text-sm opacity-70 font-mono mt-1">
+                                (<span id="val-map">---</span>)
+                            </div>
+                        </div>
+
+                        <!-- RESP Box -->
+                        <div class="flex-1 lg:flex-none flex flex-col items-end text-yellow-500 min-w-[100px]">
+                            <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
+                                <span>RESP rpm</span>
+                            </div>
+                            <div id="val-rr" class="text-3xl lg:text-4xl font-bold font-mono tracking-tighter">16</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN CONTROLS (Hidden if on SIM view) -->
+            <div id="admin-panel" class="w-full max-w-6xl bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700" <?= $isSim ? 'style="display: none;"' : '' ?>>
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-4">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <h2 class="text-xl font-semibold text-white">Simulation Admin Controls</h2>
+                    <span class="ml-auto text-xs bg-indigo-900 text-indigo-200 px-3 py-1 rounded-full border border-indigo-700">LIVE SYNC ACTIVE</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Defibrillator Panel -->
+                    <div class="bg-red-950/20 p-4 rounded-lg border border-red-900/50 md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
+                        <div>
+                            <label class="block text-sm font-medium text-red-400 mb-2">Shock Energy: <span id="lbl-shockEnergy">150</span> J</label>
+                            <input type="range" id="input-shockEnergy" min="25" max="300" step="1" value="150" class="w-full accent-red-500" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-red-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
+                            <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
+                        </div>
+                        <div>
+                            <button id="btn-shock" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg p-2.5 transition-colors shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                DELIVER SHOCK
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Rhythm Selection -->
+                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Cardiac Rhythm</label>
+                        <select id="input-rhythm" class="w-full bg-slate-800 text-white border border-slate-600 rounded-lg p-2.5 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                            <optgroup label="Sinus / Atrial">
+                                <option value="sinus">Normal Sinus Rhythm</option>
+                                <option value="afib">Atrial Fibrillation</option>
+                                <option value="aflutter">Atrial Flutter</option>
+                                <option value="svt">Supraventricular Tachycardia</option>
+                            </optgroup>
+                            <optgroup label="Ventricular">
+                                <option value="vtach">Monomorphic V-Tach</option>
+                                <option value="torsades">Torsades de Pointes</option>
+                                <option value="vfib">Ventricular Fibrillation</option>
+                            </optgroup>
+                            <optgroup label="AV Blocks">
+                                <option value="1st_degree">1st Degree AV Block</option>
+                                <option value="2nd_degree_type1">2nd Degree Block Type I (Wenckebach)</option>
+                                <option value="2nd_degree_type2">2nd Degree Block Type II</option>
+                                <option value="3rd_degree">3rd Degree AV Block</option>
+                            </optgroup>
+                            <optgroup label="Lethal">
+                                <option value="asystole">Asystole</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <!-- Contextual Rhythm Controls -->
+                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
+                        
+                        <div id="ctrl-saNodeRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">SA Node Rate: <span id="lbl-saNodeRate">80</span> bpm</label>
+                            <input type="range" id="input-saNodeRate" min="20" max="220" value="80" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-ventricularRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Ventricular Response Rate: <span id="lbl-ventricularRate">150</span> bpm</label>
+                            <input type="range" id="input-ventricularRate" min="20" max="220" value="150" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-flutterRatio" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Flutter Ratio</label>
+                            <select id="input-flutterRatio" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-white">
+                                <option value="1:1">1:1 (300 bpm)</option>
+                                <option value="1:2" selected>1:2 (150 bpm)</option>
+                                <option value="1:3">1:3 (100 bpm)</option>
+                                <option value="1:4">1:4 (75 bpm)</option>
+                            </select>
+                        </div>
+
+                        <div id="ctrl-svtRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">SVT Rate: <span id="lbl-svtRate">180</span> bpm</label>
+                            <input type="range" id="input-svtRate" min="150" max="250" value="180" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-vtRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">V-Tach Rate: <span id="lbl-vtRate">160</span> bpm</label>
+                            <input type="range" id="input-vtRate" min="100" max="250" value="160" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-torsadesRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Torsades Rate: <span id="lbl-torsadesRate">220</span> bpm</label>
+                            <input type="range" id="input-torsadesRate" min="150" max="300" value="220" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-prProlongation" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">PR Prolongation: <span id="lbl-prProlongation">0.32</span> s</label>
+                            <input type="range" id="input-prProlongation" min="0.2" max="0.4" step="0.02" value="0.32" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-blockSeverity" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Block Ratio (N:1)</label>
+                            <select id="input-blockSeverity" class="w-full bg-slate-800 border border-slate-600 rounded p-2 text-white">
+                                <option value="2" selected>2:1 Block</option>
+                                <option value="3">3:1 Block</option>
+                                <option value="4">4:1 Block</option>
+                            </select>
+                        </div>
+
+                        <div id="ctrl-escapeRate" class="admin-ctrl hidden">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Ventricular Escape Rate: <span id="lbl-escapeRate">40</span> bpm</label>
+                            <input type="range" id="input-escapeRate" min="20" max="60" value="40" class="w-full accent-indigo-500" />
+                        </div>
+
+                        <div id="ctrl-lethal" class="admin-ctrl hidden col-span-full">
+                            <div class="flex items-center justify-center text-red-400 font-semibold p-4 bg-red-950/20 rounded-lg border border-red-900/50 w-full">
+                                Lethal Rhythm Active. No structural controls available.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Vitals Controls -->
+                <div class="mt-8 bg-slate-900/50 p-4 rounded-lg border border-slate-700 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">SpO2: <span id="lbl-spo2">98</span>%</label>
+                        <input type="range" id="input-spo2" min="50" max="100" value="98" class="w-full accent-cyan-500" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Sys BP: <span id="lbl-sysBp">120</span> mmHg</label>
+                        <input type="range" id="input-sysBp" min="40" max="250" value="120" class="w-full accent-white" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Dia BP: <span id="lbl-diaBp">80</span> mmHg</label>
+                        <input type="range" id="input-diaBp" min="20" max="150" value="80" class="w-full accent-white" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-2">RESP: <span id="lbl-rr">16</span> rpm</label>
+                        <input type="range" id="input-rr" min="0" max="50" value="16" class="w-full accent-yellow-500" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const sessionId = "<?= htmlspecialchars($id) ?>";
+                const isController = <?= $isCtrl ? 'true' : 'false' ?>;
+                let lastShockTrigger = 0;
+
+                // --- STATE ---
+                const state = {
+                    rhythm: 'sinus', saNodeRate: 80, ventricularRate: 150, flutterRatio: '1:2',
+                    svtRate: 180, vtRate: 160, torsadesRate: 220, escapeRate: 40,
+                    prProlongation: 0.32, blockSeverity: 2, spo2: 98, rr: 16,
+                    sysBp: 120, diaBp: 80, liveHR: 0, baseHR: 0, joules: 150, shockThreshold: 100,
+                    shockTrigger: 0
+                };
+
+                const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, time: 0 };
+                const events = [];
+                const drawState = { lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: 90, plethY: 220, respY: 340 };
+
+                // Setup Clocks
+                setInterval(() => { document.getElementById('time-display').innerText = new Date().toLocaleTimeString(); }, 1000);
+                document.getElementById('time-display').innerText = new Date().toLocaleTimeString();
+
+                // --- UI BINDINGS & UPDATES ---
+                const updateUI = () => {
+                    const rhythm = state.rhythm;
+                    
+                    if (isController) {
+                        // Hide all admin controls
+                        document.querySelectorAll('.admin-ctrl').forEach(el => el.classList.add('hidden'));
+
+                        // Show relevant ones
+                        if (['sinus', '1st_degree', '2nd_degree_type1', '2nd_degree_type2', '3rd_degree'].includes(rhythm)) {
+                            document.getElementById('ctrl-saNodeRate')?.classList.remove('hidden');
+                        }
+                        if (rhythm === 'afib') document.getElementById('ctrl-ventricularRate')?.classList.remove('hidden');
+                        if (rhythm === 'aflutter') document.getElementById('ctrl-flutterRatio')?.classList.remove('hidden');
+                        if (rhythm === 'svt') document.getElementById('ctrl-svtRate')?.classList.remove('hidden');
+                        if (rhythm === 'vtach') document.getElementById('ctrl-vtRate')?.classList.remove('hidden');
+                        if (rhythm === 'torsades') document.getElementById('ctrl-torsadesRate')?.classList.remove('hidden');
+                        if (rhythm === '1st_degree') document.getElementById('ctrl-prProlongation')?.classList.remove('hidden');
+                        if (rhythm === '2nd_degree_type2') document.getElementById('ctrl-blockSeverity')?.classList.remove('hidden');
+                        if (rhythm === '3rd_degree') document.getElementById('ctrl-escapeRate')?.classList.remove('hidden');
+                        if (['vfib', 'asystole'].includes(rhythm)) document.getElementById('ctrl-lethal')?.classList.remove('hidden');
+
+                        // Update Input Labels
+                        const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+                        setTxt('lbl-saNodeRate', state.saNodeRate);
+                        setTxt('lbl-ventricularRate', state.ventricularRate);
+                        setTxt('lbl-svtRate', state.svtRate);
+                        setTxt('lbl-vtRate', state.vtRate);
+                        setTxt('lbl-torsadesRate', state.torsadesRate);
+                        setTxt('lbl-prProlongation', state.prProlongation);
+                        setTxt('lbl-escapeRate', state.escapeRate);
+                        setTxt('lbl-spo2', state.spo2);
+                        setTxt('lbl-sysBp', state.sysBp);
+                        setTxt('lbl-diaBp', state.diaBp);
+                        setTxt('lbl-rr', state.rr);
+                        setTxt('lbl-shockEnergy', state.joules);
+                        setTxt('lbl-shockThreshold', state.shockThreshold);
+                        
+                        // Sync Inputs
+                        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+                        setVal('input-rhythm', state.rhythm);
+                        setVal('input-saNodeRate', state.saNodeRate);
+                        setVal('input-spo2', state.spo2);
+                        setVal('input-sysBp', state.sysBp);
+                        setVal('input-diaBp', state.diaBp);
+                        setVal('input-rr', state.rr);
+                        setVal('input-shockEnergy', state.joules);
+                        setVal('input-shockThreshold', state.shockThreshold);
+                    }
+
+                    // Update Vitals Display (Runs for both Controller and Viewer)
+                    const isLethal = ['vfib', 'asystole'].includes(rhythm);
+                    document.getElementById('val-spo2').innerText = isLethal ? '---' : state.spo2;
+                    document.getElementById('val-sysBp').innerText = isLethal ? '---' : state.sysBp;
+                    document.getElementById('val-diaBp').innerText = isLethal ? '---' : state.diaBp;
+                    document.getElementById('val-map').innerText = isLethal ? '---' : Math.round(state.diaBp + (state.sysBp - state.diaBp) / 3);
+                    document.getElementById('val-rr').innerText = state.rr;
+
+                    // Calculate Base Display HR
+                    switch (rhythm) {
+                        case 'sinus': case '1st_degree': state.baseHR = state.saNodeRate; break;
+                        case '2nd_degree_type1': state.baseHR = Math.round(state.saNodeRate * 0.8); break; 
+                        case '2nd_degree_type2': state.baseHR = Math.round(state.saNodeRate / state.blockSeverity); break;
+                        case '3rd_degree': state.baseHR = state.escapeRate; break;
+                        case 'afib': state.baseHR = state.ventricularRate; break;
+                        case 'aflutter': state.baseHR = Math.round(300 / parseInt(state.flutterRatio.split(':')[1])); break;
+                        case 'svt': state.baseHR = state.svtRate; break;
+                        case 'vtach': state.baseHR = state.vtRate; break;
+                        case 'torsades': state.baseHR = state.torsadesRate; break;
+                        case 'vfib': case 'asystole': state.baseHR = 0; break;
+                        default: state.baseHR = state.saNodeRate;
+                    }
+                };
+
+                const updateServerState = (changes) => {
+                    Object.assign(state, changes);
+                    updateUI();
+                    if (isController) {
+                        fetch('?action=update&id=' + sessionId, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(changes)
+                        });
+                    }
+                };
+
+                if (isController) {
+                    const bindInput = (id, key, parser = String) => {
+                        const el = document.getElementById(id);
+                        if (el) el.addEventListener('input', (e) => updateServerState({ [key]: parser(e.target.value) }));
+                    };
+
+                    bindInput('input-rhythm', 'rhythm');
+                    bindInput('input-saNodeRate', 'saNodeRate', Number);
+                    bindInput('input-ventricularRate', 'ventricularRate', Number);
+                    bindInput('input-flutterRatio', 'flutterRatio');
+                    bindInput('input-svtRate', 'svtRate', Number);
+                    bindInput('input-vtRate', 'vtRate', Number);
+                    bindInput('input-torsadesRate', 'torsadesRate', Number);
+                    bindInput('input-prProlongation', 'prProlongation', Number);
+                    bindInput('input-blockSeverity', 'blockSeverity', Number);
+                    bindInput('input-escapeRate', 'escapeRate', Number);
+                    bindInput('input-spo2', 'spo2', Number);
+                    bindInput('input-sysBp', 'sysBp', Number);
+                    bindInput('input-diaBp', 'diaBp', Number);
+                    bindInput('input-rr', 'rr', Number);
+                    bindInput('input-shockEnergy', 'joules', Number);
+                    bindInput('input-shockThreshold', 'shockThreshold', Number);
+
+                    document.getElementById('btn-shock')?.addEventListener('click', () => {
+                        const triggerTime = Date.now();
+                        events.push({ type: 'SHOCK', start: drawState.drawTime });
+                        let changes = { shockTrigger: triggerTime };
+                        
+                        // Only these rhythms will respond to defibrillation/cardioversion
+                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
+                        
+                        if (state.joules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
+                            changes.rhythm = 'sinus';
+                            changes.saNodeRate = 80;
+                            changes.spo2 = 98;
+                            changes.sysBp = 120;
+                            changes.diaBp = 80;
+                            changes.rr = 16;
+                        }
+                        updateServerState(changes);
+                    });
+                }
+
+                // Initial fetch and start polling
+                if (sessionId) {
+                    fetch('?action=poll&id=' + sessionId)
+                        .then(r => r.json())
+                        .then(data => {
+                            Object.assign(state, data);
+                            lastShockTrigger = data.shockTrigger || 0;
+                            updateUI();
+                        }).catch(e => console.error(e));
+
+                    if (!isController) {
+                        setInterval(async () => {
+                            try {
+                                const res = await fetch('?action=poll&id=' + sessionId);
+                                if (!res.ok) return;
+                                const data = await res.json();
+                                
+                                if (data.shockTrigger && data.shockTrigger !== lastShockTrigger) {
+                                    lastShockTrigger = data.shockTrigger;
+                                    events.push({ type: 'SHOCK', start: drawState.drawTime });
+                                }
+                                Object.assign(state, data);
+                                updateUI();
+                            } catch (e) {}
+                        }, 150); // Viewer polls much faster to minimize lag
+                    }
+                }
+
+                setInterval(() => {
+                    if (state.baseHR > 0 && ['sinus', 'afib', 'aflutter'].includes(state.rhythm)) {
+                        state.liveHR = state.baseHR + Math.floor(Math.random() * 3) - 1;
+                    } else {
+                        state.liveHR = state.baseHR;
+                    }
+                    const displayStr = state.liveHR === 0 ? '---' : state.liveHR;
+                    const prStr = state.liveHR === 0 ? '-' : state.liveHR;
+                    document.getElementById('val-hr').innerText = displayStr;
+                    document.getElementById('val-pr').innerText = prStr;
+                }, 2000);
+
+                // --- EKG MATH ---
+                const evaluateEKGEvent = (event, t) => {
+                    const dt = t - event.start;
+                    if (dt < 0) return 0;
+                    let v = 0;
+                    if (event.type === 'SHOCK') {
+                        if (dt < 2.0) {
+                            if (dt < 0.1) v += Math.sin(dt * 300) * 12; 
+                            else v -= 3 * Math.exp(-dt * 2) * Math.cos(dt * 8); 
+                        }
+                    } else if (event.type === 'P' && dt < 0.2) {
+                        v += 0.12 * Math.exp(-Math.pow((dt - 0.05) / 0.015, 2));
+                    } else if (event.type === 'QRS') {
+                        if (event.wide && dt < 0.3) {
+                            v += 1.0 * Math.exp(-Math.pow((dt - 0.06) / 0.03, 2));
+                            v -= 0.6 * Math.exp(-Math.pow((dt - 0.14) / 0.04, 2));
+                        } else if (!event.wide && dt < 0.15) {
+                            v -= 0.15 * Math.exp(-Math.pow((dt - 0.02) / 0.005, 2));
+                            v += 1.5 * Math.exp(-Math.pow((dt - 0.045) / 0.012, 2));
+                            v -= 0.25 * Math.exp(-Math.pow((dt - 0.07) / 0.012, 2));
+                        }
+                    } else if (event.type === 'T' && dt < 0.5) {
+                        const hr = event.hr || 80;
+                        const width = 0.03 * (60 / Math.max(hr, 40));
+                        const sign = event.inverted ? -1 : 1;
+                        v += sign * 0.25 * Math.exp(-Math.pow((dt - 0.2) / width, 2));
+                    }
+                    return v;
+                };
+
+                const evaluatePlethEvent = (event, t) => {
+                    const dt = t - event.start;
+                    if (dt < 0 || dt > 0.8) return 0;
+                    if (event.type === 'SHOCK') return 5.0 * Math.exp(-Math.pow((dt - 0.05) / 0.05, 2));
+                    let v = 1.0 * Math.exp(-Math.pow((dt - 0.15) / 0.08, 2)); 
+                    v += 0.15 * Math.exp(-Math.pow((dt - 0.35) / 0.1, 2)); 
+                    return v;
+                };
+
+                const getBaselines = (t, params) => {
+                    let ekg = 0;
+                    ekg += Math.sin(t * 0.5) * 0.02 + Math.sin(t * 1.2) * 0.01;
+
+                    if (params.rhythm === 'afib') {
+                        ekg += (Math.random() - 0.5) * 0.1;
+                        ekg += Math.sin(t * 15) * 0.03;
+                    } else if (params.rhythm === 'aflutter') {
+                        let phase = (t * 5) % 1;
+                        ekg += (phase < 0.5 ? phase * 2 : 2 - phase * 2) * 0.15 - 0.075; 
+                        ekg += Math.sin(t * 5 * Math.PI * 2) * 0.1; 
+                    } else if (params.rhythm === 'vfib') {
+                        ekg += Math.sin(t * 22.0) * 0.3;
+                        ekg += Math.cos(t * 15.3) * 0.25;
+                        ekg += Math.sin(t * 34.1) * 0.15;
+                        ekg += Math.cos(t * 7.2) * 0.2;
+                    } else if (params.rhythm === 'torsades') {
+                        let fastF = params.torsadesRate / 60;
+                        let slowF = 0.25; 
+                        let envelope = Math.sin(t * slowF * Math.PI * 2);
+                        ekg += Math.sin(t * fastF * Math.PI * 2) * envelope * 0.8;
+                        ekg += Math.cos(t * (fastF * 1.1) * Math.PI * 2) * (1 - Math.abs(envelope)) * 0.3;
+                    } else if (params.rhythm === 'asystole') {
+                        ekg = (Math.random() - 0.5) * 0.01; 
+                    }
+
+                    let resp = -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.6;
+                    let plethWander = -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.1;
+
+                    return [ekg, plethWander, resp];
+                };
+
+                // --- SCHEDULER ---
+                const scheduleEvents = (t, params, simSt, evts) => {
+                    while (evts.length > 0 && evts[0].start + 2.0 < t) { evts.shift(); }
+                    const rhythm = params.rhythm;
+                    if (simSt.rhythm !== rhythm) {
+                        simSt.rhythm = rhythm; simSt.nextP = t + 0.1; simSt.nextQRS = t + 0.1;
+                        simSt.wenckebach_beat = 0; simSt.mobitz_beat = 0;
+                    }
+
+                    const pushQRS = (time, wide = false, hr = 80, invertedT = false) => {
+                        evts.push({ type: 'QRS', start: time, wide });
+                        evts.push({ type: 'T', start: time, hr, inverted: invertedT });
+                        if (!['vfib', 'asystole'].includes(rhythm)) {
+                            evts.push({ type: 'PLETH', start: time + 0.2 });
+                        }
+                    };
+
+                    if (['sinus', '1st_degree', '2nd_degree_type1', '2nd_degree_type2', '3rd_degree'].includes(rhythm)) {
+                        if (t >= simSt.nextP) {
+                            evts.push({ type: 'P', start: t });
+                            if (rhythm === 'sinus') { pushQRS(t + 0.16, false, params.saNodeRate); } 
+                            else if (rhythm === '1st_degree') { pushQRS(t + params.prProlongation, false, params.saNodeRate); } 
+                            else if (rhythm === '2nd_degree_type1') {
+                                if (simSt.wenckebach_beat < 3) {
+                                    pushQRS(t + 0.16 + (simSt.wenckebach_beat * 0.06), false, params.saNodeRate);
+                                    simSt.wenckebach_beat++;
+                                } else { simSt.wenckebach_beat = 0; }
+                            } else if (rhythm === '2nd_degree_type2') {
+                                if (simSt.mobitz_beat < params.blockSeverity - 1) {
+                                    pushQRS(t + 0.16, false, params.saNodeRate);
+                                    simSt.mobitz_beat++;
+                                } else { simSt.mobitz_beat = 0; }
+                            }
+                            const baseInterval = 60 / params.saNodeRate;
+                            simSt.nextP = t + baseInterval + (Math.random() * (baseInterval*0.05) - (baseInterval*0.025));
+                        }
+                    }
+
+                    if (rhythm === '3rd_degree' && t >= simSt.nextQRS) {
+                        pushQRS(t, true, params.escapeRate, true);
+                        simSt.nextQRS = t + (60 / params.escapeRate);
+                    }
+                    if (rhythm === 'afib' && t >= simSt.nextQRS) {
+                        pushQRS(t, false, params.ventricularRate);
+                        simSt.nextQRS = t + Math.max(0.25, (60 / params.ventricularRate) + (Math.random() * 0.4 - 0.2));
+                    }
+                    if (rhythm === 'aflutter' && t >= simSt.nextQRS) {
+                        pushQRS(t, false, 150);
+                        simSt.nextQRS = t + (0.2 * (parseInt(params.flutterRatio.split(':')[1]) || 2));
+                    }
+                    if (rhythm === 'svt' && t >= simSt.nextQRS) {
+                        pushQRS(t, false, params.svtRate);
+                        simSt.nextQRS = t + (60 / params.svtRate);
+                    }
+                    if (rhythm === 'vtach' && t >= simSt.nextQRS) {
+                        pushQRS(t, true, params.vtRate, true);
+                        simSt.nextQRS = t + (60 / params.vtRate);
+                    }
+                };
+
+                // --- CANVAS SETUP & RENDER LOOP ---
+                const mainCanvas = document.getElementById('mainCanvas');
+                const bgCanvas = document.getElementById('bgCanvas');
+                const ctx = mainCanvas.getContext('2d');
+                const bgCtx = bgCanvas.getContext('2d');
+                const width = mainCanvas.width;
+                const height = mainCanvas.height;
+
+                bgCtx.fillStyle = '#020617'; bgCtx.fillRect(0, 0, width, height);
+                for (let x = 0; x <= width; x += 6) {
+                    bgCtx.beginPath(); bgCtx.moveTo(x, 0); bgCtx.lineTo(x, height);
+                    bgCtx.strokeStyle = x % 30 === 0 ? '#064e3b' : '#022c22';
+                    bgCtx.lineWidth = x % 30 === 0 ? 1 : 0.5; bgCtx.stroke();
+                }
+                for (let y = 0; y <= height; y += 6) {
+                    bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(width, y);
+                    bgCtx.strokeStyle = y % 30 === 0 ? '#064e3b' : '#022c22';
+                    bgCtx.lineWidth = y % 30 === 0 ? 1 : 0.5; bgCtx.stroke();
+                }
+
+                const animate = (time) => {
+                    const t_real = time / 1000;
+                    const dt_real = t_real - drawState.lastTimeReal;
+                    drawState.lastTimeReal = t_real;
+
+                    while (simState.time < drawState.drawTime + 0.5) {
+                        scheduleEvents(simState.time, state, simState, events);
+                        simState.time += 0.005; 
+                    }
+
+                    const pxPerSecond = 180; 
+                    let pixelsToDraw = dt_real * pxPerSecond;
+                    if (pixelsToDraw > 100) pixelsToDraw = 100; 
+
+                    for (let i = 0; i < pixelsToDraw; i += 1) {
+                        drawState.drawTime += 1 / pxPerSecond;
+                        let currentX = drawState.lastX + 1;
+                        let wrapped = false;
+                        if (currentX >= width) { currentX = 0; wrapped = true; }
+
+                        const baselines = getBaselines(drawState.drawTime, state);
+                        let ekgVal = baselines[0], plethVal = baselines[1], respVal = baselines[2];
+
+                        events.forEach(e => {
+                            if (e.type === 'P' || e.type === 'QRS' || e.type === 'T' || e.type === 'SHOCK') {
+                                ekgVal += evaluateEKGEvent(e, drawState.drawTime);
+                            } 
+                            if (e.type === 'PLETH' || e.type === 'SHOCK') {
+                                plethVal += evaluatePlethEvent(e, drawState.drawTime);
+                            }
+                            if (e.type === 'SHOCK') {
+                                const dt = drawState.drawTime - e.start;
+                                if (dt > 0 && dt < 0.8) respVal += 3.0 * Math.exp(-Math.pow((dt - 0.05) / 0.05, 2));
+                            }
+                        });
+
+                        const newEkgY = 100 - ekgVal * 50;
+                        const newPlethY = 240 - plethVal * 45;
+                        const newRespY = 380 - respVal * 35;
+
+                        ctx.clearRect(currentX, 0, 15, height);
+                        
+                        if (!wrapped) {
+                            ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.ekgY); ctx.lineTo(currentX, newEkgY);
+                            ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                            ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.plethY); ctx.lineTo(currentX, newPlethY);
+                            ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                            ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.respY); ctx.lineTo(currentX, newRespY);
+                            ctx.strokeStyle = '#eab308'; ctx.lineWidth = 1.5; ctx.stroke();
+                        }
+
+                        drawState.lastX = currentX; drawState.ekgY = newEkgY; 
+                        drawState.plethY = newPlethY; drawState.respY = newRespY;
+                    }
+                    requestAnimationFrame(animate);
+                };
+
+                drawState.lastTimeReal = performance.now() / 1000;
+                requestAnimationFrame(animate);
+            });
+        </script>
+    <?php endif; ?>
+</body>
+</html>
