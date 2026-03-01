@@ -503,6 +503,30 @@
             margin-top: 0.5rem;
         }
 
+        /* Open Use rationale container (inside openUseModal) */
+        #openUseRationaleContainer {
+            padding: 1rem;
+            background: #f0f8e8;
+            border: 1px solid #c3e6cb;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+        }
+        #openUseRationaleContainer label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        #openUseRationaleText {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: clamp(0.8rem, 1.25vw, 0.9rem);
+            resize: vertical;
+            min-height: 60px;
+            margin-top: 0.5rem;
+        }
+
         /* =====================================================================
            CITATION FORMAT (inside documentation section)
            ===================================================================== */
@@ -1091,11 +1115,10 @@
                             </label>
 
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="useCases" value="encouraged" aria-describedby="encouraged-desc">
+                                <input type="checkbox" name="useCases" value="encouraged">
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">✅</span>
                                     <h3>Open Use</h3>
-                                    <p id="encouraged-desc">You are welcome to explore AI tools freely throughout this assignment.</p>
                                 </div>
                             </label>
 
@@ -1371,6 +1394,62 @@
     </div>
 
     <!-- =====================================================================
+         MODAL: Open Use
+         Shown when instructor selects "Open Use". Offers preset rationale
+         options to explain to learners why open AI use is permitted.
+    ===================================================================== -->
+    <div id="openUseModal" class="modal hidden" role="dialog" aria-labelledby="open-use-modal-title" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="open-use-modal-title">Why is open AI use permitted?</h2>
+                <button class="open-use-cancel" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;padding:0.5rem;line-height:1;" aria-label="Cancel and uncheck Open Use">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:#666;margin-bottom:1rem;font-size:0.9rem;">Optional — but a brief rationale helps learners understand the intent behind open AI use.</p>
+                <div id="openUseRationaleContainer">
+                    <div class="options-grid" style="margin-bottom:0.75rem;">
+                        <label class="option-card">
+                            <input type="radio" name="openUseRationale" value="AI tools may help learners practice drafting, revising, brainstorming, or clarifying ideas while still demonstrating their own understanding.">
+                            <div class="card-content">
+                                <h3>Support Skill Development</h3>
+                                <p>AI tools may help learners practice drafting, revising, brainstorming, or clarifying ideas while still demonstrating their own understanding.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="openUseRationale" value="AI tools are part of many academic, professional, and creative contexts. This assignment includes guided AI use to build responsible engagement skills.">
+                            <div class="card-content">
+                                <h3>Reflect Real-World Practice</h3>
+                                <p>AI tools are part of many academic, professional, and creative contexts. This assignment includes guided AI use to build responsible engagement skills.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="openUseRationale" value="AI may support early-stage idea generation, organization, or exploration, allowing learners to focus more deeply on analysis, synthesis, or application.">
+                            <div class="card-content">
+                                <h3>Scaffold Complex Thinking</h3>
+                                <p>AI may support early-stage idea generation, organization, or exploration, allowing learners to focus more deeply on analysis, synthesis, or application.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="openUseRationale" value="AI tools may offer language clarification, idea rehearsal, or alternative explanations that support diverse learners.">
+                            <div class="card-content">
+                                <h3>Accessibility &amp; Equity Support</h3>
+                                <p>AI tools may offer language clarification, idea rehearsal, or alternative explanations that support diverse learners.</p>
+                            </div>
+                        </label>
+                    </div>
+                    <textarea id="openUseRationaleText" name="openUseRationaleText"
+                              placeholder="Or write your own rationale for learners..."
+                              style="width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:var(--border-radius);font-size:clamp(0.8rem,1.25vw,0.9rem);resize:vertical;min-height:60px;margin-top:0.5rem;"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="openUseCancelBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="button" id="openUseDoneBtn" class="btn">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
          MODAL: Info
          About this tool (video + copy placeholders pending final content).
     ===================================================================== -->
@@ -1568,6 +1647,9 @@
         const noAiModal                   = document.getElementById('noAiModal');
         const noAiDoneBtn                 = document.getElementById('noAiDoneBtn');
         const noAiCancelBtn               = document.getElementById('noAiCancelBtn');
+        const openUseModal                = document.getElementById('openUseModal');
+        const openUseDoneBtn              = document.getElementById('openUseDoneBtn');
+        const openUseCancelBtn            = document.getElementById('openUseCancelBtn');
 
         const downloadModal               = document.getElementById('downloadModal');
         const copyUrlBtn                  = document.getElementById('copyUrlBtn');
@@ -1721,13 +1803,15 @@
          * Serialises all form selections into a compact base64 string so the
          * complete policy configuration can be shared via a URL parameter.
          *
-         * State shape: { u, d, cu, cd, pr, prt }
+         * State shape: { u, d, cu, cd, pr, prt, or }
          *   u   — array of selected useCases values
          *   d   — array of selected documentation values
          *   cu  — custom use-cases text
          *   cd  — custom documentation text
          *   pr  — selected prohibitionReason radio value
          *   prt — custom prohibition reason text
+         *   or  — selected openUseRationale radio value
+         *   ort — custom open use rationale text
          */
         function encodeFormState() {
             const formData = new FormData(form);
@@ -1737,7 +1821,9 @@
                 cu:  document.getElementById('customUseCases')?.value || '',
                 cd:  document.getElementById('customDocumentation')?.value || '',
                 pr:  document.querySelector('input[name="prohibitionReason"]:checked')?.value || '',
-                prt: document.getElementById('prohibitionReasonText')?.value || ''
+                prt: document.getElementById('prohibitionReasonText')?.value || '',
+                or:  document.querySelector('input[name="openUseRationale"]:checked')?.value || '',
+                ort: document.getElementById('openUseRationaleText')?.value || ''
             };
             return btoa(JSON.stringify(state));
         }
@@ -1767,6 +1853,11 @@
                     if (r) r.checked = true;
                 }
                 if (state.prt) { const el = document.getElementById('prohibitionReasonText'); if (el) el.value = state.prt; }
+                if (state.or) {
+                    const r = document.querySelector(`input[name="openUseRationale"][value="${state.or}"]`);
+                    if (r) r.checked = true;
+                }
+                if (state.ort) { const el = document.getElementById('openUseRationaleText'); if (el) el.value = state.ort; }
 
                 handleConditionalQuestions();
                 toggleOtherUseCases();
@@ -2010,8 +2101,12 @@
 
             // --- Body copy ---
             if (aiUsage === 'encouraged') {
+                const rationaleRadio = document.querySelector('input[name="openUseRationale"]:checked');
+                const rationaleCustom = document.getElementById('openUseRationaleText')?.value?.trim();
+                const baseText = 'You are welcome to explore AI tools freely throughout this assignment.';
+                const rationaleText = rationaleCustom || rationaleRadio?.value || '';
                 sections.push({
-                    text:     'Learners are welcome to use AI tools in any way that supports their learning on this assignment.',
+                    text:     rationaleText ? `${baseText} ${rationaleText}` : baseText,
                     iconHTML: '<span class="icon" aria-hidden="true">✅</span>'
                 });
 
@@ -2132,6 +2227,13 @@
                     return;
                 }
 
+                // Selecting "Open Use" opens the open-use rationale modal.
+                // The preview only updates once the instructor clicks Done.
+                if (e.target.value === 'encouraged' && e.target.checked) {
+                    openModal(openUseModal);
+                    return;
+                }
+
             } else if (e.target.name === 'documentation') {
                 handleDocumentationExclusivity(e.target);
                 toggleOtherDocumentation();
@@ -2152,13 +2254,17 @@
         });
 
         // Free-text fields: re-render preview on every keystroke
-        ['customUseCases', 'customDocumentation', 'prohibitionReasonText'].forEach(id => {
+        ['customUseCases', 'customDocumentation', 'prohibitionReasonText', 'openUseRationaleText'].forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
             el.addEventListener('input', function () {
                 // Typing a custom prohibition reason clears any radio selection
                 if (id === 'prohibitionReasonText' && this.value.trim()) {
                     document.querySelectorAll('input[name="prohibitionReason"]').forEach(r => r.checked = false);
+                }
+                // Typing a custom open use rationale clears any radio selection
+                if (id === 'openUseRationaleText' && this.value.trim()) {
+                    document.querySelectorAll('input[name="openUseRationale"]').forEach(r => r.checked = false);
                 }
                 updatePolicyPreview();
                 updateURL();
@@ -2264,6 +2370,53 @@
             if (e.target === noAiModal) cancelNoAi();
         });
 
+        /**
+         * Cancels the Open Use flow: unchecks the checkbox, removes any
+         * rationale selection, closes the modal, and refreshes the preview.
+         */
+        function cancelOpenUse() {
+            const encouragedCb = document.querySelector('input[name="useCases"][value="encouraged"]');
+            if (encouragedCb && encouragedCb.checked) {
+                encouragedCb.checked = false;
+                document.querySelectorAll('input[name="useCases"]').forEach(cb => {
+                    cb.closest('.option-card').classList.remove('grayed-out');
+                });
+            }
+            document.querySelectorAll('input[name="openUseRationale"]').forEach(r => r.checked = false);
+            const ort = document.getElementById('openUseRationaleText');
+            if (ort) ort.value = '';
+
+            closeModal(openUseModal);
+            handleConditionalQuestions();
+            updatePolicyPreview();
+            updateURL();
+        }
+
+        // Selecting a preset radio inside the Open Use modal clears the free-text
+        // field so only one rationale shows in the policy.
+        openUseModal.addEventListener('change', function (e) {
+            if (e.target.name === 'openUseRationale') {
+                const ta = document.getElementById('openUseRationaleText');
+                if (ta) ta.value = '';
+            }
+        });
+
+        // Open Use modal — Done button
+        openUseDoneBtn.addEventListener('click', function () {
+            closeModal(openUseModal);
+            updatePolicyPreview();
+            updateURL();
+        });
+
+        // Open Use modal — Cancel button and header × button
+        openUseCancelBtn.addEventListener('click', cancelOpenUse);
+        document.querySelectorAll('.open-use-cancel').forEach(btn => btn.addEventListener('click', cancelOpenUse));
+
+        // Clicking the backdrop of the Open Use modal cancels it
+        openUseModal.addEventListener('click', function (e) {
+            if (e.target === openUseModal) cancelOpenUse();
+        });
+
         // Share button
         shareBtn.addEventListener('click', function (e) {
             e.preventDefault(); e.stopPropagation();
@@ -2329,7 +2482,8 @@
         // Escape key closes whichever modal is currently open
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
-            if (!noAiModal.classList.contains('hidden')) { cancelNoAi(); return; }
+            if (!noAiModal.classList.contains('hidden'))     { cancelNoAi(); return; }
+            if (!openUseModal.classList.contains('hidden'))   { cancelOpenUse(); return; }
             [embedModal, downloadModal, pngReminderModal, infoModal].forEach(m => closeModal(m));
         });
 
@@ -2342,11 +2496,14 @@
             // Reset all native form fields
             form.reset();
 
-            // The prohibition-reason inputs live outside the <form> element,
-            // so we clear them manually.
+            // The prohibition-reason and open-use-rationale inputs live outside
+            // the <form> element, so we clear them manually.
             document.querySelectorAll('input[name="prohibitionReason"]').forEach(r => r.checked = false);
             const prt = document.getElementById('prohibitionReasonText');
             if (prt) prt.value = '';
+            document.querySelectorAll('input[name="openUseRationale"]').forEach(r => r.checked = false);
+            const ort2 = document.getElementById('openUseRationaleText');
+            if (ort2) ort2.value = '';
 
             // Remove all grayed-out states
             document.querySelectorAll('.option-card.grayed-out').forEach(c => c.classList.remove('grayed-out'));
@@ -2356,7 +2513,7 @@
             document.getElementById('otherUseCasesContainer').classList.add('hidden');
 
             // Close any open modals
-            [noAiModal, infoModal, embedModal, downloadModal, pngReminderModal].forEach(m => closeModal(m));
+            [noAiModal, openUseModal, infoModal, embedModal, downloadModal, pngReminderModal].forEach(m => closeModal(m));
 
             // Restore question visibility
             document.getElementById('question4').classList.remove('hidden');
@@ -2589,8 +2746,10 @@
                 return;
             }
             if (e.target.closest('#copyPolicyBtn')) { e.preventDefault(); e.stopPropagation(); copyPolicyBtn.dispatchEvent(new MouseEvent('click', { bubbles: false })); return; }
-            if (e.target.closest('#noAiDoneBtn'))   { e.preventDefault(); e.stopPropagation(); closeModal(noAiModal); updatePolicyPreview(); updateURL(); return; }
-            if (e.target.closest('.no-ai-cancel'))  { e.preventDefault(); e.stopPropagation(); cancelNoAi(); return; }
+            if (e.target.closest('#noAiDoneBtn'))     { e.preventDefault(); e.stopPropagation(); closeModal(noAiModal); updatePolicyPreview(); updateURL(); return; }
+            if (e.target.closest('.no-ai-cancel'))    { e.preventDefault(); e.stopPropagation(); cancelNoAi(); return; }
+            if (e.target.closest('#openUseDoneBtn'))  { e.preventDefault(); e.stopPropagation(); closeModal(openUseModal); updatePolicyPreview(); updateURL(); return; }
+            if (e.target.closest('.open-use-cancel')) { e.preventDefault(); e.stopPropagation(); cancelOpenUse(); return; }
             if (e.target.closest('.close-modal'))   { e.preventDefault(); e.stopPropagation(); [embedModal, downloadModal, pngReminderModal, infoModal].forEach(m => closeModal(m)); return; }
             if (e.target.closest('#copyUrlBtn')) {
                 e.preventDefault(); e.stopPropagation();

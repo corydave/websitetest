@@ -1,4 +1,6 @@
-# TeleGen
+# PROMPT
+
+## TeleGen
 Generates a real-time modifiable telemetry monitor for a simulated patient.
 Admin can control settings and the program will generate live EKG tracing and other vital signs. This output is viewable to the viewer in a format that resembles a telemetry monitor such as the Phillips IntelliVue MP5. ⚕
 

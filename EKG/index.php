@@ -63,6 +63,21 @@ $isLinks = ($action === 'start');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telemetry Monitor System</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ctrl: sticky wrapper (must NOT have overflow:hidden — that's why it's a separate div from the monitor) */
+        @media screen and (max-width: 1023px) {
+            #sim-view-wrapper .waves-area { flex: none; }
+            .ctrl-sticky-wrap { position: sticky; top: 0; z-index: 50; background: #020617; }
+            .ctrl-sticky-wrap .waves-area { flex: none; height: 200px !important; }
+            .ctrl-sticky-wrap #main-monitor { margin-bottom: 0.5rem; border-radius: 0; border-left: none; border-right: none; }
+            .ctrl-sticky-wrap .vitals-sidebar { display: none; }
+        }
+        /* Sim landscape: fill the screen */
+        @media screen and (orientation: landscape) and (max-width: 1023px) {
+            #sim-view-wrapper #main-monitor { max-width: 100%; border-radius: 0; margin-bottom: 0; }
+            #sim-view-wrapper .waves-area { height: calc(100vh - 2.5rem); height: calc(100svh - 2.5rem); }
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-200 font-sans min-h-screen flex flex-col items-center">
 
@@ -94,11 +109,17 @@ $isLinks = ($action === 'start');
                     </div>
                 </div>
 
-                <div class="mb-4">
+                <div>
                     <label class="block text-sm font-bold text-slate-400 mb-2 uppercase tracking-wider">Instructor Controller URL (Admin Panel)</label>
                     <div class="flex gap-2">
                         <input type="text" readonly value="<?= htmlspecialchars($ctrlUrl) ?>" class="flex-1 bg-slate-900 text-indigo-400 font-mono border border-slate-600 rounded-lg p-3 outline-none" />
                         <a href="<?= htmlspecialchars($ctrlUrl) ?>" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Open</a>
+                    </div>
+                    <div class="mt-4">
+                        <div class="bg-white p-2 rounded-lg inline-block">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=<?= urlencode($ctrlUrl) ?>"
+                                 class="w-44 h-44 block" alt="QR Code for Instructor Controls" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,9 +127,10 @@ $isLinks = ($action === 'start');
 
     <?php else: ?>
         <!-- MAIN SIMULATION APP -->
-        <div class="w-full p-2 md:p-6 flex flex-col items-center">
+        <div <?= $isSim ? 'id="sim-view-wrapper"' : '' ?> class="w-full p-2 md:p-6 flex flex-col items-center">
             <!-- MONITOR UI -->
-            <div class="w-full max-w-6xl bg-black border-4 border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col mb-8">
+            <?php if ($isCtrl): ?><div class="ctrl-sticky-wrap w-full max-w-6xl"><?php endif; ?>
+            <div id="main-monitor" class="w-full max-w-6xl bg-black border-4 border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col mb-8">
                 
                 <!-- Monitor Header -->
                 <div class="bg-slate-950 px-4 py-2 flex justify-between items-center border-b border-slate-800 text-sm md:text-base">
@@ -126,7 +148,7 @@ $isLinks = ($action === 'start');
                 <div class="flex flex-col lg:flex-row relative">
                     
                     <!-- Waves Area -->
-                    <div class="flex-1 relative h-[300px] md:h-[450px] overflow-hidden">
+                    <div class="waves-area flex-1 relative h-[300px] lg:h-[450px] overflow-hidden">
                         <canvas id="bgCanvas" width="1200" height="450" class="absolute top-0 left-0 w-full h-full object-fill"></canvas>
                         <canvas id="mainCanvas" width="1200" height="450" class="absolute top-0 left-0 w-full h-full object-fill z-10"></canvas>
                         
@@ -137,15 +159,15 @@ $isLinks = ($action === 'start');
                     </div>
 
                     <!-- Vitals Sidebar -->
-                    <div class="w-full lg:w-72 bg-slate-950 border-t lg:border-t-0 lg:border-l border-slate-800 p-4 flex flex-row lg:flex-col gap-4 lg:gap-6 justify-between overflow-x-auto">
-                        
+                    <div class="vitals-sidebar w-full lg:w-72 bg-slate-950 border-t lg:border-t-0 lg:border-l border-slate-800 p-3 grid grid-cols-2 lg:flex lg:flex-col gap-3 lg:gap-0">
+
                         <!-- HR Box -->
-                        <div class="flex-1 lg:flex-none flex flex-col items-end text-green-500 border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[120px]">
+                        <div class="bg-slate-900 lg:bg-transparent rounded-lg lg:rounded-none p-3 lg:p-4 lg:border-b border-slate-800 flex flex-col items-end text-green-500">
                             <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
                                 <span>HR</span>
                                 <svg class="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             </div>
-                            <div id="val-hr" class="text-5xl lg:text-7xl font-bold font-mono tracking-tighter">---</div>
+                            <div id="val-hr" class="text-4xl lg:text-7xl font-bold font-mono tracking-tighter">---</div>
                             <div class="w-full flex justify-end text-xs opacity-70 gap-2 mt-1">
                                 <span>120</span>
                                 <span>50</span>
@@ -153,21 +175,21 @@ $isLinks = ($action === 'start');
                         </div>
 
                         <!-- SpO2 Box -->
-                        <div class="flex-1 lg:flex-none flex flex-col items-end text-cyan-500 border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[120px]">
+                        <div class="bg-slate-900 lg:bg-transparent rounded-lg lg:rounded-none p-3 lg:p-4 lg:border-b border-slate-800 flex flex-col items-end text-cyan-500">
                             <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
                                 <span>SpO2 %</span>
                                 <span>PR <span id="val-pr">-</span></span>
                             </div>
-                            <div id="val-spo2" class="text-4xl lg:text-5xl font-bold font-mono tracking-tighter">---</div>
+                            <div id="val-spo2" class="text-3xl lg:text-5xl font-bold font-mono tracking-tighter">---</div>
                         </div>
 
                         <!-- NIBP Box -->
-                        <div class="flex-1 lg:flex-none flex flex-col items-end text-white border-r lg:border-r-0 lg:border-b border-slate-800 pb-0 lg:pb-4 pr-4 lg:pr-0 min-w-[150px]">
+                        <div class="bg-slate-900 lg:bg-transparent rounded-lg lg:rounded-none p-3 lg:p-4 lg:border-b border-slate-800 flex flex-col items-end text-white">
                             <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
                                 <span>NIBP mmHg</span>
                                 <span class="opacity-70">Auto</span>
                             </div>
-                            <div class="text-2xl lg:text-3xl font-bold font-mono">
+                            <div class="text-xl lg:text-3xl font-bold font-mono">
                                 <span id="val-sysBp">---</span>/<span id="val-diaBp">---</span>
                             </div>
                             <div class="text-sm opacity-70 font-mono mt-1">
@@ -176,7 +198,7 @@ $isLinks = ($action === 'start');
                         </div>
 
                         <!-- RESP Box -->
-                        <div class="flex-1 lg:flex-none flex flex-col items-end text-yellow-500 min-w-[100px]">
+                        <div class="bg-slate-900 lg:bg-transparent rounded-lg lg:rounded-none p-3 lg:p-4 flex flex-col items-end text-yellow-500">
                             <div class="w-full flex justify-between items-start text-xs font-bold mb-1">
                                 <span>RESP rpm</span>
                             </div>
@@ -186,6 +208,24 @@ $isLinks = ($action === 'start');
                     </div>
                 </div>
             </div>
+            <?php if ($isCtrl): ?></div><?php endif; ?>
+
+            <?php if ($isSim): ?>
+            <!-- LEARNER DEFIBRILLATOR PANEL -->
+            <div class="w-full max-w-6xl mt-4 bg-red-950/30 border-2 border-red-800 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-center gap-4">
+                <div class="flex-1 w-full">
+                    <label class="block text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">
+                        Shock Energy: <span id="lbl-learnerJoules">150</span> J
+                    </label>
+                    <input type="range" id="input-learnerJoules" min="10" max="300" step="10" value="150" class="w-full accent-red-500 cursor-pointer" />
+                </div>
+                <button id="btn-learner-shock" class="w-full sm:w-auto flex-shrink-0 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    SHOCK
+                </button>
+            </div>
+
+            <?php endif; ?>
 
             <!-- ADMIN CONTROLS (Hidden if on SIM view) -->
             <div id="admin-panel" class="w-full max-w-6xl bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700" <?= $isSim ? 'style="display: none;"' : '' ?>>
@@ -201,7 +241,7 @@ $isLinks = ($action === 'start');
                     <div class="bg-red-950/20 p-4 rounded-lg border border-red-900/50 md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
                         <div>
                             <label class="block text-sm font-medium text-red-400 mb-2">Shock Energy: <span id="lbl-shockEnergy">150</span> J</label>
-                            <input type="range" id="input-shockEnergy" min="25" max="300" step="1" value="150" class="w-full accent-red-500" />
+                            <input type="range" id="input-shockEnergy" min="10" max="300" step="10" value="150" class="w-full accent-red-500" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-red-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
@@ -336,6 +376,7 @@ $isLinks = ($action === 'start');
                 const sessionId = "<?= htmlspecialchars($id) ?>";
                 const isController = <?= $isCtrl ? 'true' : 'false' ?>;
                 let lastShockTrigger = 0;
+                let pendingTrigger = 0;
 
                 // --- STATE ---
                 const state = {
@@ -483,6 +524,42 @@ $isLinks = ($action === 'start');
                     });
                 }
 
+                // Learner shock panel (sim view only)
+                if (!isController) {
+                    let learnerJoules = 150;
+
+                    document.getElementById('input-learnerJoules')?.addEventListener('input', (e) => {
+                        learnerJoules = Number(e.target.value);
+                        const lbl = document.getElementById('lbl-learnerJoules');
+                        if (lbl) lbl.innerText = learnerJoules;
+                    });
+
+                    document.getElementById('btn-learner-shock')?.addEventListener('click', () => {
+                        const triggerTime = Date.now();
+                        pendingTrigger = triggerTime;
+                        events.push({ type: 'SHOCK', start: drawState.drawTime });
+                        let changes = { shockTrigger: triggerTime };
+
+                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
+                        if (learnerJoules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
+                            changes.rhythm = 'sinus';
+                            changes.saNodeRate = 80;
+                            changes.spo2 = 98;
+                            changes.sysBp = 120;
+                            changes.diaBp = 80;
+                            changes.rr = 16;
+                        }
+                        Object.assign(state, changes);
+                        updateUI();
+                        fetch('?action=update&id=' + sessionId, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(changes)
+                        });
+                    });
+
+                }
+
                 // Initial fetch and start polling
                 if (sessionId) {
                     fetch('?action=poll&id=' + sessionId)
@@ -502,7 +579,10 @@ $isLinks = ($action === 'start');
                                 
                                 if (data.shockTrigger && data.shockTrigger !== lastShockTrigger) {
                                     lastShockTrigger = data.shockTrigger;
-                                    events.push({ type: 'SHOCK', start: drawState.drawTime });
+                                    if (data.shockTrigger !== pendingTrigger) {
+                                        events.push({ type: 'SHOCK', start: drawState.drawTime });
+                                    }
+                                    pendingTrigger = 0;
                                 }
                                 Object.assign(state, data);
                                 updateUI();
