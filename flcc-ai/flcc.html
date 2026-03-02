@@ -34,9 +34,9 @@
         }
 
         .initiative-display {
-            background: white;
+            /* background: white; */
             border-radius: var(--radius);
-            border: 2px dashed #d1d5db;
+            /* border: 2px dashed #d1d5db; */
             aspect-ratio: 16 / 9;
             width: 100%;
             display: flex;
@@ -122,6 +122,94 @@
             margin-top: 1rem;
         }
 
+        .init-launch-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.85rem;
+            padding: 0.45rem 1rem;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-pill);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .init-launch-chip:hover {
+            background: #003d99;
+            transform: translateY(-1px);
+        }
+
+        /* ---- Image Slider ---- */
+        .img-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: var(--radius);
+        }
+        .img-slider-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.35s ease;
+            will-change: transform;
+        }
+        .img-slider-track img {
+            flex: 0 0 100%;
+            width: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            user-select: none;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.4);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: background 0.2s;
+        }
+        .slider-btn:hover { background: rgba(0,0,0,0.65); }
+        .slider-btn.prev { left: 10px; }
+        .slider-btn.next { right: 10px; }
+        .slider-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 7px;
+            z-index: 2;
+        }
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .slider-dot.active {
+            background: white;
+            transform: scale(1.25);
+        }
+
         @media (max-width: 900px) {
             .initiatives-layout {
                 grid-template-columns: 1fr;
@@ -187,6 +275,76 @@
 
     <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
     <script>
+        /* ---- Slider helpers ---- */
+
+        /**
+         * makeSlider(images)
+         * Returns an HTML string for an image slider. Use inside any contentHTML.
+         * Each entry can be a plain string path or an {src, alt} object.
+         * Example: contentHTML: makeSlider([
+         *   { src: 'images/photo1.jpg', alt: 'Students at an AI workshop' },
+         *   { src: 'images/photo2.jpg', alt: 'Faculty reviewing AI tools' },
+         * ])
+         */
+        function makeSlider(images) {
+            const multi = images.length > 1;
+            const trackImgs = images.map(item => {
+                const src = typeof item === 'string' ? item : item.src;
+                const alt = typeof item === 'string' ? '' : (item.alt || '');
+                return `<img src="${src}" alt="${alt}" draggable="false">`;
+            }).join('');
+            const btns = multi ? `
+                <button class="slider-btn prev" onclick="sliderStep(this,-1)" aria-label="Previous">&#8249;</button>
+                <button class="slider-btn next" onclick="sliderStep(this,1)" aria-label="Next">&#8250;</button>` : '';
+            const dots = multi ? `
+                <div class="slider-dots">${images.map((_, i) =>
+                    `<button class="slider-dot${i === 0 ? ' active' : ''}" onclick="sliderGo(this,${i})" aria-label="Slide ${i + 1}"></button>`
+                ).join('')}</div>` : '';
+            return `<div class="img-slider" data-index="0">
+                <div class="img-slider-track">${trackImgs}</div>
+                ${btns}${dots}
+            </div>`;
+        }
+
+        function _sliderUpdate(slider, index) {
+            const count = slider.querySelectorAll('.img-slider-track img').length;
+            index = ((index % count) + count) % count;
+            slider.dataset.index = index;
+            slider.querySelector('.img-slider-track').style.transform = `translateX(-${index * 100}%)`;
+            slider.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+        }
+
+        function sliderGo(el, index) {
+            const slider = el.closest('.img-slider');
+            if (slider) _sliderUpdate(slider, index);
+        }
+
+        function sliderStep(el, dir) {
+            const slider = el.closest('.img-slider');
+            if (slider) _sliderUpdate(slider, +slider.dataset.index + dir);
+        }
+
+        function initSliderAutoplay(container) {
+            container.querySelectorAll('.img-slider').forEach(slider => {
+                if (slider.querySelectorAll('.img-slider-track img').length <= 1) return;
+                function start() {
+                    slider._autoplayId = setInterval(() => _sliderUpdate(slider, +slider.dataset.index + 1), 2000);
+                }
+                function stop() { clearInterval(slider._autoplayId); }
+                slider.addEventListener('mouseenter', stop);
+                slider.addEventListener('mouseleave', start);
+                start();
+            });
+        }
+
+        function clearSliderAutoplay(container) {
+            container.querySelectorAll('.img-slider').forEach(s => clearInterval(s._autoplayId));
+        }
+
+        function applyImgTitles(container) {
+            container.querySelectorAll('img[alt]').forEach(img => { if (img.alt) img.title = img.alt; });
+        }
+
         /**
          * INITIATIVES — Add/edit entries here to update the accordion section.
          *
@@ -194,58 +352,84 @@
          *   title       - Shown as the accordion button label
          *   description - Paragraph shown when the item is open
          *   contentHTML - HTML rendered in the right-hand container (image, video, slider, etc.)
+         *                 Use makeSlider(['img1.jpg', 'img2.jpg']) for an image slider.
          */
         const initiatives = [
             {
+                title: 'AI & Accessibility',
+                description: 'FLCC\'s AI specialists have built custom prompts and AI tools that make accessibility improvements practical and achievable for every faculty and staff member.',
+                link: 'accessibility/index.php',
+                contentHTML: `<img src="images/wwd-ai-accessibility.png" alt="An illustrated infographic titled AI AS THE ACCESSIBLE ACCELERATOR displays a central AI POWERED TRANSFORMATION HUB where a diverse group of four people interacts with digital accessibility tools. On the left, a column labeled BEFORE shows problematic content like videos without captions or missing alt text, while the right side shows the AFTER result of fully captioned videos and structured documents with green checkmarks. The scene features FLCC branding and depicts various AI agents for alt text, captions, and readability checks being used to create inclusive digital content." />`
+            },
+            {
                 title: 'AI Challenge',
-                description: 'Placeholder description for Initiative A. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="layout" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative A</span></div>`
+                description: 'The AI Challenge is a scaffolded series of hands-on activities, delivered by email or on the web, that guides participants through a variety of practical ways to use AI. Bring it to your organization for free!',
+                link: 'https://aichallenges.org/',
+                contentHTML: makeSlider([
+                    { src: 'images/wwd-ai-challenge-01.png',    alt: 'Screenshot of the AI Challenge - Eight tiles, each with an AI challenge, arranged in a grid.' },
+                    { src: 'images/wwd-ai-challenge-02.png',    alt: 'Screenshot of the AI Challenge - A challenge called IMAGINE IMAGES with text describing the challenge.' },
+                    { src: 'images/wwd-ai-challenge-03.png',    alt: 'Screenshot of the AI Challenge - A description of generating images, a prompt, and the result.' },
+                    { src: 'images/wwd-ai-challenge-04.png',    alt: 'Screenshot of the AI Challenge - A shared gallery of AI-generated images made by participants in the AI Challenge.' },
+                ])
             },
             {
                 title: 'AI Enahanced Initiatives',
-                description: 'Placeholder description for Initiative B. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="zap" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative B</span></div>`
-            },            
-            {
-                title: 'AI Newsletter',
-                description: 'Placeholder description for Initiative B. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                description: 'FLCC offers small honorariums to faculty and staff who design and share AI-enhanced lessons, learning experiences, workflows, and administrative processes, recognizing and rewarding the innovative work happening across campus.',
+                link: '',
                 contentHTML: `<div class="init-placeholder"><i data-lucide="zap" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative B</span></div>`
             },
             {
                 title: 'AI Think Tank',
-                description: 'Placeholder description for Initiative C. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="globe" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative C</span></div>`
+                description: 'The AI Think Tank is a steering committee with Instructional and Business work streams that sets goals for AI exploration across all college divisions, supports access to AI tools, and develops policy recommendations to guide the college\'s AI journey.',
+                link: '',
+                contentHTML: `<img src="images/wwd-ai-think-tank.png" alt="Org Chart for the AI Think Tank - Steering Committee has two work streams - Instructional and Business" />`
             },
             {
                 title: 'Book Clubs',
-                description: 'Placeholder description for Initiative D. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="book-open" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative D</span></div>`
+                description: '<p>FLCC\'s AI Book Clubs explore titles that are easy to integrate into the curriculum while sparking meaningful conversations about AI\'s broader impact, with current selections including <em>The Opposite of Cheating</em>, <em>Teaching Effectively with ChatGPT</em>, and <em>Empire of AI</em>.</p>',
+                link: '',
+                contentHTML: `<img src="images/wwd-book-club.png" alt="Three books: The Opposite of Cheating, Teaching Effectively with ChatGPT, and Empire of AI." />`
             },
             {
                 title: 'External Consultant',
-                description: 'Placeholder description for Initiative E. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
+                description: 'Early in its AI journey, FLCC partnered with an external consultant bringing demonstrated expertise in both AI integration and cultural change strategy to help guide the college\'s approach.',
+                link: '',
                 contentHTML: `<div class="init-placeholder"><i data-lucide="users" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative E</span></div>`
             },
             {
                 title: 'FYE Educational Piece',
-                description: 'Placeholder description for Initiative F. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="bar-chart-2" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative F</span></div>`
+                description: 'FLCC built an interactive AI learning experience embedded directly in First Year Experience orientation courses, designed from the ground up to be updated on the fly so it always reflects the latest tools and trends.',
+                link: '',
+                contentHTML: makeSlider([
+                    { src: 'images/wwd-fye-01.png',  alt: 'A screenshot showing an AI tutorial - video on the left pane, an AI chatbot simulation on the right. The title is AI AND HALLUCINATIONS' },
+                    { src: 'images/wwd-fye-02.png',  alt: 'A screenshot showing an AI tutorial - video on the left pane, an AI chatbot simulation on the right. The title is DECIPHERING THE SYLLABUS' },
+                    { src: 'images/wwd-fye-03.png',  alt: 'A screenshot showing an AI tutorial - video on the left pane, an AI chatbot simulation on the right. The title is OFFICE HOURS AND EMAIL' },
+                ])
             },
             {
                 title: 'Microcredential',
-                description: 'Placeholder description for Initiative F. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="bar-chart-2" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative F</span></div>`
-            },            
+                description: 'FLCC\'s AI Integration Specialist microcredential can be completed in a single semester, offering hands-on AI courses to serve both traditional learners and working professionals. Its flexible, stackable structure lets learners enter at their skill level and build immediately applicable skills, preparing a Finger Lakes workforce that can use AI tools effectively, ethically, and with confidence.',
+                link: '',
+                contentHTML: `<img src="images/wwd-mc-info.png" alt="AI Microcredential Infographic showing the courses." />`
+            },
+            {
+                title: 'Newsletter',
+                description: 'A weekly newsletter keeps faculty and staff informed and inspired, spotlighting AI innovations happening across campus, sharing curated "Prompts of the Week," and highlighting professional development opportunities in AI.',
+                link: '',
+                contentHTML: `<img src="images/wwd-newsletters.png" alt="A collage of digital newsletters displays several editions of AI NEWS with blue headers and various article titles. Visible sections include an AI-ENHANCED LEARNING INITIATIVE announcement, a guide on AI POWERED ACCESSIBILITY TOOLS, and a LIGHTNING ROUND summary of campus projects. The newsletters feature white backgrounds with blue and black text, providing information on topics like generating alt text and using AI as a metaphor for human learning." />`
+            },
             {
                 title: 'Professional Development',
-                description: 'Placeholder description for Initiative G. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="lightbulb" width="52" style="opacity:0.25;color:var(--primary-blue)"></i><span class="ph-label">Initiative G</span></div>`
+                description: 'FLCC maintains a strategic calendar of in-person and remote AI training opportunities, with sessions cataloged for on-demand viewing so faculty and staff can learn at their own pace.',
+                link: '',
+                contentHTML: `<img src="images/wwd-professional-development.png" alt="A professional development webpage for the CENTER FOR TEACHING AND LEARNING features three course modules titled PROMPTING 101, MEDIA CREATION, and PROMPTING 201. Each section includes a descriptive paragraph about learning AI strategies and a thumbnail image overlaid with a diagonal blue banner and the CTL AI logo. The page provides external links to AI tools like Gemini, ChatGPT, and Meta AI to encourage faculty and staff engagement with new technologies." />`
             },
             {
                 title: 'Vibe Coding Course',
-                description: 'Placeholder description for Initiative F. Replace this with a concise summary of what this initiative does and who it serves across the Finger Lakes region.',
-                contentHTML: `<div class="init-placeholder"><i data-lucide="bar-chart-2" width="52" style="opacity:0.25;color:var(--primary-green)"></i><span class="ph-label">Initiative F</span></div>`
-            }            
+                description: 'FLCC\'s full-semester Vibe Coding course gives non-CS majors a low-to-no-code pathway to build real solutions with AI, fulfilling both technology and AI literacy requirements without traditional programming barriers.',
+                link: '',
+                contentHTML: `<img src="images/wwd-vibe-coding.png" alt="A digital collage on a blue background features the stylized text VIBE CODING WITH AI surrounded by various screenshots of software applications. The collage includes a computer science quiz, a digital book cover, a hand-tracking interface with geometric overlays, an interactive periodic table, and a real-time world flight tracker map. This graphic illustrates diverse programming projects and educational tools that can be developed using artificial intelligence." />`
+            }
         ];
 
         function renderInitiatives() {
@@ -263,6 +447,7 @@
                     <div class="accordion-body">
                         <div class="accordion-body-inner">
                             ${item.description}
+                            ${item.link ? `<br><a href="${item.link}" target="_blank" rel="noopener" class="init-launch-chip"><i data-lucide="external-link" width="13"></i> Launch <i data-lucide="arrow-right" width="13"></i></a>` : ''}
                             <div class="initiative-display initiative-display-inline">${item.contentHTML}</div>
                         </div>
                     </div>
@@ -271,6 +456,9 @@
 
             // Set initial content and open first body
             display.innerHTML = initiatives[0].contentHTML;
+            applyImgTitles(display);
+            initSliderAutoplay(display);
+            applyImgTitles(accordion);
             const firstBody = accordion.querySelector('.accordion-body');
             firstBody.style.maxHeight = firstBody.scrollHeight + 'px';
 
@@ -293,11 +481,14 @@
                         this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 'px';
 
                         // Swap right-side content with fade
+                        clearSliderAutoplay(display);
                         display.classList.add('fading');
                         setTimeout(() => {
                             display.innerHTML = initiatives[idx].contentHTML;
                             display.classList.remove('fading');
                             lucide.createIcons();
+                            applyImgTitles(display);
+                            initSliderAutoplay(display);
                         }, 200);
                     }
                 });
