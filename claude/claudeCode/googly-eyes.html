@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Googly Eye Tracker 👀</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      gap: 12px;
+      padding: 12px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 24px rgba(130, 200, 255, 0.5);
+      flex-shrink: 0;
+    }
+
+    /* ── The big mirror ── */
+    #container {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+      transform: scaleX(-1); /* selfie mirror */
+      /* Fill most of viewport width; preserve camera aspect ratio */
+      width: min(96vw, 1440px);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #loader {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 30, 0.93);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s;
+    }
+
+    #loader.hidden { opacity: 0; pointer-events: none; }
+
+    .spinner {
+      width: 48px; height: 48px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: #7ec8f4;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loader p { color: #aac; font-size: 0.95rem; }
+
+    /* ── Controls row ── */
+    #ui {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 16px;
+      padding: 4px 0;
+      flex-shrink: 0;
+    }
+
+    #status {
+      font-size: 0.85rem;
+      color: #889;
+      letter-spacing: 0.02em;
+    }
+
+    button {
+      padding: 7px 16px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.07);
+      color: #ccd;
+      cursor: pointer;
+      font-size: 0.83rem;
+      transition: background 0.15s, transform 0.1s;
+      user-select: none;
+      white-space: nowrap;
+    }
+    button:hover  { background: rgba(255,255,255,0.14); }
+    button:active { transform: scale(0.95); }
+    button.on     { background: rgba(80,200,130,0.22); border-color: rgba(80,200,130,0.4); color: #afa; }
+
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.80rem;
+      color: #889;
+    }
+    input[type=range] { width: 80px; accent-color: #7ec8f4; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>👀 Googly Eye Tracker</h1>
+
+  <div id="container">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="overlay"></canvas>
+    <div id="loader">
+      <div class="spinner"></div>
+      <p id="loaderMsg">Starting camera…</p>
+    </div>
+  </div>
+
+  <div id="ui">
+    <span id="status">Initializing…</span>
+    <button id="btnMirror" class="on" onclick="toggleMirror()">Mirror: ON</button>
+    <button id="btnDebug"             onclick="toggleDebug()">Debug: OFF</button>
+    <button                           onclick="wiggle()">🎲 Wiggle</button>
+    <button                           onclick="fling()">💥 Fling</button>
+
+    <div class="slider-group">
+      <label for="sGravity">Gravity</label>
+      <input id="sGravity" type="range" min="0" max="5000" value="1800" step="100">
+    </div>
+    <div class="slider-group">
+      <label for="sBounce">Bounce</label>
+      <input id="sBounce" type="range" min="0" max="100" value="30" step="1">
+    </div>
+    <div class="slider-group">
+      <label for="sSize">Eye Size</label>
+      <input id="sSize" type="range" min="60" max="200" value="100" step="2">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+  <script>
+  // ─── CONSTANTS & TUNING ──────────────────────────────────────────────────────
+  let GRAVITY   = 1800;   // px/s² downward pull
+  let BOUNCE    = 0.30;   // energy kept on wall bounce
+  let EYE_SCALE = 1.00;   // multiplier on computed eye radius (1.0 = exact eye-corner fit)
+  const DAMPING = 0.88;   // velocity decay per 60hz frame
+  const INERTIA = 0.55;   // inertia fraction from head movement
+  const PUPIL_R = 0.50;   // pupil radius / googly outer radius
+  const MAX_FACES = 4;
+
+  document.getElementById('sGravity').oninput = e => GRAVITY   = +e.target.value;
+  document.getElementById('sBounce').oninput  = e => BOUNCE    = e.target.value / 100;
+  document.getElementById('sSize').oninput    = e => EYE_SCALE = e.target.value / 100;
+
+  // ─── PHYSICS ─────────────────────────────────────────────────────────────────
+  function makePupil() {
+    return { ox: 0, oy: 0, vx: (Math.random()-0.5)*150, vy: (Math.random()-0.5)*150 };
+  }
+
+  function stepPupil(p, dt, googlyR) {
+    const pupilR = googlyR * PUPIL_R;
+    const maxOff = googlyR - pupilR - 1;
+    const decay  = Math.pow(DAMPING, dt * 60);
+
+    p.vy += GRAVITY * dt;    // gravity
+    p.ox += p.vx * dt;       // integrate
+    p.oy += p.vy * dt;
+    p.vx *= decay;            // damping
+    p.vy *= decay;
+
+    // Elastic wall collision
+    const dist = Math.hypot(p.ox, p.oy);
+    if (dist > maxOff) {
+      const nx = p.ox / dist, ny = p.oy / dist;
+      const dot = p.vx * nx + p.vy * ny;
+      p.vx = (p.vx - 2 * dot * nx) * BOUNCE;
+      p.vy = (p.vy - 2 * dot * ny) * BOUNCE;
+      p.ox = nx * maxOff * 0.998;
+      p.oy = ny * maxOff * 0.998;
+    }
+  }
+
+  function kick(p, dvx, dvy) {
+    const cap = 5000;
+    p.vx -= Math.max(-cap, Math.min(cap, dvx)) * INERTIA;
+    p.vy -= Math.max(-cap, Math.min(cap, dvy)) * INERTIA;
+  }
+
+  // ─── FACE STATE ──────────────────────────────────────────────────────────────
+  const faces = Array.from({ length: MAX_FACES }, () => ({
+    L: makePupil(), R: makePupil(),
+    prevL: null, prevR: null,
+  }));
+
+  // ─── LANDMARK INDICES ────────────────────────────────────────────────────────
+  //
+  //  Iris centers (refineLandmarks: true required):
+  //    468 = left iris center   473 = right iris center
+  //
+  //  Eye corners (for computing the correct circle radius):
+  //    Left eye:  outer=33   inner=133
+  //    Right eye: outer=263  inner=362
+  //
+  //  The googly eye radius = distance(outerCorner, innerCorner) / 2
+  //  so the white circle exactly spans the visible eye opening.
+
+  const L_IRIS_CTR  = 468;
+  const R_IRIS_CTR  = 473;
+  const L_OUTER     = 33,  L_INNER = 133;
+  const R_OUTER     = 263, R_INNER = 362;
+
+  // Also the iris ring points for debug rendering
+  const LI_RING = [469, 470, 471, 472];
+  const RI_RING = [474, 475, 476, 477];
+
+  function getEye(lm, ctrIdx, outerIdx, innerIdx, W, H) {
+    const c     = lm[ctrIdx];
+    const outer = lm[outerIdx];
+    const inner = lm[innerIdx];
+
+    // Iris center — most accurate position for the eye center
+    const cx = c.x * W;
+    const cy = c.y * H;
+
+    // Radius from eye corner to corner (half the full eye-opening width)
+    const r = Math.hypot(
+      (outer.x - inner.x) * W,
+      (outer.y - inner.y) * H
+    ) / 2;
+
+    return { cx, cy, r };
+  }
+
+  // ─── RENDERING ───────────────────────────────────────────────────────────────
+  function drawGooglyEye(ctx, cx, cy, eyeR, pupil) {
+    const R  = eyeR * EYE_SCALE;     // outer white radius
+    const pR = R * PUPIL_R;          // pupil radius
+    const px = cx + pupil.ox;
+    const py = cy + pupil.oy;
+
+    // ── White of eye — radial gradient + drop shadow ──
+    ctx.save();
+    ctx.shadowColor   = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur    = R * 0.4;
+    ctx.shadowOffsetY = R * 0.10;
+
+    const gWhite = ctx.createRadialGradient(cx - R*0.22, cy - R*0.22, R*0.04, cx, cy, R);
+    gWhite.addColorStop(0,   '#ffffff');
+    gWhite.addColorStop(0.65,'#f2f2f2');
+    gWhite.addColorStop(1,   '#cccccc');
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = gWhite;
+    ctx.fill();
+    ctx.restore();
+
+    // ── Dark rim ──
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.70)';
+    ctx.lineWidth   = Math.max(1.5, R * 0.055);
+    ctx.stroke();
+    ctx.restore();
+
+    // ── Clip everything to the white circle ──
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R - 1, 0, Math.PI * 2);
+    ctx.clip();
+
+    // ── Pupil body ──
+    const gPupil = ctx.createRadialGradient(px - pR*0.22, py - pR*0.22, pR*0.05, px, py, pR);
+    gPupil.addColorStop(0, '#444');
+    gPupil.addColorStop(1, '#000');
+
+    ctx.beginPath();
+    ctx.arc(px, py, pR, 0, Math.PI * 2);
+    ctx.fillStyle = gPupil;
+    ctx.fill();
+
+    // ── Specular highlights ──
+    ctx.beginPath();
+    ctx.arc(px - pR*0.30, py - pR*0.30, pR*0.24, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(px + pR*0.18, py + pR*0.04, pR*0.10, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.50)';
+    ctx.fill();
+
+    ctx.restore(); // remove clip
+  }
+
+  // ─── DOM REFS ────────────────────────────────────────────────────────────────
+  const video      = document.getElementById('video');
+  const overlay    = document.getElementById('overlay');
+  const ctx2d      = overlay.getContext('2d');
+  const status     = document.getElementById('status');
+  const loader     = document.getElementById('loader');
+  const loaderMsg  = document.getElementById('loaderMsg');
+  const container  = document.getElementById('container');
+
+  let lastT      = null;
+  let showDebug  = false;
+  let isMirrored = true;
+
+  // ─── MEDIAPIPE SETUP ─────────────────────────────────────────────────────────
+  const faceMesh = new FaceMesh({
+    locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
+  });
+
+  faceMesh.setOptions({
+    maxNumFaces:             MAX_FACES,
+    refineLandmarks:         true,    // unlocks iris landmarks 468–477
+    minDetectionConfidence:  0.5,
+    minTrackingConfidence:   0.5,
+  });
+
+  faceMesh.onResults(results => {
+    const now = performance.now() / 1000;
+    const dt  = lastT ? Math.min(now - lastT, 0.05) : 0.016;
+    lastT = now;
+
+    const W = overlay.width;
+    const H = overlay.height;
+
+    ctx2d.clearRect(0, 0, W, H);
+
+    if (showDebug) ctx2d.drawImage(results.image, 0, 0, W, H);
+
+    const detected = results.multiFaceLandmarks || [];
+    status.textContent = detected.length
+      ? `${detected.length} face${detected.length > 1 ? 's' : ''} detected 😄`
+      : 'No face detected — look at the camera!';
+
+    detected.forEach((lm, i) => {
+      const state = faces[i];
+      const L = getEye(lm, L_IRIS_CTR, L_OUTER, L_INNER, W, H);
+      const R = getEye(lm, R_IRIS_CTR, R_OUTER, R_INNER, W, H);
+
+      // Inertia: kick pupils opposite to head movement
+      if (state.prevL) kick(state.L, (L.cx - state.prevL.x) / dt, (L.cy - state.prevL.y) / dt);
+      if (state.prevR) kick(state.R, (R.cx - state.prevR.x) / dt, (R.cy - state.prevR.y) / dt);
+
+      // Physics
+      stepPupil(state.L, dt, L.r * EYE_SCALE);
+      stepPupil(state.R, dt, R.r * EYE_SCALE);
+
+      state.prevL = { x: L.cx, y: L.cy };
+      state.prevR = { x: R.cx, y: R.cy };
+
+      // Draw
+      drawGooglyEye(ctx2d, L.cx, L.cy, L.r, state.L);
+      drawGooglyEye(ctx2d, R.cx, R.cy, R.r, state.R);
+
+      // Debug overlay
+      if (showDebug) {
+        [
+          { iris: L, ring: LI_RING },
+          { iris: R, ring: RI_RING },
+        ].forEach(({ iris, ring }) => {
+          // Show computed googly radius
+          ctx2d.save();
+          ctx2d.beginPath();
+          ctx2d.arc(iris.cx, iris.cy, iris.r * EYE_SCALE, 0, Math.PI * 2);
+          ctx2d.strokeStyle = 'rgba(255,80,80,0.7)';
+          ctx2d.lineWidth = 2;
+          ctx2d.stroke();
+
+          // Show raw iris ring
+          ctx2d.beginPath();
+          ctx2d.arc(iris.cx, iris.cy, iris.r, 0, Math.PI * 2);
+          ctx2d.strokeStyle = 'rgba(0,255,80,0.7)';
+          ctx2d.lineWidth = 1.5;
+          ctx2d.stroke();
+
+          // Center dot
+          ctx2d.beginPath();
+          ctx2d.arc(iris.cx, iris.cy, 3, 0, Math.PI * 2);
+          ctx2d.fillStyle = '#0f0';
+          ctx2d.fill();
+          ctx2d.restore();
+        });
+      }
+    });
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────────────────────
+  async function init() {
+    try {
+      loaderMsg.textContent = 'Requesting camera…';
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }
+      });
+      video.srcObject = stream;
+
+      await new Promise(resolve => { video.onloadedmetadata = resolve; });
+      overlay.width  = video.videoWidth;
+      overlay.height = video.videoHeight;
+
+      loaderMsg.textContent = 'Loading AI model…';
+
+      const cam = new Camera(video, {
+        onFrame: () => faceMesh.send({ image: video }),
+        width:  video.videoWidth,
+        height: video.videoHeight,
+      });
+      await cam.start();
+
+      loader.classList.add('hidden');
+      status.textContent = 'Ready! Look at the camera.';
+    } catch (err) {
+      loaderMsg.textContent = `Error: ${err.message}`;
+      status.textContent = err.message;
+      console.error(err);
+    }
+  }
+
+  init();
+
+  // ─── CONTROLS ────────────────────────────────────────────────────────────────
+  function toggleMirror() {
+    isMirrored = !isMirrored;
+    container.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+    const btn = document.getElementById('btnMirror');
+    btn.textContent = `Mirror: ${isMirrored ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('on', isMirrored);
+  }
+
+  function toggleDebug() {
+    showDebug = !showDebug;
+    const btn = document.getElementById('btnDebug');
+    btn.textContent = `Debug: ${showDebug ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('on', showDebug);
+  }
+
+  function wiggle() {
+    faces.forEach(s => {
+      const mag = 800 + Math.random() * 1200;
+      const a   = Math.random() * Math.PI * 2;
+      s.L.vx += Math.cos(a) * mag;         s.L.vy += Math.sin(a) * mag;
+      s.R.vx += Math.cos(a + 1.0) * mag;   s.R.vy += Math.sin(a + 1.0) * mag;
+    });
+  }
+
+  function fling() {
+    faces.forEach(s => {
+      const mag = 5000 + Math.random() * 4000;
+      const a   = Math.random() * Math.PI * 2;
+      s.L.vx += Math.cos(a) * mag;         s.L.vy += Math.sin(a) * mag - 2000;
+      s.R.vx += Math.cos(a + 2.5) * mag;   s.R.vy += Math.sin(a + 2.5) * mag - 2000;
+    });
+  }
+  </script>
+</body>
+</html>
