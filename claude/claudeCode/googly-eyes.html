@@ -26,15 +26,14 @@
       flex-shrink: 0;
     }
 
-    /* ── The big mirror ── */
+    /* ── The big mirror — width is set by JS after video dimensions are known ── */
     #container {
       position: relative;
       border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
       transform: scaleX(-1); /* selfie mirror */
-      /* Fill most of viewport width; preserve camera aspect ratio */
-      width: min(96vw, 1440px);
+      max-width: 96vw;       /* hard cap until JS kicks in */
     }
 
     video {
@@ -116,6 +115,23 @@
       color: #889;
     }
     input[type=range] { width: 80px; accent-color: #7ec8f4; cursor: pointer; }
+
+    #camSelect {
+      display: none;           /* shown only when 2+ cameras exist */
+      padding: 6px 28px 6px 10px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.07)
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23889'/%3E%3C/svg%3E")
+        no-repeat right 9px center;
+      color: #ccd;
+      cursor: pointer;
+      font-size: 0.83rem;
+      appearance: none;
+      -webkit-appearance: none;
+      max-width: 200px;
+    }
+    #camSelect option { background: #1a1a2e; color: #ccd; }
   </style>
 </head>
 <body>
@@ -133,6 +149,7 @@
 
   <div id="ui">
     <span id="status">Initializing…</span>
+    <select id="camSelect" title="Choose camera"></select>
     <button id="btnMirror" class="on" onclick="toggleMirror()">Mirror: ON</button>
     <button id="btnDebug"             onclick="toggleDebug()">Debug: OFF</button>
     <button                           onclick="wiggle()">🎲 Wiggle</button>
@@ -153,7 +170,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
   <script>
   // ─── CONSTANTS & TUNING ──────────────────────────────────────────────────────
@@ -323,6 +339,7 @@
   let lastT      = null;
   let showDebug  = false;
   let isMirrored = true;
+  let loopId     = 0;      // incremented on each startCamera() to cancel stale loops
 
   // ─── MEDIAPIPE SETUP ─────────────────────────────────────────────────────────
   const faceMesh = new FaceMesh({
@@ -405,27 +422,95 @@
     });
   });
 
+  // ─── SIZE CONTAINER to fill available viewport ───────────────────────────────
+  // Called after video dimensions are known and on window resize.
+  // Computes the largest width that fits both the viewport width AND height
+  // (leaving room for the title and controls), preserving the camera's aspect ratio.
+  function sizeContainer() {
+    if (!video.videoWidth) return;
+    const ar     = video.videoWidth / video.videoHeight;
+    const uiEl   = document.getElementById('ui');
+    const h1El   = document.querySelector('h1');
+    const gaps   = 12 * 4;  // body padding (top+bottom) + two gaps
+    const availH = window.innerHeight - uiEl.offsetHeight - h1El.offsetHeight - gaps;
+    const availW = window.innerWidth  * 0.96;
+    const w      = Math.max(320, Math.min(availW, availH * ar, 1440));
+    container.style.width = Math.floor(w) + 'px';
+  }
+
+  // ─── CAMERA START / SWITCH ───────────────────────────────────────────────────
+  // We manage the RAF loop ourselves instead of using the MediaPipe Camera utility.
+  // Reason: Camera utility calls its own getUserMedia() on start(), which would
+  // override our deviceId-constrained stream with a fresh unconstrained one.
+  async function startCamera(deviceId = null) {
+    // Bump loopId — any running loop will see the mismatch and exit
+    const myId = ++loopId;
+
+    // Stop existing stream tracks
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
+
+    const constraints = deviceId
+      ? { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      : { facingMode: 'user',            width: { ideal: 1280 }, height: { ideal: 720 } };
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: constraints });
+    video.srcObject = stream;
+
+    await new Promise(resolve => { video.onloadedmetadata = resolve; });
+    overlay.width  = video.videoWidth;
+    overlay.height = video.videoHeight;
+
+    sizeContainer(); // fit the container to this camera's aspect ratio
+
+    // Frame loop: await each send so we never have two in-flight at once
+    async function loop() {
+      if (loopId !== myId) return;                       // stale — bail out
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        await faceMesh.send({ image: video });
+      }
+      if (loopId === myId) requestAnimationFrame(loop);  // schedule next frame
+    }
+    requestAnimationFrame(loop);
+  }
+
   // ─── INIT ────────────────────────────────────────────────────────────────────
   async function init() {
     try {
       loaderMsg.textContent = 'Requesting camera…';
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }
-      });
-      video.srcObject = stream;
-
-      await new Promise(resolve => { video.onloadedmetadata = resolve; });
-      overlay.width  = video.videoWidth;
-      overlay.height = video.videoHeight;
+      await startCamera();
 
       loaderMsg.textContent = 'Loading AI model…';
 
-      const cam = new Camera(video, {
-        onFrame: () => faceMesh.send({ image: video }),
-        width:  video.videoWidth,
-        height: video.videoHeight,
-      });
-      await cam.start();
+      // Enumerate cameras — labels are only available after permission is granted
+      const devices     = await navigator.mediaDevices.enumerateDevices();
+      const videoInputs = devices.filter(d => d.kind === 'videoinput');
+
+      if (videoInputs.length > 1) {
+        const sel = document.getElementById('camSelect');
+        sel.innerHTML = videoInputs.map((d, i) =>
+          `<option value="${d.deviceId}">${d.label || `Camera ${i + 1}`}</option>`
+        ).join('');
+
+        // Pre-select whichever device is currently active
+        const activeId = video.srcObject.getVideoTracks()[0].getSettings().deviceId;
+        if (activeId) sel.value = activeId;
+
+        sel.style.display = 'block';
+        sel.onchange = async () => {
+          status.textContent = 'Switching camera…';
+          try {
+            await startCamera(sel.value);
+            // Clear stale prev-positions so physics doesn't get a huge spurious kick
+            faces.forEach(f => { f.prevL = null; f.prevR = null; });
+            status.textContent = 'Ready!';
+          } catch (err) {
+            status.textContent = `Switch failed: ${err.message}`;
+          }
+        };
+      }
 
       loader.classList.add('hidden');
       status.textContent = 'Ready! Look at the camera.';
@@ -437,6 +522,7 @@
   }
 
   init();
+  window.addEventListener('resize', sizeContainer);
 
   // ─── CONTROLS ────────────────────────────────────────────────────────────────
   function toggleMirror() {
