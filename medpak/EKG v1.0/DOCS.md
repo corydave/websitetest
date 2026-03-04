@@ -1,4 +1,5 @@
 <!-- feature: ekg-demo.png -->
+<!-- version: 1.0.0 -->
 
 # Telemetry Monitor Simulator
 

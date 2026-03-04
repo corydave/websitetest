@@ -49,7 +49,12 @@ if (isset($_GET['raw'])) {
 
 // ─── App discovery ────────────────────────────────────────────────────────────
 function parseAppDocs(string $content, string $subdir): array {
-    $app = ['subdir' => $subdir, 'title' => $subdir, 'description' => '', 'image' => null];
+    $app = ['subdir' => $subdir, 'title' => $subdir, 'description' => '', 'image' => null, 'version' => null];
+
+    // Version via HTML comment: <!-- version: X.Y.Z -->
+    if (preg_match('/<!--\s*version:\s*(.+?)\s*-->/i', $content, $m)) {
+        $app['version'] = trim($m[1]);
+    }
 
     // Feature image via HTML comment: <!-- feature: filename.png -->
     if (preg_match('/<!--\s*feature:\s*(.+?)\s*-->/i', $content, $m)) {
@@ -181,9 +186,12 @@ $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php'), '/') . '/';
                                     <?= htmlspecialchars($app['description']) ?>
                                 </p>
                             <?php endif; ?>
-                            <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold">
-                                View details →
-                            </span>
+                            <div class="mt-4 flex items-center justify-between">
+                                <span class="text-indigo-600 text-sm font-semibold">View details →</span>
+                                <?php if ($app['version']): ?>
+                                    <span class="text-xs text-slate-400 font-mono">v<?= htmlspecialchars($app['version']) ?></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </button>
                 <?php endforeach; ?>
