@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 4rem;
+            align-items: start;
+            padding: 4.5rem 0 5rem;
+        }
+
+        /* ---- Left: info panel ---- */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-info h2 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        .contact-info p {
+            color: var(--neutral-gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .contact-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.25rem;
+            background: var(--light-bg);
+            border: 1px solid #e8eaed;
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+
+        .contact-option:hover {
+            border-color: #c8d4ee;
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .contact-option-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-option-icon.blue { background: rgba(0,70,173,0.1); color: var(--primary-blue); }
+        .contact-option-icon.green { background: rgba(88,166,24,0.1); color: var(--primary-green); }
+
+        .contact-option-text strong {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+
+        .contact-option-text span {
+            font-size: 0.82rem;
+            color: var(--neutral-gray);
+        }
+
+        /* ---- Right: form ---- */
+        .contact-form-wrap {
+            background: white;
+            border: 1px solid #e8eaed;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+        }
+
+        .contact-form-wrap h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 1.75rem;
+            color: var(--dark-gray);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            font-family: 'Rubik', sans-serif;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            background: var(--light-bg);
+            border: 1px solid #d1d5db;
+            border-radius: var(--radius-sm);
+            padding: 0.7rem 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,70,173,0.1);
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 130px;
+            line-height: 1.6;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23939598' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.9rem center;
+            padding-right: 2.25rem;
+        }
+
+        .form-submit {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-note {
+            font-size: 0.78rem;
+            color: var(--neutral-gray);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 860px) {
+            .contact-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding: 3rem 0 4rem;
+            }
+            .form-row { grid-template-columns: 1fr; }
+            .form-submit { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'contact-us';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Stay Informed</span>
+            <h1>Contact Us</h1>
+            <p class="hero-sub">Have a question, want to bring a program to your organization, or just looking to connect? We'd love to hear from you.</p>
+        </div>
+    </section>
+
+    <!-- Contact Layout -->
+    <div class="container">
+        <div class="contact-layout">
+
+            <!-- Left: info -->
+            <div class="contact-info">
+                <div>
+                    <h2>Let's talk AI.</h2>
+                    <p style="margin-top: 0.75rem;">Whether you're interested in a keynote, a workshop, or just want to learn more about what the FLX AI Hub offers — reach out. We're friendly, we're local, and we love this stuff.</p>
+                </div>
+
+                <div class="contact-options">
+                    <!-- <a href="mailto:ai@flcc.edu" class="contact-option">
+                        <div class="contact-option-icon blue"><i data-lucide="mail" width="20"></i></div>
+                        <div class="contact-option-text">
+                            <strong>Email Us</strong>
+                            <span>ai@flcc.edu</span>
+                        </div>
+                    </a> -->
+                    <a href="stay-informed.html" class="contact-option">
+                        <div class="contact-option-icon green"><i data-lucide="mail-open" width="20"></i></div>
+                        <div class="contact-option-text">
+                            <strong>Join the Mailing List</strong>
+                            <span>Get updates, event info, and AI insights</span>
+                        </div>
+                    </a>
+                    <a href="https://www.flcc.edu/ai/" target="_blank" rel="noopener" class="contact-option">
+                        <div class="contact-option-icon blue"><i data-lucide="external-link" width="20"></i></div>
+                        <div class="contact-option-text">
+                            <strong>Visit flcc.edu/ai</strong>
+                            <span>Official FLX AI Hub at Finger Lakes Community College</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: form -->
+            <div class="contact-form-wrap" id="contact-form-wrap">
+                <h3>Send us a message</h3>
+                <form id="contact-form" action="https://formspree.io/f/mykdrwgk" method="POST">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-first">First Name</label>
+                            <input type="text" id="contact-first" name="first_name" placeholder="Jane" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-last">Last Name</label>
+                            <input type="text" id="contact-last" name="last_name" placeholder="Smith" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email Address</label>
+                        <input type="email" id="contact-email" name="email" placeholder="jane@yourorg.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-org">Organization</label>
+                        <input type="text" id="contact-org" name="organization" placeholder="Your business or organization">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-interest">I'm interested in...</label>
+                        <select id="contact-interest" name="interest">
+                            <option value="" disabled selected>Select an option</option>
+                            <option>Keynote Talk</option>
+                            <option>Workshop</option>
+                            <option>Community Event</option>
+                            <option>AI in Education Series</option>
+                            <option>Webinar Series</option>
+                            <option>AI Challenge</option>
+                            <option>Something else</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" name="message" placeholder="Tell us a bit about what you're looking for..."></textarea>
+                    </div>
+                    <div class="form-submit">
+                        <p class="form-note">We typically respond within one to two business days.</p>
+                        <button type="submit" class="btn btn-primary" id="contact-submit">Send Message</button>
+                    </div>
+                </form>
+
+                <!-- Success state (hidden until submission) -->
+                <div id="contact-success" style="display:none; text-align:center; padding: 3rem 1rem;">
+                    <div style="width:56px;height:56px;border-radius:50%;background:rgba(88,166,24,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;color:var(--primary-green);">
+                        <i data-lucide="check" width="28"></i>
+                    </div>
+                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:0.5rem;">Message sent!</h3>
+                    <p style="color:var(--neutral-gray);font-size:0.95rem;line-height:1.65;">Thanks for reaching out. We'll be in touch within one to two business days.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a href="index.html" class="footer-logo">
+                <img src="images/HubLogo.png" alt="FLX AI Hub Logo">
+                <div class="logo-text">
+                    <span class="logo-title">FLX AI Hub</span>
+                    <span class="logo-sub">Innovate &amp; Educate</span>
+                </div>
+            </a>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> The FLX AI Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <script>
+        lucide.createIcons();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        var form   = document.getElementById('contact-form');
+        var btn    = document.getElementById('contact-submit');
+        var success = document.getElementById('contact-success');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Sending…';
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: new FormData(form)
+            })
+            .then(function (res) {
+                if (res.ok) {
+                    form.style.display = 'none';
+                    success.style.display = 'block';
+                    lucide.createIcons();
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Send Message';
+                    alert('Something went wrong. Please try again or email us directly at ai@flcc.edu.');
+                }
+            })
+            .catch(function () {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+                alert('Something went wrong. Please try again or email us directly at ai@flcc.edu.');
+            });
+        });
+    </script>
+</body>
+</html>

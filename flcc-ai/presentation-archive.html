@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Archive | FLX AI Hub</title>
+    <link rel="icon" type="image/x-icon" href="images/HubLogo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="shared.css">
+
+    <style>
+        /* ── Search bar ─────────────────────────────────── */
+        .search-wrapper {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        .search-icon {
+            position: absolute;
+            left: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-gray);
+            pointer-events: none;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem 0.875rem 3rem;
+            border-radius: var(--radius-pill);
+            border: 1px solid #e5e7eb;
+            font-family: 'Rubik', sans-serif;
+            font-size: 0.975rem;
+            outline: none;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,70,173,0.1);
+        }
+
+        /* ── Filter buttons ─────────────────────────────── */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .filter-btn {
+            padding: 0.45rem 1.25rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: var(--neutral-gray);
+            font-family: 'Rubik', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* ── Presentation card grid ─────────────────────── */
+        .pres-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .pres-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow);
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .pres-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .pres-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+        .pres-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.45s ease;
+        }
+        .pres-card:hover .pres-thumb img {
+            transform: scale(1.05);
+        }
+
+        .pres-badge-row {
+            padding: 0.75rem 1.25rem 0.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pres-badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            padding: 0.2rem 0.65rem;
+            border-radius: 4px;
+        }
+        .badge-slides      { background: #eff6ff; color: var(--primary-blue); }
+        .badge-video       { background: #fef2f2; color: #ef4444; }
+        .badge-pdf         { background: #fff7ed; color: #f97316; }
+        .badge-workshop    { background: #f0fdf4; color: var(--primary-green); }
+        .badge-interactive { background: #f0fdf4; color: var(--primary-green); }
+
+        .pres-body {
+            padding: 0.75rem 1.25rem 1rem;
+            flex-grow: 1;
+        }
+        .pres-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 0.4rem;
+        }
+        .pres-desc {
+            font-size: 0.9rem;
+            color: var(--neutral-gray);
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        .pres-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            align-items: center;
+        }
+
+        .pres-footer {
+            padding: 0.75rem 1.25rem;
+            background: #f8fafc;
+            border-top: 1px solid #f3f4f6;
+            text-align: right;
+        }
+        .pres-cta {
+            font-family: 'Rubik', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary-blue);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* ── Modal ──────────────────────────────────────── */
+        .pres-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+        }
+        .pres-modal-box {
+            background: white;
+            margin: 5% auto 2rem;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+        }
+        .pres-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            font-size: 1.75rem;
+            line-height: 1;
+            cursor: pointer;
+            color: #9ca3af;
+            background: none;
+            border: none;
+        }
+        .pres-modal-close:hover { color: var(--dark-gray); }
+        .pres-modal-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding-right: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-gray);
+        }
+        .embed-wrap {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+        .embed-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .pres-modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .modal-btn {
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .modal-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .btn-copy { background: #3b82f6; color: white; }
+        .btn-pdf  { background: #ef4444; color: white; }
+        .btn-ppt  { background: #f97316; color: white; }
+
+        /* ── Empty state ────────────────────────────────── */
+        .empty-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #9ca3af;
+            padding: 3rem 1rem;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .pres-modal-box { margin: 15% auto 1rem; width: 95%; }
+            .pres-modal-actions { flex-direction: column; }
+            .modal-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script>window.BASE_PATH = ''; window.ACTIVE_PAGE = 'what-we-do';</script>
+    <script src="navbar.js"></script>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-label">Slides &amp; Recordings</span>
+            <h1>Presentation Archive</h1>
+            <p class="hero-sub">Browse slides, recordings, and handouts from FLX AI Hub workshops and presentations.</p>
+        </div>
+    </section>
+
+    <!-- Library -->
+    <section class="page-section">
+        <div class="container">
+
+            <!-- Search -->
+            <div class="search-wrapper">
+                <i data-lucide="search" class="search-icon" width="18"></i>
+                <input type="text" id="pres-search" class="search-input" placeholder="Search by title, topic, or presenter...">
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar" id="pres-filters">
+                <button class="filter-btn active" onclick="filterPres('All')">All</button>
+                <button class="filter-btn" onclick="filterPres('Business')">Business</button>
+                <button class="filter-btn" onclick="filterPres('Community')">Community</button>
+                <button class="filter-btn" onclick="filterPres('Education')">Education</button>
+                <button class="filter-btn" onclick="filterPres('Government')">Government</button>
+            </div>
+
+            <!-- Grid -->
+            <div class="pres-grid" id="pres-grid">
+                <!-- Populated by JS -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="pres-modal" class="pres-modal">
+        <div class="pres-modal-box">
+            <button class="pres-modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+            <h2 class="pres-modal-title" id="modal-title"></h2>
+            <div class="embed-wrap" id="modal-embed"></div>
+            <div class="pres-modal-actions" id="modal-actions"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Data ─────────────────────────────────────────────── */
+        const presentations = [
+            {
+                id: 21,
+                title: "Grow your Business",
+                type: "Slides",
+                category: "Community",
+                author: "Dave",
+                date: "Feb 2026",
+                desc: "What the FLX AI Hub can do for YOU",
+                thumbnail: "https://docs.google.com/presentation/d/1pioyZw8ObbdV4ft5u29JCNh_En65RzBaWPqdQ4qTBJ4/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1pioyZw8ObbdV4ft5u29JCNh_En65RzBaWPqdQ4qTBJ4/preview",
+                tags: ["victor", "ontario county", "grow", "grow your business", "FLX AI Hub", "flcc"]
+            },
+            {
+                id: 20,
+                title: "Intro to AI & Prompting",
+                type: "Slides",
+                category: "Community",
+                author: "Dave",
+                date: "Feb 2026",
+                desc: "Introduction to AI and Prompting Examples",
+                thumbnail: "https://docs.google.com/presentation/d/1VsgarxQNg_KNM_2ewLshdEZpjHZTt_0s-MVCnASuVdA/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1VsgarxQNg_KNM_2ewLshdEZpjHZTt_0s-MVCnASuVdA/preview",
+                tags: ["thompson", "f.f", "ff", "UofR", "U of R"]
+            },
+            {
+                id: 19,
+                title: "AI Exploration in the Library",
+                type: "Slides",
+                category: "Education",
+                author: "Dave",
+                date: "Jan 2026",
+                desc: "Library-centric AI Exploration",
+                thumbnail: "https://docs.google.com/presentation/d/1VW_ZqXPRPhLEnhTb4W0pDxsuRemlEmEtJAaSwZqN15k/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1VW_ZqXPRPhLEnhTb4W0pDxsuRemlEmEtJAaSwZqN15k/preview",
+                tags: ["flcc", "library"]
+            },
+            {
+                id: 18,
+                title: "FLCC Lightning Round",
+                type: "Slides",
+                category: "Community",
+                author: "AI Think Tank",
+                date: "Jan 2026",
+                desc: "A look at how people are using AI across the campus.",
+                thumbnail: "https://docs.google.com/presentation/d/1KolErh3rKUe-MvmH_UO3JsEjhu8TDAnqg-Vd_VOSOBc/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1KolErh3rKUe-MvmH_UO3JsEjhu8TDAnqg-Vd_VOSOBc/preview",
+                tags: ["flcc", "aitt", "AI Think Tank", "thinktank", "lightning round"]
+            },
+            {
+                id: 17,
+                title: "AI Playground",
+                type: "Workshop",
+                category: "Community",
+                author: "Dave Ghidiu",
+                date: "Jan 2026",
+                desc: "A primer on AI and then - WE PLAY!",
+                thumbnail: "https://docs.google.com/presentation/d/1fLy4C5eizcOHm0rWDC67d_4iglaWPQOMNV4-Ct2M_r8/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1fLy4C5eizcOHm0rWDC67d_4iglaWPQOMNV4-Ct2M_r8/preview",
+                tags: ["arc", "ontario"]
+            },
+            {
+                id: 16,
+                title: "You Haven't Missed the Boat!",
+                type: "Slides",
+                category: "Community",
+                author: "Dave Ghidiu",
+                date: "Jan 2026",
+                desc: "You haven't missed the boat! And sweet, sweet prompting examples.",
+                thumbnail: "https://docs.google.com/presentation/d/1NR-LUf3NJg3LEMttiVsiviWxC67NSLniIpLE_3mJ9gk/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1NR-LUf3NJg3LEMttiVsiviWxC67NSLniIpLE_3mJ9gk/preview",
+                tags: ["thompson", "ff"]
+            },
+            {
+                id: 15,
+                title: "A Look at AI",
+                type: "Slides",
+                category: "Government",
+                author: "Dave Ghidiu",
+                date: "Jan 2026",
+                desc: "Intro to AI and some relevant prompting strategies",
+                thumbnail: "https://docs.google.com/presentation/d/1m3M09jjyy2GWdGijkdq1Szvs1oF7vCGy68Rzg1SxPF4/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1m3M09jjyy2GWdGijkdq1Szvs1oF7vCGy68Rzg1SxPF4/preview",
+                tags: ["ontario", "planning department"]
+            },
+            {
+                id: 14,
+                title: "Building AI Literacy in Schools",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Dec 2025",
+                desc: "High-altitude look at AI in schools - with live demos!",
+                thumbnail: "https://docs.google.com/presentation/d/1aOI51ZcdL84VN_9QRxUvqwmnZFvI1bDxKVUoh60CFpk/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1aOI51ZcdL84VN_9QRxUvqwmnZFvI1bDxKVUoh60CFpk/preview",
+                tags: ["k12", "Gemini"]
+            },
+            {
+                id: 13,
+                title: "Anxiety vs Agency",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Dec 2025",
+                desc: "WORKSHOP: AI Policy Generator",
+                thumbnail: "https://docs.google.com/presentation/d/1dsNcEnqequ79GpAobWO7iYSXqKRek455qWYac-NnC0Q/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1dsNcEnqequ79GpAobWO7iYSXqKRek455qWYac-NnC0Q/preview",
+                tags: ["NHS", "norman"]
+            },
+            {
+                id: 12,
+                title: "AI Insight for K12",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Dec 2025",
+                desc: "A look at how AI can potentiate educators that provides actionable and structural ideas.",
+                thumbnail: "https://docs.google.com/presentation/d/1THVN1jgkDP1NAwh2vTEdVFGSQBioUZjsHFxdIk7-tUI/export?format=png&pageid=p1",
+                link: "https://docs.google.com/presentation/d/1THVN1jgkDP1NAwh2vTEdVFGSQBioUZjsHFxdIk7-tUI/preview",
+                tags: ["WFL", "Finger Lakes", "CSO", "Wayne"]
+            },
+            {
+                id: 11,
+                title: "AI Bias",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Oct 2025",
+                desc: "Explore the 5 dimensions of bias in AI and look at ways to mitigate it.",
+                thumbnail: "https://docs.google.com/presentation/d/1OPzY-GuFEwhULu0I7_xOBJDIQXIwPLZKx-YoxajODbA/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/1OPzY-GuFEwhULu0I7_xOBJDIQXIwPLZKx-YoxajODbA/preview",
+                tags: ["NHS", "norman"]
+            },
+            {
+                id: 10,
+                title: "Generative AI - A Workforce Perspective",
+                type: "Slides",
+                category: "Business",
+                author: "Dave Ghidiu",
+                date: "Oct 2025",
+                desc: "The State of AI in Workforce Development",
+                thumbnail: "https://docs.google.com/presentation/d/1TEyLT1KFuBFfMPn52b7LX1LtTfIyXDvhabZeLjnRw2I/export?format=png&pageid=g323612f8f46_0_0",
+                link: "https://docs.google.com/presentation/d/1TEyLT1KFuBFfMPn52b7LX1LtTfIyXDvhabZeLjnRw2I/preview",
+                tags: ["oneonta", "tri-campus", "tricampus", "symposium"]
+            },
+            {
+                id: 9,
+                title: "Agility in the Workforce",
+                type: "Slides",
+                category: "Business",
+                author: "Debora Ortloff & Dave Ghidiu",
+                date: "Nov 2025",
+                desc: "Macroscopic view of AI trends in the workplace and a look at data",
+                thumbnail: "https://docs.google.com/presentation/d/10ruXheqswpLFbP8UrCzKttxW7frxBU625RPW9AMX7Jw/export?format=png&pageid=g3a57eb73696_1_14",
+                link: "https://docs.google.com/presentation/d/10ruXheqswpLFbP8UrCzKttxW7frxBU625RPW9AMX7Jw/preview",
+                tags: ["ontario", "county", "wib", "flwib", "finger lakes", "workforce"]
+            },
+            {
+                id: 8,
+                title: "There is Still an Onramp",
+                type: "Slides",
+                category: "Business",
+                author: "Dave Ghidiu",
+                date: "Aug 2025",
+                desc: "Follows technological throughlines and reassures that it isn't too late to learn AI",
+                thumbnail: "https://docs.google.com/presentation/d/1RT7VZv7NEESuBl8x8asVWKEy3ljtt9fBGOmuKtdIBTo/export?format=png&pageid=g37764afbcde_0_1269",
+                link: "https://docs.google.com/presentation/d/1RT7VZv7NEESuBl8x8asVWKEy3ljtt9fBGOmuKtdIBTo/preview",
+                tags: []
+            },
+            {
+                id: 7,
+                title: "AI Playground Workshop",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Nov 2025",
+                desc: "Chronicles the implementation plan FLCC used to onboard the college population to AI",
+                thumbnail: "https://docs.google.com/presentation/d/12Cs4gVzXsq5HxzU7vrHqOB1yCYtImL7kmboXHaryDSo/export?format=png&pageid=g3a3383b882f_0_4",
+                link: "https://docs.google.com/presentation/d/12Cs4gVzXsq5HxzU7vrHqOB1yCYtImL7kmboXHaryDSo/preview",
+                tags: ["UNYCC", "upstate", "community", "workshop"]
+            },
+            {
+                id: 6,
+                title: "Guided Prompting Experience Workshop",
+                type: "Slides",
+                category: "Business",
+                author: "Dave Ghidiu",
+                date: "Aug 2025",
+                desc: "A 3-hour workshop showcasing advanced prompting in the service of re-evaluating value propositions",
+                thumbnail: "https://docs.google.com/presentation/d/13eHVo1YgzkuVlgbvgWm6EZRUGqX6jPpajucYM2SmvH0/export?format=png&pageid=p",
+                link: "https://docs.google.com/presentation/d/13eHVo1YgzkuVlgbvgWm6EZRUGqX6jPpajucYM2SmvH0/preview",
+                tags: ["BOT", "Board"]
+            },
+            {
+                id: 5,
+                title: "FLCC's Roadmap",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Oct 2025",
+                desc: "Chronicles the implementation plan FLCC used to onboard the college population to AI",
+                thumbnail: "https://docs.google.com/presentation/d/1AiZKxg36e42T3RIUCgp9MKNY4wWEXDdYQ6x1phfsdnI/export?format=png&pageid=g39ef86570de_0_1",
+                link: "https://docs.google.com/presentation/d/1AiZKxg36e42T3RIUCgp9MKNY4wWEXDdYQ6x1phfsdnI/preview",
+                tags: ["Gardner Institute", "Gartner", "symposium"]
+            },
+            {
+                id: 4,
+                title: "Financial Aid and AI",
+                type: "Slides",
+                category: "Business",
+                author: "Dave Ghidiu",
+                date: "Oct 2025",
+                desc: "AI Integration techniques for Financial Aid experts",
+                thumbnail: "https://docs.google.com/presentation/d/14zxnUB503l02Q2P9r7AQDjHapPyj3EO28X5tB7txSxM/export?format=png&pageid=g3823aceedbe_0_3061",
+                link: "https://docs.google.com/presentation/d/14zxnUB503l02Q2P9r7AQDjHapPyj3EO28X5tB7txSxM/preview",
+                tags: ["NYSFAAA"]
+            },
+            {
+                id: 3,
+                title: "FLCC & AI - WNY Bi-Annual AI Conference",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Oct 2025",
+                desc: "FLCC's demonstrated path to AI implementation and regional leadership",
+                thumbnail: "https://docs.google.com/presentation/d/1xfqm_u7SoYiEJq7LPF9FaELffYVw2ZOsFa94-uRtdbU/export?format=png&pageid=g323612f8f46_0_130",
+                link: "https://docs.google.com/presentation/d/1xfqm_u7SoYiEJq7LPF9FaELffYVw2ZOsFa94-uRtdbU/preview",
+                tags: []
+            },
+            {
+                id: 2,
+                title: "AI in Education",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Aug 2025",
+                desc: "The educational imperative (and potential pathway) to AI literacy and integration",
+                thumbnail: "https://docs.google.com/presentation/d/14QP5Qhga7XvXZqVb3pxBpl4CPKJliPGvMtW-Qz3MFNA/export?format=png&pageid=g375656c51a3_0_509",
+                link: "https://docs.google.com/presentation/d/14QP5Qhga7XvXZqVb3pxBpl4CPKJliPGvMtW-Qz3MFNA/preview",
+                tags: ["Victor", "VCS"]
+            },
+            {
+                id: 1,
+                title: "State of Play of AI",
+                type: "Slides",
+                category: "Education",
+                author: "Dave Ghidiu",
+                date: "Jul 2025",
+                desc: "Current state of play of AI in education",
+                thumbnail: "https://docs.google.com/presentation/d/1u5umZ2GwwKwfuuXxAuSncJDbSyXgfGuZZOtO_nzl2Y4/export?format=png&pageid=g4eaff9a7014a4698_501",
+                link: "https://docs.google.com/presentation/d/1u5umZ2GwwKwfuuXxAuSncJDbSyXgfGuZZOtO_nzl2Y4/preview",
+                tags: ["NHS", "Norman"]
+            },
+            {
+                id: 0,
+                title: "Dimensions of AI Literacy",
+                type: "Slides",
+                category: "Education",
+                author: "Debora Ortloff & Dave Ghidiu",
+                date: "Aug 2025",
+                desc: "Multidimensional look at AI literacy in higher education",
+                thumbnail: "https://docs.google.com/presentation/d/1WVqlbI4X4hw7n3kM-z9SV_SZgVQuR-3kMLrr1DVjYuQ/export?format=png&pageid=g375656c51a3_0_509",
+                link: "https://docs.google.com/presentation/d/1WVqlbI4X4hw7n3kM-z9SV_SZgVQuR-3kMLrr1DVjYuQ/preview",
+                tags: ["GCC", "Genesee", "keynote"]
+            }
+        ];
+
+        /* ── State ────────────────────────────────────────────── */
+        let activeCategory = 'All';
+        let activeSearch   = '';
+
+        /* ── Render ───────────────────────────────────────────── */
+        function render() {
+            const grid = document.getElementById('pres-grid');
+            grid.innerHTML = '';
+
+            const q = activeSearch.toLowerCase();
+            const filtered = presentations.filter(p => {
+                const matchCat = activeCategory === 'All' || p.category === activeCategory;
+                const matchQ   = !q ||
+                    p.title.toLowerCase().includes(q) ||
+                    p.desc.toLowerCase().includes(q)  ||
+                    p.author.toLowerCase().includes(q) ||
+                    (p.tags && p.tags.some(t => t.toLowerCase().includes(q)));
+                return matchCat && matchQ;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="empty-msg">No presentations found matching your criteria.</p>';
+                return;
+            }
+
+            filtered.forEach(p => {
+                const typeKey  = p.type.toLowerCase();
+                const badgeCls = 'badge-' + typeKey;
+                const iconName = typeKey === 'video' ? 'play-circle'
+                               : typeKey === 'pdf'   ? 'file-text'
+                               : 'presentation';
+                const iconCls  = typeKey === 'video' ? 'text-green' : 'text-blue';
+
+                grid.innerHTML += `
+                    <div class="pres-card" onclick="openCard(${p.id})">
+                        <div class="pres-thumb">
+                            <img src="${p.thumbnail}" alt="${p.title}" loading="lazy">
+                        </div>
+                        <div class="pres-badge-row">
+                            <span class="pres-badge ${badgeCls}">${p.type}</span>
+                            <i data-lucide="${iconName}" class="${iconCls}" width="18"></i>
+                        </div>
+                        <div class="pres-body">
+                            <h3 class="pres-title">${p.title}</h3>
+                            <p class="pres-desc">${p.desc}</p>
+                            <div class="pres-meta">
+                                <i data-lucide="calendar" width="13" style="display:inline"></i>
+                                ${p.date} &nbsp;|&nbsp; ${p.author}
+                            </div>
+                        </div>
+                        <div class="pres-footer">
+                            <span class="pres-cta">View Material <i data-lucide="arrow-right" width="14"></i></span>
+                        </div>
+                    </div>`;
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        /* ── Filter ───────────────────────────────────────────── */
+        function filterPres(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.trim() === cat);
+            });
+            render();
+        }
+
+        /* ── Modal ────────────────────────────────────────────── */
+        function openCard(id) {
+            const p = presentations.find(x => x.id === id);
+            if (!p) return;
+
+            if (p.type === 'Slides' || p.type === 'Workshop' || p.type === 'Video') {
+                const modal   = document.getElementById('pres-modal');
+                const embed   = document.getElementById('modal-embed');
+                const actions = document.getElementById('modal-actions');
+
+                document.getElementById('modal-title').textContent = p.title;
+                actions.innerHTML = '';
+
+                if (p.type === 'Video') {
+                    let src = p.link;
+                    if (p.link.includes('watch?v=')) {
+                        src = 'https://www.youtube.com/embed/' + p.link.split('v=')[1].split('&')[0];
+                    } else if (p.link.includes('youtu.be/')) {
+                        src = 'https://www.youtube.com/embed/' + p.link.split('youtu.be/')[1];
+                    }
+                    embed.innerHTML = `<iframe src="${src}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else {
+                    embed.innerHTML = `<iframe src="${p.link}" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>`;
+                    const base   = p.link.replace(/\/preview.*$/, '');
+                    actions.innerHTML = `
+                        <a href="${base}/copy"                    target="_blank" class="modal-btn btn-copy"><i data-lucide="copy"></i> Copy Slides</a>
+                        <a href="${base}/export?format=pdf"       target="_blank" class="modal-btn btn-pdf"><i data-lucide="file-text"></i> Download PDF</a>
+                        <a href="${base}/export?format=pptx"      target="_blank" class="modal-btn btn-ppt"><i data-lucide="presentation"></i> Download PPT</a>`;
+                }
+
+                modal.style.display = 'block';
+                if (window.lucide) lucide.createIcons();
+            } else {
+                window.open(p.link, '_blank');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('pres-modal').style.display = 'none';
+            document.getElementById('modal-embed').innerHTML = '';
+        }
+
+        window.addEventListener('click', e => {
+            if (e.target === document.getElementById('pres-modal')) closeModal();
+        });
+
+        /* ── Init ─────────────────────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+
+            document.getElementById('pres-search').addEventListener('input', e => {
+                activeSearch = e.target.value;
+                render();
+            });
+        });
+    </script>
+
+</body>
+</html>

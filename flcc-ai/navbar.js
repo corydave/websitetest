@@ -25,20 +25,24 @@
         else if (p.includes('/media/'))            ap = 'media';
         else if (p.includes('flcc')    ||
                  p.includes('for-organizations') ||
+                 p.includes('presentation-archive') ||
                  p.includes('resources')          ||
                  p.includes('events'))             ap = 'what-we-do';
         else if (p.includes('tools'))              ap = 'tools';
         else if (p.includes('stay-informed'))      ap = 'stay-informed';
+        else if (p.includes('contact-us'))         ap = 'contact-us';
         else                                       ap = 'home';
     }
 
-    var mediaGroup   = ['media', 'blog'];
-    var whatWeDoGroup = ['what-we-do'];
+    var mediaGroup          = ['media', 'blog'];
+    var whatWeDoGroup       = ['what-we-do'];
+    var stayInformedGroup   = ['stay-informed', 'contact-us'];
 
     function cls(page) {
         var active = ap === page ||
-                     (page === 'media'    && mediaGroup.indexOf(ap)    !== -1) ||
-                     (page === 'what-we-do' && whatWeDoGroup.indexOf(ap) !== -1);
+                     (page === 'media'         && mediaGroup.indexOf(ap)         !== -1) ||
+                     (page === 'what-we-do'    && whatWeDoGroup.indexOf(ap)      !== -1) ||
+                     (page === 'stay-informed' && stayInformedGroup.indexOf(ap)  !== -1);
         return 'nav-link' + (active ? ' active' : '');
     }
 
@@ -87,12 +91,22 @@
         '          <a href="' + bp + 'calendar/">Calendar</a>',
         '          <a href="' + bp + 'for-organizations.html">For Organizations</a>',
         '          <a href="' + bp + 'live-events.html">Live Events</a>',
+        '          <a href="' + bp + 'presentation-archive.html">Presentation Archive</a>',
         '          <a href="' + bp + 'resources.html">Resources</a>',
         '        </div>',
         '      </div>',
 
         // '      <a href="' + bp + 'tools/"             class="' + cls('tools') + '">Tools</a>',
-        '      <a href="' + bp + 'stay-informed.html" class="' + cls('stay-informed') + '">Stay Informed</a>',
+        // Stay Informed dropdown: Join Mailing List, Contact Us
+        '      <div class="nav-dropdown" id="flx-stayinformed-dd">',
+        '        <span class="' + cls('stay-informed') + ' dropdown-trigger">',
+        '          Stay Informed <span class="chevron">' + iconChevron + '</span>',
+        '        </span>',
+        '        <div class="dropdown-menu">',
+        '          <a href="' + bp + 'stay-informed.html">Join the Mailing List</a>',
+        '          <a href="' + bp + 'contact-us.html">Contact Us</a>',
+        '        </div>',
+        '      </div>',
 
         // Standalone FLX AI Hub pill
         '      <a href="https://www.flcc.edu/ai/" target="_blank" rel="noopener" class="official-link">',
