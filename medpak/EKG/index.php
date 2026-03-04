@@ -17,7 +17,10 @@ if ($action === 'start') {
         'flutterRatio' => '1:2', 'svtRate' => 180, 'vtRate' => 160,
         'torsadesRate' => 220, 'escapeRate' => 40, 'prProlongation' => 0.32,
         'blockSeverity' => 2, 'spo2' => 98, 'rr' => 16, 'sysBp' => 120, 'diaBp' => 80,
-        'joules' => 150, 'shockThreshold' => 100, 'shockTrigger' => 0
+        'joules' => 150, 'shockThreshold' => 100, 'shockTrigger' => 0,
+        'wideQRS' => false, 'qtc' => 0.40, 'syncMode' => false,
+        'pacingOn' => false, 'pacingRate' => 80, 'pacingOutput' => 80,
+        'pacingCaptureEnabled' => false, 'pacingCaptureThreshold' => 80
     ];
     file_put_contents(getFilePath($id), json_encode($defaultState));
     
@@ -212,17 +215,37 @@ $isLinks = ($action === 'start');
 
             <?php if ($isSim): ?>
             <!-- LEARNER DEFIBRILLATOR PANEL -->
-            <div class="w-full max-w-6xl mt-4 bg-red-950/30 border-2 border-red-800 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-center gap-4">
+            <div class="mt-4 bg-red-950/30 border-2 border-red-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6 mx-auto w-full sm:w-auto sm:min-w-[700px]">
                 <div class="flex-1 w-full">
                     <label class="block text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">
                         Shock Energy: <span id="lbl-learnerJoules">150</span> J
                     </label>
-                    <input type="range" id="input-learnerJoules" min="10" max="300" step="10" value="150" class="w-full accent-red-500 cursor-pointer" />
+                    <input type="range" id="input-learnerJoules" min="0" max="8" step="1" value="5" class="w-full max-w-[500px] accent-red-500 cursor-pointer" />
                 </div>
-                <button id="btn-learner-shock" class="w-full sm:w-auto flex-shrink-0 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    SHOCK
+                <div class="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
+                    <button id="btn-learner-sync" class="w-full bg-slate-700 text-slate-400 font-bold rounded-xl py-2 px-8 border-2 border-slate-600 text-sm uppercase tracking-widest transition-all">SYNC</button>
+                    <button id="btn-learner-shock" class="w-full bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        SHOCK
+                    </button>
+                </div>
+            </div>
+
+            <!-- LEARNER PACING PANEL -->
+            <div class="mt-4 bg-blue-950/30 border-2 border-blue-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6 mx-auto w-full sm:w-auto sm:min-w-[700px]">
+                <button id="btn-pacing" class="w-full sm:w-auto flex-shrink-0 bg-slate-700 text-slate-300 font-black rounded-xl py-4 px-8 border-2 border-slate-600 text-xl uppercase tracking-wide transition-all">
+                    PACING OFF
                 </button>
+                <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-blue-400 mb-2 uppercase tracking-wider">Rate: <span id="lbl-pacingRate">80</span> ppm</label>
+                        <input type="range" id="input-pacingRate" min="40" max="140" step="10" value="80" class="w-full accent-blue-500 cursor-pointer" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-blue-400 mb-2 uppercase tracking-wider">Output: <span id="lbl-pacingOutput">80</span> mA</label>
+                        <input type="range" id="input-pacingOutput" min="10" max="200" step="10" value="80" class="w-full accent-blue-500 cursor-pointer" />
+                    </div>
+                </div>
             </div>
 
             <?php endif; ?>
@@ -241,13 +264,14 @@ $isLinks = ($action === 'start');
                     <div class="bg-red-950/20 p-4 rounded-lg border border-red-900/50 md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
                         <div>
                             <label class="block text-sm font-medium text-red-400 mb-2">Shock Energy: <span id="lbl-shockEnergy">150</span> J</label>
-                            <input type="range" id="input-shockEnergy" min="10" max="300" step="10" value="150" class="w-full accent-red-500" />
+                            <input type="range" id="input-shockEnergy" min="0" max="8" step="1" value="5" class="w-full max-w-[500px] accent-red-500" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-red-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
                             <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
                         </div>
-                        <div>
+                        <div class="flex flex-col gap-2">
+                            <button id="btn-sync" class="w-full bg-slate-700 text-slate-400 font-bold rounded-lg p-2 transition-all border border-slate-600 text-sm uppercase tracking-widest">SYNC</button>
                             <button id="btn-shock" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg p-2.5 transition-colors shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 DELIVER SHOCK
@@ -348,23 +372,78 @@ $isLinks = ($action === 'start');
                     </div>
                 </div>
 
-                <!-- Vitals Controls -->
-                <div class="mt-8 bg-slate-900/50 p-4 rounded-lg border border-slate-700 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Pacing Capture Controls -->
+                <div class="mt-8 bg-blue-950/20 p-4 rounded-lg border border-blue-900/50 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
                     <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">SpO2: <span id="lbl-spo2">98</span>%</label>
-                        <input type="range" id="input-spo2" min="50" max="100" value="98" class="w-full accent-cyan-500" />
+                        <label class="block text-sm font-medium text-blue-400 mb-3">Pacing Capture</label>
+                        <div class="flex items-center gap-3">
+                            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                                <input type="checkbox" id="input-pacingCaptureEnabled" class="sr-only peer" />
+                                <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                            </label>
+                            <span class="text-sm text-slate-300">Capture Possible</span>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Sys BP: <span id="lbl-sysBp">120</span> mmHg</label>
-                        <input type="range" id="input-sysBp" min="40" max="250" value="120" class="w-full accent-white" />
+                        <label class="block text-sm font-medium text-blue-400 mb-2">Capture Threshold: <span id="lbl-pacingCaptureThreshold">80</span> mA</label>
+                        <input type="range" id="input-pacingCaptureThreshold" min="10" max="200" step="10" value="80" class="w-full accent-blue-400" />
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">Dia BP: <span id="lbl-diaBp">80</span> mmHg</label>
-                        <input type="range" id="input-diaBp" min="20" max="150" value="80" class="w-full accent-white" />
+                </div>
+
+                <!-- Vitals Accordion -->
+                <div class="mt-8 border border-slate-700 rounded-lg overflow-hidden">
+                    <button id="btn-vitals-toggle" onclick="document.getElementById('vitals-panel').classList.toggle('hidden'); document.getElementById('vitals-chevron').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-4 py-3 bg-slate-900/50 hover:bg-slate-900/80 text-left transition-colors">
+                        <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            Vitals
+                        </span>
+                        <svg id="vitals-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="vitals-panel" class="hidden border-t border-slate-700 bg-slate-900/30 p-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">SpO2: <span id="lbl-spo2">98</span>%</label>
+                            <input type="range" id="input-spo2" min="50" max="100" value="98" class="w-full accent-cyan-500" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">BP: <span id="lbl-bp">120/80 mmHg</span></label>
+                            <input type="range" id="input-bp" min="0" max="22" step="1" value="8" class="w-full accent-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">RESP: <span id="lbl-rr">16</span> rpm</label>
+                            <input type="range" id="input-rr" min="0" max="50" value="16" class="w-full accent-yellow-500" />
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-400 mb-2">RESP: <span id="lbl-rr">16</span> rpm</label>
-                        <input type="range" id="input-rr" min="0" max="50" value="16" class="w-full accent-yellow-500" />
+                </div>
+
+                <!-- Advanced EKG Morphology Accordion -->
+                <div class="mt-4 border border-slate-700 rounded-lg overflow-hidden">
+                    <button id="btn-advanced-toggle" onclick="document.getElementById('advanced-panel').classList.toggle('hidden'); document.getElementById('advanced-chevron').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-4 py-3 bg-slate-900/50 hover:bg-slate-900/80 text-left transition-colors">
+                        <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                            Advanced EKG Morphology
+                        </span>
+                        <svg id="advanced-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="advanced-panel" class="hidden border-t border-slate-700 bg-slate-900/30 p-4 grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                        <!-- Wide QRS Toggle -->
+                        <div class="flex items-center gap-3">
+                            <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                                <input type="checkbox" id="input-wideQRS" class="sr-only peer" />
+                                <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-purple-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                            </label>
+                            <div>
+                                <div class="text-sm font-medium text-slate-200">Wide QRS</div>
+                                <div class="text-xs text-slate-500">Forces 180 ms QRS duration</div>
+                            </div>
+                        </div>
+
+                        <!-- QTc -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-2">QTc: <span id="lbl-qtc">400</span> ms</label>
+                            <input type="range" id="input-qtc" min="380" max="600" step="10" value="400" class="w-full accent-purple-500" />
+                        </div>
+
                     </div>
                 </div>
 
@@ -384,12 +463,35 @@ $isLinks = ($action === 'start');
                     svtRate: 180, vtRate: 160, torsadesRate: 220, escapeRate: 40,
                     prProlongation: 0.32, blockSeverity: 2, spo2: 98, rr: 16,
                     sysBp: 120, diaBp: 80, liveHR: 0, baseHR: 0, joules: 150, shockThreshold: 100,
-                    shockTrigger: 0
+                    shockTrigger: 0, wideQRS: false, qtc: 0.40, syncMode: false,
+                    pacingOn: false, pacingRate: 80, pacingOutput: 80,
+                    pacingCaptureEnabled: false, pacingCaptureThreshold: 80
                 };
 
-                const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, time: 0 };
+                const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, time: 0, nextPace: 0, pacingWasOn: false };
                 const events = [];
                 const drawState = { lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: 90, plethY: 220, respY: 340 };
+
+                let syncShockPending = false;
+                let doShock = null;
+                let lastKnownSyncMode = false;
+
+                const markExistingQRSSynced = () => {
+                    events.forEach(e => { if (e.type === 'QRS') e.syncMarked = true; });
+                };
+
+                const setSyncUI = () => {
+                    ['btn-sync', 'btn-learner-sync'].forEach(id => {
+                        const btn = document.getElementById(id);
+                        if (!btn) return;
+                        btn.classList.toggle('bg-yellow-400', !!state.syncMode);
+                        btn.classList.toggle('text-black', !!state.syncMode);
+                        btn.classList.toggle('border-yellow-300', !!state.syncMode);
+                        btn.classList.toggle('bg-slate-700', !state.syncMode);
+                        btn.classList.toggle('text-slate-400', !state.syncMode);
+                        btn.classList.toggle('border-slate-600', !state.syncMode);
+                    });
+                };
 
                 // Setup Clocks
                 setInterval(() => { document.getElementById('time-display').innerText = new Date().toLocaleTimeString(); }, 1000);
@@ -427,30 +529,58 @@ $isLinks = ($action === 'start');
                         setTxt('lbl-prProlongation', state.prProlongation);
                         setTxt('lbl-escapeRate', state.escapeRate);
                         setTxt('lbl-spo2', state.spo2);
-                        setTxt('lbl-sysBp', state.sysBp);
-                        setTxt('lbl-diaBp', state.diaBp);
+                        const bpStep = BP_STEPS[bpToIndex(state.sysBp)];
+                        setTxt('lbl-bp', bpStep.sys === 0 ? 'Undetectable' : bpStep.sys + '/' + bpStep.dia + ' mmHg');
                         setTxt('lbl-rr', state.rr);
                         setTxt('lbl-shockEnergy', state.joules);
                         setTxt('lbl-shockThreshold', state.shockThreshold);
-                        
+                        setTxt('lbl-qtc', Math.round((state.qtc || 0.40) * 1000));
+                        setTxt('lbl-pacingCaptureThreshold', state.pacingCaptureThreshold);
+
                         // Sync Inputs
                         const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
                         setVal('input-rhythm', state.rhythm);
                         setVal('input-saNodeRate', state.saNodeRate);
                         setVal('input-spo2', state.spo2);
-                        setVal('input-sysBp', state.sysBp);
-                        setVal('input-diaBp', state.diaBp);
+                        setVal('input-bp', bpToIndex(state.sysBp));
                         setVal('input-rr', state.rr);
-                        setVal('input-shockEnergy', state.joules);
+                        setVal('input-shockEnergy', Math.max(0, JOULES_STEPS.indexOf(state.joules)));
                         setVal('input-shockThreshold', state.shockThreshold);
+                        setVal('input-qtc', Math.round((state.qtc || 0.40) * 1000));
+                        const wideQRSEl = document.getElementById('input-wideQRS');
+                        if (wideQRSEl) wideQRSEl.checked = !!state.wideQRS;
+                        setVal('input-pacingCaptureThreshold', state.pacingCaptureThreshold);
+                        const pacCapEl = document.getElementById('input-pacingCaptureEnabled');
+                        if (pacCapEl) pacCapEl.checked = !!state.pacingCaptureEnabled;
                     }
+
+                    // Pacing button + labels (both views)
+                    const pacingBtn = document.getElementById('btn-pacing');
+                    if (pacingBtn) {
+                        pacingBtn.textContent = state.pacingOn ? 'PACING ON' : 'PACING OFF';
+                        pacingBtn.classList.toggle('bg-blue-600', !!state.pacingOn);
+                        pacingBtn.classList.toggle('border-blue-400', !!state.pacingOn);
+                        pacingBtn.classList.toggle('text-white', !!state.pacingOn);
+                        pacingBtn.classList.toggle('bg-slate-700', !state.pacingOn);
+                        pacingBtn.classList.toggle('border-slate-600', !state.pacingOn);
+                        pacingBtn.classList.toggle('text-slate-300', !state.pacingOn);
+                    }
+                    const lblPacRate = document.getElementById('lbl-pacingRate');
+                    if (lblPacRate) lblPacRate.innerText = state.pacingRate;
+                    const lblPacOut = document.getElementById('lbl-pacingOutput');
+                    if (lblPacOut) lblPacOut.innerText = state.pacingOutput;
+                    const inPacRate = document.getElementById('input-pacingRate');
+                    if (inPacRate) inPacRate.value = state.pacingRate;
+                    const inPacOut = document.getElementById('input-pacingOutput');
+                    if (inPacOut) inPacOut.value = state.pacingOutput;
 
                     // Update Vitals Display (Runs for both Controller and Viewer)
                     const isLethal = ['vfib', 'asystole'].includes(rhythm);
                     document.getElementById('val-spo2').innerText = isLethal ? '---' : state.spo2;
-                    document.getElementById('val-sysBp').innerText = isLethal ? '---' : state.sysBp;
-                    document.getElementById('val-diaBp').innerText = isLethal ? '---' : state.diaBp;
-                    document.getElementById('val-map').innerText = isLethal ? '---' : Math.round(state.diaBp + (state.sysBp - state.diaBp) / 3);
+                    const hideBP = isLethal || state.sysBp === 0;
+                    document.getElementById('val-sysBp').innerText = hideBP ? '---' : state.sysBp;
+                    document.getElementById('val-diaBp').innerText = hideBP ? '---' : state.diaBp;
+                    document.getElementById('val-map').innerText = hideBP ? '---' : Math.round(state.diaBp + (state.sysBp - state.diaBp) / 3);
                     document.getElementById('val-rr').innerText = state.rr;
 
                     // Calculate Base Display HR
@@ -467,6 +597,7 @@ $isLinks = ($action === 'start');
                         case 'vfib': case 'asystole': state.baseHR = 0; break;
                         default: state.baseHR = state.saNodeRate;
                     }
+                    setSyncUI();
                 };
 
                 const updateServerState = (changes) => {
@@ -479,6 +610,19 @@ $isLinks = ($action === 'start');
                             body: JSON.stringify(changes)
                         });
                     }
+                };
+
+                const JOULES_STEPS = [10, 20, 30, 50, 100, 150, 200, 250, 300];
+
+                // BP slider steps: index 0 = undetectable, 1 = 50/30, 2..22 = 60..260 by 10
+                const BP_STEPS = [{ sys: 0, dia: 0 }, { sys: 50, dia: 30 }];
+                for (let s = 60; s <= 260; s += 10) {
+                    BP_STEPS.push({ sys: s, dia: Math.round((s * 2 / 3) / 5) * 5 });
+                }
+                const bpToIndex = (sys) => {
+                    if (sys <= 0) return 0;
+                    if (sys === 50) return 1;
+                    return Math.min(BP_STEPS.length - 1, Math.round((sys - 60) / 10) + 2);
                 };
 
                 if (isController) {
@@ -498,20 +642,24 @@ $isLinks = ($action === 'start');
                     bindInput('input-blockSeverity', 'blockSeverity', Number);
                     bindInput('input-escapeRate', 'escapeRate', Number);
                     bindInput('input-spo2', 'spo2', Number);
-                    bindInput('input-sysBp', 'sysBp', Number);
-                    bindInput('input-diaBp', 'diaBp', Number);
+                    document.getElementById('input-bp')?.addEventListener('input', (e) => {
+                        const bp = BP_STEPS[Number(e.target.value)];
+                        updateServerState({ sysBp: bp.sys, diaBp: bp.dia });
+                    });
                     bindInput('input-rr', 'rr', Number);
-                    bindInput('input-shockEnergy', 'joules', Number);
+                    const shockEnergyEl = document.getElementById('input-shockEnergy');
+                    if (shockEnergyEl) shockEnergyEl.addEventListener('input', (e) => updateServerState({ joules: JOULES_STEPS[Number(e.target.value)] }));
                     bindInput('input-shockThreshold', 'shockThreshold', Number);
+                    document.getElementById('input-qtc')?.addEventListener('input', (e) => updateServerState({ qtc: Number(e.target.value) / 1000 }));
+                    document.getElementById('input-wideQRS')?.addEventListener('change', (e) => updateServerState({ wideQRS: e.target.checked }));
+                    document.getElementById('input-pacingCaptureThreshold')?.addEventListener('input', (e) => updateServerState({ pacingCaptureThreshold: Number(e.target.value) }));
+                    document.getElementById('input-pacingCaptureEnabled')?.addEventListener('change', (e) => updateServerState({ pacingCaptureEnabled: e.target.checked }));
 
-                    document.getElementById('btn-shock')?.addEventListener('click', () => {
+                    doShock = () => {
                         const triggerTime = Date.now();
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
                         let changes = { shockTrigger: triggerTime };
-                        
-                        // Only these rhythms will respond to defibrillation/cardioversion
                         const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
-                        
                         if (state.joules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
                             changes.rhythm = 'sinus';
                             changes.saNodeRate = 80;
@@ -521,6 +669,17 @@ $isLinks = ($action === 'start');
                             changes.rr = 16;
                         }
                         updateServerState(changes);
+                    };
+
+                    document.getElementById('btn-sync')?.addEventListener('click', () => {
+                        const newSync = !state.syncMode;
+                        if (newSync) markExistingQRSSynced(); else syncShockPending = false;
+                        lastKnownSyncMode = newSync;
+                        updateServerState({ syncMode: newSync });
+                    });
+
+                    document.getElementById('btn-shock')?.addEventListener('click', () => {
+                        state.syncMode ? (syncShockPending = true) : doShock();
                     });
                 }
 
@@ -529,17 +688,16 @@ $isLinks = ($action === 'start');
                     let learnerJoules = 150;
 
                     document.getElementById('input-learnerJoules')?.addEventListener('input', (e) => {
-                        learnerJoules = Number(e.target.value);
+                        learnerJoules = JOULES_STEPS[Number(e.target.value)];
                         const lbl = document.getElementById('lbl-learnerJoules');
                         if (lbl) lbl.innerText = learnerJoules;
                     });
 
-                    document.getElementById('btn-learner-shock')?.addEventListener('click', () => {
+                    doShock = () => {
                         const triggerTime = Date.now();
                         pendingTrigger = triggerTime;
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
                         let changes = { shockTrigger: triggerTime };
-
                         const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
                         if (learnerJoules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
                             changes.rhythm = 'sinus';
@@ -556,7 +714,34 @@ $isLinks = ($action === 'start');
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(changes)
                         });
+                    };
+
+                    document.getElementById('btn-learner-sync')?.addEventListener('click', () => {
+                        const newSync = !state.syncMode;
+                        if (newSync) markExistingQRSSynced(); else syncShockPending = false;
+                        lastKnownSyncMode = newSync;
+                        state.syncMode = newSync;
+                        setSyncUI();
+                        fetch('?action=update&id=' + sessionId, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ syncMode: newSync })
+                        });
                     });
+
+                    document.getElementById('btn-learner-shock')?.addEventListener('click', () => {
+                        state.syncMode ? (syncShockPending = true) : doShock();
+                    });
+
+                    // Pacing controls
+                    const learnerPush = (changes) => {
+                        Object.assign(state, changes);
+                        updateUI();
+                        fetch('?action=update&id=' + sessionId, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(changes) });
+                    };
+                    document.getElementById('btn-pacing')?.addEventListener('click', () => learnerPush({ pacingOn: !state.pacingOn }));
+                    document.getElementById('input-pacingRate')?.addEventListener('input', (e) => learnerPush({ pacingRate: Number(e.target.value) }));
+                    document.getElementById('input-pacingOutput')?.addEventListener('input', (e) => learnerPush({ pacingOutput: Number(e.target.value) }));
 
                 }
 
@@ -570,25 +755,26 @@ $isLinks = ($action === 'start');
                             updateUI();
                         }).catch(e => console.error(e));
 
-                    if (!isController) {
-                        setInterval(async () => {
-                            try {
-                                const res = await fetch('?action=poll&id=' + sessionId);
-                                if (!res.ok) return;
-                                const data = await res.json();
-                                
-                                if (data.shockTrigger && data.shockTrigger !== lastShockTrigger) {
-                                    lastShockTrigger = data.shockTrigger;
-                                    if (data.shockTrigger !== pendingTrigger) {
-                                        events.push({ type: 'SHOCK', start: drawState.drawTime });
-                                    }
-                                    pendingTrigger = 0;
+                    setInterval(async () => {
+                        try {
+                            const res = await fetch('?action=poll&id=' + sessionId);
+                            if (!res.ok) return;
+                            const data = await res.json();
+
+                            if (data.shockTrigger && data.shockTrigger !== lastShockTrigger) {
+                                lastShockTrigger = data.shockTrigger;
+                                if (!isController && data.shockTrigger !== pendingTrigger) {
+                                    events.push({ type: 'SHOCK', start: drawState.drawTime });
                                 }
-                                Object.assign(state, data);
-                                updateUI();
-                            } catch (e) {}
-                        }, 150); // Viewer polls much faster to minimize lag
-                    }
+                                pendingTrigger = 0;
+                            }
+                            if (!lastKnownSyncMode && data.syncMode) markExistingQRSSynced();
+                            if (lastKnownSyncMode && !data.syncMode) syncShockPending = false;
+                            lastKnownSyncMode = !!data.syncMode;
+                            Object.assign(state, data);
+                            updateUI();
+                        } catch (e) {}
+                    }, isController ? 500 : 150);
                 }
 
                 setInterval(() => {
@@ -608,10 +794,13 @@ $isLinks = ($action === 'start');
                     const dt = t - event.start;
                     if (dt < 0) return 0;
                     let v = 0;
-                    if (event.type === 'SHOCK') {
+                    if (event.type === 'PACE' && dt < 0.012) {
+                        // Narrow vertical pacer spike
+                        v += 2.2 * Math.exp(-Math.pow((dt - 0.004) / 0.0018, 2));
+                    } else if (event.type === 'SHOCK') {
                         if (dt < 2.0) {
-                            if (dt < 0.1) v += Math.sin(dt * 300) * 12; 
-                            else v -= 3 * Math.exp(-dt * 2) * Math.cos(dt * 8); 
+                            if (dt < 0.1) v += Math.sin(dt * 300) * 12;
+                            else v -= 3 * Math.exp(-dt * 2) * Math.cos(dt * 8);
                         }
                     } else if (event.type === 'P' && dt < 0.2) {
                         v += 0.12 * Math.exp(-Math.pow((dt - 0.05) / 0.015, 2));
@@ -624,11 +813,17 @@ $isLinks = ($action === 'start');
                             v += 1.5 * Math.exp(-Math.pow((dt - 0.045) / 0.012, 2));
                             v -= 0.25 * Math.exp(-Math.pow((dt - 0.07) / 0.012, 2));
                         }
-                    } else if (event.type === 'T' && dt < 0.5) {
+                    } else if (event.type === 'T') {
                         const hr = event.hr || 80;
-                        const width = 0.03 * (60 / Math.max(hr, 40));
-                        const sign = event.inverted ? -1 : 1;
-                        v += sign * 0.25 * Math.exp(-Math.pow((dt - 0.2) / width, 2));
+                        const rr = 60 / Math.max(hr, 20);
+                        // Bazett's formula: QT = QTc * sqrt(RR)
+                        const qt = (event.qtc || 0.40) * Math.sqrt(rr);
+                        const tDur = Math.max(0.08, qt - (event.qrsDur || 0.12));
+                        if (dt >= 0 && dt < tDur) {
+                            const width = tDur * 0.28;
+                            const peak = tDur * 0.42;
+                            v += (event.inverted ? -1 : 1) * 0.25 * Math.exp(-Math.pow((dt - peak) / width, 2));
+                        }
                     }
                     return v;
                 };
@@ -684,8 +879,11 @@ $isLinks = ($action === 'start');
                     }
 
                     const pushQRS = (time, wide = false, hr = 80, invertedT = false) => {
-                        evts.push({ type: 'QRS', start: time, wide });
-                        evts.push({ type: 'T', start: time, hr, inverted: invertedT });
+                        const forceWide = params.wideQRS && !wide;
+                        const isWide = wide || forceWide;
+                        const qrsDuration = isWide ? 0.18 : 0.12;
+                        evts.push({ type: 'QRS', start: time, wide: isWide });
+                        evts.push({ type: 'T', start: time + qrsDuration, hr, inverted: invertedT, qtc: params.qtc || 0.40, qrsDur: qrsDuration });
                         if (!['vfib', 'asystole'].includes(rhythm)) {
                             evts.push({ type: 'PLETH', start: time + 0.2 });
                         }
@@ -731,6 +929,30 @@ $isLinks = ($action === 'start');
                     if (rhythm === 'vtach' && t >= simSt.nextQRS) {
                         pushQRS(t, true, params.vtRate, true);
                         simSt.nextQRS = t + (60 / params.vtRate);
+                    }
+
+                    // Pacing
+                    if (params.pacingOn && !simSt.pacingWasOn) {
+                        simSt.pacingWasOn = true;
+                        simSt.nextPace = t + 0.1;
+                    } else if (!params.pacingOn) {
+                        simSt.pacingWasOn = false;
+                    }
+                    if (params.pacingOn && t >= simSt.nextPace) {
+                        evts.push({ type: 'PACE', start: simSt.nextPace });
+                        const capture = params.pacingCaptureEnabled && params.pacingOutput >= params.pacingCaptureThreshold;
+                        if (capture) {
+                            // Paced beat: wide QRS + inverted T, 20 ms after spike
+                            const paceQRSDur = 0.18;
+                            evts.push({ type: 'QRS', start: simSt.nextPace + 0.02, wide: true });
+                            evts.push({ type: 'T', start: simSt.nextPace + 0.02 + paceQRSDur, hr: params.pacingRate, inverted: true, qtc: params.qtc || 0.40, qrsDur: paceQRSDur });
+                            evts.push({ type: 'PLETH', start: simSt.nextPace + 0.22 });
+                            // Reset intrinsic clocks so underlying rhythm doesn't compete with paced beats
+                            const nextInterval = simSt.nextPace + (60 / params.pacingRate);
+                            simSt.nextP = nextInterval;
+                            simSt.nextQRS = nextInterval;
+                        }
+                        simSt.nextPace += 60 / params.pacingRate;
                     }
                 };
 
@@ -778,7 +1000,7 @@ $isLinks = ($action === 'start');
                         let ekgVal = baselines[0], plethVal = baselines[1], respVal = baselines[2];
 
                         events.forEach(e => {
-                            if (e.type === 'P' || e.type === 'QRS' || e.type === 'T' || e.type === 'SHOCK') {
+                            if (e.type === 'P' || e.type === 'QRS' || e.type === 'T' || e.type === 'SHOCK' || e.type === 'PACE') {
                                 ekgVal += evaluateEKGEvent(e, drawState.drawTime);
                             } 
                             if (e.type === 'PLETH' || e.type === 'SHOCK') {
@@ -805,6 +1027,28 @@ $isLinks = ($action === 'start');
 
                             ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.respY); ctx.lineTo(currentX, newRespY);
                             ctx.strokeStyle = '#eab308'; ctx.lineWidth = 1.5; ctx.stroke();
+                        }
+
+                        // SYNC: triangle markers and delayed shock
+                        for (const e of events) {
+                            if (e.type !== 'QRS') continue;
+                            const peakOffset = e.wide ? 0.06 : 0.045;
+                            const peakTime = e.start + peakOffset;
+                            if (state.syncMode && !e.syncMarked && drawState.drawTime >= peakTime) {
+                                e.syncMarked = true;
+                                ctx.fillStyle = '#facc15';
+                                ctx.beginPath();
+                                ctx.moveTo(currentX, 22);      // apex (bottom)
+                                ctx.lineTo(currentX - 5, 11);  // top-left
+                                ctx.lineTo(currentX + 5, 11);  // top-right
+                                ctx.closePath();
+                                ctx.fill();
+                            }
+                            if (syncShockPending && !e.syncShockFired && drawState.drawTime >= peakTime + 0.005) {
+                                e.syncShockFired = true;
+                                syncShockPending = false;
+                                doShock?.();
+                            }
                         }
 
                         drawState.lastX = currentX; drawState.ekgY = newEkgY; 
