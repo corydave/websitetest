@@ -2,6 +2,7 @@
 
 ## Main Site
 [ ] `aria` check, `role` check
+[ ] Presentation Library needs a separate page for each item (to include links, etc.) - `index.php` with scrubbing logic (meta)
 
 ## What We Do
 [ ] Microcredential
