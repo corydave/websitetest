@@ -16,6 +16,7 @@
 - [ ] Don't tell me to use AI
 - [ ] Four pithy rules
 - [ ] You can't AI wrong [See below]
+- [ ] Vibe Coding (alternative to Word)
 
 ## UPDATE PRN
 - [ ] Link to May webinar (move to FLCC's Events)
