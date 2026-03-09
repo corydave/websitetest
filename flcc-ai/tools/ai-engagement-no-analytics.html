@@ -5,12 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- FIX: Updated CSP to allow data images, Cloudflare beacon (to stop errors), and CDN scripts -->
     <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com blob: data:;
+        default-src 'self' https://cdnjs.cloudflare.com blob: data:;
         style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';
-        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com;
-        connect-src 'self' https://cloudflareinsights.com;
+        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
         img-src 'self' data: blob: https://cdnjs.cloudflare.com;
         frame-src https://www.youtube-nocookie.com 'self';
     ">
@@ -1328,7 +1326,7 @@
                            GitHub <i class="fab fa-github" aria-hidden="true"></i>
                        </a>
                        and was forked from
-                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed & Tera's pioneering work.</a> | Some data is collected on this site. Only anonymous information (specifically, which rationale was used). <a href="ai-engagement-no-analytics.html">Click here for a version that does not collect analytics.</a>
+                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed Beck's pioneering work.</a>
                     </p>
                 </div>
             </div>
@@ -1877,7 +1875,7 @@
                 const encoded = new URLSearchParams(window.location.search).get('policy');
                 if (encoded) {
                     decodeFormState(encoded);
-                    setTimeout(() => { updatePolicyPreview(); updateIframeHeight(); sendAnalytics('raw'); }, 0);
+                    setTimeout(() => { updatePolicyPreview(); updateIframeHeight(); }, 0);
                 }
             } catch (e) {
                 console.error('Error initializing from URL:', e);
@@ -2231,7 +2229,6 @@
 
             updatePolicyPreview();
             updateURL();
-            sendAnalytics('raw');
         });
 
         // Selecting a preset radio inside the No AI modal clears the free-text
@@ -2302,7 +2299,7 @@
                 shareUrl.searchParams.delete('preview');
             }
             copyToClipboard(shareUrl.toString(), copyUrlBtn.querySelector('h3'), 'Copied!');
-            sendAnalytics('sentiment');
+
         });
 
 
@@ -2429,7 +2426,7 @@
             if (embedPreviewFrame) embedPreviewFrame.src = embedUrl.toString();
             closeModal(downloadModal);
             openModal(embedModal);
-            sendAnalytics('sentiment');
+
         });
 
         // Copy button — copies the policy as rich HTML for pasting into an LMS
@@ -2450,7 +2447,7 @@
             } else {
                 copyToClipboard(plainText, copyPolicyBtn, '<i class="fas fa-check" aria-hidden="true"></i> Copied!');
             }
-            sendAnalytics('sentiment');
+
         });
 
         // Close (×) button on all standard modals
@@ -2731,7 +2728,7 @@
                 if (embedPreviewFrame) embedPreviewFrame.src = embedUrl.toString();
                 closeModal(downloadModal);
                 openModal(embedModal);
-                sendAnalytics('sentiment');
+    
                 return;
             }
             if (e.target.closest('#copyPolicyBtn')) { e.preventDefault(); e.stopPropagation(); copyPolicyBtn.dispatchEvent(new MouseEvent('click', { bubbles: false })); return; }
@@ -2753,49 +2750,9 @@
             if (e.target.closest('#downloadText'))  { e.preventDefault(); e.stopPropagation(); triggerDownload(extractPlainText(), 'ai_policy_statement.txt', 'text/plain'); closeModal(downloadModal); return; }
         });
 
-        // =====================================================================
-        // SECTION 15 — Anonymous analytics
-        //
-        // Two event types are tracked:
-        //   'raw'       — fires on every checkbox change, capturing exploratory
-        //                 clicks and any policy loaded via a shared URL.
-        //   'sentiment' — fires when the user copies or shares the policy,
-        //                 representing their deliberate, final selection.
-        //
-        // Never fires in preview mode; silently ignores network errors so it
-        // never interferes with the user experience.
-        // =====================================================================
-
-        /**
-         * Posts the current form state to analytics.php.
-         *
-         * @param {'raw'|'sentiment'} eventType
-         */
-        function sendAnalytics(eventType) {
-            // Skip when running as a read-only preview embed
-            if (document.body.classList.contains('preview-mode')) return;
-
-            const useCases = Array.from(
-                document.querySelectorAll('input[name="useCases"]:checked')
-            ).map(cb => cb.value);
-
-            const documentation = Array.from(
-                document.querySelectorAll('input[name="documentation"]:checked')
-            ).map(cb => cb.value);
-
-            // Only send when at least one option is selected
-            if (!useCases.length && !documentation.length) return;
-
-            fetch('analytics.php', {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ useCases, documentation, eventType })
-            }).catch(() => { /* silent — analytics must never break the UI */ });
-        }
 
     }); // end DOMContentLoaded
     </script>
 
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"1f4307355f984a529a180c0bd298a86a","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>

@@ -20,56 +20,17 @@
             background: var(--light-bg);
         }
 
-        .initiatives-layout {
+        /* Two-column accordion grid */
+        #initiatives-accordion {
             display: grid;
-            grid-template-columns: 5fr 6fr;
-            gap: 4rem;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 3rem;
             align-items: start;
-            margin-top: 0;
-        }
-
-        .initiatives-right-wrap {
-            position: sticky;
-            top: 5rem;
-        }
-
-        .initiative-display {
-            /* background: white; */
-            border-radius: var(--radius);
-            /* border: 2px dashed #d1d5db; */
-            aspect-ratio: 16 / 9;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: opacity 0.2s ease;
-        }
-
-        .initiative-display.fading { opacity: 0; }
-
-        .init-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
-            text-align: center;
-            padding: 2.5rem;
-            color: var(--neutral-gray);
-        }
-
-        .init-placeholder .ph-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            opacity: 0.55;
+            border-top: 1px solid #e8eaed;
         }
 
         /* Accordion */
         .accordion-item { border-bottom: 1px solid #e8eaed; }
-        .accordion-item:first-child { border-top: 1px solid #e8eaed; }
 
         .accordion-btn {
             display: flex;
@@ -117,9 +78,22 @@
             line-height: 1.7;
         }
 
-        .initiative-display-inline {
-            display: none;
+        /* Image / slider inside accordion body */
+        .accordion-body-inner .accordion-media {
             margin-top: 1rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .accordion-body-inner .accordion-media img {
+            width: 100%;
+            display: block;
+            border-radius: var(--radius);
+        }
+
+        .accordion-body-inner .accordion-media .img-slider {
+            aspect-ratio: 16 / 9;
         }
 
         .init-launch-chip {
@@ -210,15 +184,9 @@
             transform: scale(1.25);
         }
 
-        @media (max-width: 900px) {
-            .initiatives-layout {
+        @media (max-width: 700px) {
+            #initiatives-accordion {
                 grid-template-columns: 1fr;
-            }
-            .initiatives-right {
-                display: none;
-            }
-            .initiative-display-inline {
-                display: flex;
             }
         }
     </style>
@@ -242,19 +210,8 @@
     <!-- Initiatives -->
     <section class="initiatives" id="initiatives">
         <div class="container">
-            <div class="initiatives-layout">
-                <div class="initiatives-left">
-                    <div id="initiatives-accordion">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-                <div class="initiatives-right">
-                    <div class="initiatives-right-wrap">
-                        <div class="initiative-display" id="initiative-display">
-                            <!-- Rendered by JS -->
-                        </div>
-                    </div>
-                </div>
+            <div id="initiatives-accordion">
+                <!-- Rendered by JS -->
             </div>
         </div>
     </section>
@@ -359,7 +316,7 @@
                 title: 'AI & Accessibility',
                 description: 'FLCC\'s AI specialists have built custom prompts and AI tools that make accessibility improvements practical and achievable for every faculty and staff member.',
                 link: '',
-                contentHTML: `<img src="images/wwd-ai-accessibility.png" alt="An illustrated infographic titled AI AS THE ACCESSIBLE ACCELERATOR displays a central AI POWERED TRANSFORMATION HUB where a diverse group of four people interacts with digital accessibility tools. On the left, a column labeled BEFORE shows problematic content like videos without captions or missing alt text, while the right side shows the AFTER result of fully captioned videos and structured documents with green checkmarks. The scene features FLCC branding and depicts various AI agents for alt text, captions, and readability checks being used to create inclusive digital content." />`
+                contentHTML: `<img src="images/wwd-ai-accessibility.png" alt="An illustrated infographic titled AI AS THE ACCESSIBLE ACCELERATOR displays a central AI POWERED TRANSFORMATION HUB where a diverse group of four people interacts with digital accessibility tools. On the left, a column labeled BEFORE shows problematic content like videos without captions or missing alt text, while the right side shows the AFTER result of fully captioned videos and structured documents with green checkmarks. The scene features FLCC branding and depicts various AI agents for alt text, captions, and readability checks being used to create inclusive digital content. AI GENERATED" />`
             },
             {
                 title: 'AI Challenge',
@@ -373,11 +330,17 @@
                 ])
             },
             {
+                title: 'AI Engagement Guide',
+                description: 'Build your own AI Guidelines - at the assignment level.',
+                link: 'https://www.flcc.ai/tools/ai-engagement-guide.html',
+                contentHTML: `<img src="images/wwd-ai-engagement-guide.png" alt="A digital interface titled FLCC - AI ENGAGEMENT GUIDE displays a grid of options for learners to use AI in assignments, including NO AI USE, OPEN USE, and specific tasks like BRAINSTORMING and OUTLINE AND THESIS. Selecting these options populates a preview panel on the right that summarizes the SELECTIVE AI USE policy with specific instructions for tasks like brainstorming and outlining. A bottom section titled ALT TEXT FOR ACCESSIBILITY provides a text-based version of the selected policies for easy copying." />`
+            },
+            {
                 title: 'AI Enhanced Initiatives',
                 description: 'FLCC offers small honorariums to faculty and staff who design and share AI-enhanced lessons, learning experiences, workflows, and administrative processes, recognizing and rewarding the innovative work happening across campus.',
                 link: '',
                 contentHTML: `<img src="images/wwd-ai-enhanced-initiatives.png" alt="A circular logo on a white background features a stylized tree with blue circuit board lines for a trunk and branches, blooming into green and blue leaves with digital pixel patterns. The upper arc of the circle contains the text AI ENHANCED INITIATIVES in bold blue letters, while the lower arc reads FOR FACULTY AND STAFF FINGER LAKES COMMUNITY COLLEGE in green and blue. At the base of the tree trunk, the letters AI are integrated into the root design to ground the technological theme." />`
-            },
+            },            
             {
                 title: 'AI Think Tank',
                 description: 'The AI Think Tank is a steering committee with Instructional and Business work streams that sets goals for AI exploration across all college divisions, supports access to AI tools, and develops policy recommendations to guide the college\'s AI journey.',
@@ -419,11 +382,17 @@
                 contentHTML: `<img src="images/wwd-newsletters.png" alt="A collage of digital newsletters displays several editions of AI NEWS with blue headers and various article titles. Visible sections include an AI-ENHANCED LEARNING INITIATIVE announcement, a guide on AI POWERED ACCESSIBILITY TOOLS, and a LIGHTNING ROUND summary of campus projects. The newsletters feature white backgrounds with blue and black text, providing information on topics like generating alt text and using AI as a metaphor for human learning." />`
             },
             {
+                title: 'Pedagogical Spark',
+                description: 'Community of Practice dedicated to reimagining AI as a tool for student-centered learning that prioritizes agency, accessibility, and critical thinking over mere administrative efficiency.',
+                link: '',
+                contentHTML: `<img src="images/wwd-pedagogical-spark.png" alt="A diverse group of adults sits in a circular arrangement of chairs within a brightly lit modern library or common room. They are engaged in a casual discussion with smiling and attentive expressions while dressed in comfortable everyday attire like sweaters and jeans. Large windows in the background look out onto a suburban landscape under soft natural daylight. AI GENERATED" />`
+            },
+            {
                 title: 'Professional Development',
                 description: 'FLCC maintains a strategic calendar of in-person and remote AI training opportunities, with sessions cataloged for on-demand viewing so faculty and staff can learn at their own pace.',
                 link: '',
                 contentHTML: `<img src="images/wwd-professional-development.png" alt="A professional development webpage for the CENTER FOR TEACHING AND LEARNING features three course modules titled PROMPTING 101, MEDIA CREATION, and PROMPTING 201. Each section includes a descriptive paragraph about learning AI strategies and a thumbnail image overlaid with a diagonal blue banner and the CTL AI logo. The page provides external links to AI tools like Gemini, ChatGPT, and Meta AI to encourage faculty and staff engagement with new technologies." />`
-            },
+            },            
             {
                 title: 'Vibe Coding Course',
                 description: 'FLCC\'s full-semester Vibe Coding course gives non-CS majors a low-to-no-code pathway to build real solutions with AI, fulfilling both technology and AI literacy requirements without traditional programming barriers.',
@@ -434,13 +403,11 @@
 
         function renderInitiatives() {
             const accordion = document.getElementById('initiatives-accordion');
-            const display   = document.getElementById('initiative-display');
-            if (!accordion || !display) return;
+            if (!accordion) return;
 
-            // Build accordion HTML (first item open by default)
             accordion.innerHTML = initiatives.map((item, i) => `
                 <div class="accordion-item">
-                    <button class="accordion-btn${i === 0 ? ' active' : ''}" data-index="${i}" aria-expanded="${i === 0}">
+                    <button class="accordion-btn" data-index="${i}" aria-expanded="false">
                         ${item.title}
                         <i data-lucide="chevron-down" width="20" class="accordion-chevron"></i>
                     </button>
@@ -448,48 +415,32 @@
                         <div class="accordion-body-inner">
                             ${item.description}
                             ${item.link ? `<br><a href="${item.link}" target="_blank" rel="noopener" class="init-launch-chip"><i data-lucide="external-link" width="13"></i> Launch <i data-lucide="arrow-right" width="13"></i></a>` : ''}
-                            <div class="initiative-display initiative-display-inline">${item.contentHTML}</div>
+                            <div class="accordion-media">${item.contentHTML}</div>
                         </div>
                     </div>
                 </div>
             `).join('');
 
-            // Set initial content and open first body
-            display.innerHTML = initiatives[0].contentHTML;
-            applyImgTitles(display);
-            initSliderAutoplay(display);
             applyImgTitles(accordion);
-            const firstBody = accordion.querySelector('.accordion-body');
-            firstBody.style.maxHeight = firstBody.scrollHeight + 'px';
 
             // Accordion click handler
             accordion.querySelectorAll('.accordion-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    const idx       = parseInt(this.dataset.index);
                     const isActive  = this.classList.contains('active');
                     const allBtns   = accordion.querySelectorAll('.accordion-btn');
                     const allBodies = accordion.querySelectorAll('.accordion-body');
 
                     // Close all
                     allBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-expanded', 'false'); });
-                    allBodies.forEach(b => { b.style.maxHeight = '0'; });
+                    allBodies.forEach(b => { clearSliderAutoplay(b); b.style.maxHeight = '0'; });
 
                     if (!isActive) {
-                        // Open clicked item
                         this.classList.add('active');
                         this.setAttribute('aria-expanded', 'true');
-                        this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 'px';
-
-                        // Swap right-side content with fade
-                        clearSliderAutoplay(display);
-                        display.classList.add('fading');
-                        setTimeout(() => {
-                            display.innerHTML = initiatives[idx].contentHTML;
-                            display.classList.remove('fading');
-                            lucide.createIcons();
-                            applyImgTitles(display);
-                            initSliderAutoplay(display);
-                        }, 200);
+                        const body = this.nextElementSibling;
+                        body.style.maxHeight = body.scrollHeight + 'px';
+                        lucide.createIcons();
+                        initSliderAutoplay(body);
                     }
                 });
             });
