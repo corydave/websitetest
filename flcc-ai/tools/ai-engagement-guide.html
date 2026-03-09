@@ -1328,7 +1328,7 @@
                            GitHub <i class="fab fa-github" aria-hidden="true"></i>
                        </a>
                        and was forked from
-                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed & Tera's pioneering work.</a> | Some data is collected on this site. Only anonymous information (specifically, which rationale was used). <a href="ai-engagement-no-analytics.html">Click here for a version that does not collect analytics.</a>
+                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed & Tera's pioneering work.</a> | Some data is collected on this site. Only anonymous information (specifically, which rationale was used). <a href="ai-engagement-no-analytics.html" id="no-analytics-link">Click here for a version that does not collect analytics.</a>
                     </p>
                 </div>
             </div>
@@ -1425,6 +1425,13 @@
                             <div class="card-content">
                                 <h3>Accessibility &amp; Equity Support</h3>
                                 <p>AI tools may offer language clarification, idea rehearsal, or alternative explanations that support diverse learners.</p>
+                            </div>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="openUseRationale" value="This assignment invites you to decide whether and how AI tools support your learning. You are encouraged to make intentional choices based on your goals, strengths, and areas for growth. You know your learning life best, and this policy honors your capacity to choose tools that align with your understanding of how you learn most effectively.">
+                            <div class="card-content">
+                                <h3>Learner Agency & Choice</h3>
+                                <p>This assignment invites you to decide whether and how AI tools support your learning. You are encouraged to make intentional choices based on your goals, strengths, and areas for growth. You know your learning life best, and this policy honors your capacity to choose tools that align with your understanding of how you learn most effectively.</p>
                             </div>
                         </label>
                     </div>
@@ -2789,6 +2796,15 @@
                 body:    JSON.stringify({ useCases, documentation, eventType })
             }).catch(() => { /* silent — analytics must never break the UI */ });
         }
+
+        // Track clicks on "no analytics" version link
+        document.getElementById('no-analytics-link').addEventListener('click', () => {
+            fetch('analytics.php', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ eventType: 'no_analytics_click' })
+            }).catch(() => { /* silent */ });
+        });
 
     }); // end DOMContentLoaded
     </script>

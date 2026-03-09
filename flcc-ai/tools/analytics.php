@@ -56,8 +56,11 @@ $docs = array_values(array_filter(
     fn($v) => in_array($v, $VALID_DOCS, true)
 ));
 
-// Require at least one selection
-if (empty($useCases) && empty($docs)) { http_response_code(400); exit; }
+// For no_analytics_click events, selections are not required
+$isNoAnalyticsClick = (($data['eventType'] ?? '') === 'no_analytics_click');
+
+// Require at least one selection (unless it's a no_analytics_click event)
+if (!$isNoAnalyticsClick && empty($useCases) && empty($docs)) { http_response_code(400); exit; }
 
 // ── Database ──────────────────────────────────────────────────────────────────
 try {
@@ -95,8 +98,15 @@ try {
         // Column already exists — safe to ignore
     }
 
-    // Validate event_type from request ('raw' or 'sentiment'; default 'raw')
-    $eventType = (($data['eventType'] ?? '') === 'sentiment') ? 'sentiment' : 'raw';
+    // Validate event_type from request ('raw', 'sentiment', or 'no_analytics_click'; default 'raw')
+    $rawType = $data['eventType'] ?? '';
+    if ($rawType === 'sentiment') {
+        $eventType = 'sentiment';
+    } elseif ($rawType === 'no_analytics_click') {
+        $eventType = 'no_analytics_click';
+    } else {
+        $eventType = 'raw';
+    }
 
     // Rate-limit: reject if this IP has sent >= RATE_LIMIT events in the last hour
     $ip_hash = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown');

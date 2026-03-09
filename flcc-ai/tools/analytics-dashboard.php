@@ -8,7 +8,7 @@
  */
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-define('DASHBOARD_PASSWORD', 'flcc');   // ← set your own password here
+define('DASHBOARD_PASSWORD', 'flcc-ai-analytics');   // ← set your own password here
 define('DB_PATH', __DIR__ . '/../data/analytics.db');
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -105,13 +105,15 @@ $DOC_LABELS = [
 ];
 
 // ── Load statistics ───────────────────────────────────────────────────────────
-// sentiment = Copy / Share URL clicks  (deliberate final selection)
-// raw       = every checkbox click     (exploratory behaviour)
-$sentiment = ['total' => 0, 'use_cases' => [], 'documentation' => []];
-$raw       = ['total' => 0, 'use_cases' => [], 'documentation' => []];
-$totals    = ['total' => 0, 'today' => 0, 'last7' => 0];
-$daily     = [];
-$dbError   = null;
+// sentiment          = Copy / Share URL clicks  (deliberate final selection)
+// raw                = every checkbox click     (exploratory behaviour)
+// no_analytics_click = clicks on "no analytics" version link
+$sentiment        = ['total' => 0, 'use_cases' => [], 'documentation' => []];
+$raw              = ['total' => 0, 'use_cases' => [], 'documentation' => []];
+$noAnalyticsClicks = 0;
+$totals           = ['total' => 0, 'today' => 0, 'last7' => 0];
+$daily            = [];
+$dbError          = null;
 
 if (file_exists(DB_PATH)) {
     try {
@@ -128,8 +130,13 @@ if (file_exists(DB_PATH)) {
         $totals['today'] = (int)$db->query("SELECT COUNT(*) FROM events WHERE date(ts) = date('now')")->fetchColumn();
         $totals['last7'] = (int)$db->query("SELECT COUNT(*) FROM events WHERE ts >= datetime('now','-7 days')")->fetchColumn();
 
-        // Aggregate each event type separately
-        foreach ($db->query("SELECT use_cases, documentation, COALESCE(event_type,'raw') AS event_type FROM events") as $row) {
+        // Count no_analytics_click events separately
+        $noAnalyticsClicks = (int)$db->query(
+            "SELECT COUNT(*) FROM events WHERE event_type = 'no_analytics_click'"
+        )->fetchColumn();
+
+        // Aggregate each event type separately (skip no_analytics_click rows)
+        foreach ($db->query("SELECT use_cases, documentation, COALESCE(event_type,'raw') AS event_type FROM events WHERE event_type != 'no_analytics_click'") as $row) {
             $bucket = ($row['event_type'] === 'sentiment') ? $sentiment : $raw;
             $bucket['total']++;
             foreach (json_decode($row['use_cases'],     true) ?? [] as $v)
@@ -450,6 +457,10 @@ function renderBars(array $bucketArr, array $labels, string $hue): void {
         <div class="stat-card">
             <div class="num"><?= number_format($totals['today']) ?></div>
             <div class="lbl">Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="num"><?= number_format($noAnalyticsClicks) ?></div>
+            <div class="lbl">No-Analytics Clicks</div>
         </div>
     </div>
 
