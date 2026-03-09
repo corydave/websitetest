@@ -10,7 +10,7 @@
         style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';
         script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
         img-src 'self' data: blob: https://cdnjs.cloudflare.com;
-        frame-src https://www.youtube-nocookie.com 'self';
+        frame-src https://docs.google.com 'self';
     ">
     
     <!-- FIX: Added Favicon to prevent 404 error -->
@@ -1082,7 +1082,7 @@
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <main id="main-content" class="container" role="main" tabindex="-1">
-        <h1>FLCC - AI Engagement Guide</h1>
+        <h1>FLCC - AI Engagement Guide<sup>*</sup></h1>
         
         <div class="form-container">
             <!-- Left Column: Questions -->
@@ -1326,8 +1326,9 @@
                            GitHub <i class="fab fa-github" aria-hidden="true"></i>
                        </a>
                        and was forked from
-                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed Beck's pioneering work.</a>
+                       <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">Ed and Tera's pioneering work.</a>
                     </p>
+                    <p id="asterisk"><sup>*</sup>No analytics are collected from this page.</p>
                 </div>
             </div>
         </footer>
@@ -1453,19 +1454,14 @@
             <div class="modal-body">
                 <!-- TODO: Replace placeholder video ID before launch -->
                 <div class="info-video-container">
-                    <iframe
-                        src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-                        title="About the AI Policy Generator"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                    <iframe width="560" height="315" src="https://docs.google.com/videos/d/1K6X372LRLV8LI95m6wZTgax2a1-UKldBuUT4h038PC8/play" title="Video player" frameborder="0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px;"></iframe>
                 </div>
                 <!-- TODO: Replace lorem ipsum before launch -->
-                <div class="info-text">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    <p>Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo.</p>
-                </div>
+                <!--<div class="info-text">-->
+                <!--    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>-->
+                <!--    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>-->
+                <!--    <p>Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo.</p>-->
+                <!--</div>-->
             </div>
         </div>
     </div>
@@ -2317,6 +2313,8 @@
         function closeModal(modal) {
             modal.classList.add('hidden');
             document.body.classList.remove('modal-open');
+            // Stop any iframe video inside the modal by resetting its src
+            modal.querySelectorAll('iframe').forEach(f => { f.src = f.src; });            
         }
 
         /**
