@@ -1,0 +1,2704 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design a Game with AI - 2K Summer Workshop</title>
+
+  <!-- Google Fonts: Bricolage Grotesque (display) + Instrument Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── CSS VARIABLES ──────────────────────────────────────────────────── */
+    :root {
+      --blue:    #1c4587;   /* main brand color */
+      --maroon:  #741b47;   /* phase 2 accent */
+      --charcoal:#434343;   /* body text / nav items */
+      --green:   #34a853;   /* principle callouts */
+      --red:     #ea4335;   /* warnings / stress-test */
+      --yellow:  #fbbc05;   /* lesson callouts */
+      --sky:     #1e90ff;   /* interactive highlights */
+
+      /* Derived tones */
+      --blue-light:    #d9e8f5;
+      --blue-dark:     #0d2a52;
+      --green-light:   #d9f0e1;
+      --yellow-light:  #fef9e3;
+      --maroon-light:  #f5d6e8;
+      --sky-light:     #ddeeff;
+
+      --white:    #ffffff;
+      --off-white:#f8f9fb;
+      --border:   #e2e6ed;
+      --muted:    #6b7280;
+
+      --sidebar-w: 260px;
+      --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-body:    'Instrument Sans', system-ui, sans-serif;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(28,69,135,0.10);
+    }
+
+    /* ─── RESET & BASE ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--charcoal);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--blue-dark);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 2rem;
+    }
+
+    /* Subtle noise texture overlay on sidebar */
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo .wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .sidebar-logo .tagline {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Timer badge in sidebar */
+    .sidebar-timer {
+      margin: 0.75rem 1.25rem;
+      background: rgba(251,188,5,0.15);
+      border: 1px solid rgba(251,188,5,0.3);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-timer .timer-icon { font-size: 1rem; }
+
+    .sidebar-timer .timer-text {
+      font-size: 0.72rem;
+      color: var(--yellow);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* Phase section in nav */
+    .nav-phase {
+      padding: 0.9rem 1.25rem 0.3rem;
+    }
+
+    .nav-phase-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-phase-label.phase1 { color: rgba(30,144,255,0.7); }
+    .nav-phase-label.phase2 { color: rgba(116,27,71,0.9); }
+    .nav-phase-label.share  { color: rgba(52,168,83,0.8); }
+
+    /* Individual nav item */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 1.25rem;
+      cursor: pointer;
+      border-radius: 0;
+      text-decoration: none;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .nav-item.active {
+      background: rgba(30,144,255,0.15);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--sky);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .nav-step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-item.active .nav-step-num {
+      background: var(--sky);
+      color: var(--white);
+    }
+
+    .nav-step-title {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.3;
+      transition: color 0.15s;
+    }
+
+    .nav-item.active .nav-step-title,
+    .nav-item:hover .nav-step-title {
+      color: rgba(255,255,255,0.9);
+    }
+
+    .nav-time {
+      margin-left: auto;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.25);
+      white-space: nowrap;
+    }
+
+    /* ─── MAIN CONTENT ───────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+
+    /* ─── PAGE HEADER ────────────────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sky);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 2.2rem;
+      color: var(--blue);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header h1 span {
+      color: var(--maroon);
+    }
+
+    .page-header-sub {
+      margin-top: 0.6rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 560px;
+    }
+
+    /* Timeline pills row */
+    .timeline-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .timeline-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid;
+    }
+
+    .pill-p1 { background: var(--blue-light);  color: var(--blue);   border-color: #b3ccec; }
+    .pill-p2 { background: var(--maroon-light); color: var(--maroon); border-color: #e0a8cb; }
+    .pill-share { background: var(--green-light); color: #1e7a3c; border-color: #a8d9b4; }
+
+    .pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    .pill-p1 .pill-dot { background: var(--blue); }
+    .pill-p2 .pill-dot { background: var(--maroon); }
+    .pill-share .pill-dot { background: var(--green); }
+
+    /* ─── PHASE BANNER ───────────────────────────────────────────────────── */
+    .phase-banner {
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.75rem;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phase-banner::after {
+      content: '';
+      position: absolute;
+      right: -20px; top: -20px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .phase-banner.phase1 { background: var(--blue); }
+    .phase-banner.phase2 { background: var(--maroon); }
+    .phase-banner.share  { background: var(--green); }
+
+    .phase-banner-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.3rem;
+    }
+
+    .phase-banner h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: white;
+      letter-spacing: -0.01em;
+    }
+
+    .phase-banner p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.75);
+      margin-top: 0.4rem;
+      max-width: 520px;
+      line-height: 1.5;
+    }
+
+    /* ─── STEP CARD ──────────────────────────────────────────────────────── */
+    .step-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      scroll-margin-top: 2rem;
+    }
+
+    .step-header {
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .step-num-badge {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .phase1 .step-num-badge { background: var(--blue); }
+    .phase2 .step-num-badge { background: var(--maroon); }
+    .share  .step-num-badge { background: var(--green); }
+
+    /* The step num badge color is set dynamically via JS */
+    .step-num-badge.badge-blue    { background: var(--blue); }
+    .step-num-badge.badge-maroon  { background: var(--maroon); }
+    .step-num-badge.badge-green   { background: var(--green); }
+
+    .step-header-text { flex: 1; }
+
+    .step-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .step-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--blue-dark);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .step-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+
+    .step-body {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: #4a5568;
+      line-height: 1.65;
+      margin-bottom: 1.1rem;
+    }
+
+    /* ─── PROMPT BOX ─────────────────────────────────────────────────────── */
+    .prompt-block {
+      margin-bottom: 1rem;
+    }
+
+    .prompt-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+
+    .prompt-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    .prompt-label.followup { color: var(--sky); }
+    .prompt-label.stress   { color: var(--red); }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--blue);
+      background: var(--blue-light);
+      border: 1px solid #b3ccec;
+      border-radius: 6px;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      font-family: var(--font-body);
+    }
+
+    .copy-btn:hover { background: #c8dfee; }
+    .copy-btn:active { transform: scale(0.97); }
+    .copy-btn.copied { background: var(--green-light); color: #1e7a3c; border-color: #a8d9b4; }
+
+    .prompt-box {
+      background: #f2f2f2;              /* light gray - visually distinct from card bg */
+      border: 1.5px solid #d0d0d0;
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      font-family: Consolas, 'Courier New', Courier, monospace;  /* monospace for prompt text */
+      font-size: 0.82rem;
+      color: #222;
+      line-height: 1.7;
+      font-style: normal;
+      position: relative;
+      white-space: pre-wrap;   /* preserves intentional line breaks in prompts */
+    }
+
+    /* bracket placeholders styled differently so users know what to replace */
+    .prompt-box .placeholder {
+      background: rgba(28,69,135,0.1);
+      border-radius: 3px;
+      padding: 0 3px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    /* ─── PROMPT TYPE BADGE ──────────────────────────────────────────────── */
+    /* A small pill that labels the prompting technique used in each prompt block */
+    .prompt-type-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+      border: 1.5px solid;
+      white-space: nowrap;
+    }
+
+    /* Color variants for different technique types */
+    .badge-direct      { background: #e8f0fe; color: #1a56c4; border-color: #b3c8f5; }
+    .badge-followup    { background: #e3f3ff; color: #0060c7; border-color: #90c8f0; }
+    .badge-context     { background: #fce8ff; color: #7b1fa2; border-color: #d8a0f0; }
+    .badge-meta        { background: #fff3e0; color: #b45309; border-color: #f5c67a; }
+    .badge-chain       { background: #e8fce8; color: #1a7a1a; border-color: #90d890; }
+    .badge-fewshot     { background: #fdf0f0; color: #b91c1c; border-color: #f0a0a0; }
+    .badge-refine      { background: #f0f0ff; color: #4338ca; border-color: #b0a8f0; }
+    .badge-role        { background: #f5f5f5; color: #374151; border-color: #c0c0c0; }
+    .badge-constraint  { background: #fff8e1; color: #92400e; border-color: #f0cc70; }
+    .badge-panel       { background: #fef2f2; color: #991b1b; border-color: #f5a0a0; }
+    .badge-budget      { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
+    .badge-action      { background: #f0f0f0; color: #555555; border-color: #c8c8c8; }
+    .badge-compare     { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+    .badge-socratic    { background: #fff1f2; color: #9f1239; border-color: #fda4af; }
+    .badge-negative    { background: #fef9c3; color: #713f12; border-color: #fde047; }
+    .badge-multimodal  { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .badge-social      { background: #fce7f3; color: #9d174d; border-color: #f9a8d4; }
+    .badge-music       { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
+
+    /* ─── LESSON CALLOUT ─────────────────────────────────────────────────── */
+    .lesson-callout {
+      margin-top: 1.1rem;
+      background: var(--yellow-light);
+      border: 1.5px solid #f0d060;
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+    }
+
+    .callout-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .lesson-callout .callout-label { color: #8a6000; }
+
+    .callout-body {
+      font-size: 0.845rem;
+      line-height: 1.6;
+    }
+
+    .lesson-callout .callout-body { color: #5a4000; }
+
+    /* ─── PRINCIPLE CALLOUT ──────────────────────────────────────────────── */
+    .principle-callout {
+      margin-top: 0.85rem;
+      background: var(--green-light);
+      border: 1.5px solid #9dd4ac;
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+    }
+
+    .principle-callout .callout-label { color: #1a6630; }
+    .principle-callout .callout-body  { color: #1e4728; }
+
+    /* ─── TAXONOMY TABLE ─────────────────────────────────────────────────── */
+    .taxonomy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 0.75rem;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+
+    .taxonomy-table th {
+      background: var(--blue);
+      color: white;
+      padding: 0.6rem 0.85rem;
+      text-align: left;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .taxonomy-table td {
+      padding: 0.6rem 0.85rem;
+      vertical-align: top;
+      border-top: 1px solid var(--border);
+      color: var(--charcoal);
+      line-height: 1.4;
+    }
+
+    .taxonomy-table tr:nth-child(even) td { background: var(--off-white); }
+
+    .taxonomy-cat {
+      font-weight: 700;
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    .category-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* ─── GAME CONCEPT CARD ──────────────────────────────────────────────── */
+    .concept-card {
+      background: white;
+      border: 2px solid var(--blue);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .concept-card h3 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--blue);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .concept-card-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .field-group {
+      margin-bottom: 0.9rem;
+    }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .field-input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 0.55rem 0.8rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--charcoal);
+      background: var(--off-white);
+      resize: vertical;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    .field-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(28,69,135,0.1);
+      background: white;
+    }
+
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 4px;
+    }
+
+    .cat-chip {
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: white;
+      color: var(--muted);
+    }
+
+    .cat-chip:hover { border-color: var(--blue); color: var(--blue); }
+    .cat-chip.selected { background: var(--blue); color: white; border-color: var(--blue); }
+
+    /* ─── PITCH TIPS ─────────────────────────────────────────────────────── */
+    .pitch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .pitch-item {
+      background: var(--blue-light);
+      border: 1px solid #b3ccec;
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .pitch-item-num {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--blue);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .pitch-item-text {
+      font-size: 0.8rem;
+      color: #2a4a7a;
+      line-height: 1.4;
+    }
+
+    /* ─── REFERENCE SECTION ──────────────────────────────────────────────── */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .ref-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .ref-card-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 0.3rem;
+    }
+
+    .ref-card-desc {
+      font-size: 0.78rem;
+      color: var(--charcoal);
+      line-height: 1.5;
+    }
+
+    /* ─── PROGRESS BAR ───────────────────────────────────────────────────── */
+    .progress-bar-wrap {
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: auto;
+    }
+
+    .progress-bar-label {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--sky);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* ─── DIVIDER ─────────────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+
+    /* ─── FOOTER NOTE ────────────────────────────────────────────────────── */
+    .footer-note {
+      background: var(--blue);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      margin-top: 2rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.85rem;
+    }
+
+    .footer-note strong { color: white; }
+
+    /* ─── MOBILE TOGGLE ──────────────────────────────────────────────────── */
+    .mobile-toggle {
+      display: none;
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      width: 48px; height: 48px;
+      background: var(--blue);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      z-index: 200;
+      box-shadow: 0 4px 14px rgba(28,69,135,0.4);
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+    /* ─── RESPONSIVE - tablet ───────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      :root { --sidebar-w: 220px; }
+      .main { padding: 1.75rem 1.75rem 3rem; }
+      .page-header h1 { font-size: 1.75rem; }
+      .ref-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ─── RESPONSIVE - mobile ────────────────────────────────────────────── */
+    @media (max-width: 780px) {
+      :root { --sidebar-w: 280px; } /* full-width-ish overlay on mobile */
+
+      /* Sidebar slides off-screen by default; .open class reveals it */
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      /* Dim backdrop when sidebar is open */
+      .sidebar-backdrop {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 99;
+      }
+      .sidebar-backdrop.visible { display: block; }
+
+      .main {
+        margin-left: 0;
+        padding: 1.1rem 1rem 3rem;
+        max-width: 100%;
+      }
+
+      .mobile-toggle { display: flex; }
+
+      /* Page header */
+      .page-header h1 { font-size: 1.5rem; }
+      .timeline-row { gap: 0.4rem; }
+      .timeline-pill { font-size: 0.72rem; padding: 0.3rem 0.65rem; }
+
+      /* Cards */
+      .step-header { padding: 1rem 1rem 0.75rem; gap: 0.75rem; }
+      .step-body   { padding: 1rem; }
+      .step-title  { font-size: 1rem; }
+
+      /* Grids → single column */
+      .pitch-grid, .ref-grid { grid-template-columns: 1fr; }
+
+      /* Taxonomy table - allow horizontal scroll */
+      .taxonomy-table { font-size: 0.75rem; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+      /* Prompt boxes - prevent overflow */
+      .prompt-box { font-size: 0.75rem; overflow-x: auto; }
+
+      /* Phase banners */
+      .phase-banner { padding: 1rem 1.1rem; }
+      .phase-banner h2 { font-size: 1.2rem; }
+
+      /* Concept card */
+      .concept-card { padding: 1rem; }
+
+      /* Download button row wrapping */
+      .download-row { flex-direction: column; }
+
+      /* Map upload widget */
+      .map-upload-area { min-height: 120px; }
+    }
+
+    /* ─── RESPONSIVE - very small phones ────────────────────────────────── */
+    @media (max-width: 380px) {
+      .main { padding: 0.85rem 0.75rem 3rem; }
+      .step-num-badge { width: 30px; height: 30px; font-size: 0.8rem; }
+      .copy-btn { font-size: 0.65rem; padding: 2px 7px; }
+      .prompt-type-badge { font-size: 0.5rem; padding: 1px 5px; }
+    }
+
+    /* ─── ACCESSIBILITY: focus rings ─────────────────────────────────────── */
+    :focus-visible {
+      outline: 2px solid var(--sky);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* ─── AI TOOLS LAUNCHER ──────────────────────────────────────────────── */
+    .tools-launcher {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .tools-launcher-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .tools-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .tool-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      background: var(--off-white);
+      color: var(--charcoal);
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+
+    .tool-link:hover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      color: var(--blue);
+      transform: translateY(-2px);
+    }
+
+    .tool-link img {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      display: block;
+    }
+
+    /* ─── NEW CHAT BREAK ──────────────────────────────────────────────────── */
+    .new-chat-break {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--yellow-light);
+      border: 1.5px solid #f0d040;
+      border-radius: var(--radius);
+      padding: 1rem 1.4rem;
+      margin: 1.5rem 0;
+    }
+
+    .new-chat-break-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .new-chat-break-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      color: #6b4400;
+      letter-spacing: -0.01em;
+    }
+
+    .new-chat-break-rationale {
+      font-size: 0.8rem;
+      color: #7a5500;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-card {
+      animation: fadeInUp 0.35s ease both;
+    }
+
+    .step-card:nth-child(1) { animation-delay: 0.05s; }
+    .step-card:nth-child(2) { animation-delay: 0.10s; }
+    .step-card:nth-child(3) { animation-delay: 0.15s; }
+    .step-card:nth-child(4) { animation-delay: 0.20s; }
+    .step-card:nth-child(5) { animation-delay: 0.25s; }
+    .step-card:nth-child(6) { animation-delay: 0.30s; }
+
+    /* ─── STARBURST BADGE ────────────────────────────────────────────────── */
+    /* Used on the Meta-Prompting nav item to mark it as a special "Prompt Enhancer" */
+    .starburst-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.55rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: var(--yellow);
+      color: #5a3a00;
+      white-space: nowrap;
+      /* Subtle starburst clip using CSS polygon */
+      clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%,
+        79% 91%, 50% 70%, 21% 91%, 32% 57%,
+        2% 35%, 39% 35%
+      );
+      width: 48px;
+      height: 48px;
+      border-radius: 0;
+      font-size: 0.42rem;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      line-height: 1.1;
+      flex-shrink: 0;
+    }
+
+    /* Simpler pill version - more readable at small sidebar size */
+    .enhancer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: var(--yellow);
+      color: #5a3a00;
+      white-space: nowrap;
+      margin-left: 2px;
+      /* pointy left edge like a banner/starburst ribbon */
+      clip-path: polygon(6px 0%, 100% 0%, 100% 100%, 6px 100%, 0% 50%);
+      padding-left: 10px;
+    }
+
+
+    /* ─── DOWNLOAD ROW ───────────────────────────────────────────────────── */
+    .download-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 0.85rem 0;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 1rem;
+      border-radius: 7px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+    }
+    .download-btn:hover  { filter: brightness(0.92); }
+    .download-btn:active { transform: scale(0.97); }
+
+    .download-btn.blue   { background: var(--blue-light);  color: var(--blue);   border-color: #b3ccec; }
+    .download-btn.maroon { background: var(--maroon-light); color: var(--maroon); border-color: #e0a8cb; }
+    .download-btn.green  { background: var(--green-light);  color: #1e7a3c;       border-color: #a8d9b4; }
+
+    /* ─── MAP UPLOAD WIDGET ──────────────────────────────────────────────── */
+    .map-upload-area {
+      border: 2px dashed #c0cfe0;
+      border-radius: 10px;
+      background: #f7faff;
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .map-upload-area:hover, .map-upload-area.drag-over {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .map-upload-area input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .map-upload-icon { font-size: 2rem; line-height: 1; }
+    .map-upload-label { font-size: 0.82rem; color: var(--blue); font-weight: 600; }
+    .map-upload-sub   { font-size: 0.72rem; color: var(--muted); }
+    .map-preview {
+      display: none;
+      width: 100%; margin-top: 0.75rem;
+      border-radius: 8px; overflow: hidden;
+      border: 2px solid var(--blue);
+      position: relative;
+    }
+    .map-preview img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; background: #f0f0f0; }
+    .map-preview-clear {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(0,0,0,0.55); color: white;
+      border: none; border-radius: 50%;
+      width: 26px; height: 26px; font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+<div class="layout">
+
+  <!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Workshop navigation">
+
+    <div class="sidebar-logo">
+      <div class="wordmark">Design a Game<br>with AI</div>
+      <div class="tagline">2K Summer Workshop</div>
+    </div>
+
+    <div class="sidebar-timer">
+      <span class="timer-icon">⏱</span>
+      <span class="timer-text">60-Minute Session</span>
+    </div>
+
+    <!-- Phase 1 nav -->
+    <div class="nav-phase">
+      <div class="nav-phase-label phase1">Phase 1 - Learning AI</div>
+
+      <a class="nav-item" href="#step-1" onclick="setActive(this)">
+        <div class="nav-step-num">1</div>
+        <div class="nav-step-title">Warm Up: First Contact</div>
+        <div class="nav-time">5 min</div>
+      </a>
+      <a class="nav-item" href="#step-2" onclick="setActive(this)">
+        <div class="nav-step-num">2</div>
+        <div class="nav-step-title">Meta-Prompting: Punch Up Your Prompts <span class="enhancer-pill" title="Prompt Enhancer - use this technique to supercharge other prompts">✦ Enhancer</span></div>
+        <div class="nav-time">5 min</div>
+      </a>
+    </div>
+
+    <!-- Phase 2 nav: Seasoning the Chat -->
+    <div class="nav-phase">
+      <div class="nav-phase-label" style="color:rgba(30,144,255,0.85);">Phase 2 - Seasoning the Chat</div>
+      <a class="nav-item" href="#step-3" onclick="setActive(this)">
+        <div class="nav-step-num">3</div>
+        <div class="nav-step-title">Load the 2K Summer Vocabulary</div>
+        <div class="nav-time">7 min</div>
+      </a>
+      <a class="nav-item" href="#step-4" onclick="setActive(this)">
+        <div class="nav-step-num">4</div>
+        <div class="nav-step-title">Analyze the Blueprint</div>
+        <div class="nav-time">5 min</div>
+      </a>
+    </div>
+
+    <!-- Phase 3 nav: Creation -->
+    <div class="nav-phase">
+      <div class="nav-phase-label phase2">Phase 3 - Creation</div>
+
+      <a class="nav-item" href="#step-5" onclick="setActive(this)">
+        <div class="nav-step-num">5</div>
+        <div class="nav-step-title">Starting the Design</div>
+        <div class="nav-time">10 min</div>
+      </a>
+      <a class="nav-item" href="#step-6" onclick="setActive(this)">
+        <div class="nav-step-num">6</div>
+        <div class="nav-step-title">Build the World</div>
+        <div class="nav-time">10 min</div>
+      </a>
+      <a class="nav-item" href="#step-7" onclick="setActive(this)">
+        <div class="nav-step-num">7</div>
+        <div class="nav-step-title">Design the Mechanics</div>
+        <div class="nav-time">10 min</div>
+      </a>
+      <a class="nav-item" href="#step-8" onclick="setActive(this)">
+        <div class="nav-step-num">8</div>
+        <div class="nav-step-title">Stress Test &amp; Cost It Out</div>
+        <div class="nav-time">8 min</div>
+      </a>
+    </div>
+
+
+    <!-- Share out nav -->
+    <div class="nav-phase">
+      <div class="nav-phase-label share">Share Out</div>
+      <a class="nav-item" href="#share-out" onclick="setActive(this)">
+        <div class="nav-step-num">✦</div>
+        <div class="nav-step-title">The 60-Second Pitch</div>
+        <div class="nav-time">10 min</div>
+      </a>
+      <a class="nav-item" href="#reference" onclick="setActive(this)">
+        <div class="nav-step-num">≡</div>
+        <div class="nav-step-title">Quick Reference</div>
+        <div class="nav-time">-</div>
+      </a>
+    </div>
+
+    <!-- Bonus nav -->
+    <div class="nav-phase">
+      <div class="nav-phase-label" style="color:rgba(251,188,5,0.8);">Bonus - Assets &amp; Hype</div>
+      <a class="nav-item" href="#step-9" onclick="setActive(this)">
+        <div class="nav-step-num">✶</div>
+        <div class="nav-step-title">Multimodal: Build Your Assets</div>
+        <div class="nav-time">-</div>
+      </a>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="progress-bar-wrap" style="margin-top: 1rem;">
+      <div class="progress-bar-label">Your progress</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══════════════════════════════════════════════════════ -->
+  <main class="main" role="main">
+
+    <!-- Page header -->
+    <header class="page-header">
+      <div class="page-header-eyebrow">ACA Tri-State - 2026</div>
+      <h1>Design a Game<br><span>with AI</span></h1>
+      <p class="page-header-sub">
+        A guided AI prompting experience for camp professionals -
+        learn prompting skills while designing an original all-camp game from scratch.
+      </p>
+
+      <div class="timeline-row">
+        <div class="timeline-pill pill-p1">
+          <div class="pill-dot"></div>
+          Phase 1: Learning AI ~10 min
+        </div>
+        <div class="timeline-pill pill-p2">
+          <div class="pill-dot"></div>
+          Phase 2: Seasoning ~12 min
+        </div>
+        <div class="timeline-pill" style="background:#ddeeff;color:#0060c7;border-color:#90c8f0;">
+          <div class="pill-dot" style="background:#1e90ff;"></div>
+          Phase 3: Creation ~30 min
+        </div>
+        <div class="timeline-pill pill-share">
+          <div class="pill-dot"></div>
+          Share Out ~10 min
+        </div>
+      </div>
+    </header>
+
+    <!-- ── AI TOOLS LAUNCHER ────────────────────────────────────────────── -->
+    <div class="tools-launcher">
+      <div class="tools-launcher-label">Open an AI tool to get started - pick any one you like</div>
+      <div class="tools-grid">
+        <a class="tool-link" href="https://chatgpt.com" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=chatgpt.com&sz=32" alt="ChatGPT logo" />
+          ChatGPT
+        </a>
+        <a class="tool-link" href="https://claude.ai" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=32" alt="Claude logo" />
+          Claude
+        </a>
+        <a class="tool-link" href="https://gemini.google.com" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=32" alt="Gemini logo" />
+          Gemini
+        </a>
+        <a class="tool-link" href="https://www.meta.ai" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=meta.ai&sz=32" alt="Meta AI logo" />
+          Meta AI
+        </a>
+        <a class="tool-link" href="https://copilot.microsoft.com" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=32" alt="Copilot logo" />
+          Copilot
+        </a>
+      </div>
+    </div>
+
+    <!-- ── PHASE 1 ──────────────────────────────────────────────────────── -->
+    <div class="phase-banner phase1">
+      <div class="phase-banner-label">Phase 1</div>
+      <h2>Learning AI</h2>
+      <p>Get comfortable with AI as a design partner. Learn the core techniques that will power everything you do in Phases 2 and 3. Start a fresh chat in any AI tool: Claude, ChatGPT, Gemini, or Copilot.</p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-card" id="step-1">
+      <div class="step-header">
+        <div class="step-num-badge badge-blue">1</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 1 · Phase 1</div>
+          <div class="step-title">Warm Up: First Contact</div>
+          <div class="step-time">⏱ 5 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Let's wake up the AI - and ourselves. This step is about getting comfortable with AI as a
+          <em>conversational partner</em>, not just an answer machine. Start a fresh chat and jump in.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-direct">Direct Command</span>&ensp;Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy prompt to clipboard">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Please generate 10 ideas for all-camp games that a summer camp could run for a mixed-age group of 7 to 15 year olds. The games should be active and novel. Budget is under $100 per game - lean heavily on things already at camp, items from thrift stores, and cheap materials from the hardware store (spray paint, rope, PVC pipe, lumber scraps, etc.).">Please generate 10 ideas for all-camp games that a summer camp could run for a mixed-age group of 7 to 15 year olds. The games should be active and novel. Budget is under $100 per game - lean heavily on things already at camp, items from thrift stores, and cheap materials from the hardware store (spray paint, rope, PVC pipe, lumber scraps, etc.).</div>
+        </div>
+
+        <p class="step-desc" style="margin-top: 0.75rem;">
+          Pick one idea from the list that sparks something and ask a follow-up:
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label followup"><span class="prompt-type-badge badge-followup">Follow-Up</span>&ensp;Follow-Up Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy follow-up prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I really like idea #[X]. Can you expand on it - give me more detail about the setup, the staff roles, and what makes it exciting for campers?">I really like idea #<span class="placeholder">[X]</span>. Can you expand on it - give me more detail about the setup, the staff roles, and what makes it exciting for campers?</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Direct Command Prompts</div>
+          <div class="callout-body">
+            The most basic prompt is a clear instruction. But the real power comes from what happens <em>next</em> -
+            AI rewards follow-up. Every response is a springboard, not a destination.
+            Interrogate, push back, and ask for more. Resist the urge to get one answer and move on.
+          </div>
+        </div>
+        <div class="lesson-callout" style="margin-top:0.6rem;">
+          <div class="callout-label">🟡 Lesson: Follow-Up Prompts</div>
+          <div class="callout-body">
+            A follow-up prompt uses AI's previous response as raw material.
+            You can zoom in on one idea, ask for a different angle, or push AI to go deeper.
+            Think of it as a conversation, not a transaction - each exchange
+            builds on the last. "I liked #3 - now make it weirder" is a completely
+            valid and effective prompt.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW CHAT BREAK: After Step 1 -->
+    <div class="new-chat-break">
+      <div class="new-chat-break-icon">💬</div>
+      <div>
+        <div class="new-chat-break-title">Start a New Chat</div>
+        <div class="new-chat-break-rationale">We don't want this chat polluted with the superficial content from the warm-up. A fresh chat gives us a clean slate for the real work ahead.</div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Meta-Prompting -->
+    <div class="step-card" id="step-2">
+      <div class="step-header">
+        <div class="step-num-badge badge-blue">2</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 2 · Phase 1</div>
+          <div class="step-title">Meta-Prompting: Ask AI to Write Your Prompts <span class="enhancer-pill" title="Prompt Enhancer - use this technique to supercharge any other prompt">✦ Enhancer</span></div>
+          <div class="step-time">⏱ 5 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Here's a move that changes everything: you can ask AI to write better prompts <em>for you</em>.
+          Instead of guessing how to phrase something, describe your goal and let AI design
+          the ideal prompt to get there - then run it. You'll reach for this trick
+          again in Phase Two whenever you feel stuck on how to ask for something.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-meta">Meta-Prompt</span>
+              &ensp;Setup Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy meta-prompt setup">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I want to design a memorable all-camp game for a summer camp. The game should work for mixed ages (7–15), cost under $100 using thrift store finds, hardware store materials (spray paint, rope, PVC pipe, lumber), and things already at camp. It should have a strong theme with staff playing characters.
+
+I'm not sure exactly how to ask you for help with this. Could you please write me the best possible prompt I could use to get you to generate three creative, detailed game concepts? The prompt you design should be specific and structured to get the richest possible response from an AI.">I want to design a memorable all-camp game for a summer camp. The game should work for mixed ages (7–15), cost under $100 using thrift store finds, hardware store materials (spray paint, rope, PVC pipe, lumber), and things already at camp. It should have a strong theme with staff playing characters.
+
+I'm not sure exactly how to ask you for help with this. Could you please write me the best possible prompt I could use to get you to generate three creative, detailed game concepts? The prompt you design should be specific and structured to get the richest possible response from an AI.</div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.85rem;">
+          Once AI hands you the prompt it designed, <strong>copy it and run it as your next message.</strong>
+          Notice how much richer the result is compared to asking directly.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-action">↩ Action</span>
+              &ensp;Run the Generated Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy run instruction">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="[Paste the prompt AI just wrote for you here, then send it]">[Paste the prompt AI just wrote for you here, then send it]</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Meta-Prompting</div>
+          <div class="callout-body">
+            Meta-prompting means asking AI to write the best prompt for AI - then using that prompt.
+            Think of it as asking an expert chef for their best recipe before you start cooking.
+            It's especially powerful when you know <em>what</em> you want but aren't sure <em>how to ask for it</em>.
+            You'll use this again in Phase Two to punch up your world-building and mechanics prompts.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Load Vocabulary -->
+    <div class="step-card" id="step-3">
+      <div class="step-header">
+        <div class="step-num-badge badge-blue">3</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 3 · Phase 2</div>
+          <div class="step-title">Load the 2K Summer Vocabulary</div>
+          <div class="step-time">⏱ 7 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Now we prime the AI with the 2K Summer game design framework.
+          This <em>"seasons"</em> the chat - everything AI generates from here will be shaped by this context.
+          <strong>Stay in the same chat</strong> as Steps 1 and 2. The context from your warm-up is already an asset.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-context">Contextualized Chat</span>&ensp;Priming Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy priming prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Hi! I'm a camp professional attending a workshop on designing all-camp games. I'm learning about a framework called 2K Summer, which is built around the idea that an entire summer of novel, immersive, memorable games can be designed for around $2,000. I'd love your help thinking through game design today. For now, just confirm you understand the context - we'll dig in shortly.">Hi! I'm a camp professional attending a workshop on designing all-camp games. I'm learning about a framework called 2K Summer, which is built around the idea that an entire summer of novel, immersive, memorable games can be designed for around $2,000. I'd love your help thinking through game design today. For now, just confirm you understand the context - we'll dig in shortly.</div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.75rem;">Now introduce the 2K Summer game taxonomy:</p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-context">Contextualized Chat</span>&ensp;Taxonomy Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy taxonomy prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="2K Summer organizes all-camp games into six categories: Building (teams construct something over time), Escape (sneak-and-evade through staged checkpoints), Epic (open-world quest with subgames and characters), Carnival (counselor-run booths, campers roam freely), Rush (campers scramble for a resource with characters and chaos), and Performance (talent shows, staff shows). Please confirm you understand these six categories and give me a one-sentence description of each.">2K Summer organizes all-camp games into six categories: Building (teams construct something over time), Escape (sneak-and-evade through staged checkpoints), Epic (open-world quest with subgames and characters), Carnival (counselor-run booths, campers roam freely), Rush (campers scramble for a resource with characters and chaos), and Performance (talent shows, staff shows). Please confirm you understand these six categories and give me a one-sentence description of each.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Contextualized Chats</div>
+          <div class="callout-body">
+            For best results, create a fresh chat for each new project and prime it with relevant context upfront.
+            Think of it as briefing a new collaborator before a meeting.
+            Everything you share now shapes every response that follows.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle</div>
+          <div class="callout-body">
+            2K Summer games are organized into six categories. Knowing the category helps you design with intent.
+            The same theme can be applied to different categories - and the same mechanics can be <em>resurfaced</em>
+            with a completely new skin.
+          </div>
+        </div>
+
+        <!-- Taxonomy table -->
+        <p class="step-desc" style="margin-top:1.1rem; margin-bottom:0.4rem;">
+          <strong>Quick Reference: The 2K Summer Game Taxonomy</strong>
+        </p>
+        <table class="taxonomy-table" aria-label="2K Summer game categories">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Essence</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#1c4587"></span>Building</td>
+              <td>Teams construct something over time; the build IS the program</td>
+              <td>Drag Racers</td>
+            </tr>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#741b47"></span>Escape</td>
+              <td>Sneak, evade, and advance through staged checkpoints with lore</td>
+              <td>Doughboys</td>
+            </tr>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#1e90ff"></span>Epic</td>
+              <td>Open-world quest with subgames, casting, and a big finale</td>
+              <td>TERG 3000</td>
+            </tr>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#fbbc05"></span>Carnival</td>
+              <td>Counselor-run booths; campers roam freely and earn rewards</td>
+              <td>Renaissance Festival</td>
+            </tr>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#ea4335"></span>Rush</td>
+              <td>Campers scramble for a resource; coopetition + characters + chaos</td>
+              <td>Gold Rush</td>
+            </tr>
+            <tr>
+              <td class="taxonomy-cat"><span class="category-dot" style="background:#34a853"></span>Performance</td>
+              <td>Talent, staff shows, or competitive performances as the main event</td>
+              <td>Staff Show / TERG Finale</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+    <!-- ── PHASE 2: SEASONING THE CHAT ───────────────────────────────────── -->
+    <div class="phase-banner" style="background: var(--sky); margin-top:2.5rem;">
+      <div class="phase-banner-label">Phase 2</div>
+      <h2>Seasoning the Chat</h2>
+      <p>
+        Now we load the AI with the vocabulary and design logic of 2K Summer.
+        Think of it as briefing a collaborator - the richer the context you give,
+        the smarter everything that comes back. Stay in the same chat throughout this phase.
+      </p>
+    </div>
+
+    <!-- STEP 3 (formerly Step 2) -->
+    <div class="step-card" id="step-4">
+      <div class="step-header">
+        <div class="step-num-badge badge-blue">4</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 4 · Phase 2</div>
+          <div class="step-title">Analyze the Blueprint: What Makes a Game Great?</div>
+          <div class="step-time">⏱ 7 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Now let's get AI to do some analytical heavy lifting. We'll look at a real 2K Summer game -
+          <strong>Doughboys</strong>, a WWI-themed Escape game - and ask AI to explain the design principles
+          that make it memorable. Stay in the same chat as Step 3.
+        </p>
+
+        <p class="step-desc" style="margin-bottom:0.5rem;">
+          <strong>Optional:</strong> Download the Doughboys game files to upload into your AI chat for a deeper analysis - or visit
+          <a href="https://www.2ksummer.com/" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;">2ksummer.com</a>
+          to choose a different game.
+        </p>
+        <div class="download-row">
+          <a class="download-btn blue"
+             href="https://docs.google.com/document/d/1re2s0CHJUpzzfSgJDJNtG8DIPxUYn7YrDNDLbEfzkx8/export?format=pdf"
+             target="_blank" rel="noopener" download="Doughboys-Rules.pdf">
+            ⬇ Doughboys - Game Description (PDF)
+          </a>
+          <a class="download-btn maroon"
+             href="https://docs.google.com/presentation/d/1LZgwPxpbEQrmniYIhIMN7f8nQnDCwgs80G_MLQW4mvk/export/pdf"
+             target="_blank" rel="noopener" download="Doughboys-Assets.pdf">
+            ⬇ Doughboys - Assets &amp; Props (PDF)
+          </a>
+        </div>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-chain">Chain-of-Thought</span>&ensp;Analysis Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy analysis prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I want to share a description of a real 2K Summer game called Doughboys. It's a WWI-themed Escape game where campers start in the 'American trenches' and must advance through six checkpoints - sneaking past stationary guards, avoiding patrols, and finally dashing across a battlefield (complete with a golf-cart tank, smoke machines, and a mortally wounded soldier yelling 'Tell Maggie I love her!'). Staff play characters like Allied Commanders and German Stormtroopers in full costume. The atmosphere shifts from cheerful and patriotic at the start to increasingly distressed and war-torn by the end.
+
+Please explain - step by step - why this game is likely memorable and effective for campers aged 7–15. What design principles does it embody?">I want to share a description of a real 2K Summer game called Doughboys. It's a WWI-themed Escape game where campers start in the 'American trenches' and must advance through six checkpoints - sneaking past stationary guards, avoiding patrols, and finally dashing across a battlefield (complete with a golf-cart tank, smoke machines, and a mortally wounded soldier yelling 'Tell Maggie I love her!'). Staff play characters like Allied Commanders and German Stormtroopers in full costume. The atmosphere shifts from cheerful and patriotic at the start to increasingly distressed and war-torn by the end.
+
+Please explain - step by step - why this game is likely memorable and effective for campers aged 7–15. What design principles does it embody?</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Chain-of-Thought Prompts</div>
+          <div class="callout-body">
+            Asking AI to "explain step by step" or "show your reasoning" produces richer, more analytical responses.
+            It also helps you validate whether AI's logic holds up - and spot assumptions you might want to challenge.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle: The Magic Circle</div>
+          <div class="callout-body">
+            The Magic Circle is the shared imaginative agreement that "this is real right now."
+            Lore, characters, costumes, and atmosphere all serve to deepen it.
+            When staff commit fully to their roles, campers go all-in too.
+            Protect the Magic Circle fiercely - it's the most important thing you're building.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- NEW CHAT BREAK: Before Step 5 -->
+    <div class="new-chat-break">
+      <div class="new-chat-break-icon">💬</div>
+      <div>
+        <div class="new-chat-break-title">Start a New Chat</div>
+        <div class="new-chat-break-rationale">We're starting fresh - but not from zero. You now have context about the 2K Summer framework and what makes great games work. A clean chat lets you apply all of that deliberately, without the clutter of earlier exploration.</div>
+      </div>
+    </div>
+
+    <!-- PROMPT TECHNIQUES TOOLKIT - bridge between Phase 1 and Phase 2 -->
+    <div class="step-card" id="step-5" style="scroll-margin-top:2rem;">
+      <div class="step-header">
+        <div class="step-num-badge badge-maroon">5</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 5 · Phase 3</div>
+          <div class="step-title">Starting the Design: Expand Your Toolkit</div>
+          <div class="step-time">⏱ 10 minutes - try each technique, then carry them into Steps 6–8</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          You've built a strong prompting foundation in Phases 1 and 2.
+          Before you start designing your game, here are four more techniques
+          that will make your game design - and everything after this workshop - sharper and more powerful.
+        </p>
+
+        <!-- Socratic -->
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-socratic">Socratic</span>
+              &ensp;Let AI Interview You
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy socratic prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I want to design an all-camp game from scratch but I'm not sure exactly what I want yet. Please ask me five questions - one at a time - to help me figure out what kind of game would be the best fit for my camp and the theme of the week. Ask the first question now and wait for my answer before asking the next one.">I want to design an all-camp game from scratch but I'm not sure exactly what I want yet. Please ask me five questions - one at a time - to help me figure out what kind of game would be the best fit for my camp and for the theme of the week. Ask the first question now and wait for my answer before asking the next one.</div>
+        </div>
+        <div class="lesson-callout" style="margin-bottom:1rem;">
+          <div class="callout-label">🟡 Lesson: Socratic / Question-Only Prompts</div>
+          <div class="callout-body">
+            You can ask AI to <em>interview you</em> instead of just answering you. This is powerful
+            when you're not sure what you want - AI's questions help you articulate your own thinking.
+            Always specify "one at a time" so you don't get bombarded with five questions at once.
+          </div>
+        </div>
+
+        <!-- Persona -->
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-role">Role-Based</span>
+              &ensp;Tell AI Who You Are
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy persona prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I'm a camp director with 12 years of experience running programs for kids aged 7–15. I have a staff of 20 counselors, most of whom are 18–22 years old and enthusiastic but not experienced game designers. My camp runs for 6 weeks each summer and we do one all-camp game per week. Given this context, what are the most important things I should keep in mind when designing a new all-camp game?">I'm a camp director with 12 years of experience running programs for kids aged 7–15. I have a staff of 20 counselors, most of whom are 18–22 years old and enthusiastic but not experienced game designers. My camp runs for 6 weeks each summer and we do one all-camp game per week. Given this context, what are the most important things I should keep in mind when designing a new all-camp game?</div>
+        </div>
+        <div class="lesson-callout" style="margin-bottom:1rem;">
+          <div class="callout-label">🟡 Lesson: Role-Based Prompts (Tell AI Who YOU Are)</div>
+          <div class="callout-body">
+            Role-based prompts tell AI who <em>it</em> should be. Persona prompts tell AI who
+            <em>you</em> are. The more context AI has about your experience, your constraints,
+            and your audience, the more tailored the response. "I have 20 counselors" produces
+            a very different answer than "I have 3 staff members."
+          </div>
+        </div>
+          
+
+        <!-- Negative Constraint -->
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-negative">Negative Constraint</span>
+              &ensp;Tell AI What NOT to Do
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy negative constraint prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Can you please give me a list of 10 game mechanics (and one sentence description of what each one is) so I can start thinking about building a game? The game mechanics should relate to general game design, not necessarily what we are talking about.. Do NOT suggest anything involving: elimination (players sitting out), trivia questions, teams standing in lines waiting for a turn, or anything that requires expensive equipment. Every mechanic should keep all campers active and moving simultaneously.">Can you please give me a list of 10 game mechanics (and one sentence description of what each one is) so I can start thinking about building a game? The game mechanics should relate to general game design, not necessarily what we are talking about.. Do NOT suggest anything involving: elimination (players sitting out), trivia questions, teams standing in lines waiting for a turn, or anything that requires expensive equipment. Every mechanic should keep all campers active and moving simultaneously.</div>
+        </div>
+        <div class="lesson-callout" style="margin-bottom:1rem;">
+          <div class="callout-label">🟡 Lesson: Negative Constraint Prompts</div>
+          <div class="callout-body">
+            Telling AI what <em>not</em> to do is just as powerful as telling it what to do.
+            AI defaults to the most common answers - negative constraints push it past the
+            obvious and into more creative territory. Great for avoiding game design anti-patterns
+            like elimination, snowballing, or kingmaking.
+          </div>
+        </div>
+
+        <!-- Ranking / Comparative -->
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-compare">Ranking</span>
+              &ensp;Ask AI to Rank and Score Options
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy ranking prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Here are three game mechanics I'm considering for my all-camp game:
+A) [MECHANIC A]
+B) [MECHANIC B]
+C) [MECHANIC C]
+
+Please rank these from best to worst for a mixed-age group of 7–15 year olds. For each, give it a score out of 10 for: (1) accessibility for younger campers, (2) excitement for older campers, (3) ease of running for staff, and (4) overall memorability. Show your reasoning for each score.">Here are three game mechanics I'm considering for my all-camp game:
+A) <span class="placeholder">[MECHANIC A]</span>
+B) <span class="placeholder">[MECHANIC B]</span>
+C) <span class="placeholder">[MECHANIC C]</span>
+
+Please rank these from best to worst for a mixed-age group of 7–15 year olds. For each, give it a score out of 10 for: (1) accessibility for younger campers, (2) excitement for older campers, (3) ease of running for staff, and (4) overall memorability. Show your reasoning for each score.</div>
+        </div>
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Ranking Prompts</div>
+          <div class="callout-body">
+            You can ask AI to rank and score your options across any dimensions you choose.
+            This is especially useful when you're stuck deciding between ideas that are all
+            good in different ways. Scoring makes the trade-offs visible. Combine with
+            chain-of-thought by asking AI to "show your reasoning" for each score.
+          </div>
+        </div>
+
+        <!-- Remember Mechanics -->
+        <div class="prompt-block" style="margin-top:1rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-context">Memory Anchor</span>
+              &ensp;Lock In the Mechanics
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy memory anchor prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Great - I want to make sure we don't lose these ideas. Please list all the game mechanics we've discussed so far, numbered clearly. We're going to need them when we start designing our game in the next phase - so treat this as your reference list.">Great - I want to make sure we don't lose these ideas. Please list all the game mechanics we've discussed so far, numbered clearly. We're going to need them when we start designing our game in the next phase - so treat this as your reference list.</div>
+        </div>
+        <div class="lesson-callout" style="margin-top:0.5rem;">
+          <div class="callout-label">🟡 Lesson: Memory Anchoring</div>
+          <div class="callout-body">
+            AI doesn't automatically "remember" things for later - but you can ask it to. Explicitly
+            telling AI to hold onto a list, a decision, or a set of constraints means you can
+            reference it again in the same chat without re-explaining everything. Think of it as
+            pinning a note to the top of the conversation.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── PHASE 2 ──────────────────────────────────────────────────────── -->
+    <div class="phase-banner phase2" style="margin-top:2.5rem;">
+      <div class="phase-banner-label">Phase 3</div>
+      <h2>Creation</h2>
+      <p>
+        You've loaded the vocabulary and explored what makes great games work.
+        Now your team designs an original all-camp game from scratch.
+        <strong style="color:white;">Start a NEW chat</strong> for Phase 3 -
+        a clean slate lets you apply everything you've learned so far.
+        Take 2 minutes to pick a category and a theme.
+      </p>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-card" id="step-6">
+      <div class="step-header">
+        <div class="step-num-badge badge-maroon">6</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 6 · Phase 3</div>
+          <div class="step-title">Build the World: Lore, Characters &amp; Atmosphere</div>
+          <div class="step-time">⏱ 10 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          The lore is the story that wraps the game. It's why a simple sneak-and-evade becomes <em>Doughboys</em>
+          instead of "Tag, But With Guards." Give AI your category and theme and ask it to build a world.
+          Replace the brackets with your team's choices.
+        </p>
+
+        <p class="step-desc" style="margin-top:0.6rem;">
+          <strong>Reminder - the six 2K Summer categories:</strong>
+          <span style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+            <span style="background:var(--blue-light);color:var(--blue);border:1px solid #b3ccec;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Escape</span>
+            <span style="background:#ddeeff;color:#0060c7;border:1px solid #90c8f0;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Epic</span>
+            <span style="background:var(--green-light);color:#1e7a3c;border:1px solid #a8d9b4;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Performance</span>
+            <span style="background:var(--blue-light);color:var(--blue-dark);border:1px solid #b3ccec;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Building</span>
+            <span style="background:#fde8e6;color:#b83224;border:1px solid #f5b3ad;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Rush</span>
+            <span style="background:var(--yellow-light);color:#7a5500;border:1px solid #f0d040;border-radius:100px;padding:2px 10px;font-size:0.78rem;font-weight:600;">Carnival</span>
+          </span>
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-compare">Comparative</span>&ensp;World-Building Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy world-building prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="OK! I'm ready to make a game! I'm designing a [CATEGORY]-type all-camp game with a [THEME] theme. Please help me build the world of this game. I need:
+1. A compelling 2–3 sentence backstory (the lore) that explains why campers are doing what they're doing
+2. 3–5 staff character roles with names and a one-sentence description of each character's personality and job in the game
+3. A suggestion for how the lore could 'bleed out' of the game - a moment before or after the game that extends the fiction
+
+Give me two different versions so I can choose.">OK! I'm ready to make a game! I'm designing a <span class="placeholder">[CATEGORY]</span>-type all-camp game with a <span class="placeholder">[THEME]</span> theme. Please help me build the world of this game. I need:
+1. A compelling 2–3 sentence backstory (the lore) that explains why campers are doing what they're doing
+2. 3–5 staff character roles with names and a one-sentence description of each character's personality and job in the game
+3. A suggestion for how the lore could 'bleed out' of the game - a moment before or after the game that extends the fiction
+
+Give me two different versions so I can choose.</div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.75rem;">Pick your favorite version and push it further:</p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label followup"><span class="prompt-type-badge badge-refine">Iterative Refinement</span>&ensp;Refinement Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy refinement prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I love version [X]. Let's develop it further. Can you name the game, write a short dramatic introduction that a Game Master could read aloud to the campers before the game starts, and suggest one absurd or funny element that would make campers laugh while staying in the fiction?">I love version <span class="placeholder">[X]</span>. Let's develop it further. Can you name the game, write a short dramatic introduction that a Game Master could read aloud to the campers before the game starts, and suggest one absurd or funny element that would make campers laugh while staying in the fiction?</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Comparative Prompting</div>
+          <div class="callout-body">
+            Asking AI for multiple versions of the same thing lets you compare and choose - rather than
+            accepting the first thing it generates. Always ask for at least two versions of anything
+            creative. Then use Iterative Refinement: take the best output and ask AI to improve it.
+            Draft → Compare → Push → Draft again.
+          </div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.9rem;">
+          Now try a <strong>few-shot prompt</strong> - give AI examples of the style you want, then ask it to match them:
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-fewshot">Few-Shot</span>
+              &ensp;Name Generator Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy few-shot name prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I need a name for my all-camp game. Here are some examples of great 2K Summer game names and why they work:
+
+- 'Doughboys' - one evocative word, WWI slang, implies character and era
+- 'TERG 3000' - absurd, robotic, memorable, sounds like a machine name
+- 'Drag Racers' - immediately descriptive, active verb + noun, no ambiguity
+- 'Consortium!' - slightly formal word made playful with an exclamation mark
+- 'The Earth Day Game' - earnest, direct, surprisingly funny in its plainness
+
+Using these as your style guide, please generate 8 names for this game. Match the energy - each name should be short, memorable, and slightly unexpected.">I need a name for my all-camp game. Here are some examples of great 2K Summer game names and why they work:
+
+- "Doughboys" - one evocative word, WWI slang, implies character and era
+- "TERG 3000" - absurd, robotic, memorable, sounds like a machine name
+- "Drag Racers" - immediately descriptive, active verb + noun, no ambiguity
+- "Consortium!" - slightly formal word made playful with an exclamation mark
+- "The Earth Day Game" - earnest, direct, surprisingly funny in its plainness
+
+Using these as your style guide, please generate 8 names for this game. Match the energy - each name should be short, memorable, and slightly unexpected.</div>
+        </div>
+
+        <div class="lesson-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟡 Lesson: Few-Shot Prompts</div>
+          <div class="callout-body">
+            A few-shot prompt provides 2–5 examples <em>inside the prompt itself</em> to teach AI the
+            pattern or style you want - then asks for more in that same vein. The examples are the instruction.
+            This is especially powerful for creative tasks where it's easier to show than tell:
+            naming things, writing in a specific voice, or matching a tone.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle: Dramatis Personae</div>
+          <div class="callout-body">
+            Staff characters are the soul of the experience. Campers should be able to <em>interact</em> with
+            them - ask questions, receive missions, even be fooled by them. The more invested staff are in their
+            roles, the deeper campers go into the Magic Circle. Absurdity is a feature, not a bug.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step-card" id="step-7">
+      <div class="step-header">
+        <div class="step-num-badge badge-maroon">7</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 7 · Phase 3</div>
+          <div class="step-title">Design the Mechanics: What Do Campers Actually Do?</div>
+          <div class="step-time">⏱ 10 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Lore without mechanics is a story, not a game. Now we design what campers physically <em>do</em> -
+          the rules, the flow, and the roles. For camps with mixed ages (7–15), mechanics must be accessible
+          to beginners but interesting enough for veterans.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-role">Role-Based</span>&ensp;Mechanics Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy mechanics prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Now let's design the mechanics for our game. Remember that campers range from age 7 to 15, so the game needs to be explainable quickly ('It's like Capture the Flag, but...') while still rewarding strategic thinking.
+
+Please refer back to the numbered list of game mechanics you saved earlier. I'd like to build on some of those ideas - please incorporate the ones that feel like the best fit for our game's lore and category.
+
+Please design:
+1. The core mechanic (the one thing every camper does to advance or score) - draw from our saved mechanics list
+2. 2–3 optional roles that campers can choose (for players who don't want to run around - designers, strategists, artisans, etc.)
+3. A brief flow of the game from start to finish
+4. A climactic finale moment">Now let's design the mechanics for our game. Remember that campers range from age 7 to 15, so the game needs to be explainable quickly ('It's like Capture the Flag, but...') while still rewarding strategic thinking.
+
+Please refer back to the numbered list of game mechanics you saved earlier. I'd like to build on some of those ideas - please incorporate the ones that feel like the best fit for our game's lore and category.
+
+Please design:
+1. The core mechanic (the one thing every camper does to advance or score) - draw from our saved mechanics list
+2. 2–3 optional roles that campers can choose (for players who don't want to run around - designers, strategists, artisans, etc.)
+3. A brief flow of the game from start to finish
+4. A climactic finale moment</div>
+        </div>
+
+        <div class="prompt-block" style="margin-top:0.85rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label followup"><span class="prompt-type-badge badge-constraint">Constraint-Based</span>&ensp;Differentiation Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy differentiation prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="One of our design constraints is that not every camper wants to run around. Please suggest 2–3 ways to build in meaningful roles for campers who prefer a quieter or more creative form of participation - roles that still feel genuinely important to the team's success.">One of our design constraints is that not every camper wants to run around. Please suggest 2–3 ways to build in meaningful roles for campers who prefer a quieter or more creative form of participation - roles that still feel genuinely important to the team's success.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Role-Based + Constraint-Based Prompts</div>
+          <div class="callout-body">
+            Adding constraints ("not every kid wants to run") forces creative solutions.
+            Constraints are a feature - they produce better design than open-ended requests.
+            The more specific your constraint, the more useful and targeted the response.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle: Design for Everyone</div>
+          <div class="callout-body">
+            The Drag Racers Pit Crew mechanic was born because there weren't enough wheels for everyone to race.
+            The constraint became part of the program. Designing roles for different play styles isn't a
+            compromise - it IS the game. Every camper should feel essential.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step-card" id="step-8">
+      <div class="step-header">
+        <div class="step-num-badge badge-maroon">8</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Step 8 · Phase 3</div>
+          <div class="step-title">Stress Test &amp; Cost It Out</div>
+          <div class="step-time">⏱ 8 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Your game has lore and mechanics. Now let's find the holes and make sure it's actually buildable.
+          We'll use AI as a critical advisor - not a cheerleader.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label stress"><span class="prompt-type-badge badge-panel">Virtual Panel</span>&ensp;Stress Test Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy stress test prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Please act as a panel of three people reviewing our game concept:
+1. A skeptical 14-year-old camper who has 'seen everything'
+2. A camp director worried about safety and staff burden
+3. A 7-year-old who gets confused easily
+
+For each person, give one thing they would love about this game and one concern or question they would raise.">Please act as a panel of three people reviewing our game concept:
+1. A skeptical 14-year-old camper who has 'seen everything'
+2. A camp director worried about safety and staff burden
+3. A 7-year-old who gets confused easily
+
+For each person, give one thing they would love about this game and one concern or question they would raise.</div>
+        </div>
+
+        <div class="prompt-block" style="margin-top:0.85rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label"><span class="prompt-type-badge badge-budget">Practical Analysis</span>&ensp;Budget Prompt</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy budget prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Now let's think about cost. The 2K Summer philosophy is that a full summer of novel games should cost around $2,000 total. Please estimate what our game would cost if we were buying everything new, then suggest 3 ways to reduce that cost by reusing, repurposing, or substituting materials.">Now let's think about cost. The 2K Summer philosophy is that a full summer of novel games should cost around $2,000 total. Please estimate what our game would cost if we were buying everything new, then suggest 3 ways to reduce that cost by reusing, repurposing, or substituting materials.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Virtual Panel (Simulation Prompting)</div>
+          <div class="callout-body">
+            Having AI simulate stakeholder feedback is one of the most powerful uses of AI in design.
+            It surfaces blind spots you'd only discover in the real world - without waiting for the real world to tell you.
+            Don't be afraid to ask for harsh feedback. "Do not congratulate us" is a perfectly good prompt.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle: Embrace the Cheapness</div>
+          <div class="callout-body">
+            The $2K constraint is a design <em>feature</em>, not a limitation. Clothesline + glue + silver spray paint
+            = barbed wire. Scarcity forces creativity. Designing around the constraint often produces the most
+            memorable moments. Build the cheapness into the program.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SHARE OUT ────────────────────────────────────────────────────── -->
+    <div class="phase-banner share" id="share-out" style="margin-top:2.5rem;">
+      <div class="phase-banner-label">Share Out</div>
+      <h2>The 60-Second Pitch</h2>
+      <p>Each group has 60 seconds to pitch their game to the room. Use your Game Concept Card below as your notes.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-badge badge-green">✦</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Share Out</div>
+          <div class="step-title">The 60-Second Pitch</div>
+          <div class="step-time">⏱ 10 minutes</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">Your pitch should hit four beats:</p>
+
+        <div class="pitch-grid">
+          <div class="pitch-item">
+            <div class="pitch-item-num">01</div>
+            <div class="pitch-item-text">The <strong>name</strong> and <strong>category</strong> of your game</div>
+          </div>
+          <div class="pitch-item">
+            <div class="pitch-item-num">02</div>
+            <div class="pitch-item-text">The <strong>lore</strong> - the story behind it all</div>
+          </div>
+          <div class="pitch-item">
+            <div class="pitch-item-num">03</div>
+            <div class="pitch-item-text">The <strong>core mechanic</strong> - what campers physically do</div>
+          </div>
+          <div class="pitch-item">
+            <div class="pitch-item-num">04</div>
+            <div class="pitch-item-text">The one thing that makes it <strong>unforgettable</strong></div>
+          </div>
+        </div>
+
+        <div class="divider" style="margin-top:1.25rem;"></div>
+
+        <p class="step-desc"><strong>Optional: Live Stress Test</strong> - run this prompt on screen after a group pitches:</p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label stress"><span class="prompt-type-badge badge-panel">Summary</span>&ensp;Elevator Pitch</span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy live panel prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="I need to do a 60-second elevator pitch. Please create a pitch that includes the name of the game, and a brief (but descriptive) summary of the game. Be sure to include any standout game mechanics, characters, lore, or other novelty.">I need to do a 60-second elevator pitch. Please create a pitch that includes the name of the game, and a brief (but descriptive) summary of the game. Be sure to include any standout game mechanics, characters, lore, or other novelty.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME CONCEPT CARD (commented out - may restore later)
+<!-- ── GAME CONCEPT CARD ───────────────────────────────────────────── 
+    <div style="margin-top:2rem;">
+      <div class="step-eyebrow" style="margin-bottom:0.5rem;">Your Team's Work</div>
+      <h2 style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--blue);margin-bottom:0.75rem;">Game Concept Card</h2>
+
+      <div class="concept-card">
+        <h3>Game Concept Card</h3>
+        <p class="concept-card-sub">Fill this in as you work through Phase Two. Use it for your 60-second pitch.</p>
+
+        <div class="field-group">
+          <label class="field-label" for="f-name">Game Name</label>
+          <input class="field-input" id="f-name" type="text" placeholder="What's your game called?" />
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">Category (pick one)</span>
+          <div class="category-chips" role="group" aria-label="Game category">
+            <button class="cat-chip" onclick="toggleChip(this)">Building</button>
+            <button class="cat-chip" onclick="toggleChip(this)">Escape</button>
+            <button class="cat-chip" onclick="toggleChip(this)">Epic</button>
+            <button class="cat-chip" onclick="toggleChip(this)">Carnival</button>
+            <button class="cat-chip" onclick="toggleChip(this)">Rush</button>
+            <button class="cat-chip" onclick="toggleChip(this)">Performance</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-theme">Theme &amp; Setting</label>
+          <input class="field-input" id="f-theme" type="text" placeholder="e.g. Space exploration, Ancient Rome, 1980s arcade..." />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-lore">The Lore (1–2 sentences)</label>
+          <textarea class="field-input" id="f-lore" rows="2" placeholder="Why are campers doing this? What's the story?"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-chars">Key Staff Character(s)</label>
+          <input class="field-input" id="f-chars" type="text" placeholder="Names and roles..." />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-mech">Core Mechanic</label>
+          <input class="field-input" id="f-mech" type="text" placeholder="It's like ___, but..." />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-do">What Campers Do</label>
+          <textarea class="field-input" id="f-do" rows="2" placeholder="Describe the flow of the game..."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-cost">Rough Cost Estimate</label>
+          <input class="field-input" id="f-cost" type="text" placeholder="e.g. ~$150 for props and costumes" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="f-pitch">Your 60-Second Pitch (key words)</label>
+          <textarea class="field-input" id="f-pitch" rows="3" placeholder="Jot the key beats of your pitch here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    -->
+
+<!-- ── REFERENCE ───────────────────────────────────────────────────── -->
+    <div id="reference" style="margin-top:2.5rem; scroll-margin-top:2rem;">
+      <div class="step-eyebrow" style="margin-bottom:0.5rem;">Take These Home</div>
+      <h2 style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--blue);margin-bottom:0.75rem;">Quick Reference</h2>
+
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">Every prompting technique from today - one place.</p>
+
+      <div class="ref-grid">
+        <div class="ref-card">
+          <div class="ref-card-name">Direct Command</div>
+          <div class="ref-card-desc">Ask clearly. Then resist the urge to stop - probe, challenge, and ask for more. Every answer is a springboard.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Contextualized Chat</div>
+          <div class="ref-card-desc">Prime AI with who you are and what you're doing. Context makes every response smarter. Brief it like a collaborator.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Chain-of-Thought</div>
+          <div class="ref-card-desc">Ask AI to "show its reasoning step by step." Great for validating logic and finding gaps in arguments.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Role-Based</div>
+          <div class="ref-card-desc">Assign AI a persona: "You are a game designer who..." Contextualizes the focus and produces targeted answers.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Constraint-Based</div>
+          <div class="ref-card-desc">Add limits: "not every kid wants to run." Constraints force creative solutions and more useful responses.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Few-Shot</div>
+          <div class="ref-card-desc">Give 2–3 examples of what you want before making the real request. AI will match your pattern exactly.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Iterative Refinement</div>
+          <div class="ref-card-desc">Use AI's output as a draft. Ask for rewrites, variations, specific tweaks. You can iterate indefinitely.</div>
+        </div>
+        <div class="ref-card">
+          <div class="ref-card-name">Virtual Panel</div>
+          <div class="ref-card-desc">Simulate stakeholder feedback. "Act as a 14-year-old who's seen everything and critique this game."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note" style="margin-top:2rem;">
+      <strong>Keep going!</strong> - 2ksummer.com<br>
+      <span style="opacity:0.85;">Dave Ghidiu &amp; Aaron Proietti</span><br>
+      <span style="opacity:0.75;">Game files, asset packages, and design resources are available on the site. If you design something great, we want to hear about it.</span>
+    </div>
+
+
+    <!-- ── BONUS: MULTIMODAL ASSETS & HYPE ──────────────────────────────── -->
+    <div class="phase-banner" id="step-9" style="margin-top:2.5rem; background: linear-gradient(135deg, #1c4587 0%, #741b47 100%); scroll-margin-top:2rem;">
+      <div class="phase-banner-label">Bonus - Take It Further</div>
+      <h2>Multimodal: Build Your Assets &amp; Hype the Game</h2>
+      <p>
+        Your game concept is solid. Now use AI to generate the assets that make it real -
+        maps, logos, infographics, social posts, and even a soundtrack.
+        These prompts are for <strong style="color:white;">image-generation tools</strong> (DALL·E in ChatGPT, Adobe Firefly, Midjourney, Canva AI, or Ideogram)
+        and <strong style="color:white;">music tools</strong> (Suno, Udio) in addition to your text AI.
+      </p>
+    </div>
+
+
+
+    <!-- 8a: Social Media -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-badge" style="background:linear-gradient(135deg,#1c4587,#741b47);">8a</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Bonus · Multimodal</div>
+          <div class="step-title">Write Pre-Summer Social Media Hype</div>
+          <div class="step-time">📱 Text AI</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Build anticipation before campers even pack their bags. A drip campaign of mysterious,
+          in-fiction posts in the weeks before summer starts is some of the cheapest and most
+          effective metagame you can run. Use your text AI to write the whole series at once.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-social">Reframing Audience</span>
+              &ensp;Hype Campaign Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy social media prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Please write a 4-post social media campaign to build hype in the 4 weeks leading up to summer. Each post should:
+- Be written in a mysterious, in-fiction voice (as if a character from the game is speaking)
+- Be appropriate for Instagram and Facebook (suitable for a family audience)
+- Include a suggested image description (what photo or graphic would accompany it)
+- Include 3–5 relevant hashtags
+- Escalate in urgency and intrigue as the weeks progress
+
+Week 1 should be cryptic and mysterious. Week 4 should feel like an urgent call to action.">Please write a 4-post social media campaign to build hype in the 4 weeks leading up to summer. Each post should:
+- Be written in a mysterious, in-fiction voice (as if a character from the game is speaking)
+- Be appropriate for Instagram and Facebook (suitable for a family audience)
+- Include a suggested image description (what photo or graphic would accompany it)
+- Include 3–5 relevant hashtags
+- Escalate in urgency and intrigue as the weeks progress
+
+Week 1 should be cryptic and mysterious. Week 4 should feel like an urgent call to action.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Role-Based Prompts for Voice &amp; Tone</div>
+          <div class="callout-body">
+            Asking AI to write "in the voice of a character from the game" is a role-based prompt -
+            one of the most powerful for creative output. The more detail you give about the character's
+            personality, the more distinctive the voice. Try adding: "This character is gruff and
+            suspicious of outsiders" or "This character is cheerful but hiding a secret."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8b: Logo & Poster -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-badge" style="background:linear-gradient(135deg,#1c4587,#741b47);">8b</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Bonus · Multimodal</div>
+          <div class="step-title">Generate a Game Logo &amp; Poster</div>
+          <div class="step-time">🖼 Image Generation Tool</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          A logo and poster make the game feel real before it starts - print them, hang them in the
+          lodge, tease them at dinner. This is pure metagame fuel.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-multimodal">Multimodal</span>
+              &ensp;Logo Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy logo prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="A bold, high-impact logo for the game called. The logo should feel [DESCRIBE TONE: e.g. 'heroic and dramatic' / 'spooky and mysterious' / 'retro and playful']. Include a strong central icon or emblem that represents a key symbol from the game. Typography: bold, stylized, slightly distressed. Color palette: [YOUR THEME COLORS]. No background - transparent or white. Style: vector-art, screen-print aesthetic, suitable for printing on a banner or T-shirt.">A bold, high-impact logo for the game called. The logo should feel <span class="placeholder">[DESCRIBE TONE: e.g. 'heroic and dramatic' / 'spooky and mysterious' / 'retro and playful']</span>. Include a strong central icon or emblem that represents a key symbol from the game. Typography: bold, stylized, slightly distressed. Color palette: <span class="placeholder">[YOUR THEME COLORS]</span>. No background - transparent or white. Style: vector-art, screen-print aesthetic, suitable for printing on a banner or T-shirt.</div>
+        </div>
+
+        <div class="prompt-block" style="margin-top:0.85rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-multimodal">Multimodal</span>
+              &ensp;Poster Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy poster prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="A dramatic movie-style event poster with the name of the game'. The poster should include: the game name in large, cinematic typography at the top or bottom; a central dramatic scene or character silhouette related to the game; atmospheric lighting (e.g. golden hour, dramatic shadows, fog); a tagline in smaller text below the title; and a color palette of [YOUR THEME COLORS]. Style: cinematic, slightly vintage, high contrast - like a blockbuster film poster from the 1980s. Portrait orientation, suitable for printing at 11x17 inches.">A dramatic movie-style event poster with the name of the game'. The poster should include: the game name in large, cinematic typography at the top or bottom; a central dramatic scene or character silhouette related to the game; atmospheric lighting (e.g. golden hour, dramatic shadows, fog); a tagline in smaller text below the title; and a color palette of <span class="placeholder">[YOUR THEME COLORS]</span>. Style: cinematic, slightly vintage, high contrast - like a blockbuster film poster from the 1980s. Portrait orientation, suitable for printing at 11x17 inches.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: The Metagame Starts Before the Game</div>
+          <div class="callout-body">
+            In 2K Summer, the <em>metagame</em> is everything that surrounds the game but isn't the game itself -
+            the poster in the dining hall, the mysterious character who appears at breakfast, the logo on the
+            counselor's shirt. AI lets you generate professional-quality metagame assets in minutes.
+            The magic circle can open days before the game begins.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8c: World Map -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-badge" style="background:linear-gradient(135deg,#1c4587,#741b47);">8c</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Bonus · Multimodal</div>
+          <div class="step-title">Generate a Game World Map</div>
+          <div class="step-time">🖼 Image Generation Tool</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          A hand-illustrated-style map of the game world turns your camp's geography into
+          something legendary. Upload your own camp map (or download Camp Cory's as a starting point),
+          then use the prompt below to have AI generate an adventure-style version.
+        </p>
+
+        <!-- Map download -->
+        <p class="step-desc" style="margin-bottom:0.5rem;">
+          Don't have a camp map handy? Download Camp Cory's as a reference:
+        </p>
+        <div class="download-row">
+          <a class="download-btn blue"
+             href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKfF8-7fFJczdGqqUGAluN5w-p0T7AQ_40zDEKo4svYmr7TbQgk10vmjhdZOtWqLVA5josXjOchyphenhyphen8x8IOx_P_pvvpR27y0XJ14P2GjKYp74-AcOJldWa1CQgGn790jjegegApUntIUp_iMQ4h81ukgOCMVVehE4sxOfGFhdjc2W4-LJD9l5ocSgaSKD6XZ/s16000/CoryMap.png"
+             download="CampCoryMap.png" target="_blank" rel="noopener">
+            ⬇ Download Camp Cory Map
+          </a>
+        </div>
+
+        <p class="step-desc" style="margin-top:1rem;"><strong>Paste this prompt into an image generation tool:</strong></p>
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-multimodal">Multimodal</span>
+              &ensp;Image Generation Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy map prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="A stylized fantasy-adventure map for the game. The map should show [3–5 KEY LOCATIONS FROM YOUR GAME] labeled with dramatic names. Style: hand-drawn ink illustration with aged parchment texture, compass rose in the corner, illustrated trees and terrain features, bold typography for location names. The overall feel should be epic, adventurous, and slightly cinematic - like a map from a fantasy novel.">A stylized fantasy-adventure map for the game. The map should show <span class="placeholder">[3–5 KEY LOCATIONS FROM YOUR GAME]</span> labeled with dramatic names. Style: hand-drawn ink illustration with aged parchment texture, compass rose in the corner, illustrated trees and terrain features, bold typography for location names. The overall feel should be epic, adventurous, and slightly cinematic - like a map from a fantasy novel.</div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.75rem;">
+          <strong>Tip:</strong> Print this at poster size and hang it in the dining hall the morning of the game.
+          Let campers discover it without explanation - the Magic Circle starts before the game does.
+        </p>
+      </div>
+    </div>
+
+    <!-- 8d: Infographic -->
+    <div class="step-card" style="scroll-margin-top:2rem;">
+      <div class="step-header">
+        <div class="step-num-badge" style="background:linear-gradient(135deg,#1c4587,#741b47);">8d</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Bonus · Multimodal</div>
+          <div class="step-title">Generate a Rules Infographic</div>
+          <div class="step-time">🖼 Image Generation Tool</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          A one-page visual rules sheet helps campers understand the game before it starts
+          and doubles as signage on game day. Ask your text AI to write the infographic
+          brief, then take that brief to an image tool.
+        </p>
+
+        <p class="step-desc"><strong>Step 1 - Get the brief from your text AI:</strong></p>
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-multimodal">Multimodal</span>
+              &ensp;Text AI Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy infographic brief prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Please write a detailed image-generation prompt I can paste into an AI image tool (like DALL·E, Adobe Firefly, or Midjourney) to create a bold, visually exciting rules infographic for our all-camp game called [GAME NAME]. The infographic should include:
+- The game name as a large header
+- A short tagline
+- 3–4 illustrated icons representing the core rules or phases
+- A color palette that feels adventurous and matches [THEME]
+- A style that is bold, graphic-novel-inspired, and readable from 10 feet away
+
+Please write a descriptive image prompt I can copy directly into an image generation tool.">Please write a detailed image-generation prompt I can paste into an AI image tool (like DALL·E, Adobe Firefly, or Midjourney) to create a bold, visually exciting rules infographic for our all-camp game called <span class="placeholder">[GAME NAME]</span>. The infographic should include:
+- The game name as a large header
+- A short tagline
+- 3–4 illustrated icons representing the core rules or phases
+- A color palette that feels adventurous and matches <span class="placeholder">[THEME]</span>
+- A style that is bold, graphic-novel-inspired, and readable from 10 feet away
+
+Please write a descriptive image prompt I can copy directly into an image generation tool.</div>
+        </div>
+
+        <p class="step-desc" style="margin-top:0.75rem;"><strong>Step 2 - Paste the resulting prompt into your image tool of choice.</strong></p>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Multimodal Prompting</div>
+          <div class="callout-body">
+            Multimodal prompting means working across different AI modalities - text, image, audio.
+            A smart move is to use your <em>text AI</em> to write the best possible prompt for your
+            <em>image AI</em>. Each tool has its strengths; chaining them together multiplies what's possible.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8e: Music -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num-badge" style="background:linear-gradient(135deg,#1c4587,#741b47);">8e</div>
+        <div class="step-header-text">
+          <div class="step-eyebrow">Bonus · Multimodal</div>
+          <div class="step-title">Generate a Game Theme &amp; Atmosphere Music</div>
+          <div class="step-time">🎵 Music AI (Suno / Udio)</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          Music transforms an activity into an experience. AI music tools like
+          <strong>Suno</strong> (suno.com) and <strong>Udio</strong> (udio.com) can generate
+          original tracks from a text description in seconds - for free. Use them to create
+          an opening theme, tension-building atmosphere music, and a triumphant finale track.
+        </p>
+
+        <div class="prompt-block">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-music">Music AI</span>
+              &ensp;Opening Theme Prompt
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy music theme prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="[GAME NAME] opening theme. [DESCRIBE GENRE AND MOOD - e.g. 'Epic orchestral fanfare, heroic brass section, building from quiet strings to a full cinematic swell' / 'Mysterious lo-fi electronic, unsettling synth pads, slow pulse, building tension' / 'Upbeat adventure folk, acoustic guitar, hand claps, fast tempo, triumphant']. 60–90 seconds. Instrumental only. Starts with energy and builds to a dramatic peak at the end.
+
+Example: 'Epic orchestral adventure theme. Bold brass fanfare opening, swelling strings, war drums, cinematic and heroic. Suitable for a summer camp game reveal moment. Instrumental. 90 seconds.'"><span class="placeholder">[GAME NAME]</span> opening theme. <span class="placeholder">[DESCRIBE GENRE AND MOOD - e.g. 'Epic orchestral fanfare, heroic brass section, building from quiet strings to a full cinematic swell']</span>. 60–90 seconds. Instrumental only. Starts with energy and builds to a dramatic peak at the end.
+
+Example: "Epic orchestral adventure theme. Bold brass fanfare opening, swelling strings, war drums, cinematic and heroic. Suitable for a summer camp game reveal. Instrumental. 90 seconds."</div>
+        </div>
+
+        <div class="prompt-block" style="margin-top:0.85rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-music">Music AI</span>
+              &ensp;Atmosphere / Tension Track
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy atmosphere music prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Atmospheric tension music for an all-camp game called '[GAME NAME]'. [DESCRIBE MOOD - e.g. 'Slow-building suspense, low drones, subtle percussion, sparse piano notes, feeling of being watched' / 'Eerie ambient soundscape, distant echoes, unsettling wind instruments, no clear melody']. Loopable. 2–3 minutes. Instrumental only. Should feel like background music during a tense moment - not distracting but emotionally present.">Atmospheric tension music for an all-camp game called '<span class="placeholder">[GAME NAME]</span>'. <span class="placeholder">[DESCRIBE MOOD - e.g. 'Slow-building suspense, low drones, subtle percussion, sparse piano']</span>. Loopable. 2–3 minutes. Instrumental only. Should feel like background music during a tense moment - not distracting but emotionally present.</div>
+        </div>
+
+        <div class="prompt-block" style="margin-top:0.85rem;">
+          <div class="prompt-label-row">
+            <span class="prompt-label">
+              <span class="prompt-type-badge badge-music">Music AI</span>
+              &ensp;Victory / Finale Track
+            </span>
+            <button class="copy-btn" onclick="copyPrompt(this)" aria-label="Copy victory music prompt">
+              📋 Copy
+            </button>
+          </div>
+          <div class="prompt-box" data-prompt="Triumphant victory fanfare for an all-camp game called '[GAME NAME]'. [DESCRIBE GENRE - e.g. 'Big orchestral celebration, full brass, cheering energy, major key, fast and joyful' / 'Retro video game victory jingle, 8-bit inspired but with modern production, short and punchy' / 'Acoustic camp-style celebration, banjo and guitar, stomping beat, singalong energy']. 30–60 seconds. Should feel like the moment of winning - pure joy and release.">Triumphant victory fanfare for an all-camp game called '<span class="placeholder">[GAME NAME]</span>'. <span class="placeholder">[DESCRIBE GENRE - e.g. 'Big orchestral celebration, full brass, cheering energy, major key']</span>. 30–60 seconds. Should feel like the moment of winning - pure joy and release.</div>
+        </div>
+
+        <div class="lesson-callout">
+          <div class="callout-label">🟡 Lesson: Descriptive Prompts for Creative AI</div>
+          <div class="callout-body">
+            Music and image AI respond to <em>sensory and emotional language</em>, not just factual descriptions.
+            Words like "unsettling," "triumphant," "sparse," "building," and "cinematic" do more work than
+            "make it sound like a game." The more vividly you describe the <em>feeling</em> you want,
+            the better the result. Genre labels (orchestral, lo-fi, 8-bit, folk) are also very effective anchors.
+          </div>
+        </div>
+
+        <div class="principle-callout" style="margin-top:0.85rem;">
+          <div class="callout-label">🟢 2K Summer Design Principle: Sound is Atmosphere</div>
+          <div class="callout-body">
+            In Doughboys, a smoke machine and a soldier yelling "Tell Maggie I love her!" cost almost nothing
+            but were remembered for years. Sound - whether a playlist, a live announcement, or AI-generated
+            music - is the cheapest atmosphere upgrade available. Play the opening theme as campers gather.
+            Let the music tell them something big is about to happen.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Mobile sidebar toggle -->
+<button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+  ☰
+</button>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /*
+   * All JavaScript for the 2K Summer workshop app.
+   * Keeps things readable for newer developers with clear comments.
+   */
+
+  // ── COPY PROMPT TO CLIPBOARD ──────────────────────────────────────────────
+  // When someone clicks a "Copy" button, we grab the text from the sibling
+  // .prompt-box element (using data-prompt for clean text without HTML spans)
+  // and write it to the clipboard.
+  function copyPrompt(btn) {
+    // The prompt box is a sibling of the label row - go up to .prompt-block then find the box
+    const block = btn.closest('.prompt-block');
+    const box   = block.querySelector('.prompt-box');
+
+    // Use data-prompt if available (clean text), otherwise fall back to innerText
+    const text = box.dataset.prompt || box.innerText;
+
+    navigator.clipboard.writeText(text).then(() => {
+      // Visual feedback: change button text briefly
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      // Fallback for environments where clipboard API isn't available
+      btn.textContent = 'Try again';
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    });
+  }
+
+  // ── CATEGORY CHIP TOGGLE ──────────────────────────────────────────────────
+  // The category chip buttons in the Game Concept Card behave like radio buttons -
+  // only one can be selected at a time.
+  function toggleChip(chip) {
+    // Deselect all chips in the same group first
+    const group = chip.closest('.category-chips');
+    group.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
+    // Then select the clicked one
+    chip.classList.add('selected');
+  }
+
+  // ── ACTIVE NAV ITEM ───────────────────────────────────────────────────────
+  // Highlight the clicked nav item as active. Also updates the progress bar.
+  function setActive(link) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    link.classList.add('active');
+    updateProgress();
+  }
+
+  // ── SCROLL SPY ────────────────────────────────────────────────────────────
+  // As the user scrolls, automatically highlight the correct nav item
+  // based on which step card is most visible.
+  const stepIds = ['step-1','step-2','step-3','step-4','step-5','step-6','step-7','step-8','share-out','reference','step-9'];
+
+  function onScroll() {
+    // Find the step that's currently near the top of the viewport
+    let currentId = stepIds[0];
+    for (const id of stepIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      // If the top of this section is above the midpoint of the screen, it's "current"
+      if (rect.top <= window.innerHeight * 0.4) {
+        currentId = id;
+      }
+    }
+
+    // Update active nav item to match
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+      const href = item.getAttribute('href');
+      if (href === '#' + currentId) {
+        item.classList.add('active');
+      }
+    });
+
+    updateProgress();
+  }
+
+  // ── PROGRESS BAR ──────────────────────────────────────────────────────────
+  // Calculate how far through the workshop the user has scrolled.
+  function updateProgress() {
+    const scrollTop    = window.scrollY;
+    const docHeight    = document.documentElement.scrollHeight - window.innerHeight;
+    const pct          = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  // ── MOBILE SIDEBAR TOGGLE ─────────────────────────────────────────────────
+  const sidebar     = document.getElementById('sidebar');
+  const mobileToggle = document.getElementById('mobileToggle');
+
+  const backdrop = document.getElementById('sidebarBackdrop');
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('visible');
+    mobileToggle.textContent = '☰';
+    mobileToggle.setAttribute('aria-expanded', false);
+  }
+
+  mobileToggle.addEventListener('click', () => {
+    const isOpen = sidebar.classList.toggle('open');
+    backdrop.classList.toggle('visible', isOpen);
+    mobileToggle.setAttribute('aria-expanded', isOpen);
+    mobileToggle.textContent = isOpen ? '✕' : '☰';
+  });
+
+  // Close sidebar and backdrop when clicking the backdrop
+  backdrop.addEventListener('click', closeSidebar);
+
+  // Close sidebar when a nav item is clicked on mobile
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 780) closeSidebar();
+    });
+  });
+
+  // ── KEYBOARD NAVIGATION ───────────────────────────────────────────────────
+  // Allow Enter/Space to activate nav items via keyboard
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.click();
+      }
+    });
+    // Make nav items focusable
+    if (!item.getAttribute('tabindex')) item.setAttribute('tabindex', '0');
+  });
+
+  // ── EVENT LISTENERS ──────────────────────────────────────────────────────
+  // Attach scroll listener (passive = better performance on mobile)
+
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Run once on load to set initial active state
+  document.addEventListener('DOMContentLoaded', () => {
+    const firstItem = document.querySelector('.nav-item');
+    if (firstItem) firstItem.classList.add('active');
+    onScroll(); // sync immediately in case user lands mid-page
+  });
+
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"ce4c45e2557e4897bf35a88449e886d7","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
