@@ -20,7 +20,7 @@ if ($action === 'start') {
         'joules' => 150, 'shockThreshold' => 100, 'shockTrigger' => 0,
         'wideQRS' => false, 'qtc' => 0.40, 'syncMode' => false,
         'pacingOn' => false, 'pacingRate' => 80, 'pacingOutput' => 80,
-        'pacingCaptureEnabled' => false, 'pacingCaptureThreshold' => 80
+        'pacingCaptureEnabled' => true, 'pacingCaptureThreshold' => 80
     ];
     file_put_contents(getFilePath($id), json_encode($defaultState));
     
@@ -143,7 +143,6 @@ $isLinks = ($action === 'start');
                     </div>
                     <div class="text-slate-400 flex gap-4">
                         <span id="time-display">--:--:--</span>
-                        <span>PACED: NO</span>
                     </div>
                 </div>
 
@@ -214,8 +213,11 @@ $isLinks = ($action === 'start');
             <?php if ($isCtrl): ?></div><?php endif; ?>
 
             <?php if ($isSim): ?>
+            <!-- LEARNER DEFIB + PACING PANELS (side-by-side on wider screens) -->
+            <div class="mt-4 flex flex-col md:flex-row gap-4 w-full max-w-6xl">
+
             <!-- LEARNER DEFIBRILLATOR PANEL -->
-            <div class="mt-4 bg-red-950/30 border-2 border-red-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6 mx-auto w-full sm:w-auto sm:min-w-[700px]">
+            <div class="flex-1 bg-red-950/30 border-2 border-red-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6">
                 <div class="flex-1 w-full">
                     <label class="block text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">
                         Shock Energy: <span id="lbl-learnerJoules">150</span> J
@@ -223,7 +225,7 @@ $isLinks = ($action === 'start');
                     <input type="range" id="input-learnerJoules" min="0" max="8" step="1" value="5" class="w-full max-w-[500px] accent-red-500 cursor-pointer" />
                 </div>
                 <div class="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
-                    <button id="btn-learner-sync" class="w-full bg-slate-700 text-slate-400 font-bold rounded-xl py-2 px-8 border-2 border-slate-600 text-sm uppercase tracking-widest transition-all">SYNC</button>
+                    <button id="btn-learner-sync" class="w-full bg-[#CF9C00] text-black font-bold rounded-xl py-2 px-8 border-2 border-[#CF9C00] text-sm uppercase tracking-widest transition-all">SYNC</button>
                     <button id="btn-learner-shock" class="w-full bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         SHOCK
@@ -232,7 +234,7 @@ $isLinks = ($action === 'start');
             </div>
 
             <!-- LEARNER PACING PANEL -->
-            <div class="mt-4 bg-blue-950/30 border-2 border-blue-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6 mx-auto w-full sm:w-auto sm:min-w-[700px]">
+            <div class="flex-1 bg-blue-950/30 border-2 border-blue-800 rounded-xl p-6 shadow-xl flex flex-col sm:flex-row items-center gap-6">
                 <button id="btn-pacing" class="w-full sm:w-auto flex-shrink-0 bg-slate-700 text-slate-300 font-black rounded-xl py-4 px-8 border-2 border-slate-600 text-xl uppercase tracking-wide transition-all">
                     PACING OFF
                 </button>
@@ -242,11 +244,13 @@ $isLinks = ($action === 'start');
                         <input type="range" id="input-pacingRate" min="40" max="140" step="10" value="80" class="w-full accent-blue-500 cursor-pointer" />
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-blue-400 mb-2 uppercase tracking-wider">Output: <span id="lbl-pacingOutput">80</span> mA</label>
+                        <label class="block text-sm font-bold text-blue-400 mb-2 uppercase tracking-wider">Output: <span id="lbl-pacingOutput">80</span> <span class="normal-case">mA</span></label>
                         <input type="range" id="input-pacingOutput" min="10" max="200" step="10" value="80" class="w-full accent-blue-500 cursor-pointer" />
                     </div>
                 </div>
             </div>
+
+            </div><!-- end defib+pacing row -->
 
             <?php endif; ?>
 
@@ -259,25 +263,6 @@ $isLinks = ($action === 'start');
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
-                    <!-- Defibrillator Panel -->
-                    <div class="bg-red-950/20 p-4 rounded-lg border border-red-900/50 md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
-                        <div>
-                            <label class="block text-sm font-medium text-red-400 mb-2">Shock Energy: <span id="lbl-shockEnergy">150</span> J</label>
-                            <input type="range" id="input-shockEnergy" min="0" max="8" step="1" value="5" class="w-full max-w-[500px] accent-red-500" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-red-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
-                            <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <button id="btn-sync" class="w-full bg-slate-700 text-slate-400 font-bold rounded-lg p-2 transition-all border border-slate-600 text-sm uppercase tracking-widest">SYNC</button>
-                            <button id="btn-shock" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg p-2.5 transition-colors shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                DELIVER SHOCK
-                            </button>
-                        </div>
-                    </div>
 
                     <!-- Rhythm Selection -->
                     <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
@@ -378,7 +363,7 @@ $isLinks = ($action === 'start');
                         <label class="block text-sm font-medium text-blue-400 mb-3">Pacing Capture</label>
                         <div class="flex items-center gap-3">
                             <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                                <input type="checkbox" id="input-pacingCaptureEnabled" class="sr-only peer" />
+                                <input type="checkbox" id="input-pacingCaptureEnabled" class="sr-only peer" checked />
                                 <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
                             </label>
                             <span class="text-sm text-slate-300">Capture Possible</span>
@@ -447,6 +432,34 @@ $isLinks = ($action === 'start');
                     </div>
                 </div>
 
+                <!-- Defib Accordion -->
+                <div class="mt-4 border border-slate-700 rounded-lg overflow-hidden">
+                    <button onclick="document.getElementById('defib-panel').classList.toggle('hidden'); document.getElementById('defib-chevron').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-4 py-3 bg-slate-900/50 hover:bg-slate-900/80 text-left transition-colors">
+                        <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Defib
+                        </span>
+                        <svg id="defib-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="defib-panel" class="hidden border-t border-slate-700 bg-red-950/10 p-4 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
+                        <div>
+                            <label class="block text-sm font-medium text-red-400 mb-2">Shock Energy: <span id="lbl-shockEnergy">150</span> J</label>
+                            <input type="range" id="input-shockEnergy" min="0" max="8" step="1" value="5" class="w-full accent-red-500" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-red-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
+                            <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <button id="btn-sync" class="w-full bg-[#CF9C00] text-black font-bold rounded-lg p-2 transition-all border border-[#CF9C00] text-sm uppercase tracking-widest">SYNC</button>
+                            <button id="btn-shock" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg p-2.5 transition-colors shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                DELIVER SHOCK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -465,7 +478,7 @@ $isLinks = ($action === 'start');
                     sysBp: 120, diaBp: 80, liveHR: 0, baseHR: 0, joules: 150, shockThreshold: 100,
                     shockTrigger: 0, wideQRS: false, qtc: 0.40, syncMode: false,
                     pacingOn: false, pacingRate: 80, pacingOutput: 80,
-                    pacingCaptureEnabled: false, pacingCaptureThreshold: 80
+                    pacingCaptureEnabled: true, pacingCaptureThreshold: 80
                 };
 
                 const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, time: 0, nextPace: 0, pacingWasOn: false };
@@ -485,11 +498,9 @@ $isLinks = ($action === 'start');
                         const btn = document.getElementById(id);
                         if (!btn) return;
                         btn.classList.toggle('bg-yellow-400', !!state.syncMode);
-                        btn.classList.toggle('text-black', !!state.syncMode);
                         btn.classList.toggle('border-yellow-300', !!state.syncMode);
-                        btn.classList.toggle('bg-slate-700', !state.syncMode);
-                        btn.classList.toggle('text-slate-400', !state.syncMode);
-                        btn.classList.toggle('border-slate-600', !state.syncMode);
+                        btn.classList.toggle('bg-[#CF9C00]', !state.syncMode);
+                        btn.classList.toggle('border-[#CF9C00]', !state.syncMode);
                     });
                 };
 
@@ -581,7 +592,7 @@ $isLinks = ($action === 'start');
                     document.getElementById('val-sysBp').innerText = hideBP ? '---' : state.sysBp;
                     document.getElementById('val-diaBp').innerText = hideBP ? '---' : state.diaBp;
                     document.getElementById('val-map').innerText = hideBP ? '---' : Math.round(state.diaBp + (state.sysBp - state.diaBp) / 3);
-                    document.getElementById('val-rr').innerText = state.rr;
+                    document.getElementById('val-rr').innerText = isLethal ? '---' : state.rr;
 
                     // Calculate Base Display HR
                     switch (rhythm) {
@@ -631,7 +642,14 @@ $isLinks = ($action === 'start');
                         if (el) el.addEventListener('input', (e) => updateServerState({ [key]: parser(e.target.value) }));
                     };
 
-                    bindInput('input-rhythm', 'rhythm');
+                    document.getElementById('input-rhythm')?.addEventListener('input', (e) => {
+                        const rhythm = e.target.value;
+                        const changes = { rhythm };
+                        if (rhythm === 'vtach')      { changes.sysBp = 100; changes.diaBp = 65; changes.spo2 = 92; }
+                        else if (rhythm === 'torsades')   { changes.sysBp = 70;  changes.diaBp = 45; changes.spo2 = 85; }
+                        else if (rhythm === '3rd_degree') { changes.sysBp = 90;  changes.diaBp = 60; changes.spo2 = 90; }
+                        updateServerState(changes);
+                    });
                     bindInput('input-saNodeRate', 'saNodeRate', Number);
                     bindInput('input-ventricularRate', 'ventricularRate', Number);
                     bindInput('input-flutterRatio', 'flutterRatio');
@@ -778,7 +796,10 @@ $isLinks = ($action === 'start');
                 }
 
                 setInterval(() => {
-                    if (state.baseHR > 0 && ['sinus', 'afib', 'aflutter'].includes(state.rhythm)) {
+                    const pacingCapture = state.pacingOn && state.pacingOutput >= state.pacingCaptureThreshold && state.pacingCaptureEnabled;
+                    if (pacingCapture) {
+                        state.liveHR = state.pacingRate;
+                    } else if (state.baseHR > 0 && ['sinus', 'afib', 'aflutter'].includes(state.rhythm)) {
                         state.liveHR = state.baseHR + Math.floor(Math.random() * 3) - 1;
                     } else {
                         state.liveHR = state.baseHR;
@@ -863,8 +884,9 @@ $isLinks = ($action === 'start');
                         ekg = (Math.random() - 0.5) * 0.01; 
                     }
 
-                    let resp = -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.6;
-                    let plethWander = -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.1;
+                    const isLethalRhythm = params.rhythm === 'vfib' || params.rhythm === 'asystole';
+                    let resp = isLethalRhythm ? (Math.random() - 0.5) * 0.05 : -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.6;
+                    let plethWander = isLethalRhythm ? 0 : -Math.sin(t * (params.rr / 60) * Math.PI * 2) * 0.1;
 
                     return [ekg, plethWander, resp];
                 };
