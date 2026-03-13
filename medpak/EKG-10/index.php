@@ -71,9 +71,10 @@ $isLinks = ($action === 'start');
         @media screen and (max-width: 1023px) {
             #sim-view-wrapper .waves-area { flex: none; }
             .ctrl-sticky-wrap { position: sticky; top: 0; z-index: 50; background: #020617; }
-            .ctrl-sticky-wrap .waves-area { flex: none; height: 200px !important; }
-            .ctrl-sticky-wrap #main-monitor { margin-bottom: 0.5rem; border-radius: 0; border-left: none; border-right: none; }
+            .ctrl-sticky-wrap .waves-area { flex: none; height: 100px !important; }
+            .ctrl-sticky-wrap #main-monitor { margin-bottom: 0; border-radius: 0; border-left: none; border-right: none; }
             .ctrl-sticky-wrap .vitals-sidebar { display: none; }
+            .ctrl-sticky-wrap .ctrl-trace-hide { display: none; }
         }
         /* Sim landscape: fill the screen */
         @media screen and (orientation: landscape) and (max-width: 1023px) {
@@ -156,8 +157,8 @@ $isLinks = ($action === 'start');
                         
                         <!-- Trace Labels -->
                         <div class="absolute top-4 left-4 z-20 text-green-500 font-bold text-sm">II <span class="text-xs ml-2">1 mV</span></div>
-                        <div class="absolute top-[180px] left-4 z-20 text-cyan-500 font-bold text-sm">SpO2</div>
-                        <div class="absolute top-[310px] left-4 z-20 text-yellow-500 font-bold text-sm">RESP</div>
+                        <div class="ctrl-trace-hide absolute top-[180px] left-4 z-20 text-cyan-500 font-bold text-sm">SpO2</div>
+                        <div class="ctrl-trace-hide absolute top-[310px] left-4 z-20 text-yellow-500 font-bold text-sm">RESP</div>
                     </div>
 
                     <!-- Vitals Sidebar -->
@@ -210,7 +211,27 @@ $isLinks = ($action === 'start');
                     </div>
                 </div>
             </div>
-            <?php if ($isCtrl): ?></div><?php endif; ?>
+            <?php if ($isCtrl): ?>
+                <!-- Compact vitals strip — ctrl mobile only (hidden lg+) -->
+                <div class="flex lg:hidden w-full bg-slate-950 border-t-2 border-slate-800 divide-x divide-slate-800">
+                    <div class="flex-1 flex flex-col items-center py-2 text-green-500">
+                        <span class="text-[10px] font-bold uppercase opacity-60 tracking-wider">HR</span>
+                        <span id="ctrl-val-hr" class="text-2xl font-bold font-mono leading-none mt-0.5">---</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center py-2 text-cyan-500">
+                        <span class="text-[10px] font-bold uppercase opacity-60 tracking-wider">SpO2%</span>
+                        <span id="ctrl-val-spo2" class="text-2xl font-bold font-mono leading-none mt-0.5">---</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center py-2 text-white">
+                        <span class="text-[10px] font-bold uppercase opacity-60 tracking-wider">NIBP</span>
+                        <span id="ctrl-val-bp" class="text-lg font-bold font-mono leading-none mt-0.5">---/---</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center py-2 text-yellow-500">
+                        <span class="text-[10px] font-bold uppercase opacity-60 tracking-wider">RESP</span>
+                        <span id="ctrl-val-rr" class="text-2xl font-bold font-mono leading-none mt-0.5">---</span>
+                    </div>
+                </div>
+            </div><?php endif; ?>
 
             <?php if ($isSim): ?>
             <!-- LEARNER DEFIB + PACING PANELS (side-by-side on wider screens) -->
@@ -483,7 +504,8 @@ $isLinks = ($action === 'start');
 
                 const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, time: 0, nextPace: 0, pacingWasOn: false };
                 const events = [];
-                const drawState = { lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: 90, plethY: 220, respY: 340 };
+                const ctrlMobile = isController && window.innerWidth < 1024;
+                const drawState = { lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: ctrlMobile ? 225 : 90, plethY: 220, respY: 340 };
 
                 let syncShockPending = false;
                 let doShock = null;
@@ -593,6 +615,14 @@ $isLinks = ($action === 'start');
                     document.getElementById('val-diaBp').innerText = hideBP ? '---' : state.diaBp;
                     document.getElementById('val-map').innerText = hideBP ? '---' : Math.round(state.diaBp + (state.sysBp - state.diaBp) / 3);
                     document.getElementById('val-rr').innerText = isLethal ? '---' : state.rr;
+
+                    // Compact ctrl mobile vitals strip
+                    const ctrlSpo2 = document.getElementById('ctrl-val-spo2');
+                    if (ctrlSpo2) ctrlSpo2.innerText = isLethal ? '---' : state.spo2;
+                    const ctrlBp = document.getElementById('ctrl-val-bp');
+                    if (ctrlBp) ctrlBp.innerText = hideBP ? '---/---' : state.sysBp + '/' + state.diaBp;
+                    const ctrlRr = document.getElementById('ctrl-val-rr');
+                    if (ctrlRr) ctrlRr.innerText = isLethal ? '---' : state.rr;
 
                     // Calculate Base Display HR
                     switch (rhythm) {
@@ -808,6 +838,8 @@ $isLinks = ($action === 'start');
                     const prStr = state.liveHR === 0 ? '-' : state.liveHR;
                     document.getElementById('val-hr').innerText = displayStr;
                     document.getElementById('val-pr').innerText = prStr;
+                    const ctrlHr = document.getElementById('ctrl-val-hr');
+                    if (ctrlHr) ctrlHr.innerText = displayStr;
                 }, 2000);
 
                 // --- EKG MATH ---
@@ -911,70 +943,87 @@ $isLinks = ($action === 'start');
                         }
                     };
 
-                    if (['sinus', '1st_degree', '2nd_degree_type1', '2nd_degree_type2', '3rd_degree'].includes(rhythm)) {
-                        if (t >= simSt.nextP) {
-                            evts.push({ type: 'P', start: t });
-                            if (rhythm === 'sinus') { pushQRS(t + 0.16, false, params.saNodeRate); } 
-                            else if (rhythm === '1st_degree') { pushQRS(t + params.prProlongation, false, params.saNodeRate); } 
-                            else if (rhythm === '2nd_degree_type1') {
-                                if (simSt.wenckebach_beat < 3) {
-                                    pushQRS(t + 0.16 + (simSt.wenckebach_beat * 0.06), false, params.saNodeRate);
-                                    simSt.wenckebach_beat++;
-                                } else { simSt.wenckebach_beat = 0; }
-                            } else if (rhythm === '2nd_degree_type2') {
-                                if (simSt.mobitz_beat < params.blockSeverity - 1) {
-                                    pushQRS(t + 0.16, false, params.saNodeRate);
-                                    simSt.mobitz_beat++;
-                                } else { simSt.mobitz_beat = 0; }
-                            }
-                            const baseInterval = 60 / params.saNodeRate;
-                            simSt.nextP = t + baseInterval + (Math.random() * (baseInterval*0.05) - (baseInterval*0.025));
-                        }
-                    }
-
-                    if (rhythm === '3rd_degree' && t >= simSt.nextQRS) {
-                        pushQRS(t, true, params.escapeRate, true);
-                        simSt.nextQRS = t + (60 / params.escapeRate);
-                    }
-                    if (rhythm === 'afib' && t >= simSt.nextQRS) {
-                        pushQRS(t, false, params.ventricularRate);
-                        simSt.nextQRS = t + Math.max(0.25, (60 / params.ventricularRate) + (Math.random() * 0.4 - 0.2));
-                    }
-                    if (rhythm === 'aflutter' && t >= simSt.nextQRS) {
-                        pushQRS(t, false, 150);
-                        simSt.nextQRS = t + (0.2 * (parseInt(params.flutterRatio.split(':')[1]) || 2));
-                    }
-                    if (rhythm === 'svt' && t >= simSt.nextQRS) {
-                        pushQRS(t, false, params.svtRate);
-                        simSt.nextQRS = t + (60 / params.svtRate);
-                    }
-                    if (rhythm === 'vtach' && t >= simSt.nextQRS) {
-                        pushQRS(t, true, params.vtRate, true);
-                        simSt.nextQRS = t + (60 / params.vtRate);
-                    }
-
-                    // Pacing
+                    // --- PACING (evaluated first so capture can inhibit native beats this tick) ---
                     if (params.pacingOn && !simSt.pacingWasOn) {
                         simSt.pacingWasOn = true;
                         simSt.nextPace = t + 0.1;
                     } else if (!params.pacingOn) {
                         simSt.pacingWasOn = false;
                     }
+                    let nativeInhibited = false;
                     if (params.pacingOn && t >= simSt.nextPace) {
                         evts.push({ type: 'PACE', start: simSt.nextPace });
                         const capture = params.pacingCaptureEnabled && params.pacingOutput >= params.pacingCaptureThreshold;
                         if (capture) {
+                            nativeInhibited = true;
                             // Paced beat: wide QRS + inverted T, 20 ms after spike
                             const paceQRSDur = 0.18;
                             evts.push({ type: 'QRS', start: simSt.nextPace + 0.02, wide: true });
                             evts.push({ type: 'T', start: simSt.nextPace + 0.02 + paceQRSDur, hr: params.pacingRate, inverted: true, qtc: params.qtc || 0.40, qrsDur: paceQRSDur });
                             evts.push({ type: 'PLETH', start: simSt.nextPace + 0.22 });
-                            // Reset intrinsic clocks so underlying rhythm doesn't compete with paced beats
-                            const nextInterval = simSt.nextPace + (60 / params.pacingRate);
-                            simSt.nextP = nextInterval;
-                            simSt.nextQRS = nextInterval;
+                            // Advance native clocks by one native beat interval so beats resume
+                            // on their own schedule (not the pacing interval) — allows native beats
+                            // between paced beats when native rate > pacing rate.
+                            const nativePInterval = 60 / (params.saNodeRate || 80);
+                            const nativeQRSInterval = (() => {
+                                switch(rhythm) {
+                                    case '3rd_degree': return 60 / params.escapeRate;
+                                    case 'afib':      return 60 / params.ventricularRate;
+                                    case 'aflutter':  return 0.2 * (parseInt(params.flutterRatio.split(':')[1]) || 2);
+                                    case 'svt':       return 60 / params.svtRate;
+                                    case 'vtach':     return 60 / params.vtRate;
+                                    default:          return nativePInterval;
+                                }
+                            })();
+                            simSt.nextP   = t + nativePInterval   + 0.001;
+                            simSt.nextQRS = t + nativeQRSInterval + 0.001;
                         }
                         simSt.nextPace += 60 / params.pacingRate;
+                    }
+
+                    // --- NATIVE BEATS (skipped entirely when pacing capture is active this tick) ---
+                    if (!nativeInhibited) {
+                        if (['sinus', '1st_degree', '2nd_degree_type1', '2nd_degree_type2', '3rd_degree'].includes(rhythm)) {
+                            if (t >= simSt.nextP) {
+                                evts.push({ type: 'P', start: t });
+                                if (rhythm === 'sinus') { pushQRS(t + 0.16, false, params.saNodeRate); }
+                                else if (rhythm === '1st_degree') { pushQRS(t + params.prProlongation, false, params.saNodeRate); }
+                                else if (rhythm === '2nd_degree_type1') {
+                                    if (simSt.wenckebach_beat < 3) {
+                                        pushQRS(t + 0.16 + (simSt.wenckebach_beat * 0.06), false, params.saNodeRate);
+                                        simSt.wenckebach_beat++;
+                                    } else { simSt.wenckebach_beat = 0; }
+                                } else if (rhythm === '2nd_degree_type2') {
+                                    if (simSt.mobitz_beat < params.blockSeverity - 1) {
+                                        pushQRS(t + 0.16, false, params.saNodeRate);
+                                        simSt.mobitz_beat++;
+                                    } else { simSt.mobitz_beat = 0; }
+                                }
+                                const baseInterval = 60 / params.saNodeRate;
+                                simSt.nextP = t + baseInterval + (Math.random() * (baseInterval*0.05) - (baseInterval*0.025));
+                            }
+                        }
+
+                        if (rhythm === '3rd_degree' && t >= simSt.nextQRS) {
+                            pushQRS(t, true, params.escapeRate, true);
+                            simSt.nextQRS = t + (60 / params.escapeRate);
+                        }
+                        if (rhythm === 'afib' && t >= simSt.nextQRS) {
+                            pushQRS(t, false, params.ventricularRate);
+                            simSt.nextQRS = t + Math.max(0.25, (60 / params.ventricularRate) + (Math.random() * 0.4 - 0.2));
+                        }
+                        if (rhythm === 'aflutter' && t >= simSt.nextQRS) {
+                            pushQRS(t, false, 150);
+                            simSt.nextQRS = t + (0.2 * (parseInt(params.flutterRatio.split(':')[1]) || 2));
+                        }
+                        if (rhythm === 'svt' && t >= simSt.nextQRS) {
+                            pushQRS(t, false, params.svtRate);
+                            simSt.nextQRS = t + (60 / params.svtRate);
+                        }
+                        if (rhythm === 'vtach' && t >= simSt.nextQRS) {
+                            pushQRS(t, true, params.vtRate, true);
+                            simSt.nextQRS = t + (60 / params.vtRate);
+                        }
                     }
                 };
 
@@ -1034,7 +1083,7 @@ $isLinks = ($action === 'start');
                             }
                         });
 
-                        const newEkgY = 100 - ekgVal * 50;
+                        const newEkgY = (isController && window.innerWidth < 1024 ? 225 : 100) - ekgVal * 50;
                         const newPlethY = 240 - plethVal * 45;
                         const newRespY = 380 - respVal * 35;
 
@@ -1044,11 +1093,13 @@ $isLinks = ($action === 'start');
                             ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.ekgY); ctx.lineTo(currentX, newEkgY);
                             ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 1.5; ctx.stroke();
 
-                            ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.plethY); ctx.lineTo(currentX, newPlethY);
-                            ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.5; ctx.stroke();
+                            if (!(isController && window.innerWidth < 1024)) {
+                                ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.plethY); ctx.lineTo(currentX, newPlethY);
+                                ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.5; ctx.stroke();
 
-                            ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.respY); ctx.lineTo(currentX, newRespY);
-                            ctx.strokeStyle = '#eab308'; ctx.lineWidth = 1.5; ctx.stroke();
+                                ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.respY); ctx.lineTo(currentX, newRespY);
+                                ctx.strokeStyle = '#eab308'; ctx.lineWidth = 1.5; ctx.stroke();
+                            }
                         }
 
                         // SYNC: triangle markers and delayed shock
