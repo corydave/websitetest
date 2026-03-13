@@ -202,14 +202,14 @@ $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php'), '/') . '/';
 
     <!-- ── Modal ──────────────────────────────────────────────────────────── -->
     <div id="modal-backdrop"
-         class="hidden fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 sm:p-8 overflow-y-auto"
+         class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 sm:p-8"
          role="dialog" aria-modal="true">
 
         <div id="modal-box"
-             class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-auto flex flex-col">
+             class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[90vh]">
 
             <!-- Modal header -->
-            <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-200 sticky top-0 bg-white rounded-t-2xl z-10">
+            <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-white rounded-t-2xl flex-shrink-0">
                 <h2 id="modal-title" class="flex-1 font-bold text-slate-900 text-lg truncate"></h2>
                 <a id="modal-open-link"
                    href="#"
@@ -226,7 +226,7 @@ $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php'), '/') . '/';
             </div>
 
             <!-- Modal body: rendered markdown -->
-            <div id="modal-body" class="prose prose-slate prose-img:rounded-lg max-w-none px-6 py-6 overflow-y-auto">
+            <div id="modal-body" class="prose prose-slate prose-img:rounded-lg max-w-none px-6 py-6 overflow-y-auto flex-1">
                 <p class="text-slate-400 text-sm">Loading…</p>
             </div>
         </div>
