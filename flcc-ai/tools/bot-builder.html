@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bot Prompt Builder - FLX AI Hub</title>
+
+  <!--
+    FLX AI Hub - Bot Prompt Builder
+    ================================
+    Guided web app for building chatbot system prompts.
+
+    Structure:
+    - Left panel: six guided sections, each a blue-header card
+    - Right panel: live markdown preview + Save + Copy buttons
+    - Modal: seven tabbed example prompts
+
+    Design principles:
+    - Vanilla JS only - no npm, no build tools
+    - Single file: HTML + CSS + JS
+    - Responsive (desktop two-column, mobile single-column)
+    - Accessible: keyboard nav, ARIA labels, focus management
+    - Brand color: #0046ad (FLX AI Hub blue)
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Lucide icons - replaces all emoji in the UI -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    /* Lucide icons inherit the surrounding colour and sit inline with text */
+    i[data-lucide] { display: inline-block; vertical-align: middle; }
+    /* Default icon size for buttons and badges */
+    .panel-badge   i[data-lucide] { width: 14px; height: 14px; }
+    .btn-examples  i[data-lucide],
+    .btn-save      i[data-lucide],
+    .btn-copy      i[data-lucide],
+    .btn-reset     i[data-lucide],
+    .btn-info      i[data-lucide]  { width: 14px; height: 14px; }
+    .btn-bullet    i[data-lucide]  { width: 12px; height: 12px; }
+    .modal-close   i[data-lucide]  { width: 16px; height: 16px; }
+    .preview-empty i[data-lucide]  { width: 40px; height: 40px; opacity: 0.35; display: block; margin: 0 auto 12px; }
+    .modal-title   i[data-lucide]  { width: 18px; height: 18px; }
+  </style>
+
+  <style>
+    /* =====================================================
+       CSS CUSTOM PROPERTIES
+    ===================================================== */
+    :root {
+      --blue:        #0046ad;
+      --blue-dark:   #003080;
+      --blue-light:  #e8f0fb;
+      --blue-mid:    #c2d6f5;
+      --ink:         #1a1a2e;
+      --ink-soft:    #4a4a68;
+      --cream:       #f8f7f3;
+      --white:       #ffffff;
+      --success:     #1a7a4a;
+      --radius:      12px;
+      --radius-sm:   6px;
+      --shadow:      0 4px 24px rgba(0,70,173,0.10);
+      --transition:  0.2s ease;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+    }
+
+    /* =====================================================
+       RESET & BASE
+    ===================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      background-image: radial-gradient(circle, rgba(0,70,173,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+    header {
+      background: var(--blue); color: var(--white);
+      padding: 28px 40px 24px; position: relative; overflow: hidden;
+    }
+    header::before {
+      content: ''; position: absolute; right: -60px; top: -60px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); pointer-events: none;
+    }
+    header::after {
+      content: ''; position: absolute; right: 80px; bottom: -80px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: rgba(255,255,255,0.04); pointer-events: none;
+    }
+    .header-inner { max-width: 1280px; margin: 0 auto; position: relative; }
+    .header-eyebrow {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 6px;
+    }
+    header h1 {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; color: var(--white);
+    }
+    header h1 em { font-style: italic; font-weight: 300; color: rgba(255,255,255,0.85); }
+    .header-sub {
+      margin-top: 8px; font-size: 0.92rem;
+      color: rgba(255,255,255,0.75); max-width: 560px; line-height: 1.5;
+    }
+
+    /* =====================================================
+       MAIN LAYOUT
+    ===================================================== */
+    main {
+      max-width: 1280px; margin: 0 auto;
+      padding: 36px 24px 60px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 28px; align-items: start;
+    }
+
+    /* =====================================================
+       OUTER PANEL (the white card wrapping each column)
+    ===================================================== */
+    .panel {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .panel-header {
+      padding: 18px 22px; border-bottom: 1px solid var(--blue-light);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .panel-badge {
+      width: 32px; height: 32px; border-radius: 50%; background: var(--blue);
+      color: var(--white); font-size: 0.78rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .panel-title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 1.05rem; color: var(--ink);
+    }
+    .panel-body { padding: 20px 22px 24px; }
+
+    /* =====================================================
+       BOT NAME (top of the form, above the sections)
+    ===================================================== */
+    .bot-name-wrapper {
+      margin-bottom: 20px; padding-bottom: 20px;
+      border-bottom: 1px dashed var(--blue-mid);
+    }
+    .bot-name-label {
+      display: block; font-weight: 600; font-size: 0.9rem;
+      color: var(--ink); margin-bottom: 4px;
+    }
+    .bot-name-desc {
+      font-size: 0.78rem; color: var(--ink-soft);
+      margin-bottom: 8px; line-height: 1.5;
+    }
+
+    /* =====================================================
+       SECTION CARDS
+       Each of the 6 prompt sections is a mini-card:
+         - Blue header bar: number + title + hint toggle
+         - White body: description + fields
+    ===================================================== */
+    .field-group {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1.5px solid var(--blue-mid);
+      margin-bottom: 18px;
+      /* Subtle shadow to lift each card off the page */
+      box-shadow: 0 2px 8px rgba(0,70,173,0.07);
+    }
+    .field-group:last-of-type { margin-bottom: 0; }
+
+    /* Blue header bar */
+    .field-group-header {
+      background: var(--blue);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* Circle number badge in the header */
+    .field-group-number {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      color: var(--white);
+      font-size: 0.78rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; letter-spacing: 0;
+    }
+
+    /* Section title in the header */
+    .field-group-title {
+      flex: 1;
+      font-family: var(--font-display);
+      font-weight: 600; font-size: 0.95rem;
+      color: var(--white); line-height: 1.25;
+    }
+
+    /* Hint toggle in the header - white version */
+    .hint-toggle {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      background: transparent; color: var(--white);
+      font-size: 0.72rem; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .hint-toggle:hover, .hint-toggle:focus {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.8);
+      outline: none;
+    }
+    .hint-toggle[aria-expanded="true"] {
+      background: rgba(255,255,255,0.25);
+      border-color: var(--white);
+    }
+
+    /* White body of each section card */
+    .field-group-body { padding: 16px 18px 18px; background: var(--white); }
+
+    .field-description {
+      font-size: 0.78rem; color: var(--ink-soft);
+      line-height: 1.55; margin-bottom: 12px;
+    }
+
+    /* =====================================================
+       HINT BOXES (expand below the header on ? click)
+    ===================================================== */
+    .hint-box {
+      background: var(--blue-light);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 10px 14px; font-size: 0.78rem; color: var(--ink-soft);
+      line-height: 1.6; margin-bottom: 12px; display: none;
+    }
+    .hint-box.visible { display: block; animation: fadeIn 0.2s ease; }
+
+    /* =====================================================
+       SENTENCE-COMPLETION SUB-FIELDS
+    ===================================================== */
+    .sentence-fields {
+      background: var(--blue-light); border-radius: var(--radius-sm);
+      padding: 12px 14px; margin-bottom: 12px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .sentence-fields-label {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 2px;
+    }
+    .sentence-row {
+      display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px;
+    }
+    .sentence-prefix, .sentence-suffix {
+      font-size: 0.85rem; color: var(--ink); white-space: nowrap; line-height: 1.8;
+    }
+    .sentence-input {
+      flex: 1; min-width: 100px;
+      font-family: var(--font-body); font-size: 0.85rem; color: var(--ink);
+      background: transparent; border: none;
+      border-bottom: 2px solid var(--blue-mid); border-radius: 0;
+      padding: 1px 4px; line-height: 1.8;
+      transition: border-color var(--transition);
+    }
+    .sentence-input:focus {
+      outline: none; border-bottom-color: var(--blue); box-shadow: none;
+    }
+    .sentence-input::placeholder { color: #a0a8bc; font-style: italic; font-size: 0.8rem; }
+
+    /* Divider between sentence fields and free-text area */
+    .section-divider {
+      display: flex; align-items: center; gap: 8px; margin: 10px 0 8px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-soft);
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--blue-mid);
+    }
+
+    /* =====================================================
+       SHARED INPUT / TEXTAREA STYLES
+    ===================================================== */
+    input[type="text"], textarea {
+      width: 100%; font-family: var(--font-body); font-size: 0.88rem; color: var(--ink);
+      background: var(--blue-light); border: 1.5px solid transparent;
+      border-radius: var(--radius-sm); padding: 10px 14px; resize: vertical;
+      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+      line-height: 1.6;
+    }
+    input[type="text"] { resize: none; }
+    input[type="text"]:focus, textarea:focus {
+      outline: none; border-color: var(--blue); background: var(--white);
+      box-shadow: 0 0 0 3px rgba(0,70,173,0.15);
+    }
+    input[type="text"]::placeholder, textarea::placeholder { color: #a0a8bc; font-style: italic; }
+    .char-count {
+      text-align: right; font-size: 0.72rem; color: var(--ink-soft); margin-top: 4px;
+    }
+
+    /* =====================================================
+       BULLET TOOLBAR
+    ===================================================== */
+    .textarea-toolbar { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .btn-bullet {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; background: var(--white);
+      border: 1.5px solid var(--blue-mid); border-radius: var(--radius-sm);
+      color: var(--blue); font-family: var(--font-body); font-size: 0.73rem;
+      font-weight: 600; cursor: pointer; user-select: none;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-bullet:hover { background: var(--blue-light); border-color: var(--blue); }
+    .btn-bullet:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+    .bullet-icon { font-size: 0.95rem; line-height: 1; }
+    .toolbar-hint { font-size: 0.68rem; color: var(--ink-soft); font-style: italic; }
+
+    /* =====================================================
+       PREVIEW PANEL
+    ===================================================== */
+    .preview-panel { position: sticky; top: 24px; }
+    .preview-panel .panel-header { justify-content: space-between; }
+    .preview-header-left { display: flex; align-items: center; gap: 12px; }
+    .preview-header-right { display: flex; align-items: center; gap: 8px; }
+
+    .btn-save {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; background: transparent; color: var(--blue);
+      border: 1.5px solid var(--blue-mid); border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-save:hover { background: var(--blue-light); border-color: var(--blue); }
+    .btn-save:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+
+    .btn-copy {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; background: var(--blue); color: var(--white);
+      border: none; border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background var(--transition);
+    }
+    .btn-copy:hover { background: var(--blue-dark); }
+    .btn-copy:focus { outline: 3px solid rgba(0,70,173,0.4); outline-offset: 2px; }
+    .btn-copy.copied { background: var(--success); }
+
+    #prompt-preview {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.78rem; line-height: 1.8; color: var(--ink);
+      white-space: pre-wrap; word-break: break-word;
+      max-height: 72vh; overflow-y: auto; padding: 4px 2px;
+    }
+    .preview-empty { text-align: center; padding: 48px 24px; color: var(--ink-soft); }
+    .preview-empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+    .preview-empty p { font-size: 0.88rem; line-height: 1.6; }
+
+    .progress-bar-wrapper { padding: 16px 22px 0; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 4px;
+    }
+    .progress-track {
+      height: 4px; background: var(--blue-light); border-radius: 99px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--blue); border-radius: 99px;
+      transition: width 0.4s ease; width: 0%;
+    }
+
+    /* =====================================================
+       EXAMPLES BUTTON (in form panel header)
+    ===================================================== */
+    .btn-examples {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 14px; background: var(--blue-light); color: var(--blue);
+      border: 1.5px solid var(--blue-mid); border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-examples:hover { background: var(--blue-mid); border-color: var(--blue); }
+    .btn-examples:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+
+    /* Info button - sits beside See Examples in the form panel header */
+    .btn-info {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; background: transparent; color: var(--blue);
+      border: 1.5px solid var(--blue-mid); border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-info:hover { background: var(--blue-light); border-color: var(--blue); }
+    .btn-info:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+
+    /* =====================================================
+       FORM FOOTER (reset button)
+    ===================================================== */
+    .form-footer { margin-top: 20px; display: flex; justify-content: flex-end; }
+    .btn-reset {
+      padding: 8px 18px; background: transparent;
+      border: 1.5px solid var(--blue-mid); color: var(--ink-soft);
+      border-radius: var(--radius-sm); font-family: var(--font-body);
+      font-size: 0.82rem; font-weight: 500; cursor: pointer;
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .btn-reset:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-reset:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(10,15,40,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.18s ease;
+    }
+    .modal-backdrop.hidden { display: none; }
+    .modal {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+      width: 100%; max-width: 900px; max-height: 90vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      animation: modalIn 0.22s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px 16px; border-bottom: 1px solid var(--blue-light);
+      flex-shrink: 0;
+    }
+    .modal-title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 1.1rem; color: var(--ink);
+    }
+    .modal-subtitle { font-size: 0.78rem; color: var(--ink-soft); margin-top: 2px; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid var(--blue-mid); background: transparent;
+      color: var(--ink-soft); font-size: 1.1rem; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .modal-close:hover { background: var(--blue); color: var(--white); border-color: var(--blue); }
+    .modal-close:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+    .modal-body { display: flex; flex: 1; overflow: hidden; }
+
+    /* Left tab rail */
+    .modal-tabs {
+      width: 200px; flex-shrink: 0;
+      border-right: 1px solid var(--blue-light);
+      padding: 12px 0; display: flex; flex-direction: column; gap: 2px;
+      overflow-y: auto;
+    }
+    .modal-tab {
+      display: flex; flex-direction: column; padding: 10px 16px;
+      cursor: pointer; border: none; background: transparent; text-align: left;
+      font-family: var(--font-body); border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .modal-tab:hover { background: var(--blue-light); }
+    .modal-tab:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: -3px; }
+    .modal-tab.active { background: var(--blue-light); border-left-color: var(--blue); }
+    .modal-tab-name { font-weight: 600; font-size: 0.83rem; color: var(--ink); }
+    .modal-tab.active .modal-tab-name { color: var(--blue); }
+    .modal-tab-desc { font-size: 0.7rem; color: var(--ink-soft); margin-top: 2px; line-height: 1.35; }
+
+    /* Right content pane */
+    .modal-content { flex: 1; overflow-y: auto; padding: 22px 26px; }
+    .example-pane { display: none; }
+    .example-pane.active { display: block; }
+    .example-pane-title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 1rem; color: var(--blue); margin-bottom: 4px;
+    }
+    .example-pane-tag {
+      display: inline-block; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--blue-light); color: var(--blue);
+      border-radius: 99px; padding: 2px 10px; margin-bottom: 12px;
+    }
+    .example-prompt {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.75rem; line-height: 1.8; color: var(--ink);
+      background: var(--blue-light); border-radius: var(--radius-sm);
+      padding: 16px 18px; white-space: pre-wrap; word-break: break-word;
+    }
+    .btn-load-example {
+      margin-top: 14px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; background: var(--blue); color: var(--white);
+      border: none; border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background var(--transition);
+    }
+    .btn-load-example:hover { background: var(--blue-dark); }
+    .btn-load-example:focus { outline: 3px solid rgba(0,70,173,0.3); outline-offset: 2px; }
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+    footer {
+      text-align: center; padding: 24px; font-size: 0.75rem;
+      color: var(--ink-soft); border-top: 1px solid var(--blue-mid);
+    }
+
+    /* =====================================================
+       ANIMATIONS
+    ===================================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+    @media (max-width: 900px) {
+      header { padding: 22px 20px 18px; }
+      main { grid-template-columns: 1fr; padding: 20px 16px 40px; gap: 20px; }
+      .preview-panel { position: static; order: 2; }
+      .form-panel { order: 1; }
+      #prompt-preview { max-height: 50vh; }
+    }
+    @media (max-width: 640px) {
+      .modal-body { flex-direction: column; }
+      .modal-tabs {
+        width: 100%; flex-direction: row; overflow-x: auto; overflow-y: visible;
+        border-right: none; border-bottom: 1px solid var(--blue-light); padding: 6px;
+      }
+      .modal-tab {
+        border-left: none; border-bottom: 3px solid transparent;
+        padding: 6px 12px; white-space: nowrap;
+      }
+      .modal-tab.active { border-bottom-color: var(--blue); border-left-color: transparent; }
+      .modal-tab-desc { display: none; }
+      .modal-content { padding: 14px 16px; }
+    }
+    @media (max-width: 480px) {
+      .panel-body { padding: 14px 14px 18px; }
+      .panel-header { padding: 12px 14px; }
+      .sentence-input { min-width: 80px; }
+      .field-group-title { font-size: 0.88rem; }
+    }
+
+    /* =====================================================
+       INFO MODAL - video + heading + body text
+    ===================================================== */
+    .info-modal-body { padding: 24px 28px 28px; overflow-y: auto; }
+
+    /* 16:9 responsive video wrapper */
+    .video-wrapper {
+      position: relative; width: 100%; padding-top: 56.25%;
+      border-radius: var(--radius-sm); overflow: hidden;
+      background: var(--ink); margin-bottom: 20px;
+    }
+    .video-wrapper iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+    .info-heading {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 1.05rem; color: var(--ink); margin-bottom: 10px;
+    }
+    .info-text {
+      font-size: 0.88rem; color: var(--ink-soft); line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <p class="header-eyebrow">FLX AI Hub · Custom Bots for Educators</p>
+    <h1>Bot Prompt <em>Builder</em></h1>
+    <p class="header-sub">
+      Complete the sentence starters in each section, then add extra detail in the
+      free-text area. Watch your prompt assemble live - then copy or download it
+      straight into your bot builder.
+    </p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================================================
+       LEFT: Guided form
+  =================================================== -->
+  <section class="panel form-panel" aria-label="Bot prompt form">
+
+    <div class="panel-header">
+      <div class="panel-badge" aria-hidden="true"><i data-lucide="pencil"></i></div>
+      <h2 class="panel-title">Build Your Prompt</h2>
+      <button class="btn-info" onclick="openInfoModal()" aria-haspopup="dialog" aria-label="About this tool">
+        <i data-lucide="info"></i> About
+      </button>
+      <button class="btn-examples" onclick="openModal()" aria-haspopup="dialog" aria-label="View example prompts">
+        <i data-lucide="lightbulb"></i> See Examples
+      </button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- BOT NAME -->
+      <div class="bot-name-wrapper">
+        <label class="bot-name-label" for="bot-name">
+          Bot Name <span style="color:var(--ink-soft);font-weight:400">(optional)</span>
+        </label>
+        <p class="bot-name-desc">Give your bot a name - it helps you and your students know who they're talking to.</p>
+        <input type="text" id="bot-name" placeholder="e.g. ParentBridge, HistoryHelper, WritingCoach…"
+               maxlength="60" autocomplete="off" oninput="updatePreview()" />
+      </div>
+
+      <!-- ── SECTION 1: ROLE ─────────────────────────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">1</div>
+          <span class="field-group-title">Role - Who is this bot?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-role"
+                  title="Show example" onclick="toggleHint('hint-role',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">Define the bot's identity, purpose, and the audience it serves.</p>
+          <div class="hint-box" id="hint-role" role="note">
+            <strong>Example:</strong> "You are an expert in parent-teacher communication. Your job is to help teachers draft professional, warm messages. You are talking to K-12 classroom teachers."
+          </div>
+          <div class="sentence-fields" aria-label="Role sentence starters">
+            <p class="sentence-fields-label">Complete these sentences</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">You are an expert in</span>
+              <input type="text" class="sentence-input" id="role-expert"
+                     placeholder="e.g. parent communication, writing feedback…"
+                     aria-label="You are an expert in" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Your job is to</span>
+              <input type="text" class="sentence-input" id="role-job"
+                     placeholder="e.g. help teachers draft professional messages…"
+                     aria-label="Your job is to" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">You are talking to</span>
+              <input type="text" class="sentence-input" id="role-audience"
+                     placeholder="e.g. K-12 classroom teachers…"
+                     aria-label="You are talking to" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+          </div>
+          <div class="section-divider">additional notes</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-role')" aria-label="Add bullet to Role field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter</span>
+          </div>
+          <textarea id="field-role" rows="2"
+                    placeholder="Anything else about this bot's identity…"
+                    aria-label="Role - additional notes"
+                    oninput="updatePreview(); updateCharCount(this,'count-role')"></textarea>
+          <p class="char-count"><span id="count-role">0</span> characters</p>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: CONTEXT ──────────────────────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">2</div>
+          <span class="field-group-title">Context - What does it know?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-context"
+                  title="Show example" onclick="toggleHint('hint-context',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">Tell the bot what the user will bring, and what it can and can't access.</p>
+          <div class="hint-box" id="hint-context" role="note">
+            <strong>Example:</strong> "The user will provide a brief description of the situation. You have access to general communication best practices. You do NOT have access to student records or any identifying information."
+          </div>
+          <div class="sentence-fields" aria-label="Context sentence starters">
+            <p class="sentence-fields-label">Complete these sentences</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">The user will provide you with</span>
+              <input type="text" class="sentence-input" id="ctx-provides"
+                     placeholder="e.g. a brief description of the situation…"
+                     aria-label="The user will provide you with" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">You have access to</span>
+              <input type="text" class="sentence-input" id="ctx-has"
+                     placeholder="e.g. general communication best practices…"
+                     aria-label="You have access to" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">You do NOT have access to</span>
+              <input type="text" class="sentence-input" id="ctx-lacks"
+                     placeholder="e.g. student records or identifying details…"
+                     aria-label="You do NOT have access to" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+          </div>
+          <div class="section-divider">additional notes</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-context')" aria-label="Add bullet to Context field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter</span>
+          </div>
+          <textarea id="field-context" rows="2"
+                    placeholder="Any other background the bot should know…"
+                    aria-label="Context - additional notes"
+                    oninput="updatePreview(); updateCharCount(this,'count-context')"></textarea>
+          <p class="char-count"><span id="count-context">0</span> characters</p>
+        </div>
+      </div>
+
+      <!-- ── SECTION 3: CONSTRAINTS & GUARDRAILS ─────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">3</div>
+          <span class="field-group-title">Constraints &amp; Guardrails - What should it never do?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-constraints"
+                  title="Show example" onclick="toggleHint('hint-constraints',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">One guardrail sentence, then list your hard limits below. Start each with "Never" or "Do not."</p>
+          <div class="hint-box" id="hint-constraints" role="note">
+            <strong>Guardrail example:</strong> "If the conversation drifts off topic, the bot should gently redirect the user back to the original task."<br><br>
+            <strong>Constraints examples:</strong><br>
+            - Never include student last names.<br>
+            - Never assume family structure - use "guardian" not "mom and dad".<br>
+            - Never send a message - you draft only.<br>
+            - Never share confidential information without flagging a privacy caution first.
+          </div>
+          <div class="sentence-fields" aria-label="Guardrail sentence starter">
+            <p class="sentence-fields-label">Guardrail</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">If the conversation drifts off topic, the bot should</span>
+              <input type="text" class="sentence-input" id="con-offtopic"
+                     placeholder="e.g. gently redirect the user back to the task…"
+                     aria-label="If the conversation drifts off topic, the bot should"
+                     oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+          </div>
+          <div class="section-divider">hard limits (bullets)</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-constraints')" aria-label="Add bullet to Constraints field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter to auto-bullet</span>
+          </div>
+          <textarea id="field-constraints" rows="5"
+                    placeholder="- Never…&#10;- Do not…&#10;- Always avoid…"
+                    aria-label="Constraints - What should it never do?"
+                    oninput="updatePreview(); updateCharCount(this,'count-constraints')"></textarea>
+          <p class="char-count"><span id="count-constraints">0</span> characters</p>
+        </div>
+      </div>
+
+      <!-- ── SECTION 4: TONE ─────────────────────────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">4</div>
+          <span class="field-group-title">Tone - How should it communicate?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-tone"
+                  title="Show example" onclick="toggleHint('hint-tone',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">Describe the bot's voice, style, and how it handles confusion or frustration.</p>
+          <div class="hint-box" id="hint-tone" role="note">
+            <strong>Example:</strong> "Your tone is warm but professional. Keep responses to 150 words or fewer. Avoid jargon. If the user seems confused or frustrated, slow down and ask one clarifying question."
+          </div>
+          <div class="sentence-fields" aria-label="Tone sentence starters">
+            <p class="sentence-fields-label">Complete these sentences</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Your tone is</span>
+              <input type="text" class="sentence-input" id="tone-style"
+                     placeholder="e.g. warm but professional, encouraging, calm…"
+                     aria-label="Your tone is" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Keep responses to</span>
+              <input type="text" class="sentence-input" id="tone-length"
+                     placeholder="e.g. 150" aria-label="Keep responses to how many words or fewer"
+                     style="max-width:80px;" oninput="updatePreview()" />
+              <span class="sentence-suffix">words or fewer.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Avoid</span>
+              <input type="text" class="sentence-input" id="tone-avoid"
+                     placeholder="e.g. jargon, clinical language, long paragraphs…"
+                     aria-label="Avoid" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">If the user seems confused or frustrated,</span>
+              <input type="text" class="sentence-input" id="tone-frustrated"
+                     placeholder="e.g. slow down and ask one clarifying question…"
+                     aria-label="If the user seems confused or frustrated" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+          </div>
+          <div class="section-divider">additional notes</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-tone')" aria-label="Add bullet to Tone field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter</span>
+          </div>
+          <textarea id="field-tone" rows="2"
+                    placeholder="Any other notes about voice or style…"
+                    aria-label="Tone - additional notes"
+                    oninput="updatePreview(); updateCharCount(this,'count-tone')"></textarea>
+          <p class="char-count"><span id="count-tone">0</span> characters</p>
+        </div>
+      </div>
+
+      <!-- ── SECTION 5: ESCALATION ───────────────────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">5</div>
+          <span class="field-group-title">Escalation - What happens when things go off-script?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-escalation"
+                  title="Show example" onclick="toggleHint('hint-escalation',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">How should the bot handle sensitive, out-of-scope, or inappropriate situations?</p>
+          <div class="hint-box" id="hint-escalation" role="note">
+            <strong>Example:</strong> "If the user asks something outside your scope, politely decline and redirect. If the conversation becomes sensitive, respond calmly and do not engage further. Always direct the user to their school administrator for questions you can't answer."
+          </div>
+          <div class="sentence-fields" aria-label="Escalation sentence starters">
+            <p class="sentence-fields-label">Complete these sentences</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">If the user asks something outside your scope,</span>
+              <input type="text" class="sentence-input" id="esc-outofscope"
+                     placeholder="e.g. politely decline and redirect to the topic…"
+                     aria-label="If the user asks something outside your scope" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">If the conversation becomes sensitive or inappropriate,</span>
+              <input type="text" class="sentence-input" id="esc-sensitive"
+                     placeholder="e.g. respond calmly and do not engage further…"
+                     aria-label="If the conversation becomes sensitive or inappropriate" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Always direct the user to</span>
+              <input type="text" class="sentence-input" id="esc-redirect"
+                     placeholder="e.g. their school counselor or administrator…"
+                     aria-label="Always direct the user to" oninput="updatePreview()" />
+              <span class="sentence-suffix">for questions you can't answer.</span>
+            </div>
+          </div>
+          <div class="section-divider">additional notes</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-escalation')" aria-label="Add bullet to Escalation field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter</span>
+          </div>
+          <textarea id="field-escalation" rows="2"
+                    placeholder="Any other edge cases or off-script scenarios…"
+                    aria-label="Escalation - additional notes"
+                    oninput="updatePreview(); updateCharCount(this,'count-escalation')"></textarea>
+          <p class="char-count"><span id="count-escalation">0</span> characters</p>
+        </div>
+      </div>
+
+      <!-- ── SECTION 6: WORKFLOW ─────────────────────── -->
+      <div class="field-group">
+        <div class="field-group-header">
+          <div class="field-group-number" aria-hidden="true">6</div>
+          <span class="field-group-title">Workflow - How does the conversation unfold?</span>
+          <button class="hint-toggle" aria-expanded="false" aria-controls="hint-workflow"
+                  title="Show example" onclick="toggleHint('hint-workflow',this)">?</button>
+        </div>
+        <div class="field-group-body">
+          <p class="field-description">Define how the bot opens, how it asks questions, and what it does when a task is complete.</p>
+          <div class="hint-box" id="hint-workflow" role="note">
+            <strong>Example:</strong> "This bot begins every conversation by introducing itself and asking what the teacher needs. Before responding, the bot should ask one clarifying question. The bot asks only one question at a time. After completing a task, the bot should ask if the teacher wants to adjust anything."
+          </div>
+          <div class="sentence-fields" aria-label="Workflow sentence starters">
+            <p class="sentence-fields-label">Complete these sentences</p>
+            <div class="sentence-row">
+              <span class="sentence-prefix">This bot begins every conversation by</span>
+              <input type="text" class="sentence-input" id="wf-opens"
+                     placeholder="e.g. introducing itself and asking what the user needs…"
+                     aria-label="This bot begins every conversation by" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">Before responding, the bot should</span>
+              <input type="text" class="sentence-input" id="wf-before"
+                     placeholder="e.g. ask one clarifying question…"
+                     aria-label="Before responding, the bot should" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">The bot asks only</span>
+              <input type="text" class="sentence-input" id="wf-questions"
+                     placeholder="e.g. one" aria-label="The bot asks only how many questions at a time"
+                     style="max-width:70px;" oninput="updatePreview()" />
+              <span class="sentence-suffix">question(s) at a time.</span>
+            </div>
+            <div class="sentence-row">
+              <span class="sentence-prefix">After completing a task, the bot should</span>
+              <input type="text" class="sentence-input" id="wf-after"
+                     placeholder="e.g. ask if the user wants to adjust anything…"
+                     aria-label="After completing a task, the bot should" oninput="updatePreview()" />
+              <span class="sentence-suffix">.</span>
+            </div>
+          </div>
+          <div class="section-divider">additional notes</div>
+          <div class="textarea-toolbar">
+            <button class="btn-bullet" onclick="insertBullet('field-workflow')" aria-label="Add bullet to Workflow field">
+              <i data-lucide="list"></i> Add bullet
+            </button>
+            <span class="toolbar-hint">or start a line with "- " and press Enter</span>
+          </div>
+          <textarea id="field-workflow" rows="2"
+                    placeholder="Any other notes about how the conversation should flow…"
+                    aria-label="Workflow - additional notes"
+                    oninput="updatePreview(); updateCharCount(this,'count-workflow')"></textarea>
+          <p class="char-count"><span id="count-workflow">0</span> characters</p>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-reset" onclick="resetForm()" aria-label="Clear all fields and start over">
+          <i data-lucide="rotate-ccw"></i> Start over
+        </button>
+      </div>
+
+    </div><!-- /panel-body -->
+  </section>
+
+
+  <!-- ===================================================
+       RIGHT: Live preview
+  =================================================== -->
+  <aside class="panel preview-panel" aria-label="Live prompt preview" aria-live="polite">
+    <div class="panel-header">
+      <div class="preview-header-left">
+        <div class="panel-badge" aria-hidden="true"><i data-lucide="eye"></i></div>
+        <h2 class="panel-title">Live Preview</h2>
+      </div>
+      <div class="preview-header-right">
+        <button class="btn-save" onclick="savePrompt()" aria-label="Download prompt as .txt file">
+          <i data-lucide="download"></i> Save .txt
+        </button>
+        <button class="btn-copy" id="copy-btn" onclick="copyPrompt()" aria-label="Copy prompt to clipboard">
+          <span id="copy-icon"><i data-lucide="clipboard"></i></span>
+          <span id="copy-label">Copy Prompt</span>
+        </button>
+      </div>
+    </div>
+    <div class="progress-bar-wrapper">
+      <div class="progress-label">
+        <span>Sections completed</span>
+        <span id="progress-text">0 of 6</span>
+      </div>
+      <div class="progress-track" role="progressbar"
+           aria-valuenow="0" aria-valuemin="0" aria-valuemax="6" aria-label="Sections completed">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="preview-empty" id="preview-empty">
+        <div class="preview-empty-icon"><i data-lucide="bot"></i></div>
+        <p>Your system prompt will appear here as you fill in the sections on the left.</p>
+      </div>
+      <pre id="prompt-preview" aria-label="Generated system prompt" hidden></pre>
+    </div>
+  </aside>
+
+</main>
+
+<footer>FLX AI Hub · Custom Bots for Educators · Always review your prompt before deploying.</footer>
+
+
+<!-- =====================================================
+     INFO MODAL - About this tool
+===================================================== -->
+<div class="modal-backdrop hidden" id="info-modal-backdrop"
+     role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+  <div class="modal" style="max-width:680px">
+
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="info-modal-title">
+          <i data-lucide="info"></i> About This Tool
+        </h2>
+        <p class="modal-subtitle">Watch the video, then start building.</p>
+      </div>
+      <button class="modal-close" onclick="closeInfoModal()" aria-label="Close info modal">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="info-modal-body">
+
+      <!-- 16:9 placeholder YouTube embed -->
+      <!-- Replace the src URL below with your actual video URL when ready -->
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          title="About the Bot Prompt Builder"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- Heading - replace with your own -->
+      <p class="info-heading">How to Use the Bot Prompt Builder</p>
+
+      <!-- Body text - replace with your own -->
+      <p class="info-text">
+        This is placeholder text. Replace this with a brief description of the
+        Bot Prompt Builder - what it does, how to use it, and what to do with
+        the prompt once it's built. You can also add links, tips, or any other
+        context that will help educators get the most out of this tool.
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     EXAMPLES MODAL - 7 tabbed examples
+===================================================== -->
+<div class="modal-backdrop hidden" id="modal-backdrop"
+     role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+  <div class="modal">
+
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modal-title-text"><i data-lucide="book-open"></i> Example Prompts</h2>
+        <p class="modal-subtitle">Seven complete instruction sets - one for each major bot archetype. Click any tab to explore, then load it into the builder.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close examples"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Tabs -->
+      <nav class="modal-tabs" aria-label="Example prompts">
+        <button class="modal-tab active" onclick="switchTab(0,this)" aria-selected="true">
+          <span class="modal-tab-name">ParentBridge</span>
+          <span class="modal-tab-desc">Parent communication for teachers</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(1,this)" aria-selected="false">
+          <span class="modal-tab-name">SocraticCoach</span>
+          <span class="modal-tab-desc">Writing feedback &amp; Socratic tutor</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(2,this)" aria-selected="false">
+          <span class="modal-tab-name">SubPlanner</span>
+          <span class="modal-tab-desc">Substitute lesson plan generator</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(3,this)" aria-selected="false">
+          <span class="modal-tab-name">HistoryHelper</span>
+          <span class="modal-tab-desc">Historical figure roleplay bot</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(4,this)" aria-selected="false">
+          <span class="modal-tab-name">DebateCoach</span>
+          <span class="modal-tab-desc">Debate opponent &amp; argument builder</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(5,this)" aria-selected="false">
+          <span class="modal-tab-name">RubricBuilder</span>
+          <span class="modal-tab-desc">Assignment rubric creation assistant</span>
+        </button>
+        <button class="modal-tab" onclick="switchTab(6,this)" aria-selected="false">
+          <span class="modal-tab-name">ELLBridge</span>
+          <span class="modal-tab-desc">Differentiation &amp; ELL support bot</span>
+        </button>
+      </nav>
+
+      <!-- Content panes -->
+      <div class="modal-content">
+
+        <!-- 0: ParentBridge -->
+        <div class="example-pane active" id="example-0">
+          <p class="example-pane-title">ParentBridge</p>
+          <span class="example-pane-tag">Teacher Productivity</span>
+          <pre class="example-prompt"># ParentBridge
+
+## Role
+
+You are an expert in K-12 parent and guardian communication.
+Your job is to help teachers draft clear, professional, and warm
+messages to families about classroom situations.
+You are talking to K-12 classroom teachers.
+
+---
+
+## Context
+
+The user will provide you with a brief description of the situation
+they need to communicate about.
+You have access to general knowledge about effective school
+communication best practices.
+You do NOT have access to student records, grades, or any
+identifying information - only what the teacher tells you.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should gently
+redirect the teacher back to drafting their message.
+
+- Never include student last names in any draft.
+- Never assume family structure - use "guardian" or "family,"
+  never "mom and dad."
+- Never send a message - you draft only; the teacher always
+  reviews before anything goes out.
+- Never share confidential information without flagging a
+  privacy caution to the teacher first.
+- Never write more than 200 words unless specifically asked.
+
+---
+
+## Tone
+
+Your tone is warm but professional.
+Keep responses to 200 words or fewer.
+Avoid jargon, acronyms (IEP, Tier 2, etc.), and clinical language.
+If the user seems confused or frustrated, ask one clarifying
+question before drafting anything new.
+
+- Write at an 8th-grade reading level.
+- Never open with "I hope this email finds you well."
+- Every draft should feel like it was written by the most
+  thoughtful teacher in the building.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, politely decline
+and redirect to the drafting task.
+If the conversation becomes sensitive or involves student safety
+or serious disciplinary issues, draft a minimal factual message
+and note: "Consider looping in your administrator before sending."
+Always direct the user to their school administrator for questions
+you can't answer.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What situation
+would you like help communicating to a family today?"
+Before responding, the bot should ask whether this is a first
+contact or a follow-up with the family.
+The bot asks only one question at a time.
+After completing a draft, the bot should ask: "Would you like to
+adjust the tone, shorten it, or change any specific phrasing?"
+Then remind: "Please review before sending - you know this
+family best."</pre>
+          <button class="btn-load-example" onclick="loadExample(0)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 1: SocraticCoach -->
+        <div class="example-pane" id="example-1">
+          <p class="example-pane-title">SocraticCoach</p>
+          <span class="example-pane-tag">Student-Facing · Socratic Tutor</span>
+          <pre class="example-prompt"># SocraticCoach
+
+## Role
+
+You are an expert in writing coaching and Socratic questioning.
+Your job is to help students improve their writing through guided
+questions - never by rewriting for them.
+You are talking to middle and high school students working on
+essays, arguments, or creative writing assignments.
+
+---
+
+## Context
+
+The user will provide you with a piece of their own writing or
+a description of what they are trying to write.
+You have access to general knowledge about writing craft,
+argumentation, and rhetorical structure.
+You do NOT have access to the assignment rubric, teacher
+instructions, or the student's grade - ask if you need context.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should gently
+bring the student back to their writing with a question.
+
+- Never rewrite a student's sentences for them.
+- Never give the student a thesis, topic sentence, or conclusion
+  to copy - guide them to write their own.
+- Never complete an assignment on a student's behalf.
+- Never tell the student their writing is bad - frame all
+  feedback as questions or observations.
+- If a student asks "just tell me what to write," respond:
+  "I can't do that - but I can ask something that might unlock
+  it. Ready?"
+
+---
+
+## Tone
+
+Your tone is encouraging, patient, and curious.
+Keep responses to 80 words or fewer.
+Avoid literary jargon unless the student uses it first.
+If the user seems confused or frustrated, slow down, affirm
+their effort, and ask one simpler question.
+
+- Never lecture. One idea per response, maximum.
+- End almost every response with a question.
+- Celebrate specific strengths before pointing to what could
+  be stronger.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, redirect warmly:
+"That's outside what I can help with - let's get back to your
+writing."
+If the conversation becomes inappropriate, respond calmly, do
+not engage with the content, and suggest the student speak with
+their teacher.
+Always direct the user to their classroom teacher for questions
+about grades, deadlines, or assignment requirements.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What are you
+working on today - and where are you feeling stuck?"
+Before responding, the bot should identify one specific strength
+in the student's writing to mention first.
+The bot asks only one question at a time.
+After the student revises, the bot should ask: "How does that
+feel compared to what you had before?"</pre>
+          <button class="btn-load-example" onclick="loadExample(1)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 2: SubPlanner -->
+        <div class="example-pane" id="example-2">
+          <p class="example-pane-title">SubPlanner</p>
+          <span class="example-pane-tag">Teacher Productivity · Workflow</span>
+          <pre class="example-prompt"># SubPlanner
+
+## Role
+
+You are an expert in classroom routines, lesson structure,
+and substitute teacher communication.
+Your job is to help teachers quickly generate clear, detailed,
+and self-contained substitute lesson plans.
+You are talking to K-12 classroom teachers preparing for a
+planned or unexpected absence.
+
+---
+
+## Context
+
+The user will provide you with their grade level, subject,
+current unit or topic, and any specific constraints.
+You have access to general knowledge about lesson design,
+classroom management, and age-appropriate activities.
+You do NOT have access to the teacher's curriculum documents,
+student rosters, or IEPs - ask the teacher to share what the
+sub needs to know.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should redirect:
+"Let's get your sub plan ready - what grade and subject are
+we planning for?"
+
+- Never include student last names or identifying details.
+- Never suggest activities requiring the teacher's presence.
+- Never assume technology is available - ask first.
+- Never generate a plan longer than one page unless asked.
+- Always flag if a suggested activity requires materials the
+  sub might not easily locate.
+
+---
+
+## Tone
+
+Your tone is calm, efficient, and reassuring.
+Keep responses to 250 words or fewer per plan section.
+Avoid edu-jargon - write plans a substitute with no subject
+knowledge could follow without confusion.
+If the user seems confused or frustrated, ask: "What would
+be most helpful to nail down first - the schedule, the activity,
+or the classroom management notes?"
+
+- Use short sentences and numbered steps wherever possible.
+- Every plan should feel written for a capable adult who has
+  never been in this classroom before.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, redirect: "That's
+outside what I can generate - let's focus on your sub plan."
+If the user describes a student safety concern, respond: "That
+sounds like something to flag for your admin before you leave -
+I can help you draft a note to them too."
+Always direct the user to their department chair or admin for
+questions about coverage policies or building procedures.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What grade,
+subject, and date are we planning for - and is this planned
+or last-minute?"
+Before responding, the bot should ask: "Any key things the
+sub needs to know - routines, student needs, or materials
+to avoid?"
+The bot asks only two questions before drafting a plan.
+After completing a plan, the bot should ask: "Would you like
+me to add a classroom management section, seating chart note,
+or emergency contact reminder?"</pre>
+          <button class="btn-load-example" onclick="loadExample(2)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 3: HistoryHelper -->
+        <div class="example-pane" id="example-3">
+          <p class="example-pane-title">HistoryHelper</p>
+          <span class="example-pane-tag">Student-Facing · Historical Roleplay</span>
+          <pre class="example-prompt"># HistoryHelper
+
+## Role
+
+You are an expert in U.S. history, primary sources, and
+historical perspective-taking.
+Your job is to portray a historical figure and respond to
+student questions as that figure - in first person, grounded
+in historical evidence.
+You are talking to middle and high school students researching
+or discussing U.S. history.
+
+---
+
+## Context
+
+The user will provide you with the name of the historical
+figure they want to interview and their questions.
+You have access to historically documented speeches, letters,
+and accounts related to the figure's life and era.
+You do NOT have access to information beyond what was known
+during the figure's lifetime - you must stay in period.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should redirect
+gently: "That's a question for another time - what would you
+like to ask me about my life and work?"
+
+- Never invent facts, quotes, or events not supported by
+  historical record.
+- Never speak from outside the figure's historical perspective
+  - stay in character and in the time period.
+- Never express modern political opinions through the figure.
+- If a student asks something the figure could not have known,
+  respond in character: "I'm afraid that is beyond my
+  knowledge - perhaps you might ask of someone in your time."
+- Always be transparent: begin by noting you are an AI
+  portraying this figure, not the person themselves.
+
+---
+
+## Tone
+
+Your tone is thoughtful, period-appropriate, and dignified.
+Keep responses to 120 words or fewer.
+Avoid modern slang, idioms, or anachronistic references.
+If the user seems confused or frustrated, step briefly out of
+character to clarify, then offer to continue the interview.
+
+- Speak in first person as the historical figure.
+- Ground every response in something historically documented.
+- Invite follow-up questions to keep dialogue moving.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, decline in
+character: "I cannot speak to that - it falls beyond my
+knowledge or experience."
+If the conversation becomes inappropriate or disrespectful,
+step out of character calmly and redirect to the learning task.
+Always direct the user to their classroom teacher for questions
+about the assignment or grading.
+
+---
+
+## Workflow
+
+This bot begins every conversation by introducing itself:
+"Good day. I am [figure's name]. I understand you have
+questions for me - I am prepared to answer as best I can.
+What would you like to know?"
+Before responding, the bot should confirm which figure the
+student wants to interview.
+The bot asks only one follow-up question at a time.
+After a substantive exchange, the bot should ask: "Is there
+another aspect of my life or work you'd like to explore?"</pre>
+          <button class="btn-load-example" onclick="loadExample(3)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 4: DebateCoach -->
+        <div class="example-pane" id="example-4">
+          <p class="example-pane-title">DebateCoach</p>
+          <span class="example-pane-tag">Student-Facing · Debate Opponent</span>
+          <pre class="example-prompt"># DebateCoach
+
+## Role
+
+You are an expert in argumentation, rhetoric, and debate strategy.
+Your job is to argue a position firmly so that students must
+build and defend a counter-argument using evidence.
+You are talking to middle and high school students practicing
+debate, persuasive writing, or critical thinking skills.
+
+---
+
+## Context
+
+The user will provide you with the topic and which side you
+should argue, or you will be assigned a side by the teacher.
+You have access to general knowledge on the debate topic,
+including common arguments, counterarguments, and evidence.
+You do NOT have access to the student's assignment details -
+ask if you need to understand the context better.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should redirect:
+"Let's stay in the debate - what's your counter-argument?"
+
+- Never concede the argument without the student providing
+  strong, evidence-based reasoning.
+- Never be cruel, dismissive, or personal - challenge the
+  argument, never the student.
+- Never switch sides mid-debate unless the teacher instructs it.
+- Never provide the student with arguments they should be
+  making themselves.
+- If a student says "I give up," respond: "You're closer than
+  you think. What's one piece of evidence you haven't used yet?"
+
+---
+
+## Tone
+
+Your tone is confident, fair, and intellectually energizing.
+Keep responses to 100 words or fewer - leave room for the
+student to respond.
+Avoid personal attacks, sarcasm, or condescension.
+If the user seems confused or frustrated, pause: "Let's slow
+down - what part of my argument feels hardest to answer?"
+
+- Steel-man your own position - make the student work.
+- Acknowledge strong student points before pivoting.
+- Always end your turn with a challenge or question for the
+  student to respond to.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, redirect:
+"That's outside the debate - let's stay on the topic at hand."
+If the conversation becomes disrespectful, respond calmly:
+"Strong debaters keep it respectful. Let's try again."
+Always direct the user to their teacher for questions about
+the assignment, rubric, or grading.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What topic are
+we debating today, and which side should I argue?"
+Before responding, the bot should confirm the topic and sides.
+The bot asks only one challenge question per turn.
+After a full exchange, the bot should offer: "Would you like
+feedback on the strength of your argument, or shall we go
+another round?"</pre>
+          <button class="btn-load-example" onclick="loadExample(4)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 5: RubricBuilder -->
+        <div class="example-pane" id="example-5">
+          <p class="example-pane-title">RubricBuilder</p>
+          <span class="example-pane-tag">Teacher Productivity · Assessment</span>
+          <pre class="example-prompt"># RubricBuilder
+
+## Role
+
+You are an expert in assessment design, standards alignment,
+and rubric construction.
+Your job is to help teachers draft clear, fair, and useful
+rubrics for any assignment or project.
+You are talking to K-12 teachers and instructional coaches
+designing assessments.
+
+---
+
+## Context
+
+The user will provide you with a description of the assignment,
+the grade level, and any standards or learning objectives
+they want the rubric to reflect.
+You have access to general knowledge about rubric design,
+performance levels, and assessment best practices.
+You do NOT have access to the school's grading system or
+specific curriculum documents - ask if alignment is needed.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should redirect:
+"Let's focus on your rubric - what assignment are we building
+this for?"
+
+- Never generate a rubric without first confirming the
+  assignment description and grade level.
+- Never use vague descriptors like "good" or "adequate" -
+  every performance level must be specific and observable.
+- Never exceed four performance levels unless asked.
+- Never assign point values unless the teacher specifies
+  their grading system.
+- Always present the rubric in a clear format the teacher
+  can copy directly into their LMS or document.
+
+---
+
+## Tone
+
+Your tone is professional, precise, and collaborative.
+Keep responses to 300 words or fewer outside of the rubric
+itself.
+Avoid assessment jargon unless the teacher uses it first.
+If the user seems confused or frustrated, ask: "Would it
+help to start with just one criterion and build from there?"
+
+- Use parallel structure across all performance level
+  descriptors.
+- Write in language that is clear to both teacher and student.
+- After drafting, invite the teacher to adjust any criterion.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, redirect:
+"That's outside what I can help design - let's focus on
+your rubric."
+If the user asks for help with grading a specific student's
+work, respond: "I can help you refine the rubric criteria,
+but grading decisions are yours to make."
+Always direct the user to their curriculum coordinator for
+questions about district standards alignment.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What assignment
+is this rubric for, and what grade level?"
+Before drafting, the bot should ask: "What are the two or
+three most important things you want students to demonstrate?"
+The bot asks only one question at a time.
+After completing a draft rubric, the bot should ask: "Would
+you like to adjust any criterion, add a self-assessment
+column, or include a student-facing version?"</pre>
+          <button class="btn-load-example" onclick="loadExample(5)">⬅ Load into builder</button>
+        </div>
+
+        <!-- 6: ELLBridge -->
+        <div class="example-pane" id="example-6">
+          <p class="example-pane-title">ELLBridge</p>
+          <span class="example-pane-tag">Student-Facing · Differentiation &amp; ELL Support</span>
+          <pre class="example-prompt"># ELLBridge
+
+## Role
+
+You are an expert in language acquisition, content
+differentiation, and accessible instruction.
+Your job is to help students understand classroom content
+by re-explaining it in simpler language, in their home
+language if needed, and at a level that matches where they are.
+You are talking to English Language Learners and students
+who need content explained at a different level or pace.
+
+---
+
+## Context
+
+The user will provide you with a concept, passage, or
+assignment they are struggling to understand.
+You have access to general knowledge across core subject
+areas and can explain content in multiple languages.
+You do NOT have access to the student's IEP, language
+proficiency level, or teacher's lesson plan - ask what
+would help most.
+
+---
+
+## Constraints & Guardrails
+
+If the conversation drifts off topic, the bot should gently
+redirect: "Let's focus on understanding your class material
+- what would you like me to explain?"
+
+- Never do the assignment for the student - explain the
+  concept so they can do it themselves.
+- Never use the student's name or store any personal details.
+- Never assume a student's language background - always ask
+  if language support would be helpful.
+- Never use idioms, figurative language, or complex sentence
+  structures in initial explanations.
+- If a student says they still don't understand, try a
+  different approach - analogy, example, or shorter steps.
+
+---
+
+## Tone
+
+Your tone is patient, warm, and encouraging.
+Keep responses to 100 words or fewer - short enough not to
+overwhelm.
+Avoid idioms, complex vocabulary, and long sentences in
+your first explanation.
+If the user seems confused or frustrated, slow down: try
+a real-world example or ask "Which part felt most confusing?"
+
+- Use simple, direct sentences.
+- Offer to explain in another language if helpful.
+- Celebrate every moment of understanding - progress matters.
+
+---
+
+## Escalation
+
+If the user asks something outside your scope, respond warmly:
+"That's a bit outside what I can help explain - let's focus
+on your class material."
+If a student expresses distress beyond academic confusion,
+respond with care and suggest they speak with a trusted
+adult at school.
+Always direct the user to their classroom teacher for
+questions about assignments, grades, or deadlines.
+
+---
+
+## Workflow
+
+This bot begins every conversation by asking: "What are you
+trying to understand today - and would it help if I explained
+it in a different language?"
+Before responding, the bot should ask what subject or topic
+the student is working on.
+The bot asks only one question at a time.
+After explaining something, the bot should ask: "Does that
+make more sense, or would you like me to try explaining it
+a different way?"</pre>
+          <button class="btn-load-example" onclick="loadExample(6)">⬅ Load into builder</button>
+        </div>
+
+      </div><!-- /modal-content -->
+    </div><!-- /modal-body -->
+  </div><!-- /modal -->
+</div><!-- /modal-backdrop -->
+
+
+<script>
+  /*
+    SECTIONS - drives the preview assembly and reset logic.
+    Each entry maps to one of the six prompt sections.
+  */
+  const SECTIONS = [
+    {
+      heading: '## Role',
+      subFields: [
+        { prefix: 'You are an expert in', inputId: 'role-expert',   suffix: '.' },
+        { prefix: 'Your job is to',        inputId: 'role-job',      suffix: '.' },
+        { prefix: 'You are talking to',    inputId: 'role-audience', suffix: '.' },
+      ],
+      textareaId: 'field-role',
+      countId: 'count-role',
+    },
+    {
+      heading: '## Context',
+      subFields: [
+        { prefix: 'The user will provide you with', inputId: 'ctx-provides', suffix: '.' },
+        { prefix: 'You have access to',             inputId: 'ctx-has',      suffix: '.' },
+        { prefix: 'You do NOT have access to',      inputId: 'ctx-lacks',    suffix: '.' },
+      ],
+      textareaId: 'field-context',
+      countId: 'count-context',
+    },
+    {
+      heading: '## Constraints & Guardrails',
+      subFields: [
+        { prefix: 'If the conversation drifts off topic, the bot should', inputId: 'con-offtopic', suffix: '.' },
+      ],
+      textareaId: 'field-constraints',
+      countId: 'count-constraints',
+    },
+    {
+      heading: '## Tone',
+      subFields: [
+        { prefix: 'Your tone is',                              inputId: 'tone-style',      suffix: '.' },
+        { prefix: 'Keep responses to',                         inputId: 'tone-length',     suffix: ' words or fewer.' },
+        { prefix: 'Avoid',                                     inputId: 'tone-avoid',      suffix: '.' },
+        { prefix: 'If the user seems confused or frustrated,', inputId: 'tone-frustrated', suffix: '.' },
+      ],
+      textareaId: 'field-tone',
+      countId: 'count-tone',
+    },
+    {
+      heading: '## Escalation',
+      subFields: [
+        { prefix: 'If the user asks something outside your scope,',          inputId: 'esc-outofscope', suffix: '.' },
+        { prefix: 'If the conversation becomes sensitive or inappropriate,', inputId: 'esc-sensitive',  suffix: '.' },
+        { prefix: 'Always direct the user to',                               inputId: 'esc-redirect',   suffix: " for questions you can't answer." },
+      ],
+      textareaId: 'field-escalation',
+      countId: 'count-escalation',
+    },
+    {
+      heading: '## Workflow',
+      subFields: [
+        { prefix: 'This bot begins every conversation by',   inputId: 'wf-opens',     suffix: '.' },
+        { prefix: 'Before responding, the bot should',       inputId: 'wf-before',    suffix: '.' },
+        { prefix: 'The bot asks only',                       inputId: 'wf-questions', suffix: ' question(s) at a time.' },
+        { prefix: 'After completing a task, the bot should', inputId: 'wf-after',     suffix: '.' },
+      ],
+      textareaId: 'field-workflow',
+      countId: 'count-workflow',
+    },
+  ];
+
+
+  /* Build the text for one section from its sub-fields + textarea */
+  function buildSectionText(section) {
+    var lines = [];
+    section.subFields.forEach(function(sf) {
+      var el  = document.getElementById(sf.inputId);
+      var val = el ? el.value.trim() : '';
+      if (val) lines.push(sf.prefix + ' ' + val + sf.suffix);
+    });
+    var ta  = document.getElementById(section.textareaId);
+    var val = ta ? ta.value.trim() : '';
+    if (val) {
+      if (lines.length > 0) lines.push('');
+      lines.push(val);
+    }
+    return lines.join('\n');
+  }
+
+
+  /* Rebuild the live preview on every input event */
+  function updatePreview() {
+    var botName    = document.getElementById('bot-name').value.trim();
+    var preEl      = document.getElementById('prompt-preview');
+    var emptyEl    = document.getElementById('preview-empty');
+    var parts      = [];
+    var filledCount = 0;
+
+    if (botName) parts.push('# ' + botName + '\n');
+
+    SECTIONS.forEach(function(section) {
+      var content = buildSectionText(section);
+      if (content) {
+        filledCount++;
+        parts.push(section.heading + '\n\n' + content);
+      }
+    });
+
+    updateProgress(filledCount);
+
+    if (parts.length === 0 && !botName) {
+      emptyEl.style.display = '';
+      emptyEl.removeAttribute('aria-hidden');
+      preEl.hidden = true;
+      return;
+    }
+    emptyEl.style.display = 'none';
+    emptyEl.setAttribute('aria-hidden', 'true');
+    preEl.hidden = false;
+    preEl.textContent = parts.join('\n\n---\n\n');
+  }
+
+
+  /* Update the progress bar */
+  function updateProgress(filledCount) {
+    var total  = SECTIONS.length;
+    var pct    = Math.round((filledCount / total) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = filledCount + ' of ' + total;
+    var track = document.querySelector('.progress-track');
+    track.setAttribute('aria-valuenow', filledCount);
+    track.setAttribute('aria-valuetext', filledCount + ' of ' + total + ' sections completed');
+  }
+
+
+  /* Live character count for free-text areas */
+  function updateCharCount(textarea, countId) {
+    var el = document.getElementById(countId);
+    if (el) el.textContent = textarea.value.length;
+  }
+
+
+  /* Copy assembled prompt to clipboard */
+  function copyPrompt() {
+    var preEl = document.getElementById('prompt-preview');
+    if (preEl.hidden || !preEl.textContent.trim()) {
+      alert('Nothing to copy yet - fill in at least one section first!');
+      return;
+    }
+    navigator.clipboard.writeText(preEl.textContent)
+      .then(function() {
+        var btn = document.getElementById('copy-btn');
+        btn.classList.add('copied');
+        document.getElementById('copy-icon').innerHTML  = '<i data-lucide="check"></i>';
+        document.getElementById('copy-label').textContent = 'Copied!';
+        lucide.createIcons();
+        setTimeout(function() {
+          btn.classList.remove('copied');
+          document.getElementById('copy-icon').innerHTML  = '<i data-lucide="clipboard"></i>';
+          document.getElementById('copy-label').textContent = 'Copy Prompt';
+          lucide.createIcons();
+        }, 2500);
+      })
+      .catch(function() {
+        alert('Could not copy automatically. Please select the preview text and copy manually (Ctrl+C / Cmd+C).');
+      });
+  }
+
+
+  /*
+    Save the assembled prompt as a .txt file.
+    Uses a Blob + temporary <a> element - no server needed.
+  */
+  function savePrompt() {
+    var preEl = document.getElementById('prompt-preview');
+    if (preEl.hidden || !preEl.textContent.trim()) {
+      alert('Nothing to save yet - fill in at least one section first!');
+      return;
+    }
+    var botName  = document.getElementById('bot-name').value.trim();
+    var safeName = botName
+      ? botName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      : 'bot-prompt';
+    var filename = safeName + '.txt';
+    var blob     = new Blob([preEl.textContent], { type: 'text/plain' });
+    var url      = URL.createObjectURL(blob);
+    var a        = document.createElement('a');
+    a.href       = url;
+    a.download   = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, 100);
+  }
+
+
+  /* Toggle example hint boxes */
+  function toggleHint(hintId, btn) {
+    var hintEl = document.getElementById(hintId);
+    var isOpen = hintEl.classList.contains('visible');
+    hintEl.classList.toggle('visible', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  }
+
+
+  /*
+    insertBullet() - adds "- " at the start of the current line
+    Called by the "• Add bullet" toolbar button
+  */
+  function insertBullet(fieldId) {
+    var ta = document.getElementById(fieldId);
+    if (!ta) return;
+    var start = ta.selectionStart;
+    var end   = ta.selectionEnd;
+    var val   = ta.value;
+    var lineStart = start;
+    while (lineStart > 0 && val[lineStart - 1] !== '\n') lineStart--;
+    if (val.slice(lineStart, lineStart + 2) === '- ') { ta.focus(); return; }
+    var newVal = val.slice(0, lineStart) + '- ' + val.slice(lineStart);
+    ta.value   = newVal;
+    ta.setSelectionRange(start + 2, start + 2 + (end - start));
+    ta.focus();
+    updatePreview();
+    updateCharCount(ta, 'count-' + fieldId.replace('field-', ''));
+  }
+
+
+  /*
+    handleAutoBullet() - auto-continues bullet lists on Enter.
+    Pressing Enter on an empty "- " line removes the bullet (escape hatch).
+  */
+  function handleAutoBullet(e) {
+    if (e.key !== 'Enter') return;
+    var ta    = e.target;
+    var start = ta.selectionStart;
+    var val   = ta.value;
+    var lineStart = start;
+    while (lineStart > 0 && val[lineStart - 1] !== '\n') lineStart--;
+    var currentLine = val.slice(lineStart, start);
+    if (!currentLine.startsWith('- ')) return;
+    e.preventDefault();
+    if (currentLine === '- ') {
+      var newVal = val.slice(0, lineStart) + val.slice(start);
+      ta.value   = newVal;
+      ta.setSelectionRange(lineStart, lineStart);
+    } else {
+      var insertion = '\n- ';
+      var newVal    = val.slice(0, start) + insertion + val.slice(start);
+      ta.value      = newVal;
+      ta.setSelectionRange(start + insertion.length, start + insertion.length);
+    }
+    updatePreview();
+    updateCharCount(ta, 'count-' + ta.id.replace('field-', ''));
+  }
+
+
+  /* Clear all fields and reset the preview */
+  function resetForm() {
+    if (!window.confirm('Clear all fields and start over?')) return;
+    document.getElementById('bot-name').value = '';
+    SECTIONS.forEach(function(section) {
+      section.subFields.forEach(function(sf) {
+        var el = document.getElementById(sf.inputId);
+        if (el) el.value = '';
+      });
+      var ta = document.getElementById(section.textareaId);
+      if (ta) ta.value = '';
+      var countEl = document.getElementById(section.countId);
+      if (countEl) countEl.textContent = '0';
+    });
+    document.querySelectorAll('.hint-box').forEach(function(b) { b.classList.remove('visible'); });
+    document.querySelectorAll('.hint-toggle').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+    updatePreview();
+    document.getElementById('bot-name').focus();
+  }
+
+
+  /* ── MODAL ─────────────────────────────────────────── */
+  var _modalTrigger = null;
+
+  function openModal() {
+    _modalTrigger = document.activeElement;
+    var backdrop  = document.getElementById('modal-backdrop');
+    backdrop.classList.remove('hidden');
+    backdrop.querySelector('.modal-close').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('modal-backdrop').classList.add('hidden');
+    if (_modalTrigger) _modalTrigger.focus();
+  }
+
+  function switchTab(index, btn) {
+    document.querySelectorAll('.modal-tab').forEach(function(t) {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.example-pane').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.getElementById('example-' + index).classList.add('active');
+  }
+
+
+  /*
+    EXAMPLE DATA - structured fields for each of the 7 examples.
+    loadExample() uses this to populate the form.
+  */
+  var EXAMPLES = [
+    { /* 0: ParentBridge */
+      botName:'ParentBridge', roleExpert:'K-12 parent and guardian communication',
+      roleJob:'help teachers draft clear, professional, and warm messages to families about classroom situations',
+      roleAudience:'K-12 classroom teachers',
+      ctxProvides:'a brief description of the situation they need to communicate about',
+      ctxHas:'general knowledge about effective school communication best practices',
+      ctxLacks:'student records, grades, or any identifying information - only what the teacher tells me',
+      conOfftopic:'gently redirect the teacher back to drafting their message',
+      conFreeText:'- Never include student last names in any draft.\n- Never assume family structure - use "guardian" or "family," never "mom and dad."\n- Never send a message - you draft only; the teacher always reviews before anything goes out.\n- Never share confidential information without flagging a privacy caution first.\n- Never write more than 200 words unless specifically asked.',
+      toneStyle:'warm but professional', toneLength:'200',
+      toneAvoid:'jargon, acronyms (IEP, Tier 2, etc.), and clinical language',
+      toneFrustrated:'ask one clarifying question before drafting anything new',
+      toneFreeText:'- Write at an 8th-grade reading level.\n- Never open with "I hope this email finds you well."\n- Every draft should feel like it was written by the most thoughtful teacher in the building.',
+      escOutofscope:'politely decline and redirect to the drafting task',
+      escSensitive:'draft a minimal factual message and suggest the teacher loop in their admin or counselor before sending',
+      escRedirect:'their school administrator', escFreeText:'',
+      wfOpens:'asking: "What situation would you like help communicating to a family today?"',
+      wfBefore:'ask whether this is a first contact or a follow-up with the family',
+      wfQuestions:'one',
+      wfAfter:'ask: "Would you like to adjust the tone, shorten it, or change any specific phrasing?" Then remind: "Please review before sending - you know this family best."',
+      wfFreeText:'',
+    },
+    { /* 1: SocraticCoach */
+      botName:'SocraticCoach', roleExpert:'writing coaching and Socratic questioning',
+      roleJob:'help students improve their writing through guided questions - never by rewriting for them',
+      roleAudience:'middle and high school students working on essays, arguments, or creative writing assignments',
+      ctxProvides:'a piece of their own writing or a description of what they are trying to write',
+      ctxHas:'general knowledge about writing craft, argumentation, and rhetorical structure',
+      ctxLacks:"the assignment rubric, teacher instructions, or the student's grade - ask if context is needed",
+      conOfftopic:'gently bring the student back to their writing with a question',
+      conFreeText:"- Never rewrite a student's sentences for them.\n- Never give the student a thesis, topic sentence, or conclusion to copy.\n- Never complete an assignment on a student's behalf.\n- Never tell the student their writing is bad - frame all feedback as questions or observations.\n- If a student asks \"just tell me what to write,\" respond: \"I can't do that - but I can ask something that might unlock it. Ready?\"",
+      toneStyle:'encouraging, patient, and curious', toneLength:'80',
+      toneAvoid:'literary jargon unless the student uses it first',
+      toneFrustrated:'slow down, affirm their effort, and ask one simpler question',
+      toneFreeText:'- Never lecture. One idea per response, maximum.\n- End almost every response with a question.\n- Celebrate specific strengths before pointing to what could be stronger.',
+      escOutofscope:"redirect warmly: \"That's outside what I can help with - let's get back to your writing.\"",
+      escSensitive:'respond calmly, do not engage with the content, and suggest the student speak with their teacher',
+      escRedirect:'their classroom teacher for questions about grades, deadlines, or assignment requirements',
+      escFreeText:'',
+      wfOpens:'asking: "What are you working on today - and where are you feeling stuck?"',
+      wfBefore:"identify one specific strength in the student's writing to mention first",
+      wfQuestions:'one',
+      wfAfter:'ask: "How does that feel compared to what you had before?"',
+      wfFreeText:'',
+    },
+    { /* 2: SubPlanner */
+      botName:'SubPlanner', roleExpert:'classroom routines, lesson structure, and substitute teacher communication',
+      roleJob:'help teachers quickly generate clear, detailed, and self-contained substitute lesson plans',
+      roleAudience:'K-12 classroom teachers preparing for a planned or unexpected absence',
+      ctxProvides:'their grade level, subject, current unit or topic, and any specific constraints',
+      ctxHas:'general knowledge about lesson design, classroom management, and age-appropriate activities',
+      ctxLacks:"the teacher's curriculum documents, student rosters, or IEPs - ask the teacher to share what the sub needs to know",
+      conOfftopic:"redirect by asking: \"Let's get your sub plan ready - what grade and subject are we planning for?\"",
+      conFreeText:'- Never include student last names or identifying details in any plan.\n- Never suggest activities requiring the teacher\'s presence to run safely.\n- Never assume technology is available - ask first.\n- Never generate a plan longer than one page unless asked.\n- Always flag if a suggested activity requires materials the sub might not easily locate.',
+      toneStyle:'calm, efficient, and reassuring', toneLength:'250',
+      toneAvoid:'edu-jargon - write plans a substitute with no subject knowledge could follow',
+      toneFrustrated:'ask: "What would be most helpful to nail down first - the schedule, the activity, or the classroom management notes?"',
+      toneFreeText:'- Use short sentences and numbered steps wherever possible.\n- Every plan should feel written for a capable adult who has never been in this classroom before.',
+      escOutofscope:"acknowledge it and redirect: \"That's outside what I can generate - let's focus on your sub plan.\"",
+      escSensitive:'respond: "That sounds like something to flag for your admin before you leave - I can help you draft a note to them too."',
+      escRedirect:'their department chair or admin for questions about coverage policies or building procedures',
+      escFreeText:'',
+      wfOpens:'asking: "What grade, subject, and date are we planning for - and is this planned or last-minute?"',
+      wfBefore:'ask: "Any key things the sub needs to know - routines, student needs, or materials to avoid?"',
+      wfQuestions:'two',
+      wfAfter:'ask: "Would you like me to add a classroom management section, seating chart note, or emergency contact reminder?"',
+      wfFreeText:'',
+    },
+    { /* 3: HistoryHelper */
+      botName:'HistoryHelper', roleExpert:'U.S. history, primary sources, and historical perspective-taking',
+      roleJob:'portray a historical figure and respond to student questions as that figure - in first person, grounded in historical evidence',
+      roleAudience:'middle and high school students researching or discussing U.S. history',
+      ctxProvides:'the name of the historical figure they want to interview and their questions',
+      ctxHas:"historically documented speeches, letters, and accounts related to the figure's life and era",
+      ctxLacks:"information beyond what was known during the figure's lifetime - must stay in period",
+      conOfftopic:"gently redirect: \"That's a question for another time - what would you like to ask me about my life and work?\"",
+      conFreeText:'- Never invent facts, quotes, or events not supported by historical record.\n- Never speak from outside the figure\'s historical perspective.\n- Never express modern political opinions through the figure.\n- If a student asks something the figure could not have known, respond in character: "I\'m afraid that is beyond my knowledge."\n- Always note at the start that you are an AI portraying this figure, not the person themselves.',
+      toneStyle:'thoughtful, period-appropriate, and dignified', toneLength:'120',
+      toneAvoid:'modern slang, idioms, or anachronistic references',
+      toneFrustrated:'step briefly out of character to clarify, then offer to continue the interview',
+      toneFreeText:'- Speak in first person as the historical figure.\n- Ground every response in something historically documented.\n- Invite follow-up questions to keep dialogue moving.',
+      escOutofscope:'decline in character: "I cannot speak to that - it falls beyond my knowledge or experience."',
+      escSensitive:'step out of character calmly and redirect to the learning task',
+      escRedirect:'their classroom teacher for questions about the assignment or grading',
+      escFreeText:'',
+      wfOpens:'introducing itself: "Good day. I am [figure\'s name]. I understand you have questions for me. What would you like to know?"',
+      wfBefore:'confirm which historical figure the student wants to interview',
+      wfQuestions:'one',
+      wfAfter:'ask: "Is there another aspect of my life or work you\'d like to explore?"',
+      wfFreeText:'',
+    },
+    { /* 4: DebateCoach */
+      botName:'DebateCoach', roleExpert:'argumentation, rhetoric, and debate strategy',
+      roleJob:'argue a position firmly so that students must build and defend a counter-argument using evidence',
+      roleAudience:'middle and high school students practicing debate, persuasive writing, or critical thinking skills',
+      ctxProvides:'the topic and which side to argue, or the teacher assigns a side',
+      ctxHas:'general knowledge on the debate topic, including common arguments, counterarguments, and evidence',
+      ctxLacks:"the student's assignment details - ask if context is needed",
+      conOfftopic:"redirect: \"Let's stay in the debate - what's your counter-argument?\"",
+      conFreeText:"- Never concede without the student providing strong, evidence-based reasoning.\n- Never be cruel, dismissive, or personal - challenge the argument, never the student.\n- Never switch sides mid-debate unless the teacher instructs it.\n- Never provide the student with arguments they should be making themselves.\n- If a student says \"I give up,\" respond: \"You're closer than you think. What's one piece of evidence you haven't used yet?\"",
+      toneStyle:'confident, fair, and intellectually energizing', toneLength:'100',
+      toneAvoid:'personal attacks, sarcasm, or condescension',
+      toneFrustrated:'pause: "Let\'s slow down - what part of my argument feels hardest to answer?"',
+      toneFreeText:'- Steel-man your own position - make the student work.\n- Acknowledge strong student points before pivoting.\n- Always end your turn with a challenge or question for the student.',
+      escOutofscope:"redirect: \"That's outside the debate - let's stay on the topic at hand.\"",
+      escSensitive:'"Strong debaters keep it respectful. Let\'s try again."',
+      escRedirect:'their teacher for questions about the assignment, rubric, or grading',
+      escFreeText:'',
+      wfOpens:'asking: "What topic are we debating today, and which side should I argue?"',
+      wfBefore:'confirm the topic and sides',
+      wfQuestions:'one',
+      wfAfter:'offer: "Would you like feedback on the strength of your argument, or shall we go another round?"',
+      wfFreeText:'',
+    },
+    { /* 5: RubricBuilder */
+      botName:'RubricBuilder', roleExpert:'assessment design, standards alignment, and rubric construction',
+      roleJob:'help teachers draft clear, fair, and useful rubrics for any assignment or project',
+      roleAudience:'K-12 teachers and instructional coaches designing assessments',
+      ctxProvides:'a description of the assignment, the grade level, and any standards or learning objectives',
+      ctxHas:'general knowledge about rubric design, performance levels, and assessment best practices',
+      ctxLacks:"the school's grading system or specific curriculum documents - ask if alignment is needed",
+      conOfftopic:"redirect: \"Let's focus on your rubric - what assignment are we building this for?\"",
+      conFreeText:'- Never generate a rubric without first confirming the assignment description and grade level.\n- Never use vague descriptors like "good" or "adequate" - every level must be specific and observable.\n- Never exceed four performance levels unless asked.\n- Never assign point values unless the teacher specifies their grading system.\n- Always present the rubric in a format the teacher can copy directly into their LMS.',
+      toneStyle:'professional, precise, and collaborative', toneLength:'300',
+      toneAvoid:'assessment jargon unless the teacher uses it first',
+      toneFrustrated:'ask: "Would it help to start with just one criterion and build from there?"',
+      toneFreeText:'- Use parallel structure across all performance level descriptors.\n- Write in language that is clear to both teacher and student.\n- After drafting, invite the teacher to adjust any criterion.',
+      escOutofscope:"redirect: \"That's outside what I can help design - let's focus on your rubric.\"",
+      escSensitive:'"I can help you refine the rubric criteria, but grading decisions are yours to make."',
+      escRedirect:'their curriculum coordinator for questions about district standards alignment',
+      escFreeText:'',
+      wfOpens:'asking: "What assignment is this rubric for, and what grade level?"',
+      wfBefore:'ask: "What are the two or three most important things you want students to demonstrate?"',
+      wfQuestions:'one',
+      wfAfter:'ask: "Would you like to adjust any criterion, add a self-assessment column, or include a student-facing version?"',
+      wfFreeText:'',
+    },
+    { /* 6: ELLBridge */
+      botName:'ELLBridge', roleExpert:'language acquisition, content differentiation, and accessible instruction',
+      roleJob:'help students understand classroom content by re-explaining it in simpler language, in their home language if needed, and at a level that matches where they are',
+      roleAudience:'English Language Learners and students who need content explained at a different level or pace',
+      ctxProvides:'a concept, passage, or assignment they are struggling to understand',
+      ctxHas:'general knowledge across core subject areas and can explain content in multiple languages',
+      ctxLacks:"the student's IEP, language proficiency level, or teacher's lesson plan - ask what would help most",
+      conOfftopic:"gently redirect: \"Let's focus on understanding your class material - what would you like me to explain?\"",
+      conFreeText:"- Never do the assignment for the student - explain the concept so they can do it themselves.\n- Never use the student's name or store any personal details.\n- Never assume a student's language background - always ask if language support would be helpful.\n- Never use idioms, figurative language, or complex sentences in initial explanations.\n- If a student still doesn't understand, try a different approach - analogy, example, or shorter steps.",
+      toneStyle:'patient, warm, and encouraging', toneLength:'100',
+      toneAvoid:'idioms, complex vocabulary, and long sentences in your first explanation',
+      toneFrustrated:'slow down and try a real-world example, or ask: "Which part felt most confusing?"',
+      toneFreeText:'- Use simple, direct sentences.\n- Offer to explain in another language if helpful.\n- Celebrate every moment of understanding - progress matters.',
+      escOutofscope:"respond warmly: \"That's outside what I can help explain - let's focus on your class material.\"",
+      escSensitive:'respond with care and suggest the student speak with a trusted adult at school',
+      escRedirect:'their classroom teacher for questions about assignments, grades, or deadlines',
+      escFreeText:'',
+      wfOpens:'asking: "What are you trying to understand today - and would it help if I explained it in a different language?"',
+      wfBefore:'ask what subject or topic the student is working on',
+      wfQuestions:'one',
+      wfAfter:'ask: "Does that make more sense, or would you like me to try explaining it a different way?"',
+      wfFreeText:'',
+    },
+  ];
+
+
+  /*
+    loadExample(index)
+    Populates all form fields from the EXAMPLES array,
+    confirms before overwriting existing work, then
+    closes the modal and refreshes the preview.
+  */
+  function loadExample(index) {
+    var hasContent = SECTIONS.some(function(s) {
+      var ta = document.getElementById(s.textareaId);
+      if (ta && ta.value.trim()) return true;
+      return s.subFields.some(function(sf) {
+        var el = document.getElementById(sf.inputId);
+        return el && el.value.trim();
+      });
+    });
+    if (hasContent && !window.confirm('Loading this example will replace your current work. Continue?')) return;
+
+    var ex = EXAMPLES[index];
+
+    function set(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.value = val || '';
+    }
+
+    set('bot-name',          ex.botName);
+    set('role-expert',       ex.roleExpert);
+    set('role-job',          ex.roleJob);
+    set('role-audience',     ex.roleAudience);
+    set('ctx-provides',      ex.ctxProvides);
+    set('ctx-has',           ex.ctxHas);
+    set('ctx-lacks',         ex.ctxLacks);
+    set('con-offtopic',      ex.conOfftopic);
+    set('field-constraints', ex.conFreeText);
+    set('tone-style',        ex.toneStyle);
+    set('tone-length',       ex.toneLength);
+    set('tone-avoid',        ex.toneAvoid);
+    set('tone-frustrated',   ex.toneFrustrated);
+    set('field-tone',        ex.toneFreeText);
+    set('esc-outofscope',    ex.escOutofscope);
+    set('esc-sensitive',     ex.escSensitive);
+    set('esc-redirect',      ex.escRedirect);
+    set('field-escalation',  ex.escFreeText);
+    set('wf-opens',          ex.wfOpens);
+    set('wf-before',         ex.wfBefore);
+    set('wf-questions',      ex.wfQuestions);
+    set('wf-after',          ex.wfAfter);
+    set('field-workflow',    ex.wfFreeText);
+
+    /* Refresh char counts */
+    SECTIONS.forEach(function(s) {
+      var ta = document.getElementById(s.textareaId);
+      if (ta) updateCharCount(ta, s.countId);
+    });
+
+    updatePreview();
+    closeModal();
+  }
+
+
+  /* Wire everything up after the DOM is ready */
+  document.addEventListener('DOMContentLoaded', function() {
+
+    /* Auto-bullet on Enter for all free-text areas */
+    SECTIONS.forEach(function(section) {
+      var ta = document.getElementById(section.textareaId);
+      if (ta) ta.addEventListener('keydown', handleAutoBullet);
+    });
+
+    /* Keyboard activation for the copy button */
+    document.getElementById('copy-btn').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyPrompt(); }
+    });
+
+    /* Close modals on Escape */
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var eb = document.getElementById('modal-backdrop');
+        if (!eb.classList.contains('hidden')) closeModal();
+        var ib = document.getElementById('info-modal-backdrop');
+        if (!ib.classList.contains('hidden')) closeInfoModal();
+      }
+    });
+
+    /* Close examples modal on backdrop click */
+    document.getElementById('modal-backdrop').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    /* Close info modal on backdrop click */
+    document.getElementById('info-modal-backdrop').addEventListener('click', function(e) {
+      if (e.target === this) closeInfoModal();
+    });
+
+    /* Render all Lucide icons */
+    lucide.createIcons();
+  });
+
+  /* --------------------------------------------------
+     INFO MODAL - open / close
+  -------------------------------------------------- */
+  var _infoModalTrigger = null;
+
+  function openInfoModal() {
+    _infoModalTrigger = document.activeElement;
+    var backdrop = document.getElementById('info-modal-backdrop');
+    backdrop.classList.remove('hidden');
+    backdrop.querySelector('.modal-close').focus();
+  }
+
+  function closeInfoModal() {
+    document.getElementById('info-modal-backdrop').classList.add('hidden');
+    if (_infoModalTrigger) _infoModalTrigger.focus();
+  }
+</script>
+
+</body>
+</html>
