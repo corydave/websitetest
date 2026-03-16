@@ -110,7 +110,7 @@
 
         // Standalone FLX AI Hub pill
         '      <a href="https://www.flcc.edu/ai/" target="_blank" rel="noopener" class="official-link">',
-        '        FLX AI Hub &nbsp;' + iconExternal,
+        '        flcc.edu/ai &nbsp;' + iconExternal,
         '      </a>',
 
         '    </nav>',
