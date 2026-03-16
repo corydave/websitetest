@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI for Marketing & Communications | FLX AI Hub</title>
+
+    <!-- Tailwind CSS for utility-based styling (CDN version - no install needed) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome for copy icon, file icons, etc. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Nunito Sans - the FLX AI Hub brand font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ─── BRAND COLORS ─────────────────────────────────────────────────────
+           CSS variables for the FLX AI Hub palette. Change a color here and
+           it updates everywhere on the page automatically.
+        ─────────────────────────────────────────────────────────────────────── */
+        :root {
+            --primary-blue:   #0046AD;  /* main brand color - header, headings, buttons   */
+            --accent-green:   #58A618;  /* badge for "Daily" technique cards               */
+            --accent-orange:  #C9754A;  /* badge for the Research card                     */
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+
+        /* Tailwind doesn't know our custom brand colors, so we add manual
+           utility classes for the handful we actually use. */
+        .bg-primary     { background-color: var(--primary-blue);  }
+        .text-primary   { color:            var(--primary-blue);  }
+        .bg-accent      { background-color: var(--accent-green);  }
+        .border-accent  { border-color:     var(--accent-green);  }
+        .bg-research    { background-color: var(--accent-orange); }
+        .bg-advanced    { background-color: var(--primary-blue);  } /* blue badge: Advanced cards */
+
+        /* ─── PROMPT TEXT BOX ──────────────────────────────────────────────────
+           Monospace font inside a soft gray box so prompts look clearly
+           different from the surrounding UI prose.
+        ─────────────────────────────────────────────────────────────────────── */
+        .prompt-text {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            white-space: pre-wrap;   /* preserves line breaks in the prompt text  */
+            word-break: break-word;  /* stops long lines from overflowing the box  */
+        }
+
+        /* ─── CARD HOVER EFFECT ────────────────────────────────────────────────
+           Cards lift slightly on hover for a tactile feel.
+        ─────────────────────────────────────────────────────────────────────── */
+        .card-shadow {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-shadow:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
+                        0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        /* ─── FULL-WIDTH CARDS ──────────────────────────────────────────────────
+           Research card (and section dividers) span both grid columns.
+        ─────────────────────────────────────────────────────────────────────── */
+        .research-card {
+            grid-column: 1 / -1;
+        }
+
+        /* ─── TOAST NOTIFICATION ───────────────────────────────────────────────
+           A small banner that slides up from the bottom of the screen briefly
+           after the user copies a prompt to their clipboard.
+        ─────────────────────────────────────────────────────────────────────── */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--accent-green);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein  { from { bottom: 0;    opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0;    opacity: 0; } }
+
+        /* ─── AI TOOLS LAUNCHER ────────────────────────────────────────────────
+           A row of pill-buttons that open each AI tool in a new tab.
+           Sits between the intro text and the first prompt card.
+        ─────────────────────────────────────────────────────────────────────── */
+        .tools-launcher {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 12px rgba(0, 70, 173, 0.08);
+        }
+
+        /* Small uppercase label above the tool buttons */
+        .tools-launcher-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        /* Flex row that wraps on narrow screens */
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+        }
+
+        /* Each individual tool pill */
+        .tool-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: #334155;
+            transition: border-color 0.15s, background 0.15s, transform 0.1s;
+        }
+
+        /* Hover: lift slightly and highlight in brand blue */
+        .tool-link:hover {
+            border-color: var(--primary-blue);
+            background: #dbeafe;
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Favicon icon inside each pill */
+        .tool-link img {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            display: block;
+        }
+
+        /* ─── PRESENTER MODE (?view=full in the URL) ────────────────────────────
+           Switches the grid to a single column and sizes each card to roughly
+           fill the screen - great for presenting without a separate slide deck.
+           JS adds the 'presenter-mode' class to #prompt-grid on page load
+           when it detects ?view=full in the URL.
+        ─────────────────────────────────────────────────────────────────────── */
+        #prompt-grid.presenter-mode {
+            grid-template-columns: 1fr;
+        }
+
+        #prompt-grid.presenter-mode article {
+            min-height: 88vh;
+            max-width: 860px;
+            margin-inline: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Prompt box and "why" text grow bigger in presenter mode */
+        #prompt-grid.presenter-mode .prompt-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        #prompt-grid.presenter-mode .card-why {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* ─── MODAL OVERLAY ────────────────────────────────────────────────────
+           A full-screen dimmed backdrop. Clicking the backdrop (or the ×
+           button) closes the modal.
+        ─────────────────────────────────────────────────────────────────────── */
+        .modal-backdrop {
+            display: none;                /* hidden by default */
+            position: fixed;
+            inset: 0;                     /* covers the entire viewport */
+            background: rgba(0,0,0,0.55);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* JS adds the 'open' class to show the modal */
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        /* The white modal box */
+        .modal-box {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            width: 100%;
+            overflow: hidden;
+            animation: modalIn 0.2s ease-out;
+        }
+
+        /* Text modals: comfortable reading width */
+        .modal-box.modal-text  { max-width: 640px; }
+
+        /* Spreadsheet modals: nearly fullscreen */
+        .modal-box.modal-sheet { max-width: 95vw; height: 90vh; }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+
+        /* Modal header: navy bar with title and close button */
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--primary-blue);
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .modal-header-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        /* The × close button in the modal header */
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 0.25rem;
+            transition: color 0.15s;
+        }
+        .modal-close:hover { color: #ffffff; }
+
+        /* Scrollable content area inside text modals */
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Pre-formatted text block for text modals */
+        .modal-content-text {
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #1e293b;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* The iframe fills the full modal content area in sheet mode */
+        .modal-iframe {
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            border: none;
+            display: block;
+        }
+
+        /* ─── PAGE HERO ─────────────────────────────────────────────────────────
+           Blue banner that replaces the old header. Sits above the slides embed.
+        ─────────────────────────────────────────────────────────────────────── */
+        .page-hero {
+            background: var(--primary-blue);
+            color: #ffffff;
+            padding: 3.5rem 1.5rem 3rem;
+            text-align: center;
+        }
+
+        .page-hero .hero-label {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(1.75rem, 5vw, 2.75rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero .hero-sub {
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.85);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ─── SLIDES SECTION ────────────────────────────────────────────────────
+           White panel below the hero that holds the 16:9 embedded presentation
+           and the three action buttons beneath it.
+        ─────────────────────────────────────────────────────────────────────── */
+        .slides-section {
+            background: #ffffff;
+            padding: 3rem 1.5rem 2.5rem;
+            border-bottom: 1px solid #e8eaed;
+        }
+
+        /* Centers and constrains the slide embed to a comfortable reading width */
+        .slides-container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Responsive 16:9 aspect-ratio wrapper.
+           The iframe is positioned absolutely inside so it always fills the box
+           regardless of screen size - no fixed pixel heights needed. */
+        .slides-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 56.25% = 9/16 * 100 - gives us the 16:9 ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 6px 30px rgba(0, 70, 173, 0.13);
+        }
+
+        .slides-wrapper iframe {
+            position: absolute;
+            inset: 0;          /* shorthand for top:0; right:0; bottom:0; left:0 */
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Row of action buttons below the slide embed */
+        .slides-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;    /* wraps to a second row on narrow screens */
+            margin-top: 1.5rem;
+        }
+
+        /* ─── ACTION BUTTONS ────────────────────────────────────────────────────
+           Standalone button styles (normally provided by shared.css on the
+           full FLCC site - defined here so this file works on its own).
+        ─────────────────────────────────────────────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+            border: 2px solid transparent;
+        }
+        .btn:hover { transform: translateY(-2px); }
+
+        /* Primary: solid blue fill */
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            border-color: var(--primary-blue);
+        }
+        .btn-primary:hover {
+            background-color: #003a91;
+            border-color: #003a91;
+        }
+
+        /* Outline: white/transparent with a blue border */
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        .btn-outline:hover {
+            background-color: #dbeafe;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PAGE HERO
+         Blue banner with the workshop title and a one-line description.
+         Sits above the slides embed section.
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <header class="page-hero">
+        <span class="hero-label">FLX AI Hub</span>
+        <h1>AI for Marketing &amp; Communications</h1>
+        <p class="hero-sub">
+            Slideshow and prompt engineering resource from the FLX AI Hub.
+            Use the prompts below as templates - swap in your own context and get started.
+        </p>
+    </header>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SLIDES SECTION
+         Embeds the Google Slides presentation in a responsive 16:9 iframe.
+         The three buttons below let participants copy, download PDF, or
+         download PPTX without leaving the page.
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="slides-section" aria-label="Presentation slideshow">
+        <div class="slides-container">
+
+            <!-- 16:9 responsive iframe wrapper.
+                 The padding-bottom trick (56.25%) makes the box maintain
+                 the correct aspect ratio at any screen width. -->
+            <div class="slides-wrapper">
+                <iframe
+                    src="https://docs.google.com/presentation/d/1jjrHCYJoS6YmMiITjc_W0CXn3dSEgOuK_DU713lkVVI/embed?start=false&loop=false&delayms=3000"
+                    allowfullscreen
+                    loading="lazy"
+                    title="AI for Marketing and Communications Slideshow">
+                </iframe>
+            </div>
+
+            <!-- Action buttons: copy the deck, download as PDF, download as PPTX.
+                 All links open in a new tab and are explicitly marked safe
+                 with rel="noopener noreferrer". -->
+            <div class="slides-actions">
+
+                <a href="https://docs.google.com/presentation/d/1jjrHCYJoS6YmMiITjc_W0CXn3dSEgOuK_DU713lkVVI/copy"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-primary">
+                    <i class="fa-solid fa-copy" aria-hidden="true"></i>
+                    Copy Google Slides
+                </a>
+
+                <a href="https://docs.google.com/presentation/d/1jjrHCYJoS6YmMiITjc_W0CXn3dSEgOuK_DU713lkVVI/export/pdf"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-outline">
+                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                    Download PDF
+                </a>
+
+                <a href="https://docs.google.com/presentation/d/1jjrHCYJoS6YmMiITjc_W0CXn3dSEgOuK_DU713lkVVI/export/pptx"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-outline">
+                    <i class="fa-solid fa-file-powerpoint" aria-hidden="true"></i>
+                    Download PPTX
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <main class="max-w-6xl mx-auto py-12 px-6">
+
+        <!-- ── INTRO ─────────────────────────────────────────────────────────── -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-primary mb-4 border-b-4 border-accent inline-block pb-2">
+                The Prompt Crescendo
+            </h2>
+            <p class="text-lg text-slate-600 mt-4">
+                This library contains every prompting technique and marketing example from today's session
+                - organized from daily-use fundamentals to high-end strategies. Each prompt is a
+                template: swap in your clients, industries, and context to make it yours.
+                Click <strong>Copy Prompt</strong> on any card to send it straight to your clipboard.
+            </p>
+        </section>
+
+        <!-- ── AI TOOLS LAUNCHER ─────────────────────────────────────────────
+             Quick-launch buttons for the major AI tools. Clicking any one
+             opens that tool in a new browser tab so participants can follow
+             along live. Favicons are pulled from Google's public favicon service.
+        ─────────────────────────────────────────────────────────────────────── -->
+        <div class="tools-launcher" role="navigation" aria-label="AI tools">
+            <div class="tools-launcher-label">Open an AI tool to get started - pick any one you like</div>
+            <div class="tools-grid">
+
+                <a class="tool-link" href="https://claude.ai" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=32" alt="Claude logo" />
+                    Claude
+                </a>
+
+                <a class="tool-link" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=chatgpt.com&sz=32" alt="ChatGPT logo" />
+                    ChatGPT
+                </a>
+
+                <a class="tool-link" href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=32" alt="Gemini logo" />
+                    Gemini
+                </a>
+
+                <a class="tool-link" href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=32" alt="Microsoft Copilot logo" />
+                    Copilot
+                </a>
+
+                <a class="tool-link" href="https://www.meta.ai" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=meta.ai&sz=32" alt="Meta AI logo" />
+                    Meta AI
+                </a>
+
+                <a class="tool-link" href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=perplexity.ai&sz=32" alt="Perplexity logo" />
+                    Perplexity
+                </a>
+
+                <a class="tool-link" href="https://notebooklm.google.com" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.google.com/s2/favicons?domain=notebooklm.google.com&sz=32" alt="NotebookLM logo" />
+                    NotebookLM
+                </a>
+
+            </div>
+        </div>
+
+        <!-- ── CARD GRID ──────────────────────────────────────────────────────
+             JavaScript fills this div with prompt cards at page load.
+             Two columns on medium+ screens, one column on mobile.
+        ─────────────────────────────────────────────────────────────────────── -->
+        <div id="prompt-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Cards are injected by renderCards() in the script below -->
+        </div>
+
+        <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-500">
+            <p>
+                &copy; 2026 FLX AI Hub &nbsp;&bull;&nbsp; Finger Lakes Community College &nbsp;&bull;&nbsp;
+                <a href="https://flcc.ai"
+                   class="underline hover:text-primary transition-colors"
+                   target="_blank"
+                   rel="noopener noreferrer">flcc.ai</a>
+            </p>
+        </footer>
+
+    </main>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         TOAST
+         A brief green "Copied!" banner shown after a prompt is copied.
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        Prompt copied to clipboard!
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MODAL
+         A single reusable modal container. JavaScript populates the title
+         and body content dynamically before opening it.
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="modalBackdrop"
+         class="modal-backdrop"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modalTitle"
+         onclick="handleBackdropClick(event)">
+
+        <!-- The white box - JS toggles between 'modal-text' and 'modal-sheet' -->
+        <div id="modalBox" class="modal-box modal-text">
+
+            <!-- Navy header with title + close button -->
+            <div class="modal-header">
+                <span id="modalTitle" class="modal-header-title"></span>
+                <button class="modal-close"
+                        onclick="closeModal()"
+                        aria-label="Close modal"
+                        title="Close">&#x2715;</button>
+            </div>
+
+            <!-- Content area - either scrollable text or an iframe -->
+            <div id="modalBody" class="modal-body">
+                <!-- Populated by JS -->
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         JAVASCRIPT
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <script>
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * PROMPT DATA
+     *
+     * Each object in this array becomes one card on the page.
+     *
+     * Fields:
+     *   name         - Card heading shown in large bold text
+     *   category     - Badge label: "Daily" (green), "Advanced" (blue),
+     *                  or "Research" (orange + full-width)
+     *   why          - One or two sentences explaining the technique's value
+     *   prompt       - The actual prompt text that gets copied to the clipboard
+     *   fileLink     - (optional) A file or sheet associated with this prompt:
+     *                    type: "modal-text"  → shows plain text in a popup
+     *                    type: "modal-sheet" → embeds a Google Sheet in a popup
+     *                    type: "download"    → direct file download link
+     *   research     - (optional) true = renders full-width with orange badge
+     *   sectionBreak - (optional) true = injects an "Advanced" section divider
+     *                  above this card (used for the first Advanced card)
+     * ════════════════════════════════════════════════════════════════════════
+     */
+    const prompts = [
+
+        // ── DAILY PROMPTING ───────────────────────────────────────────────────
+        // These are the foundational techniques everyone can start using today.
+
+        {
+            name:     "1. Reframing the Tone of an Email",
+            category: "Daily",
+            why:      "For anyone who has written an email while frustrated and thought better of sending it. AI doesn't have bad days - it can strip away the defensiveness that creeps in when a deadline slips. Think of it as a professional editor available at midnight, one who is never tired of your drama.",
+            fileLink: {
+                icon:    "fa-file-lines",
+                text:    "Sample Draft",
+                type:    "modal-text",
+                title:   "Frustrated Draft Email",
+                content: `To: sarah@clientbrand.com
+Subject: Content Calendar - Still Waiting on Photos
+
+Hi Sarah,
+
+I can't move forward because you haven't sent the photos. The delay is on your end, not mine.
+
+I've been waiting three weeks for the product images you said you'd send over by the 3rd. Without them, I can't build out next month's calendar or schedule any of the posts we discussed.
+
+Please get them over as soon as possible. The longer this drags on, the harder it gets to keep everything on track.
+
+Thanks,
+[Your Name]`
+            },
+            prompt:
+`I need to send an email to a client explaining that their social media content calendar is delayed because they still haven't sent me the product photos I requested three weeks ago.
+
+My current draft is too defensive: [see Sample Draft]
+
+Please rewrite this. The tone should be professional, collaborative, and gently firm. Do not sound passive-aggressive. Keep the focus on getting the project moving, not on who's at fault.`
+        },
+
+        {
+            name:     "2. Writing for Multiple Audiences",
+            category: "Daily",
+            why:      "When you're the only writer in the room, you're constantly context-switching between audiences. This prompt does that switching for you, so you're not rewriting from scratch three times - just once.",
+            fileLink: {
+                icon:    "fa-file-lines",
+                text:    "Sample Service Summary",
+                type:    "modal-text",
+                title:   "New Service Summary: Social Content Strategy",
+                content: `SERVICE SUMMARY: Social Content Strategy Package
+
+We're launching a done-for-you social media content strategy service for small businesses that don't have the time or team to manage their online presence consistently.
+
+Here's how it works: we start with a 45-minute discovery call to understand your business, your voice, and your goals. From there, we build a 30-day content calendar tailored to your brand - including post concepts, caption copy, hashtag sets, and posting times optimized for your audience.
+
+Clients receive a fully editable content calendar delivered in Google Sheets, plus a one-hour walkthrough session so they feel confident scheduling and adapting the content themselves.
+
+The service is designed for businesses posting on Instagram, Facebook, or LinkedIn - or all three. We handle the strategy so you can stay focused on running your business.
+
+Pricing starts at $450/month for one platform, with multi-platform packages available.
+
+This is for the business owner who knows they need to show up online but keeps pushing it to the bottom of the list.`
+            },
+            prompt:
+`Here is a summary of a new service we're launching: [see Sample Service Summary].
+
+Please adapt this for three different audiences:
+
+1. A 2-sentence pitch for a busy small business owner who needs to understand the value in under 30 seconds.
+
+2. A social media caption for Instagram, written in a friendly, conversational tone with a clear call to action.
+
+3. A plain-language FAQ answer for someone who found us through Google and doesn't know our industry jargon yet.`
+        },
+
+        {
+            name:     "3. Identifying Blind Spots",
+            category: "Daily",
+            why:      "When you've been staring at the same copy for hours, you stop seeing it clearly. This prompt puts a fresh set of skeptical eyes on your work instantly - the kind of reader who won't give you the benefit of the doubt.",
+            fileLink: {
+                icon:    "fa-file-lines",
+                text:    "Sample Landing Page Draft",
+                type:    "modal-text",
+                title:   "Landing Page Draft: Social Content Strategy",
+                content: `HEADLINE: Finally, a Social Media Strategy That Actually Gets Done
+
+Stop letting your content fall through the cracks. Our Social Content Strategy Package gives you a complete 30-day content plan - built around your brand, your voice, and your goals - so you never have to stare at a blank caption box again.
+
+WHAT YOU GET:
+- A custom 30-day content calendar (Google Sheets, fully editable)
+- Post concepts, caption copy, and hashtags for every single post
+- Platform-specific timing recommendations
+- A 1-hour walkthrough so you're never left guessing
+
+WHO IT'S FOR:
+This is for small business owners who know they should be posting consistently but keep running out of time, ideas, or both. If you've ever said "I'll deal with social media next week" - this is for you.
+
+HOW IT WORKS:
+We start with a 45-minute discovery call. You tell us about your business and your customers. We handle the rest. Your calendar lands in your inbox within 7 business days.
+
+THE INVESTMENT:
+Starting at $450/month for one platform. Multi-platform packages available.
+
+READY TO GET STARTED?
+Book your discovery call today. No commitment, no pressure - just a conversation about what consistent, on-brand content could do for your business.
+
+[Book a Free Discovery Call →]`
+            },
+            prompt:
+`I'm writing a landing page for a new service aimed at small business owners who are skeptical of spending money on marketing. Act as a burned-out small business owner who has been oversold on services before and is immediately suspicious of anything that sounds like marketing.
+
+Read the draft [see Sample Landing Page Draft] and tell me:
+
+- What phrases sound like empty promises or corporate filler?
+- What questions do you have that I failed to answer?
+- Which parts make you more skeptical instead of building trust?`
+        },
+
+        {
+            name:     "4. Getting Help with Excel",
+            category: "Daily",
+            why:      "You don't need to memorize complex syntax. Describe what you want in plain English and let the AI write the formula. It will also explain it so you can tweak it yourself next time.",
+            fileLink: {
+                icon:    "fa-file-excel",
+                text:    "Email Metrics Sheet",
+                type:    "modal-sheet",
+                title:   "Email Subject Line Metrics",
+                url:     "https://docs.google.com/spreadsheets/d/1663_epOcrHcYZIYgIWV0AWpcIi1cniEA7IGLzV9XfDI/edit?usp=sharing",
+                linkUrl: "https://docs.google.com/spreadsheets/d/1663_epOcrHcYZIYgIWV0AWpcIi1cniEA7IGLzV9XfDI/edit"
+            },
+            prompt:
+`I am working in Excel. Column A contains email subject lines, and Column B contains open rates as percentages.
+
+I want to flag any subject line that contains the word "free" or "exclusive," but only if the open rate is below 20%.
+
+Please write an Excel formula that returns "Review Subject Line" if both conditions are met, and leaves the cell blank if not.
+
+Explain how the formula works so I can adjust the threshold or the trigger words later.`
+        },
+
+        {
+            name:     "5. Summarizing a Document",
+            category: "Daily",
+            why:      "You're not being paid to read documents. You're being paid to create things. This prompt skips the summarizing step and goes straight to a ready-to-use deliverable.",
+            fileLink: {
+                icon: "fa-file-pdf",
+                text: "Wine Conference Brochure",
+                type: "download",
+                url:  "https://drive.google.com/uc?export=download&id=1jyPRcQYX29Qbqift7Rbqf8LAg6LAF6uV"
+            },
+            prompt:
+`I need to create a series of social posts promoting our upcoming event based on this event description and speaker bios: [Paste text or attach file].
+
+Please extract the 5 most compelling details - anything that would make someone stop scrolling. For each one:
+
+- Write a short, punchy post of 2-3 sentences with a clear call to action.
+
+- Suggest the best platform to post it on (Instagram, LinkedIn, Facebook) and briefly explain why.`
+        },
+
+        {
+            name:     "6. The CRAFT Framework",
+            category: "Daily",
+            why:      "The Role element does the heavy lifting here - telling the AI to think like a strategist who specializes in unglamorous industries forces it out of generic advice. The Format element ensures the output is a ready-to-use deliverable, not a list of suggestions you still have to execute yourself.",
+            prompt:
+`Context: We manage social media for a local home services company (plumber, HVAC, electrician). Our current content gets almost no engagement - people follow us but never interact.
+
+Role: You are a social media strategist who specializes in "boring" industries that struggle to build authentic audiences.
+
+Action: Create a 30-day content calendar that builds genuine engagement - not just follower counts.
+
+Format: A week-by-week plan with 3 posts per week, each including the post concept, suggested caption angle, best platform, and one question or hook designed to prompt a reply or comment.
+
+Tone: Conversational and neighborly - like a trusted local expert, not a corporate account.`
+        },
+
+
+        // ── HIGH-END PROMPTING ────────────────────────────────────────────────
+        // These advanced techniques take more setup but produce dramatically
+        // better results for complex, strategic, or recurring tasks.
+        //
+        // The first card in this section has sectionBreak: true - the
+        // renderCards() function uses that flag to inject a visual divider
+        // above this card so the page is clearly split into two sections.
+
+        {
+            name:        "7. Chain of Thought (CoT)",
+            category:    "Advanced",
+            sectionBreak: true,   // ← triggers the "High-End Prompting" divider above
+            why:         "If you ask AI to jump straight to an answer, it often skips the nuance. Asking it to think out loud first forces it to process your specific context before it commits to a recommendation - which means fewer answers that could have come from a template.",
+            prompt:
+`I'm planning a promotional push for our local coffee shop's new loyalty app. Our customers are mostly regulars aged 40-65 who are already loyal - they just don't use apps much.
+
+Before you give me any promotional ideas, walk me through the thought process of one of these customers receiving a flyer about the new app. What are they feeling? What's their first hesitation? What would actually make them give it a try?
+
+After that analysis, suggest three low-cost promotional ideas specifically designed to overcome those hesitations - not generic app-launch tactics.`
+        },
+
+        {
+            name:     "8. Metaprompting",
+            category: "Advanced",
+            why:      "When you know what you want but can't get the AI to be specific enough to deliver it, ask the AI to design the instructions itself. This is how you build a reusable workflow that fits your exact voice and your clients - a custom tool you can paste in every month.",
+            prompt:
+`I write monthly newsletters for a local real estate agent. I keep getting generic results from AI that don't match her voice or her audience.
+
+Do not write any newsletter content yet.
+
+Instead, write a reusable prompt I can paste into a new chat each month to get consistently good results. The prompt you write should:
+
+- Define her voice as a clear persona, based on this description: [e.g., "warm, knowledgeable, never pushy, speaks to first-time buyers and retirees downsizing"].
+- Set constraints for length, format, and what to avoid.
+- Instruct the AI to ask me 2-3 questions about that month's topic before writing anything.`
+        },
+
+        {
+            name:     "9. Socratic Prompting",
+            category: "Advanced",
+            why:      "When you're a department of one, there's no one to rubber-duck with. This prompt turns the AI into a structured thinking partner that helps you diagnose problems yourself, rather than handing you an answer that may miss the real issue.",
+            prompt:
+`The Facebook ads I'm running for a local gym have a solid click-through rate, but almost no one is filling out the contact form once they land on the page. Something is breaking down between the ad and the form.
+
+Do not give me a list of fixes yet.
+
+Instead, ask me 5 probing questions - one at a time, waiting for my answer before asking the next - about the ad copy, the landing page, the form itself, and the audience targeting. Help me find the real problem before we talk about solutions.`
+        },
+
+        {
+            name:     "10. Virtual Panels",
+            category: "Advanced",
+            why:      "When you're the only person working on a campaign, there's nobody to poke holes in your thinking before you go live. This prompt simulates the room you wish you could be in - with stakeholders who will actually push back.",
+            fileLink: {
+                icon:    "fa-file-lines",
+                text:    "Sample Brand Concept",
+                type:    "modal-text",
+                title:   "Brand Refresh Concept: Harmon's Hardware",
+                content: `BRAND REFRESH CONCEPT: Harmon's Hardware
+One-Page Summary
+
+THE SITUATION:
+Harmon's Hardware has served the community for 40 years. The current brand - a hand-painted-style logo in burgundy and gold, a tagline that reads "Your Neighborhood Hardware Store Since 1984" - was last updated in the early 2000s. The store is healthy, but foot traffic from customers under 45 is declining. The owner's daughter, Maya, joined the business two years ago and manages the store's social media. She believes a visual refresh could help attract younger homeowners without alienating the regulars.
+
+THE PROPOSED CHANGES:
+1. New logo: A simplified, modern mark based on a stylized wrench and house icon. Clean lines, no script fonts. Works well at small sizes on social media.
+
+2. Updated color palette: Retiring the burgundy and gold in favor of a deep navy (#1B2A4A) and a warm amber (#E8A020). The new palette reads as trustworthy and approachable while feeling more contemporary.
+
+3. New tagline: "Built for Whatever's Next." Replaces "Your Neighborhood Hardware Store Since 1984." The founding year moves to a secondary position in the brand system rather than the primary tagline.
+
+4. Refreshed in-store signage and a new social media visual template.
+
+WHAT IS NOT CHANGING:
+The name. The commitment to stocking obscure parts competitors don't carry. The staff. The free advice.
+
+THE GOAL:
+Look like the store we already are - just through a window that younger customers can actually see through.`
+            },
+            prompt:
+`I'm preparing a brand refresh for the family-owned hardware store that I work at. It has been in business for 40 years. Here is the one-page concept summary: [see Sample Brand Concept].
+
+Act as a panel of three people who will be in that meeting:
+
+- The owner, who built the business from scratch and is emotionally attached to the current logo.
+- A long-time customer in their 60s who shops there because it feels like a neighborhood store, not a big box.
+- The owner's adult child who manages the social media and wants the brand to feel more modern.
+
+Have each person raise their two biggest concerns or objections to the proposed changes.`
+        },
+
+        {
+            name:     "11. Few-Shot Prompting",
+            category: "Advanced",
+            why:      "AI is a pattern-matching engine. Show it exactly what good looks like in your voice, and it will replicate that format far more reliably than if you describe it in words. This is how solo practitioners punch above their weight on content volume.",
+            prompt:
+`I write social captions for a local bakery. Please study these examples of captions that performed well and match the style exactly - warm, a little playful, always ending with a soft call to action.
+
+Example 1: "Mondays are hard. Croissants help. Fresh from the oven until they're gone - stop in before 10."
+
+Example 2: "Our sourdough took three days to make. It'll take you three minutes to finish a slice. Worth it. Order online or come find us."
+
+Now write three captions for this week's featured item: [Describe the item, any seasonal angle, and any promotion].`
+        },
+
+        {
+            name:     "12. The Devil's Advocate",
+            category: "Advanced",
+            why:      "When you've been working on something solo, you stop seeing the risks. This prompt explicitly tells the AI to stop being agreeable and start being critical - before a client, a comment section, or a competitor does it for you.",
+            fileLink: {
+                icon:    "fa-file-lines",
+                text:    "Sample Campaign Concept",
+                type:    "modal-text",
+                title:   "Cause-Marketing Campaign: Giving Tuesday / Preserve the Finger Lakes",
+                content: `CAMPAIGN CONCEPT: "Rooted Here"
+Client: Lakeview Nursery & Garden Center
+Cause: Giving Tuesday - benefiting the Finger Lakes Land Trust
+
+OVERVIEW:
+For Giving Tuesday this year, Lakeview Nursery is partnering with the Finger Lakes Land Trust to launch "Rooted Here" - a two-week campaign that connects the act of planting something in your backyard to the larger act of protecting the natural landscape that defines this region.
+
+For every purchase of $50 or more during the campaign window (November 18 - December 3), Lakeview will donate 10% of the sale to the Finger Lakes Land Trust's working farmland and forest preservation fund.
+
+KEY MESSAGES:
+1. "Every plant you put in the ground is a vote for what this place looks like in 50 years."
+2. "We've been selling roots since 1987. This year, we're helping protect the ones that were here long before us."
+3. "The Finger Lakes is worth preserving. So is the way of life that comes with it."
+
+CAMPAIGN ELEMENTS:
+- In-store signage and window display featuring a hand-drawn map of Land Trust-protected parcels in the region
+- Email series (3 emails over 2 weeks) telling the story of one protected farm
+- Social content: daily "Did You Know?" posts about native plants and local conservation
+- A co-branded Giving Tuesday post shared by both organizations
+
+TONE:
+Rooted, sincere, local. Not performative. The campaign should feel like something a real person who loves this place put together - not a marketing department trying to look good.`
+            },
+            prompt:
+`I'm about to launch a cause-marketing campaign tying our client's brand to Giving Tuesday. Here is the campaign concept and key messaging: [see Sample Campaign Concept].
+
+Act as three different critics: a skeptical journalist, a social media user looking for reasons to call out performative marketing, and a member of the community the campaign is trying to support.
+
+Do not compliment the campaign. Find 3 ways this could backfire - whether it's perceived as exploitative, factually shaky, or just tone-deaf.
+
+For each risk, suggest one small, specific change that would address it.`
+        },
+
+        {
+            name:     "13. The High-Powered Prompt",
+            category: "Advanced",
+            why:      "Every element earns its place: Objective focuses AI on outcomes, not tasks. Role gives it expert judgment. Context grounds it in your reality. Restrictions prevent it from taking the easy way out. This is full-spectrum prompt engineering in one shot.",
+            prompt:
+`OBJECTIVE: Re-engage customers who haven't visited our boutique in six months.
+
+ACTION: Write a short email campaign - three emails over three weeks - designed to bring them back in.
+
+ROLE: You are a direct response copywriter who specializes in small, local retail businesses.
+
+CONTEXT: We sell women's clothing in a mid-size Midwestern town. Our customers are 35-60, value quality over trends, and chose us over big-box stores because of the personal service. Our last re-engagement attempt was a discount code blast that cheapened the brand.
+
+FORMAT: Three emails. Each with a subject line, a 100-word body, and a single clear call to action.
+
+AUDIENCE: Lapsed customers who know us and liked us - they just drifted away.
+
+TONE: Warm and personal, like a note from a shop owner, not a marketing department.
+
+TIMEFRAME: Campaign runs in the 3 weeks before the holiday shopping season.
+
+RESTRICTIONS: No discount codes. No urgency tactics. The first email should not mention the store at all - just tell a short story.`
+        },
+
+
+        // ── DEEP RESEARCH ─────────────────────────────────────────────────────
+        // Start this at the very beginning of the session so it runs in the
+        // background. Circle back to the results together as the payoff moment.
+        {
+            name:     "Deep Research: AI in Marketing & Communications",
+            category: "Research",
+            research: true,
+            why:      "Start this prompt at the very beginning of the session and let it run in the background while we work through the crescendo. The payoff comes when we circle back together - a live demonstration of AI completing hours of research in minutes.",
+            prompt:
+`Context: I work in marketing and communications for a small or mid-size organization - managing content, client relationships, campaigns, and copy, often as a team of one or two.
+
+The Task: Please conduct a deep research dive into "AI Adoption in Marketing & Communications: Trends, Tools, and Best Practices 2025."
+
+Step 1: The Landscape
+
+- What are the 5 highest-impact use cases for AI in marketing and communications right now? Look especially at content creation, audience research, campaign analysis, social media management, and email marketing.
+
+- Find 3 real-world examples of small or mid-size organizations that have publicly reported measurable results from using AI in their marketing operations. What did they implement and what did they achieve?
+
+Step 2: The Tools Check
+
+- What AI tools are most commonly adopted by solo marketers and small marketing teams in 2025? Which ones offer the best ROI for content creation, scheduling, and analytics without enterprise budgets?
+
+Step 3: The Action Plan
+
+- Based on this research, propose 3 "Quick Win" AI use cases a solo marketing professional could implement this week - no new software purchases required.
+
+- For each Quick Win, write a 1-sentence value proposition that could be used to convince a skeptical manager or client.`
+        }
+
+    ]; // end prompts array
+
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * showToast()
+     *
+     * Briefly displays the green "Copied!" banner at the bottom of the
+     * screen. The CSS animation handles the fade-in and fade-out.
+     * After 3 seconds, the 'show' class is removed so the banner hides.
+     * ════════════════════════════════════════════════════════════════════════
+     */
+    function showToast() {
+        const toast = document.getElementById("toast");
+        toast.className = "show";
+        setTimeout(() => {
+            toast.className = toast.className.replace("show", "");
+        }, 3000);
+    }
+
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * copyToClipboard(text)
+     *
+     * Copies the provided text to the user's clipboard.
+     * Uses the modern navigator.clipboard API when available (requires HTTPS
+     * or localhost), then falls back to a textarea + execCommand approach
+     * for older browsers or HTTP contexts.
+     * ════════════════════════════════════════════════════════════════════════
+     */
+    function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            // Modern Clipboard API - works in all current browsers on HTTPS
+            navigator.clipboard.writeText(text)
+                .then(showToast)
+                .catch(() => fallbackCopy(text)); // if permission denied, try fallback
+        } else {
+            // Older browser / HTTP context fallback
+            fallbackCopy(text);
+        }
+    }
+
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * fallbackCopy(text)
+     *
+     * Creates an off-screen textarea, selects its text, and uses the
+     * deprecated document.execCommand('copy') to write to the clipboard.
+     * Only called when the modern Clipboard API is unavailable.
+     * ════════════════════════════════════════════════════════════════════════
+     */
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+
+        // Position the textarea completely off-screen so it never flickers visibly
+        textArea.style.position = "fixed";
+        textArea.style.left     = "-9999px";
+        textArea.style.top      = "-9999px";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+            showToast();
+        } catch (err) {
+            // If both methods fail, log quietly - don't show a confusing error to the user
+            console.error('Copy to clipboard failed:', err);
+        }
+
+        document.body.removeChild(textArea);
+    }
+
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * renderCards()
+     *
+     * Loops through the prompts array and builds an HTML <article> card
+     * for each entry, then appends them to the #prompt-grid div.
+     *
+     * Key decisions:
+     *  - Research cards get the 'research-card' CSS class (full-width)
+     *    and an orange badge; a divider is injected above them too.
+     *  - Advanced cards get a blue badge (bg-advanced) instead of green.
+     *  - Any card with sectionBreak: true gets a "High-End Prompting"
+     *    divider injected above it.
+     *  - Prompt text is HTML-escaped before being injected into the DOM
+     *    to prevent any accidental rendering of special characters.
+     *  - The copy button's onclick uses the array index to reference
+     *    the original (unescaped) prompt text from the prompts array.
+     * ════════════════════════════════════════════════════════════════════════
+     */
+    function renderCards() {
+        const grid = document.getElementById('prompt-grid');
+
+        prompts.forEach(function(p, index) {
+
+            // ── Determine card type ──────────────────────────────────────────
+            const isResearch = p.research === true;
+            const cardClass  = isResearch ? "research-card" : "";
+
+            // Badge color: orange for Research, blue for Advanced, green for Daily
+            let badgeClass;
+            if (isResearch) {
+                badgeClass = "bg-research";
+            } else if (p.category === "Advanced") {
+                badgeClass = "bg-advanced";
+            } else {
+                badgeClass = "bg-accent";
+            }
+
+            // ── Section break divider ────────────────────────────────────────
+            // If this card is flagged as the first in the Advanced section,
+            // inject a full-width visual separator before the card.
+            if (p.sectionBreak) {
+                const divider = document.createElement('div');
+                divider.className = 'research-card';  // full-width across both columns
+                divider.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:1rem;margin:0.5rem 0 0.5rem;">
+                        <div style="flex:1;height:2px;background:linear-gradient(to right,#e2e8f0,#0046AD);border-radius:1px;"></div>
+                        <span style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#0046AD;white-space:nowrap;">
+                            &#x2193;&nbsp; High-End Prompting &nbsp;&#x2193;
+                        </span>
+                        <div style="flex:1;height:2px;background:linear-gradient(to left,#e2e8f0,#0046AD);border-radius:1px;"></div>
+                    </div>`;
+                grid.appendChild(divider);
+            }
+
+            // ── Research card divider ────────────────────────────────────────
+            // For the Research card, inject an orange "Deep Research" divider.
+            if (isResearch) {
+                const divider = document.createElement('div');
+                divider.className = 'research-card';
+                divider.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:1rem;margin:0.5rem 0 0.5rem;">
+                        <div style="flex:1;height:2px;background:linear-gradient(to right,#e2e8f0,#C9754A);border-radius:1px;"></div>
+                        <span style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#C9754A;white-space:nowrap;">
+                            &#x2193;&nbsp; Deep Research &nbsp;&#x2193;
+                        </span>
+                        <div style="flex:1;height:2px;background:linear-gradient(to left,#e2e8f0,#C9754A);border-radius:1px;"></div>
+                    </div>`;
+                grid.appendChild(divider);
+            }
+
+            // ── HTML-escape the prompt text ──────────────────────────────────
+            // This makes characters like < > & display correctly as text
+            // rather than being interpreted as HTML tags.
+            // We do NOT put the index in here - we reference prompts[index] in
+            // the onclick so we always read from the clean original string.
+            const safePrompt = p.prompt
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // ── Build the card element ───────────────────────────────────────
+            const card = document.createElement('article');
+            card.className = [
+                "bg-white rounded-xl shadow-md overflow-hidden",
+                "border border-slate-200 flex flex-col card-shadow",
+                cardClass
+            ].filter(Boolean).join(" ");
+
+            card.innerHTML = `
+                <div class="p-6 flex-grow">
+
+                    <!-- Badge + title row -->
+                    <div class="mb-4">
+                        <span class="px-2 py-1 text-xs font-bold uppercase rounded ${badgeClass} text-white mb-2 inline-block">
+                            ${p.category}
+                        </span>
+                        <h3 class="text-xl font-bold text-primary">${p.name}</h3>
+                    </div>
+
+                    <!-- Why use this technique? -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                            Why use it?
+                        </h4>
+                        <p class="text-slate-700 leading-relaxed font-light card-why">${p.why}</p>
+                    </div>
+
+                    <!-- The copyable prompt template -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                            Prompt Template
+                        </h4>
+                        <div class="prompt-text p-4 rounded-lg border border-slate-200 text-sm leading-relaxed">${safePrompt}</div>
+                    </div>
+
+                </div>
+
+                <!-- Card footer: file link on the left (if any), copy button on the right -->
+                <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
+
+                    <!-- File link button (only rendered when a fileLink exists).
+                         Behaviour depends on the type field:
+                           modal-text  → shows plain text content in a popup modal
+                           modal-sheet → embeds a Google Sheet in a large iframe modal
+                           download    → triggers a direct file download               -->
+                    ${p.fileLink ? (() => {
+                        const fl = p.fileLink;
+                        if (fl.type === 'modal-text') {
+                            // We pass the array index (a safe integer) - never raw content
+                            return `<button
+                                onclick="openTextModal(${index})"
+                                class="text-sm font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-tight flex items-center"
+                                aria-label="Preview ${fl.text}"
+                                title="Preview ${fl.text}"
+                            ><i class="fa-solid ${fl.icon} mr-2" aria-hidden="true"></i>${fl.text}</button>`;
+                        } else if (fl.type === 'modal-sheet') {
+                            // We pass the array index so JS can read url/title safely
+                            return `<button
+                                onclick="openSheetModal(${index})"
+                                class="text-sm font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-tight flex items-center"
+                                aria-label="Preview ${fl.text}"
+                                title="Preview ${fl.text}"
+                            ><i class="fa-solid ${fl.icon} mr-2" aria-hidden="true"></i>${fl.text}</button>`;
+                        } else {
+                            // download type - a plain anchor with the download attribute
+                            return `<a
+                                href="${fl.url}"
+                                download
+                                class="text-sm font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-tight flex items-center"
+                                aria-label="Download ${fl.text}"
+                                title="Download ${fl.text}"
+                            ><i class="fa-solid ${fl.icon} mr-2" aria-hidden="true"></i>${fl.text}</a>`;
+                        }
+                    })() : `<span></span>`}
+
+                    <!-- Copy prompt button - always present on every card -->
+                    <button
+                        onclick="copyToClipboard(prompts[${index}].prompt)"
+                        class="text-sm font-bold text-primary hover:text-blue-800 transition-colors uppercase tracking-tight flex items-center"
+                        aria-label="Copy the ${p.name} prompt to clipboard"
+                        title="Copy prompt to clipboard"
+                    >
+                        <i class="fa-solid fa-copy mr-2" aria-hidden="true"></i>
+                        Copy Prompt
+                    </button>
+
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+    }
+
+
+    /*
+     * ════════════════════════════════════════════════════════════════════════
+     * MODAL FUNCTIONS
+     *
+     * Three entry points depending on the fileLink type:
+     *   openTextModal(index)   - shows plain text content in a modal
+     *   openSheetModal(index)  - embeds a Google Sheet in an iframe modal
+     *   closeModal()           - hides the modal and clears content
+     *
+     * handleBackdropClick(event) closes the modal when the user clicks the
+     * dimmed area outside the white box, but NOT the box itself.
+     * ════════════════════════════════════════════════════════════════════════
+     */
+
+    // Grab the modal elements once - reused by all modal functions
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalBox      = document.getElementById('modalBox');
+    const modalTitle    = document.getElementById('modalTitle');
+    const modalBody     = document.getElementById('modalBody');
+
+
+    /*
+     * openTextModal(index)
+     * --------------------
+     * Reads the fileLink.content and fileLink.title from the prompts array
+     * at the given index, then opens a medium-width scrollable text modal.
+     *
+     * We use the index (a safe integer from our own code) rather than putting
+     * raw content in onclick attributes, which avoids any XSS surface area.
+     */
+    function openTextModal(index) {
+        const fl = prompts[index].fileLink;
+
+        // Set modal to comfortable reading width
+        modalBox.className = 'modal-box modal-text';
+
+        // Set the title in the navy header
+        modalTitle.textContent = fl.title;
+
+        // Build a <pre> element using textContent (not innerHTML) so that
+        // any special characters in the sample text are safely escaped.
+        modalBody.innerHTML = '';
+        const pre = document.createElement('pre');
+        pre.className = 'modal-content-text';
+        pre.textContent = fl.content;   // textContent escapes < > & automatically
+        modalBody.appendChild(pre);
+
+        modalBackdrop.classList.add('open');
+
+        // Move keyboard focus to the close button so keyboard users can dismiss it
+        modalBackdrop.querySelector('.modal-close').focus();
+    }
+
+
+    /*
+     * openSheetModal(index)
+     * ----------------------
+     * Reads the fileLink.url, fileLink.title, and optional fileLink.linkUrl
+     * from the prompts array, then embeds the URL in a near-fullscreen iframe.
+     *
+     * If linkUrl is provided, a "Link to Spreadsheet" anchor is shown in
+     * the header so the user can open the full sheet in a new tab.
+     */
+    function openSheetModal(index) {
+        const fl = prompts[index].fileLink;
+
+        // Set modal to large near-fullscreen size
+        modalBox.className = 'modal-box modal-sheet';
+
+        // Build the header title
+        modalTitle.innerHTML = '';
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = fl.title;
+        modalTitle.appendChild(titleSpan);
+
+        // Remove any "Link to Spreadsheet" anchor left from a previous modal open
+        const existingLink = document.getElementById('modalSheetLink');
+        if (existingLink) existingLink.remove();
+
+        // If the data provides a direct link, inject it into the header
+        if (fl.linkUrl) {
+            const header  = modalBackdrop.querySelector('.modal-header');
+            const closeBtn = header.querySelector('.modal-close');
+
+            const link = document.createElement('a');
+            link.id        = 'modalSheetLink';
+            link.href      = fl.linkUrl;
+            link.target    = '_blank';
+            link.rel       = 'noopener noreferrer';
+            link.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" style="margin-right:0.35rem;"></i>Open Spreadsheet';
+            link.style.cssText = [
+                'font-size: 0.78rem',
+                'font-weight: 700',
+                'color: rgba(255,255,255,0.85)',
+                'text-decoration: none',
+                'letter-spacing: 0.03em',
+                'margin-right: 1rem',
+                'white-space: nowrap',
+                'transition: color 0.15s',
+            ].join(';');
+            link.addEventListener('mouseenter', () => link.style.color = '#ffffff');
+            link.addEventListener('mouseleave', () => link.style.color = 'rgba(255,255,255,0.85)');
+
+            // Insert the link just before the × close button
+            header.insertBefore(link, closeBtn);
+        }
+
+        // Make modal-body a flex column so the iframe can stretch to fill it
+        modalBody.style.padding       = '0';
+        modalBody.style.display       = 'flex';
+        modalBody.style.flexDirection = 'column';
+        modalBody.style.flex          = '1';
+        modalBody.style.overflow      = 'hidden';
+        modalBody.innerHTML           = '';
+
+        // Build the iframe - setting src in JS (not innerHTML) is safer
+        const iframe = document.createElement('iframe');
+        iframe.src       = fl.url;
+        iframe.className = 'modal-iframe';
+        iframe.title     = fl.title;
+        iframe.setAttribute('loading', 'lazy');
+        modalBody.appendChild(iframe);
+
+        modalBackdrop.classList.add('open');
+        modalBackdrop.querySelector('.modal-close').focus();
+    }
+
+
+    /*
+     * closeModal()
+     * ------------
+     * Hides the backdrop and clears the body content so stale iframes
+     * or text don't linger in the DOM while the modal is closed.
+     */
+    function closeModal() {
+        modalBackdrop.classList.remove('open');
+
+        // Small delay before clearing so the closing animation isn't jarring
+        setTimeout(() => {
+            modalBody.innerHTML     = '';
+            modalBody.style.cssText = '';   // reset all inline style overrides
+
+            // Remove the "Open Spreadsheet" anchor if it was injected
+            const sheetLink = document.getElementById('modalSheetLink');
+            if (sheetLink) sheetLink.remove();
+        }, 150);
+    }
+
+
+    /*
+     * handleBackdropClick(event)
+     * --------------------------
+     * Closes the modal when the user clicks the dark backdrop area,
+     * but NOT when they click inside the white modal box itself.
+     */
+    function handleBackdropClick(event) {
+        // event.target is the element that was actually clicked.
+        // Only close if it is the backdrop itself, not a child inside the box.
+        if (event.target === modalBackdrop) {
+            closeModal();
+        }
+    }
+
+
+    /*
+     * Keyboard accessibility - close modal on Escape key press.
+     */
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) {
+            closeModal();
+        }
+    });
+
+
+    // ── INITIALIZE ────────────────────────────────────────────────────────────
+    // Build all the cards as soon as the page finishes loading, then check
+    // whether the URL contains ?view=full to activate presenter mode.
+    window.addEventListener('load', function () {
+
+        // Render all prompt cards into the grid
+        renderCards();
+
+        // Check the URL for ?view=full (case-insensitive check via URLSearchParams)
+        // URLSearchParams safely parses the query string for us.
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('view') === 'full') {
+
+            // Single-column presenter layout
+            document.getElementById('prompt-grid').classList.add('presenter-mode');
+
+            // Override Tailwind's md:grid-cols-2 with an inline style
+            document.getElementById('prompt-grid').style.gridTemplateColumns = '1fr';
+        }
+    });
+
+    </script>
+
+</body>
+</html>
