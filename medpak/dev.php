@@ -298,7 +298,6 @@ $isLinks = ($action === 'start');
                             <optgroup label="Ventricular">
                                 <option value="vtach">Monomorphic V-Tach</option>
                                 <option value="torsades">Torsades de Pointes</option>
-                                <option value="vfib">Ventricular Fibrillation</option>
                             </optgroup>
                             <optgroup label="AV Blocks">
                                 <option value="1st_degree">1st Degree AV Block</option>
@@ -307,6 +306,7 @@ $isLinks = ($action === 'start');
                                 <option value="3rd_degree">3rd Degree AV Block</option>
                             </optgroup>
                             <optgroup label="Lethal">
+                                <option value="vfib">Ventricular Fibrillation</option>
                                 <option value="asystole">Asystole</option>
                             </optgroup>
                         </select>
@@ -588,7 +588,16 @@ $isLinks = ($action === 'start');
                         if (wideQRSEl) wideQRSEl.checked = !!state.wideQRS;
                         setVal('input-pacingCaptureThreshold', state.pacingCaptureThreshold);
                         const pacCapEl = document.getElementById('input-pacingCaptureEnabled');
-                        if (pacCapEl) pacCapEl.checked = !!state.pacingCaptureEnabled;
+                        if (pacCapEl) {
+                            pacCapEl.checked = !!state.pacingCaptureEnabled;
+                            const isVfib = rhythm === 'vfib';
+                            pacCapEl.disabled = isVfib;
+                            const capContainer = pacCapEl.closest('.flex');
+                            if (capContainer) {
+                                capContainer.classList.toggle('opacity-40', isVfib);
+                                capContainer.classList.toggle('pointer-events-none', isVfib);
+                            }
+                        }
                     }
 
                     // Pacing button + labels (both views)
@@ -688,6 +697,7 @@ $isLinks = ($action === 'start');
                         if (rhythm === 'vtach')      { changes.sysBp = 100; changes.diaBp = 65; changes.spo2 = 92; }
                         else if (rhythm === 'torsades')   { changes.sysBp = 70;  changes.diaBp = 45; changes.spo2 = 85; }
                         else if (rhythm === '3rd_degree') { changes.sysBp = 90;  changes.diaBp = 60; changes.spo2 = 90; }
+                        else if (rhythm === 'vfib')       { changes.pacingCaptureEnabled = false; }
                         updateServerState(changes);
                     });
                     bindInput('input-saNodeRate', 'saNodeRate', Number);
