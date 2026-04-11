@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human vs AI Quiz</title>
+    <meta author="FLX AI Hub">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
             min-height: 100vh;
             color: #333;
         }
@@ -37,7 +37,6 @@
         .quiz-header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
@@ -57,7 +56,6 @@
 
         .progress-fill {
             height: 100%;
-            /* background: linear-gradient(90deg, #4CAF50, #45a049); */
             background: #0046AD;
             width: 0%;
             transition: width 0.3s ease;
@@ -120,13 +118,11 @@
         }
 
         .guess-btn.human {
-            /* background: linear-gradient(135deg, #ff6b6b, #ee5a52); */
             background-color: #0046AD;
             color: white;
         }
 
         .guess-btn.ai {
-            /* background: linear-gradient(135deg, #4ecdc4, #44a08d); */
             background-color: #FFFFFF;
             color: #0046AD;
             border: 1px solid #0046AD;
@@ -158,7 +154,6 @@
             font-weight: bold;
             margin: 20px 0;
             color: #0046AD;
-            /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
         }
 
         .score-message {
@@ -169,7 +164,6 @@
 
         .thumbnails-grid {
             display: grid;
-            /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
             grid-template-columns: repeat(3, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 30px;
@@ -307,7 +301,6 @@
         }
 
         .restart-btn {
-            /* background: linear-gradient(135deg, #667eea, #764ba2); */
             background-color: #0046AD;
             color: white;
             border: none;
@@ -420,12 +413,6 @@
                 answer: 'ai',
                 feedback: 'This limerick was <a href="https://chatgpt.com/share/686bd1d4-dd74-800d-bedd-7d7f47f698f7" target="_blank">created by ChatGPT with the prompt "Please write a limerick that describes limericks"</a>'
             },
-            // {
-            //     type: 'text',
-            //     content: 'Those parts of thee that the world\'s eye doth view<br />Want nothing that the thought of hearts can mend;<br />All tongues, the voice of souls, give thee that due,<br />Uttering bare truth, even so as foes commend.<br />Thy outward thus with outward praise is crown\'d;<br />But those same tongues, that give thee so thine own,<br />In other accents do this praise confound<br />By seeing farther than the eye hath shown.<br />They look into the beauty of thy mind,<br />And that in guess they measure by thy deeds;<br />Then, churls, their thoughts, although their eyes were kind,<br />To thy fair flower add the rank smell of weeds:<br />But why thy odour matcheth not thy show,<br />The soil is this, that thou dost common grow.',
-            //     answer: 'human',
-            //     feedback: 'This is Sonnet LXIX by William Shakespeare.'
-            // },            
             {
                 type: 'text',
                 content: '<center><iframe width="560" height="315" src="https://www.youtube.com/embed/sAG2TL-7eD0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 15px !important;"></iframe></center>',
@@ -440,12 +427,6 @@
                 answer: 'human',
                 feedback: 'This is a photograph taken by a human photographer and uploaded to Unsplash. This image was taken by Alex York and is a barn in the Mormon Row Historic District, Antelope Flats Road, Moose, WY, USA. You can find the original here: <a href="https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U" target="_blank">https://unsplash.com/photos/an-old-barn-in-a-field-with-a-fence-jajGJbTf31U</a>'
             },
-            // {
-            //     type: 'text',
-            //     content: 'When Katie walks, the morning dew takes flight,<br />And roses blush to match her gentle grace.<br />Her laughter rings like bells in golden light,<br />While sunshine pales before her radiant face.<br />Her eyes, like sapphires set in starlit skies,<br />Hold depths that speak of wisdom yet untold.<br />In Katie\'s gaze, eternal beauty lies,<br />More precious than the finest burnished gold.<br />Her voice, a melody that soothes the soul,<br />Can chase away the shadows of despair.<br />She makes the broken heart complete and whole,<br />A treasure beyond compare, beyond compare.<br />Though time may steal the bloom from summer\'s rose,<br />Sweet Katie\'s beauty eternally glows.',
-            //     answer: 'ai',
-            //     feedback: 'This was written by Claude Sonnet 4 with the prompt "Please generate a sonnet in the spirit of Shakespeare about a woman named Katie."'
-            // },
             {
                 type: 'text',
                 content: '<audio controls><source src="rochesterWeather.mp3" type="audio/mpeg">Your browser does not support the audio element.</audio>',
@@ -454,7 +435,7 @@
             },            
             {
                 type: 'text',
-                content: 'The limerick packs laughs anatomical<br />Into space that is quite economical.<br />But the good ones I’ve seen<br />So seldom are clean<br />And the clean ones so seldom are comical.',
+                content: 'The limerick packs laughs anatomical<br />Into space that is quite economical.<br />But the good ones I have seen<br />So seldom are clean<br />And the clean ones so seldom are comical.',
                 answer: 'human',
                 feedback: '<a href="https://kingoflimericks.com/14-of-the-most-famous-limericks-literary-classics/" target="_blank">The author of this limerick is unknown.</a>'
             },
@@ -486,18 +467,6 @@
                 answer: 'human',
                 feedback: 'This video is 100% real. It was sourced from Pixabay and is done by Zethian and can be found at <a href="https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/" target="_blank">https://pixabay.com/videos/wolf-animal-mammal-nature-wild-27400/</a>.'
             },
-            // {
-            //     type: 'text',
-            //     content: 'The first light of dawn had barely touched the Baltic Sea when Captain Nathan "Hawk" Harris’s submarine, USS Minnesota, slipped beneath the surface with the precision of a predator stalking its prey. At periscope depth, Harris peered through the gyro-stabilized lens, his eagle-eyed gaze fixed on the needle-sharp silhouette of a Russian Akula-class fast attack boat cutting through the grey waves ten klicks to port. In the cramped control room, sonar operators traced the enemy’s propeller clicks—mechanical and ominous—while the tactical display flickered with encrypted chatter from Naval Intelligence in London. A fresh, biting chill crept into Harris’s Gore-Tex jacket as he keyed the intercom: “All stations, prepare for passive tracking. We’re in position to shadow their transit for possible infiltration.” In the hush that followed, only the low hum of the diesel-electric engines and the distant echoes of Cold War paranoia remained, as the stage was set for a confrontation that could ignite a global tinderbox.',
-            //     answer: 'ai',
-            //     feedback: 'This was generated by ChatGPT o4-mini-high in June, 2025. The prompt was "Please write the opening paragraph of a novel that is in the style of Tom Clancy."'
-            // },
-            // {
-            //     type: 'text',
-            //     content: 'In retrospect, it would seem an odd way to start a war. Only one of the participants knew what was really happening, and even that was a coincidence. The property settlement had been moved up on the calendar due to a death in the attorney\'s family, and so the attorney was scheduled for a redeye flight, two hours from now, to Hawaii. It was Mr. Yamata\'s first property closing on American soil. Though he owned many properties in the continental United States, the actual title transfer had always been handled by other attorneys, invariably American citizens, who had done precisely what they had been paid to do, generally with oversight by one of Mr. Yamata\'s employees. But not this time.',
-            //     answer: 'human',
-            //     feedback: 'This is a sample from the opening of Tom Clancy\'s 1994 political thriller <u>Debt of Honor</u>.'
-            // }
             {
                 type: 'text',
                 content: '<audio controls><source src="backyardDreams.mp3" type="audio/mpeg">Your browser does not support the audio element.</audio>',
@@ -510,6 +479,48 @@
         let currentCard = 0;
         let userAnswers = [];
         let score = 0;
+
+        // ---------------------------------------------------------------
+        // stopMediaOnCard()
+        //
+        // Stops any playing media inside a given card element so it
+        // doesn't keep running after the user advances to the next slide.
+        //
+        // Two media types need different treatment:
+        //   1. <audio> and <video> elements  — use the native .pause() method
+        //   2. YouTube <iframe> embeds       — use the YouTube iframe API's
+        //      postMessage interface to send a "pauseVideo" command
+        //
+        // The YouTube postMessage approach works without loading the full
+        // YouTube IFrame API script; it just requires the iframe src to
+        // already contain "enablejsapi=1".  We add that parameter
+        // automatically in createQuizCards() below.
+        // ---------------------------------------------------------------
+        function stopMediaOnCard(cardElement) {
+            if (!cardElement) return;
+
+            // --- Stop native HTML audio/video elements ---
+            // querySelectorAll finds ALL matching elements inside the card,
+            // so this handles cards that might have more than one player.
+            cardElement.querySelectorAll('audio, video').forEach(function(mediaEl) {
+                mediaEl.pause();        // stop playback
+                mediaEl.currentTime = 0; // rewind to the beginning (optional but clean)
+            });
+
+            // --- Stop YouTube iframes via postMessage ---
+            // YouTube's iframe player listens for JSON messages on the
+            // window's message channel.  The "command" key tells it what
+            // to do; "pauseVideo" is the relevant command here.
+            cardElement.querySelectorAll('iframe').forEach(function(iframe) {
+                // Only try to message iframes that appear to be YouTube embeds
+                if (iframe.src && iframe.src.includes('youtube.com')) {
+                    iframe.contentWindow.postMessage(
+                        JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+                        '*' // target origin — '*' is safe here because we're only pausing playback
+                    );
+                }
+            });
+        }
 
         // Initialize quiz
         function initQuiz() {
@@ -538,7 +549,20 @@
                 
                 let contentHTML = '';
                 if (item.type === 'text') {
-                    contentHTML = `<div class="card-text">${item.content}</div>`;
+                    // For text content that contains a YouTube iframe, we need to add
+                    // "enablejsapi=1" to the src so the iframe will accept postMessage
+                    // commands (like pauseVideo) from our stopMediaOnCard() function.
+                    const processedContent = item.content.replace(
+                        /(https:\/\/www\.youtube\.com\/embed\/[^"]*)/g,
+                        function(match) {
+                            // Only add the parameter if it isn't already present
+                            if (match.includes('enablejsapi')) return match;
+                            // Append as a query parameter
+                            const separator = match.includes('?') ? '&' : '?';
+                            return match + separator + 'enablejsapi=1';
+                        }
+                    );
+                    contentHTML = `<div class="card-text">${processedContent}</div>`;
                 } else if (item.type === 'image') {
                     contentHTML = `<img src="${item.content}" alt="${item.alt}" title="${item.title}" class="card-image">`;
                 }
@@ -588,6 +612,11 @@
             if (guess === quizData[cardIndex].answer) {
                 score++;
             }
+
+            // ---- Stop any media playing on the card the user just answered ----
+            // We call this immediately (not inside the setTimeout) so the media
+            // stops right away rather than continuing during the 1-second delay.
+            stopMediaOnCard(card);
 
             // Move to next card or show results
             setTimeout(() => {
