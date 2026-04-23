@@ -1,0 +1,1748 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Maker</title>
+
+    <!--
+        gif.js — A JavaScript GIF encoder that runs in the browser.
+        It uses Web Workers to do the heavy lifting off the main thread,
+        keeping the UI responsive during encoding.
+        Docs: https://jnordberg.github.io/gif.js/
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+
+    <!--
+        DM Sans: clean, geometric sans-serif for body text.
+        DM Mono: for frame numbers, file sizes, and technical readouts.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           CSS CUSTOM PROPERTIES (design tokens)
+           All colors, radii, and transitions are defined here so the
+           theme can be adjusted from one place.
+           ============================================================ */
+        :root {
+            /* Background layers — very dark, layered depth */
+            --bg:         #0b0b0b;
+            --surface:    #141414;
+            --surface-2:  #1c1c1c;
+            --surface-3:  #242424;
+
+            /* Accent — warm amber, like film leader or a light table */
+            --accent:     #f59e0b;
+            --accent-dim: #d97706;
+            --accent-glow:rgba(245, 158, 11, 0.15);
+
+            /* Text */
+            --text:       #f0ede8;
+            --text-mid:   #a09a93;
+            --text-dim:   #605a55;
+
+            /* Borders */
+            --border:     rgba(255, 255, 255, 0.07);
+            --border-mid: rgba(255, 255, 255, 0.12);
+
+            /* Semantic */
+            --success:    #34d399;
+            --danger:     #f87171;
+
+            /* Shape */
+            --r-sm:  6px;
+            --r-md:  10px;
+            --r-lg:  16px;
+
+            /* Animation */
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            /* Subtle noise texture via SVG data URI for depth */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            padding-bottom: 4rem;
+        }
+
+        /* ============================================================
+           LAYOUT WRAPPER
+           ============================================================ */
+        #app {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* ============================================================
+           HEADER — film-strip top stripe + title
+           ============================================================ */
+        header {
+            padding: 0.5rem 0 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* The filmstrip sprocket-hole row at the very top */
+        .filmstrip-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1.25rem;
+            align-items: center;
+        }
+
+        .sprocket {
+            width: 16px;
+            height: 11px;
+            background: var(--surface-2);
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        /* Accent bar in the filmstrip */
+        .filmstrip-bar .accent-strip {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: 99px;
+        }
+
+        header h1 {
+            font-size: clamp(1.6rem, 4vw, 2rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        header h1 span {
+            color: var(--accent);
+        }
+
+        header p {
+            color: var(--text-mid);
+            font-size: 0.88rem;
+            margin-top: 0.3rem;
+        }
+
+        /* ============================================================
+           SECTION LABELS (uppercase overline style)
+           ============================================================ */
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ============================================================
+           UPLOAD ZONE
+           ============================================================ */
+        #upload-zone {
+            border: 1.5px dashed var(--border-mid);
+            border-radius: var(--r-lg);
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            background: var(--surface);
+            transition: border-color 0.25s var(--ease), background 0.25s var(--ease),
+                        transform 0.2s var(--ease);
+            position: relative;
+            outline: none;
+        }
+
+        #upload-zone::before {
+            /* Subtle corner marks, like photo crop marks */
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1px solid transparent;
+            border-radius: var(--r-md);
+            pointer-events: none;
+            transition: border-color 0.25s;
+        }
+
+        #upload-zone:hover,
+        #upload-zone:focus-visible {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            transform: scale(1.005);
+        }
+
+        #upload-zone:hover::before,
+        #upload-zone:focus-visible::before {
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        #upload-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.08);
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.75rem;
+            filter: grayscale(0.3);
+        }
+
+        #upload-zone h2 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        #upload-zone .upload-hint {
+            color: var(--text-mid);
+            font-size: 0.83rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .browse-label {
+            display: inline-block;
+            padding: 0.5rem 1.4rem;
+            background: var(--accent);
+            color: #0b0b0b;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            transition: background 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .browse-label:hover { background: #fbbf24; }
+
+        /* ============================================================
+           PANEL — generic card container
+           ============================================================ */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 1.25rem;
+        }
+
+        /* ============================================================
+           FRAMES PANEL — header row with controls
+           ============================================================ */
+        .frames-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .frames-title {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+        }
+
+        .frames-title h2 {
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        /* Frame count badge */
+        .badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: var(--surface-3);
+            border: 1px solid var(--border-mid);
+            color: var(--text-mid);
+            padding: 0.15rem 0.55rem;
+            border-radius: 99px;
+        }
+
+        /* "Apply to all" row */
+        .apply-all-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .apply-all-row label {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+        }
+
+        /* Small inline button */
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border-mid);
+            color: var(--text-mid);
+            padding: 0.3rem 0.7rem;
+            border-radius: var(--r-sm);
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-ghost:hover, .btn-ghost:focus-visible {
+            border-color: var(--accent);
+            color: var(--accent);
+            outline: none;
+        }
+
+        /* ============================================================
+           FRAME LIST (the drag-and-drop container)
+           ============================================================ */
+        #frame-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* ============================================================
+           INDIVIDUAL FRAME CARD
+           ============================================================ */
+        .frame-card {
+            /* Grid: handle | thumbnail | info | duration-input | delete */
+            display: grid;
+            grid-template-columns: 30px 60px 1fr auto 32px;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;  /* accent stripe on hover */
+            border-radius: var(--r-md);
+            padding: 0.55rem 0.75rem 0.55rem 0.5rem;
+            transition: border-color 0.18s, box-shadow 0.18s, opacity 0.18s;
+        }
+
+        .frame-card:hover {
+            border-left-color: var(--accent);
+            border-color: var(--border-mid);
+        }
+
+        /* When being dragged — this card fades */
+        .frame-card.is-dragging {
+            opacity: 0.35;
+            border-left-color: var(--accent);
+        }
+
+        /* Card being hovered over during a drag */
+        .frame-card.drag-over-target {
+            box-shadow: 0 -3px 0 0 var(--accent);
+            border-color: var(--border-mid);
+        }
+
+        /* Drag handle — the ⠿ grip icon */
+        .drag-handle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            user-select: none;
+            border-radius: 4px;
+            padding: 0.2rem;
+            transition: color 0.15s;
+            /* Also serve as keyboard reorder button */
+        }
+
+        .drag-handle:hover { color: var(--text-mid); }
+        .drag-handle:active { cursor: grabbing; }
+
+        /* Focus ring on the handle for keyboard users */
+        .drag-handle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+            color: var(--accent);
+        }
+
+        /* Thumbnail */
+        .frame-thumb {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 5px;
+            background: var(--surface-3);
+            display: block;
+            flex-shrink: 0;
+        }
+
+        /* Info block (name + frame number) */
+        .frame-info {
+            min-width: 0; /* allow text-overflow to work */
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .frame-name {
+            font-size: 0.83rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .frame-index {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--text-dim);
+        }
+
+        /* Duration group (label + number input + "ms") */
+        .duration-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .duration-group label {
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            white-space: nowrap;
+        }
+
+        .duration-input {
+            width: 68px;
+            padding: 0.28rem 0.45rem;
+            background: var(--surface-3);
+            border: 1px solid var(--border-mid);
+            border-radius: var(--r-sm);
+            color: var(--text);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            text-align: center;
+            transition: border-color 0.15s;
+        }
+
+        .duration-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Remove frame button (×) */
+        .remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-radius: var(--r-sm);
+            padding: 0.25rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .remove-btn:hover, .remove-btn:focus-visible {
+            color: var(--danger);
+            background: rgba(248, 113, 113, 0.1);
+            outline: none;
+        }
+
+        /* ============================================================
+           SETTINGS PANEL — 3-column responsive grid
+           ============================================================ */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .setting-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .setting-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--text-mid);
+        }
+
+        /* The value shown next to the label (e.g. "100%") */
+        .setting-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--accent);
+        }
+
+        /* Sub-caption below a control */
+        .setting-sub {
+            font-size: 0.73rem;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Styled range slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--surface-3);
+            border-radius: 99px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 2px solid var(--surface);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        input[type="range"]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+
+        /* Firefox track */
+        input[type="range"]::-moz-range-track {
+            background: var(--surface-3);
+            height: 4px;
+            border-radius: 99px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border: 2px solid var(--surface);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           TOGGLE SWITCH (for loop/repeat)
+           ============================================================ */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 0.25rem;
+        }
+
+        /* The outer label wraps the hidden checkbox + slider track */
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        /* Hide the real checkbox — accessible via the label */
+        .toggle input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The visual track */
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--surface-3);
+            border: 1px solid var(--border-mid);
+            border-radius: 99px;
+            cursor: pointer;
+            transition: background 0.22s, border-color 0.22s;
+        }
+
+        /* The knob inside the track */
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            top: 3px;
+            left: 3px;
+            background: var(--text-dim);
+            border-radius: 50%;
+            transition: transform 0.22s var(--ease), background 0.22s;
+        }
+
+        /* Checked state */
+        .toggle input:checked + .toggle-track {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle input:checked + .toggle-track::after {
+            transform: translateX(18px);
+            background: #0b0b0b;
+        }
+
+        /* Focus ring for keyboard nav */
+        .toggle input:focus-visible + .toggle-track {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .toggle-label {
+            font-size: 0.83rem;
+            color: var(--text-mid);
+        }
+
+        /* ============================================================
+           GENERATE BUTTON
+           ============================================================ */
+        #generate-btn {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: var(--accent);
+            color: #0b0b0b;
+            border: none;
+            border-radius: var(--r-md);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        #generate-btn:hover:not(:disabled) {
+            background: #fbbf24;
+            box-shadow: 0 0 24px rgba(245, 158, 11, 0.3);
+            transform: translateY(-1px);
+        }
+
+        #generate-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #generate-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* ============================================================
+           PROGRESS BAR
+           ============================================================ */
+        #progress-wrap {
+            height: 4px;
+            background: var(--surface-2);
+            border-radius: 99px;
+            overflow: hidden;
+            display: none; /* shown by JS during generation */
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #fbbf24);
+            width: 0%;
+            transition: width 0.12s linear;
+            border-radius: 99px;
+        }
+
+        /* ============================================================
+           OUTPUT PANEL
+           ============================================================ */
+        #output-section {
+            animation: fadeUp 0.4s var(--ease) both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+
+        .output-meta {
+            font-size: 0.8rem;
+            color: var(--text-mid);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .output-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .output-meta strong {
+            font-family: 'DM Mono', monospace;
+            color: var(--text);
+            font-size: 0.82rem;
+        }
+
+        /* GIF preview image */
+        #output-gif {
+            display: block;
+            max-width: 100%;
+            max-height: 480px;
+            margin: 0 auto 1.25rem;
+            border-radius: var(--r-md);
+            border: 1px solid var(--border-mid);
+            /* Checkerboard background to show transparency */
+            background: repeating-conic-gradient(#2a2a2a 0% 25%, #1a1a1a 0% 50%)
+                        0 0 / 16px 16px;
+        }
+
+        /* Download button */
+        #download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.4rem;
+            background: var(--success);
+            color: #0b0b0b;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        #download-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* ============================================================
+           UTILITY CLASSES
+           ============================================================ */
+
+        /* Visually hidden but accessible to screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+
+        /* Hide elements without removing from layout flow */
+        [hidden] { display: none !important; }
+
+        /* ============================================================
+           RESPONSIVE ADJUSTMENTS
+           ============================================================ */
+        @media (max-width: 540px) {
+            body { padding-bottom: 3rem; }
+            #app  { padding: 1rem; }
+
+            .frame-card {
+                /* On small screens, drop the separate duration group —
+                   users can use "Apply All" instead */
+                grid-template-columns: 28px 52px 1fr 28px;
+            }
+
+            .duration-group { display: none; }
+
+            .apply-all-row { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <!-- Decorative filmstrip sprocket holes -->
+        <div class="filmstrip-bar" aria-hidden="true">
+            <div class="sprocket"></div>
+            <div class="sprocket"></div>
+            <div class="sprocket"></div>
+            <div class="accent-strip"></div>
+            <div class="sprocket"></div>
+            <div class="sprocket"></div>
+            <div class="sprocket"></div>
+        </div>
+        <h1>GIF <span>Maker</span></h1>
+        <p>Upload images · arrange frames · export animated GIF</p>
+    </header>
+
+    <!-- ============================================================
+         UPLOAD ZONE
+         ============================================================ -->
+    <div
+        id="upload-zone"
+        role="button"
+        tabindex="0"
+        aria-label="Upload images — click or drop files here"
+    >
+        <span class="upload-icon" aria-hidden="true">🎞️</span>
+        <h2>Drop images here</h2>
+        <p class="upload-hint">PNG · JPG · WebP · GIF · AVIF accepted</p>
+        <!--
+            The <label> is linked to the file input via `for="file-input"`.
+            Clicking the label opens the file picker. We also open it when
+            the user clicks anywhere in the upload zone (see JS below).
+        -->
+        <label class="browse-label" for="file-input">Browse Files</label>
+        <input
+            type="file"
+            id="file-input"
+            multiple
+            accept="image/*"
+            aria-label="File input — select one or more image files"
+            style="display:none"
+        >
+    </div>
+
+    <!-- ============================================================
+         FRAMES SECTION — hidden until images are uploaded
+         ============================================================ -->
+    <section id="frames-section" hidden aria-label="Animation frames">
+        <div class="panel">
+            <div class="frames-header">
+                <!-- Title + count badge -->
+                <div class="frames-title">
+                    <h2>Frames</h2>
+                    <!--
+                        aria-live="polite" tells screen readers to announce
+                        when the count changes after adding/removing frames.
+                    -->
+                    <span class="badge" id="frame-count" aria-live="polite" aria-label="frame count">0</span>
+                </div>
+
+                <!-- Controls: Apply All duration + Add More images -->
+                <div class="apply-all-row">
+                    <label for="all-duration-input" style="font-size:0.78rem; color:var(--text-mid);">All frames:</label>
+                    <input
+                        type="number"
+                        id="all-duration-input"
+                        class="duration-input"
+                        value="500"
+                        min="50"
+                        max="30000"
+                        step="50"
+                        style="width:68px;"
+                        aria-label="Duration to apply to all frames, in milliseconds"
+                    >
+                    <span style="font-size:0.72rem; color:var(--text-mid);">ms</span>
+                    <button class="btn-ghost" id="apply-all-btn">Apply All</button>
+                    <button class="btn-ghost" id="add-more-btn">+ Add More</button>
+                </div>
+            </div>
+
+            <!--
+                The drag-and-drop frame list.
+                role="list" so screen readers announce it as a list.
+                Each item will have role="listitem" (set in JS).
+            -->
+            <div id="frame-list" role="list" aria-label="Frames — drag to reorder"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SETTINGS SECTION — hidden until images are uploaded
+         ============================================================ -->
+    <section id="settings-section" hidden aria-label="GIF export settings">
+        <div class="panel">
+            <div class="section-label">Export Settings</div>
+            <div class="settings-grid">
+
+                <!-- LOOP TOGGLE -->
+                <div class="setting-block">
+                    <div class="setting-heading">Loop Animation</div>
+                    <div class="toggle-row">
+                        <!--
+                            The checkbox + visual track are inside a <label>,
+                            which means clicking the track toggles the checkbox.
+                            This keeps it keyboard-navigable with Tab + Space.
+                        -->
+                        <label class="toggle" aria-label="Toggle animation looping">
+                            <input
+                                type="checkbox"
+                                id="loop-toggle"
+                                checked
+                                aria-describedby="loop-status-text"
+                            >
+                            <span class="toggle-track" role="switch" aria-checked="true"></span>
+                        </label>
+                        <span class="toggle-label" id="loop-status-text">Repeat forever</span>
+                    </div>
+                </div>
+
+                <!-- RESOLUTION SLIDER -->
+                <div class="setting-block">
+                    <div class="setting-heading">
+                        Resolution
+                        <span class="setting-val" id="resolution-pct">100%</span>
+                    </div>
+                    <input
+                        type="range"
+                        id="resolution-slider"
+                        min="10"
+                        max="100"
+                        value="100"
+                        step="5"
+                        aria-label="Output resolution — percentage of original size"
+                        aria-valuemin="10"
+                        aria-valuemax="100"
+                        aria-valuenow="100"
+                        aria-valuetext="100 percent"
+                    >
+                    <div class="setting-sub">
+                        <span id="resolution-px">—</span>
+                        <!--
+                            File size estimate. Shown as rough estimate before generation,
+                            updated with the actual size after the GIF is created.
+                        -->
+                        <span>Est: <strong id="est-size" style="color:var(--accent)">—</strong></span>
+                    </div>
+                </div>
+
+                <!-- QUALITY SLIDER -->
+                <div class="setting-block">
+                    <div class="setting-heading">
+                        Quality
+                        <span class="setting-val" id="quality-label">Good</span>
+                    </div>
+                    <!--
+                        gif.js quality: 1 = best (slowest dither), 20 = fastest (lower quality).
+                        We invert the display so "higher = better" makes sense to the user.
+                    -->
+                    <input
+                        type="range"
+                        id="quality-slider"
+                        min="1"
+                        max="20"
+                        value="10"
+                        step="1"
+                        aria-label="GIF encoding quality — higher is better but slower"
+                    >
+                    <div class="setting-sub">
+                        <span>Best (slow)</span>
+                        <span>Fast (lower)</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         GENERATE BUTTON — hidden until images are uploaded
+         ============================================================ -->
+    <button id="generate-btn" hidden>
+        ✦ Generate GIF
+    </button>
+
+    <!--
+        Progress bar — shown only while the GIF is being encoded.
+        role="progressbar" and aria attributes keep screen readers informed.
+    -->
+    <div
+        id="progress-wrap"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        aria-label="GIF generation progress"
+    >
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- ============================================================
+         OUTPUT SECTION — shown after GIF is generated
+         ============================================================ -->
+    <section id="output-section" hidden aria-label="Generated GIF">
+        <div class="panel">
+            <div class="section-label">Result</div>
+
+            <!-- Metadata row -->
+            <div class="output-meta" id="output-meta">
+                <!-- Populated by JS after generation -->
+            </div>
+
+            <!-- The generated GIF preview -->
+            <img id="output-gif" src="" alt="Your generated animated GIF" />
+
+            <!-- Download link (styled as a button) -->
+            <a id="download-btn" href="#" download="animation.gif">
+                ↓ Download GIF
+            </a>
+        </div>
+    </section>
+
+</div><!-- /#app -->
+
+<script>
+/* ================================================================
+   GIF MAKER — Main JavaScript
+
+   OVERVIEW:
+     This script manages the full lifecycle of creating an animated GIF:
+       1. Accepting images via drag-and-drop or file picker
+       2. Displaying editable frame cards (thumbnail, name, delay)
+       3. Allowing drag-to-reorder with keyboard fallback
+       4. Providing GIF settings (resolution, quality, looping)
+       5. Encoding via gif.js and presenting the result for download
+
+   DEPENDENCIES:
+     gif.js (loaded via CDN in the <head>): handles GIF encoding with
+     a Web Worker so the main thread stays responsive.
+
+   SECURITY NOTES:
+     - All user-provided filenames are run through escapeHtml() before
+       being inserted into innerHTML to prevent XSS.
+     - Object URLs created by URL.createObjectURL() are revoked when
+       a frame is deleted, preventing memory leaks.
+     - No user data leaves the browser — all processing is local.
+   ================================================================ */
+
+
+/* ----------------------------------------------------------------
+   CONSTANTS & STATE
+   ---------------------------------------------------------------- */
+
+/**
+ * The URL of the gif.js Web Worker script.
+ * We'll try to fetch this and create a local blob URL for better
+ * cross-origin compatibility. The direct CDN URL is the fallback.
+ */
+const GIF_WORKER_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
+
+/**
+ * Blob URL for the gif.js worker. Populated by initWorkerBlob().
+ * Using a blob URL avoids potential cross-origin worker restrictions.
+ * @type {string|null}
+ */
+let workerBlobUrl = null;
+
+/**
+ * The main frames array. Each element is an object:
+ *   id:       {string}  Unique identifier (e.g. "f-3")
+ *   img:      {HTMLImageElement} The loaded image
+ *   dataUrl:  {string}  Object URL for the thumbnail src
+ *   name:     {string}  Display filename
+ *   duration: {number}  Frame delay in milliseconds
+ *
+ * @type {Array<{id:string, img:HTMLImageElement, dataUrl:string, name:string, duration:number}>}
+ */
+let frames = [];
+
+/** Incrementing counter so every frame gets a unique ID. */
+let nextId = 0;
+
+/**
+ * Drag-and-drop tracking:
+ *   draggingId: the frame.id of the card being dragged
+ */
+let draggingId = null;
+
+
+/* ----------------------------------------------------------------
+   DOM REFERENCES — grabbed once at startup
+   ---------------------------------------------------------------- */
+const uploadZone       = document.getElementById('upload-zone');
+const fileInput        = document.getElementById('file-input');
+const framesSection    = document.getElementById('frames-section');
+const frameCountBadge  = document.getElementById('frame-count');
+const frameList        = document.getElementById('frame-list');
+const addMoreBtn       = document.getElementById('add-more-btn');
+const applyAllBtn      = document.getElementById('apply-all-btn');
+const allDurationInput = document.getElementById('all-duration-input');
+const settingsSection  = document.getElementById('settings-section');
+const loopToggle       = document.getElementById('loop-toggle');
+const loopStatusText   = document.getElementById('loop-status-text');
+const resolutionSlider = document.getElementById('resolution-slider');
+const resolutionPct    = document.getElementById('resolution-pct');
+const resolutionPx     = document.getElementById('resolution-px');
+const estSize          = document.getElementById('est-size');
+const qualitySlider    = document.getElementById('quality-slider');
+const qualityLabel     = document.getElementById('quality-label');
+const generateBtn      = document.getElementById('generate-btn');
+const progressWrap     = document.getElementById('progress-wrap');
+const progressFill     = document.getElementById('progress-fill');
+const outputSection    = document.getElementById('output-section');
+const outputMeta       = document.getElementById('output-meta');
+const outputGif        = document.getElementById('output-gif');
+const downloadBtn      = document.getElementById('download-btn');
+
+
+/* ----------------------------------------------------------------
+   INITIALIZATION
+   ---------------------------------------------------------------- */
+
+/**
+ * Fetches the gif.js worker script and converts it to a blob URL.
+ * This avoids cross-origin Worker restrictions in some browsers.
+ * Falls back to the direct CDN URL if the fetch fails.
+ */
+async function initWorkerBlob() {
+    try {
+        const res  = await fetch(GIF_WORKER_CDN);
+        const blob = await res.blob();
+        workerBlobUrl = URL.createObjectURL(blob);
+    } catch (err) {
+        console.warn('GIF worker fetch failed, using CDN URL directly:', err);
+        workerBlobUrl = GIF_WORKER_CDN;
+    }
+}
+
+// Kick off the worker blob fetch immediately so it's ready when needed
+initWorkerBlob();
+
+
+/* ----------------------------------------------------------------
+   UPLOAD ZONE — click, keyboard, and drag events
+   ---------------------------------------------------------------- */
+
+/** Open the file picker when the zone itself is clicked.
+    Note: clicking the <label> or <input> inside already works —
+    we only intercept clicks that land on the zone's background. */
+uploadZone.addEventListener('click', (e) => {
+    // Don't double-trigger if the user clicked the label or input directly
+    if (e.target !== uploadZone && e.target.tagName !== 'H2' &&
+        e.target.tagName !== 'P'  && !e.target.classList.contains('upload-icon')) return;
+    fileInput.click();
+});
+
+/** Allow keyboard activation of the upload zone with Enter or Space. */
+uploadZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+    }
+});
+
+/** Drag enter — add visual feedback */
+uploadZone.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('drag-over');
+});
+
+/** Drag over — must call preventDefault() to allow dropping */
+uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+});
+
+/** Drag leave — remove visual feedback */
+uploadZone.addEventListener('dragleave', (e) => {
+    // Only remove class if we've truly left the upload zone
+    // (not just moved to a child element)
+    if (!uploadZone.contains(e.relatedTarget)) {
+        uploadZone.classList.remove('drag-over');
+    }
+});
+
+/** Drop — extract image files and load them */
+uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+
+    // Filter for image files only; ignore folders and non-images
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length > 0) loadImages(files);
+});
+
+/** File picker selection */
+fileInput.addEventListener('change', () => {
+    const files = Array.from(fileInput.files);
+    if (files.length > 0) loadImages(files);
+    // Reset so the same file can be added again if needed
+    fileInput.value = '';
+});
+
+/** "Add More" button — reuses the same file input */
+addMoreBtn.addEventListener('click', () => fileInput.click());
+
+
+/* ----------------------------------------------------------------
+   LOADING IMAGES
+   ---------------------------------------------------------------- */
+
+/**
+ * Loads an array of image File objects, creates frame objects for each,
+ * then calls onFramesChanged() once all have loaded.
+ *
+ * @param {File[]} files - array of image files from the file picker or drop
+ */
+function loadImages(files) {
+    let remaining = files.length;
+    const newFrames = [];
+
+    files.forEach(file => {
+        // Create a temporary object URL — fast, no data:URL encoding needed
+        const objectUrl = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+            newFrames.push({
+                id:       'f-' + (nextId++),
+                img:      img,
+                dataUrl:  objectUrl,
+                name:     file.name,
+                duration: 500          // default 500ms per frame
+            });
+
+            remaining--;
+            if (remaining === 0) {
+                // Sort alphabetically so file order is predictable
+                newFrames.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                frames = [...frames, ...newFrames];
+                onFramesChanged();
+            }
+        };
+
+        img.onerror = () => {
+            console.warn('Failed to load image:', file.name);
+            // Release the URL we made for this failed image
+            URL.revokeObjectURL(objectUrl);
+            remaining--;
+            // Still finish if all others loaded
+            if (remaining === 0 && newFrames.length > 0) {
+                newFrames.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                frames = [...frames, ...newFrames];
+                onFramesChanged();
+            }
+        };
+
+        img.src = objectUrl;
+    });
+}
+
+
+/* ----------------------------------------------------------------
+   FRAMES CHANGED — update UI whenever the frames array is modified
+   ---------------------------------------------------------------- */
+
+/**
+ * Called whenever frames are added, removed, or reordered.
+ * Shows/hides sections and re-renders the frame list.
+ */
+function onFramesChanged() {
+    const hasFrames = frames.length > 0;
+
+    // Show or hide the dependent UI sections
+    framesSection.hidden   = !hasFrames;
+    settingsSection.hidden = !hasFrames;
+    generateBtn.hidden     = !hasFrames;
+
+    // Update the frame count badge
+    frameCountBadge.textContent = frames.length;
+
+    renderFrameList();
+    updateResolutionDisplay();
+}
+
+
+/* ----------------------------------------------------------------
+   RENDER FRAME LIST
+   ---------------------------------------------------------------- */
+
+/**
+ * Clears the frame list container and rebuilds it from the frames array.
+ * Called after any change to frames[].
+ */
+function renderFrameList() {
+    frameList.innerHTML = '';
+    frames.forEach((frame, index) => {
+        frameList.appendChild(buildFrameCard(frame, index));
+    });
+}
+
+/**
+ * Creates a single frame card DOM element and wires up all its events.
+ *
+ * @param {Object} frame  - frame data object from the frames array
+ * @param {number} index  - zero-based position in frames[]
+ * @returns {HTMLElement} - the constructed card element
+ */
+function buildFrameCard(frame, index) {
+    const card = document.createElement('div');
+    card.className  = 'frame-card';
+    card.role       = 'listitem';
+    card.dataset.id = frame.id;
+    card.setAttribute('aria-label', `Frame ${index + 1}: ${frame.name}`);
+    card.draggable  = true;
+
+    // --- Build inner HTML ---
+    // escapeHtml() is used on all user-provided strings to prevent XSS.
+    card.innerHTML = `
+        <!-- Drag handle — visual grip icon. Also keyboard-operable. -->
+        <div
+            class="drag-handle"
+            tabindex="0"
+            role="button"
+            title="Drag to reorder (or press Arrow Up/Down)"
+            aria-label="Reorder frame ${index + 1}"
+        >⠿</div>
+
+        <!-- Thumbnail preview -->
+        <img
+            class="frame-thumb"
+            src="${frame.dataUrl}"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+        >
+
+        <!-- Frame name and index number -->
+        <div class="frame-info">
+            <span class="frame-name" title="${escapeHtml(frame.name)}">${escapeHtml(frame.name)}</span>
+            <span class="frame-index">#${String(index + 1).padStart(2, '0')}</span>
+        </div>
+
+        <!-- Per-frame delay input -->
+        <div class="duration-group">
+            <label for="dur-${frame.id}" style="font-size:0.72rem; color:var(--text-mid);">Delay</label>
+            <input
+                type="number"
+                id="dur-${frame.id}"
+                class="duration-input"
+                value="${frame.duration}"
+                min="50"
+                max="30000"
+                step="50"
+                aria-label="Frame ${index + 1} delay in milliseconds"
+            >
+            <span style="font-size:0.72rem; color:var(--text-mid);">ms</span>
+        </div>
+
+        <!-- Remove button -->
+        <button
+            class="remove-btn"
+            aria-label="Remove frame ${index + 1}: ${escapeHtml(frame.name)}"
+            title="Remove this frame"
+        >✕</button>
+    `;
+
+    // --- Wire up events ---
+
+    // Duration input: update frame.duration when value changes
+    const durInput = card.querySelector('.duration-input');
+    durInput.addEventListener('change', () => {
+        const val = parseInt(durInput.value, 10);
+        if (!isNaN(val) && val >= 50) {
+            frame.duration = val;
+        } else {
+            // Reset to last valid value if input is out of range
+            durInput.value = frame.duration;
+        }
+    });
+
+    // Remove button: filter this frame out and refresh
+    const removeBtn = card.querySelector('.remove-btn');
+    removeBtn.addEventListener('click', () => {
+        // Free the object URL so the browser can release the memory
+        URL.revokeObjectURL(frame.dataUrl);
+        frames = frames.filter(f => f.id !== frame.id);
+        onFramesChanged();
+    });
+
+    // === DRAG-AND-DROP: reorder frames by dragging cards ===
+
+    card.addEventListener('dragstart', (e) => {
+        draggingId = frame.id;
+        card.classList.add('is-dragging');
+        // Required for Firefox — must set drag data
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', frame.id);
+    });
+
+    card.addEventListener('dragend', () => {
+        card.classList.remove('is-dragging');
+        // Clean up highlight from any target card that's still marked
+        document.querySelectorAll('.frame-card.drag-over-target')
+                .forEach(c => c.classList.remove('drag-over-target'));
+        draggingId = null;
+    });
+
+    card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (frame.id !== draggingId) {
+            card.classList.add('drag-over-target');
+        }
+    });
+
+    card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over-target');
+    });
+
+    card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('drag-over-target');
+
+        if (!draggingId || draggingId === frame.id) return; // no-op for same card
+
+        const fromIdx = frames.findIndex(f => f.id === draggingId);
+        const toIdx   = frames.findIndex(f => f.id === frame.id);
+
+        if (fromIdx === -1 || toIdx === -1) return;
+
+        // Remove the dragged frame from its original position,
+        // then insert it before the frame it was dropped onto.
+        const [moved] = frames.splice(fromIdx, 1);
+        frames.splice(toIdx, 0, moved);
+
+        renderFrameList();
+        updateResolutionDisplay();
+    });
+
+    // === KEYBOARD REORDER: Arrow Up / Arrow Down on the drag handle ===
+    const handle = card.querySelector('.drag-handle');
+    handle.addEventListener('keydown', (e) => {
+        const curIdx = frames.findIndex(f => f.id === frame.id);
+        if (curIdx === -1) return;
+
+        if (e.key === 'ArrowUp' && curIdx > 0) {
+            e.preventDefault();
+            // Swap with the frame above
+            [frames[curIdx - 1], frames[curIdx]] = [frames[curIdx], frames[curIdx - 1]];
+            renderFrameList();
+            updateResolutionDisplay();
+            // Restore focus to the same frame's handle after re-render
+            const newCard = frameList.querySelector(`[data-id="${frame.id}"] .drag-handle`);
+            if (newCard) newCard.focus();
+
+        } else if (e.key === 'ArrowDown' && curIdx < frames.length - 1) {
+            e.preventDefault();
+            // Swap with the frame below
+            [frames[curIdx], frames[curIdx + 1]] = [frames[curIdx + 1], frames[curIdx]];
+            renderFrameList();
+            updateResolutionDisplay();
+            const newCard = frameList.querySelector(`[data-id="${frame.id}"] .drag-handle`);
+            if (newCard) newCard.focus();
+        }
+    });
+
+    return card;
+}
+
+
+/* ----------------------------------------------------------------
+   APPLY ALL DURATION
+   ---------------------------------------------------------------- */
+
+/**
+ * Sets every frame's duration to the value in #all-duration-input,
+ * then updates all the individual duration inputs in the UI.
+ */
+applyAllBtn.addEventListener('click', () => {
+    const val = parseInt(allDurationInput.value, 10);
+    if (isNaN(val) || val < 50) return;
+
+    frames.forEach(f => {
+        f.duration = val;
+        // Update the corresponding input in the rendered card
+        const input = document.getElementById('dur-' + f.id);
+        if (input) input.value = val;
+    });
+});
+
+
+/* ----------------------------------------------------------------
+   SETTINGS — LOOP TOGGLE
+   ---------------------------------------------------------------- */
+
+loopToggle.addEventListener('change', () => {
+    const isChecked = loopToggle.checked;
+    // Update the visible text and the ARIA switch state
+    loopStatusText.textContent = isChecked ? 'Repeat forever' : 'Play once';
+    loopToggle.nextElementSibling.setAttribute('aria-checked', String(isChecked));
+});
+
+
+/* ----------------------------------------------------------------
+   SETTINGS — RESOLUTION SLIDER
+   ---------------------------------------------------------------- */
+
+resolutionSlider.addEventListener('input', () => {
+    // Keep the ARIA value in sync for screen readers
+    resolutionSlider.setAttribute('aria-valuenow', resolutionSlider.value);
+    resolutionSlider.setAttribute('aria-valuetext', resolutionSlider.value + ' percent');
+    updateResolutionDisplay();
+});
+
+/**
+ * Recalculates and displays:
+ *   - The percentage label (e.g. "75%")
+ *   - The output pixel dimensions (e.g. "960 × 540 px")
+ *   - A rough estimated file size
+ *
+ * The file size estimate is intentionally rough — GIF compression varies
+ * enormously by image content. It's meant to give a ballpark sense of
+ * how resolution changes affect file size, not a precise measurement.
+ */
+function updateResolutionDisplay() {
+    const pct = parseInt(resolutionSlider.value, 10);
+    resolutionPct.textContent = pct + '%';
+
+    if (frames.length === 0) {
+        resolutionPx.textContent = '—';
+        estSize.textContent      = '—';
+        return;
+    }
+
+    // Base output size on the first frame's natural dimensions
+    const baseW = frames[0].img.naturalWidth;
+    const baseH = frames[0].img.naturalHeight;
+    const outW  = Math.max(1, Math.round(baseW * pct / 100));
+    const outH  = Math.max(1, Math.round(baseH * pct / 100));
+
+    resolutionPx.textContent = `${outW} × ${outH}`;
+
+    /*
+        Rough file size estimate:
+        GIF images are palettized (max 256 colors) and LZW-compressed.
+        A very rough estimate: ~3-4 bits per pixel after compression.
+        We use 3.5 bits as a middle estimate, add ~1 KB for header overhead.
+        Actual results will vary wildly depending on color complexity.
+    */
+    const bitsPerPixel = 3.5;
+    const rawBytes = (outW * outH * bitsPerPixel / 8) * frames.length + 1024;
+    estSize.textContent = formatBytes(rawBytes) + ' (est)';
+}
+
+
+/* ----------------------------------------------------------------
+   SETTINGS — QUALITY SLIDER
+   ---------------------------------------------------------------- */
+
+/**
+ * gif.js quality: 1 = best color matching (slowest), 20 = fastest.
+ * We translate the numeric value to a human-readable label.
+ */
+qualitySlider.addEventListener('input', () => {
+    const q = parseInt(qualitySlider.value, 10);
+    if      (q <= 4)  qualityLabel.textContent = 'Best';
+    else if (q <= 8)  qualityLabel.textContent = 'High';
+    else if (q <= 12) qualityLabel.textContent = 'Good';
+    else if (q <= 16) qualityLabel.textContent = 'Fast';
+    else              qualityLabel.textContent = 'Fastest';
+});
+
+
+/* ----------------------------------------------------------------
+   GENERATE GIF
+   ---------------------------------------------------------------- */
+
+generateBtn.addEventListener('click', generateGIF);
+
+/**
+ * Encodes all frames into an animated GIF using gif.js.
+ *
+ * Flow:
+ *   1. Compute output size from the resolution slider
+ *   2. Create an offscreen canvas to draw each frame at target size
+ *   3. Create a GIF encoder instance
+ *   4. Add each frame's canvas to the encoder with its delay setting
+ *   5. Start rendering; update the progress bar as it goes
+ *   6. On finish, show the preview and download link
+ */
+async function generateGIF() {
+    if (frames.length === 0) return;
+
+    // Disable the button and show progress
+    generateBtn.disabled    = true;
+    generateBtn.textContent = '⏳ Encoding…';
+    progressWrap.style.display = 'block';
+    progressFill.style.width   = '0%';
+    progressWrap.setAttribute('aria-valuenow', '0');
+    outputSection.hidden = true;
+
+    // Compute target pixel dimensions
+    const { width, height } = getOutputDimensions();
+
+    // gif.js quality setting (1 = best, 20 = fastest)
+    const quality = parseInt(qualitySlider.value, 10);
+
+    // Should the GIF loop?
+    // gif.js repeat: 0 = loop forever, -1 = play once
+    const repeat  = loopToggle.checked ? 0 : -1;
+
+    /*
+        Offscreen canvas — we'll draw each frame here, then pass the
+        canvas element directly to gif.addFrame(). gif.js reads pixel
+        data from the canvas context.
+    */
+    const canvas  = document.createElement('canvas');
+    canvas.width  = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    // Create the GIF encoder
+    const gif = new GIF({
+        workers:      2,             // parallel worker threads
+        quality:      quality,
+        width:        width,
+        height:       height,
+        workerScript: workerBlobUrl, // blob URL (or CDN fallback) set at startup
+        repeat:       repeat
+    });
+
+    // Add each frame to the encoder
+    frames.forEach(frame => {
+        // Clear and redraw this frame at the target size
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(frame.img, 0, 0, width, height);
+
+        gif.addFrame(canvas, {
+            delay: frame.duration,
+            copy: true    // copy canvas pixels now (canvas is reused for next frame)
+        });
+    });
+
+    // Track encoding progress — p is a value from 0 to 1
+    gif.on('progress', (p) => {
+        const pct = Math.round(p * 100);
+        progressFill.style.width = pct + '%';
+        progressWrap.setAttribute('aria-valuenow', pct);
+    });
+
+    // Called when encoding is complete — blob is the finished GIF file
+    gif.on('finished', (blob) => {
+        // Create a temporary URL for the blob so we can preview and download it
+        const gifUrl = URL.createObjectURL(blob);
+
+        // Update the GIF preview image
+        outputGif.src = gifUrl;
+
+        // Update the download link
+        downloadBtn.href     = gifUrl;
+        downloadBtn.download = 'animation.gif';
+
+        // Build the metadata row
+        outputMeta.innerHTML = `
+            <span>🎞️ <strong>${frames.length}</strong> frames</span>
+            <span>📐 <strong>${width} × ${height} px</strong></span>
+            <span>💾 <strong>${formatBytes(blob.size)}</strong></span>
+            <span>${loopToggle.checked ? '🔁 Loops forever' : '▶️ Plays once'}</span>
+        `;
+
+        // Also update the "estimated" file size in settings with the real number
+        estSize.textContent = formatBytes(blob.size) + ' (actual)';
+
+        // Show the output section and scroll to it
+        outputSection.hidden = false;
+        outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Re-enable the generate button
+        generateBtn.disabled    = false;
+        generateBtn.textContent = '✦ Generate GIF';
+        progressWrap.style.display = 'none';
+    });
+
+    // Kick off the actual encoding
+    gif.render();
+}
+
+
+/* ----------------------------------------------------------------
+   HELPER FUNCTIONS
+   ---------------------------------------------------------------- */
+
+/**
+ * Computes the output pixel dimensions based on the resolution slider
+ * percentage and the natural dimensions of the first frame.
+ *
+ * @returns {{ width: number, height: number }}
+ */
+function getOutputDimensions() {
+    if (frames.length === 0) return { width: 400, height: 300 };
+
+    const pct  = parseInt(resolutionSlider.value, 10) / 100;
+    const base = frames[0].img;
+
+    return {
+        width:  Math.max(1, Math.round(base.naturalWidth  * pct)),
+        height: Math.max(1, Math.round(base.naturalHeight * pct))
+    };
+}
+
+/**
+ * Converts a raw byte count into a human-readable string.
+ * Examples: 512 → "512 B",  2048 → "2.0 KB",  1500000 → "1.43 MB"
+ *
+ * @param {number} bytes
+ * @returns {string}
+ */
+function formatBytes(bytes) {
+    if (bytes < 1024)              return Math.round(bytes) + ' B';
+    if (bytes < 1024 * 1024)       return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+/**
+ * Escapes HTML special characters in a string to prevent XSS.
+ * Used before inserting user-provided text (filenames) into innerHTML.
+ *
+ * Example: escapeHtml('<script>') → '&lt;script&gt;'
+ *
+ * @param {string} str - the raw string to escape
+ * @returns {string} - the escaped string safe for innerHTML
+ */
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+
+/* ----------------------------------------------------------------
+   STARTUP
+   ---------------------------------------------------------------- */
+
+// Initialize the resolution display with a "no frames yet" state
+updateResolutionDisplay();
+
+</script>
+</body>
+</html>
