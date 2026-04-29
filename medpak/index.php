@@ -5,7 +5,7 @@ $view = $_GET['view'] ?? '';
 $id = $_GET['id'] ?? '';
 
 // Created by Aaron Weaver and Dave Ghidiu
-// Version 2026.04.12.1209
+// Version 2026.04.26.1406
 // Version-Name: STABLE
 
 // Session ID length — increase if collisions become a concern at scale
@@ -76,6 +76,11 @@ if ($isCtrl && $id) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+<!--Created by Aaron Weaver and Dave Ghidiu-->
+<!--Version 2026.04.26.1406-->
+<!--Version-Name: STABLE    -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telemetry Monitor System</title>
