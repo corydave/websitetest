@@ -7,6 +7,9 @@ $id = $_GET['id'] ?? '';
 // Created by Aaron Weaver and Dave Ghidiu
 // Version 2026.04.12.1209
 
+// Session ID length — increase if collisions become a concern at scale
+define('SESSION_ID_LENGTH', 5);
+
 // Helper for temporary file storage
 function getFilePath($id) {
     return sys_get_temp_dir() . '/telemetry_sim_' . preg_replace('/[^a-zA-Z0-9]/', '', $id) . '.json';
@@ -14,7 +17,7 @@ function getFilePath($id) {
 
 // API: Start a new session
 if ($action === 'start') {
-    $id = substr(md5(uniqid()), 0, 8);
+    $id = substr(md5(uniqid()), 0, SESSION_ID_LENGTH);
     $defaultState = [
         'rhythm' => 'sinus', 'saNodeRate' => 80, 'ventricularRate' => 150,
         'flutterRatio' => '1:2', 'svtRate' => 180, 'vtRate' => 160,
@@ -109,6 +112,26 @@ if ($isCtrl && $id) {
             <a href="?action=start" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-10 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] text-xl transition-all hover:scale-105">
                 Start New Session
             </a>
+
+            <div class="mt-10 w-full max-w-sm">
+                <div class="border-t border-slate-700 pt-8">
+                    <p class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-4">Join (Learner View)</p>
+                    <form onsubmit="joinSession(event)" class="flex gap-2">
+                        <input type="text" id="join-id" placeholder="e.g. 3ed8d" maxlength="<?= SESSION_ID_LENGTH ?>"
+                            class="flex-1 min-w-0 bg-slate-800 text-cyan-400 font-mono border border-slate-600 rounded-lg p-3 outline-none focus:border-cyan-500 placeholder-slate-600" />
+                        <button type="submit" class="flex-shrink-0 bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-3 px-5 rounded-lg transition-colors">
+                            Join
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <script>
+            function joinSession(e) {
+                e.preventDefault();
+                const id = document.getElementById('join-id').value.trim();
+                if (id) window.location.href = '?view=sim&id=' + encodeURIComponent(id);
+            }
+            </script>
         </div>
 
     <?php elseif ($isLinks): ?>
@@ -225,7 +248,7 @@ if ($isCtrl && $id) {
                 <div class="bg-slate-950 px-4 py-2 flex justify-between items-center border-b border-slate-800 text-sm md:text-base">
                     <div class="flex gap-4 items-center">
                         <?php if ($isCtrl): ?><span class="text-xs font-black uppercase tracking-widest bg-indigo-600 text-white px-2 py-0.5 rounded">ADMIN</span><?php endif; ?>
-                        <span class="font-bold text-white tracking-widest">SIM-PAT-01</span>
+                        <?php if (!$isCtrl): ?><span class="font-bold text-white tracking-widest">SIM-PAT-01</span><?php endif; ?>
                         <span class="text-slate-400">SESSION: <?= htmlspecialchars($id) ?></span>
                         <?php if ($isCtrl && !empty($simUrl)): ?><button id="btn-share-learner" onclick="shareUrl('<?= htmlspecialchars($simUrl, ENT_QUOTES) ?>', 'Learner Interface', 'ctrl-sim')" class="text-xs font-black uppercase tracking-widest bg-cyan-700 hover:bg-cyan-600 text-white px-2 py-0.5 rounded transition-colors">Share Learner</button><?php endif; ?>
                     </div>
@@ -995,7 +1018,7 @@ if ($isCtrl && $id) {
                         const triggerTime = Date.now();
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
                         let changes = { shockTrigger: triggerTime };
-                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
+                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'torsades', 'afib', 'aflutter'];
                         if (state.joules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
                             changes.rhythm = 'sinus';
                             changes.saNodeRate = 80;
@@ -1035,7 +1058,7 @@ if ($isCtrl && $id) {
                         pendingTrigger = triggerTime;
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
                         let changes = { shockTrigger: triggerTime };
-                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'afib', 'aflutter'];
+                        const shockableRhythms = ['svt', 'vfib', 'vtach', 'torsades', 'afib', 'aflutter'];
                         if (learnerJoules >= state.shockThreshold && shockableRhythms.includes(state.rhythm)) {
                             changes.rhythm = 'sinus';
                             changes.saNodeRate = 80;
@@ -1441,9 +1464,14 @@ if ($isCtrl && $id) {
                         simState.time += 0.005; 
                     }
 
-                    const pxPerSecond = 180; 
+                    const pxPerSecond = 180;
                     let pixelsToDraw = dt_real * pxPerSecond;
-                    if (pixelsToDraw > 100) pixelsToDraw = 100; 
+                    if (pixelsToDraw > 100) pixelsToDraw = 100;
+
+                    // Scale lineWidth to compensate for CSS downscaling of the canvas
+                    const lineW = mainCanvas.offsetWidth > 0
+                        ? Math.max(1.5, 1.5 * mainCanvas.width / mainCanvas.offsetWidth)
+                        : 1.5;
 
                     for (let i = 0; i < pixelsToDraw; i += 1) {
                         drawState.drawTime += 1 / pxPerSecond;
@@ -1475,14 +1503,14 @@ if ($isCtrl && $id) {
                         
                         if (!wrapped) {
                             ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.ekgY); ctx.lineTo(currentX, newEkgY);
-                            ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 1.5; ctx.stroke();
+                            ctx.strokeStyle = '#22c55e'; ctx.lineWidth = lineW; ctx.stroke();
 
                             if (!(isController && window.innerWidth < 1024)) {
                                 ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.plethY); ctx.lineTo(currentX, newPlethY);
-                                ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.5; ctx.stroke();
+                                ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = lineW; ctx.stroke();
 
                                 ctx.beginPath(); ctx.moveTo(drawState.lastX, drawState.respY); ctx.lineTo(currentX, newRespY);
-                                ctx.strokeStyle = '#eab308'; ctx.lineWidth = 1.5; ctx.stroke();
+                                ctx.strokeStyle = '#eab308'; ctx.lineWidth = lineW; ctx.stroke();
                             }
                         }
 
