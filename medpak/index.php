@@ -6,6 +6,7 @@ $id = $_GET['id'] ?? '';
 
 // Created by Aaron Weaver and Dave Ghidiu
 // Version 2026.04.12.1209
+// Version-Name: STABLE
 
 // Session ID length — increase if collisions become a concern at scale
 define('SESSION_ID_LENGTH', 5);
@@ -84,7 +85,7 @@ if ($isCtrl && $id) {
         @media screen and (max-width: 1023px) {
             #sim-view-wrapper .waves-area { flex: none; }
             .ctrl-sticky-wrap { position: sticky; top: 0; z-index: 50; background: #020617; }
-            .ctrl-sticky-wrap .waves-area { flex: none; height: 100px !important; }
+            .ctrl-sticky-wrap .waves-area { flex: none; height: 112px !important; }
             .ctrl-sticky-wrap #main-monitor { margin-bottom: 0; border-radius: 0; border-left: none; border-right: none; }
             .ctrl-sticky-wrap .vitals-sidebar { display: none; }
             .ctrl-sticky-wrap .ctrl-trace-hide { display: none; }
@@ -250,12 +251,12 @@ if ($isCtrl && $id) {
                         <?php if ($isCtrl): ?><span class="text-xs font-black uppercase tracking-widest bg-indigo-600 text-white px-2 py-0.5 rounded">ADMIN</span><?php endif; ?>
                         <?php if (!$isCtrl): ?><span class="font-bold text-white tracking-widest">SIM-PAT-01</span><?php endif; ?>
                         <span class="text-slate-400">SESSION: <?= htmlspecialchars($id) ?></span>
-                        <?php if ($isCtrl && !empty($simUrl)): ?><button id="btn-share-learner" onclick="shareUrl('<?= htmlspecialchars($simUrl, ENT_QUOTES) ?>', 'Learner Interface', 'ctrl-sim')" class="text-xs font-black uppercase tracking-widest bg-cyan-700 hover:bg-cyan-600 text-white px-2 py-0.5 rounded transition-colors">Share Learner</button><?php endif; ?>
+                        <?php if ($isCtrl && !empty($simUrl)): ?><button id="btn-share-learner" onclick="shareUrl('<?= htmlspecialchars($simUrl, ENT_QUOTES) ?>', 'Learner Interface', 'ctrl-sim')" class="text-xs font-black uppercase tracking-widest bg-cyan-700 hover:bg-cyan-600 text-white px-2 py-0.5 rounded transition-colors flex items-center gap-1"><svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg><span class="hidden sm:inline">Share Learner</span></button><?php endif; ?>
                     </div>
                     <div class="text-slate-400 flex gap-4 items-center">
                         <button id="btn-monitor-beep" title="Toggle monitor beep" class="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded border border-slate-700 text-slate-400 hover:border-slate-500 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                            <span id="beep-label">BEEP</span>
+                            <span id="beep-label" class="hidden sm:inline">BEEP</span>
                         </button>
                         <span id="time-display">--:--:--</span>
                     </div>
@@ -270,7 +271,7 @@ if ($isCtrl && $id) {
                         <canvas id="mainCanvas" width="1200" height="450" class="absolute top-0 left-0 w-full h-full object-fill z-10"></canvas>
                         
                         <!-- Trace Labels -->
-                        <div class="absolute top-4 left-4 z-20 text-green-500 font-bold text-sm">II <span class="text-xs ml-2">1 mV</span></div>
+                        <div class="absolute top-4 left-4 z-20 text-green-500 font-bold text-sm">II <span class="text-xs ml-2 ctrl-trace-hide">1 mV</span></div>
                         <div class="ctrl-trace-hide absolute top-[180px] left-4 z-20 text-cyan-500 font-bold text-sm">SpO2</div>
                         <div class="ctrl-trace-hide absolute top-[310px] left-4 z-20 text-yellow-500 font-bold text-sm">RESP</div>
                     </div>
@@ -551,7 +552,7 @@ if ($isCtrl && $id) {
                             <input type="range" id="input-escapeRate" min="20" max="60" value="40" class="w-full accent-indigo-500" />
                         </div>
 
-                        <div>
+                        <div id="ctrl-shockThreshold" class="admin-ctrl hidden">
                             <label class="block text-sm font-medium text-slate-400 mb-2">Conversion Threshold: <span id="lbl-shockThreshold">100</span> J</label>
                             <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
                         </div>
@@ -592,7 +593,12 @@ if ($isCtrl && $id) {
                         </span>
                         <svg id="vitals-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div id="vitals-panel" class="hidden border-t border-slate-700 bg-slate-900/30 p-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div id="vitals-panel" class="hidden border-t border-slate-700 bg-slate-900/30 p-4 flex flex-col gap-4">
+                        <div class="flex gap-2">
+                            <button onclick="applyVitalPreset('stable')" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-bold py-1.5 px-3 rounded-lg transition-colors uppercase tracking-wider">Stable</button>
+                            <button onclick="applyVitalPreset('deteriorate')" class="flex-1 bg-red-800 hover:bg-red-700 text-white text-sm font-bold py-1.5 px-3 rounded-lg transition-colors uppercase tracking-wider">Deteriorate</button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-2">SpO2: <span id="lbl-spo2">98</span>%</label>
                             <input type="range" id="input-spo2" min="50" max="100" value="98" class="w-full accent-cyan-500" />
@@ -605,6 +611,7 @@ if ($isCtrl && $id) {
                             <label class="block text-sm font-medium text-slate-400 mb-2">RESP: <span id="lbl-rr">16</span> rpm</label>
                             <input type="range" id="input-rr" min="0" max="50" value="16" class="w-full accent-yellow-500" />
                         </div>
+                        </div><!-- end sliders grid -->
                     </div>
                 </div>
 
@@ -726,7 +733,9 @@ if ($isCtrl && $id) {
                 const simState = { rhythm: 'sinus', nextP: 0, nextQRS: 0, wenckebach_beat: 0, mobitz_beat: 0, mobitz_cycle_size: 2, time: 0, nextPace: 0, pacingWasOn: false };
                 const events = [];
                 const ctrlMobile = isController && window.innerWidth < 1024;
-                const drawState = { lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: ctrlMobile ? 225 : 90, plethY: 220, respY: 340 };
+                // Mobile admin trace speed — higher = beats wider/more legible, wraps faster. Desktop always 180.
+                const CTRL_MOBILE_TRACE_SPEED = 310;
+                const drawState ={ lastX: 0, drawTime: 0, lastTimeReal: performance.now() / 1000, ekgY: ctrlMobile ? 322 : 90, plethY: 220, respY: 340 };
 
                 let syncShockPending = false;
                 let doShock = null;
@@ -835,6 +844,7 @@ if ($isCtrl && $id) {
                         if (rhythm === '2nd_degree_type2') document.getElementById('ctrl-blockSeverity')?.classList.remove('hidden');
                         if (rhythm === '3rd_degree') document.getElementById('ctrl-escapeRate')?.classList.remove('hidden');
                         if (['vfib', 'asystole'].includes(rhythm)) document.getElementById('ctrl-lethal')?.classList.remove('hidden');
+                        if (['svt', 'vfib', 'vtach', 'torsades', 'afib', 'aflutter'].includes(rhythm)) document.getElementById('ctrl-shockThreshold')?.classList.remove('hidden');
 
                         // Update Input Labels
                         const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
@@ -1012,6 +1022,52 @@ if ($isCtrl && $id) {
                     document.getElementById('btn-pacing')?.addEventListener('click', () => updateServerState({ pacingOn: !state.pacingOn }));
                     document.getElementById('input-pacingRate')?.addEventListener('input', (e) => updateServerState({ pacingRate: Number(e.target.value) }));
                     document.getElementById('input-pacingOutput')?.addEventListener('input', (e) => updateServerState({ pacingOutput: Number(e.target.value) }));
+
+                    window.applyVitalPreset = (preset) => {
+                        const changes = {};
+                        if (preset === 'stable') {
+                            changes.spo2 = 100; changes.rr = 16;
+                            changes.sysBp = BP_STEPS[8].sys; changes.diaBp = BP_STEPS[8].dia; // 120/80
+                            switch (state.rhythm) {
+                                case 'sinus': case '1st_degree': case '2nd_degree_type1': changes.saNodeRate = 80; break;
+                                case 'afib': changes.ventricularRate = 80; break;
+                                case 'aflutter': changes.flutterRatio = '1:4'; break;
+                                case 'svt': changes.svtRate = 150; break;
+                                case 'vtach': changes.vtRate = 100; break;
+                                case 'torsades': changes.torsadesRate = 150; break;
+                                case '2nd_degree_type2': changes.saNodeRate = 80; changes.blockSeverity = 4; break;
+                                case '3rd_degree': changes.saNodeRate = 80; changes.escapeRate = 40; break;
+                            }
+                        } else {
+                            changes.spo2 = 90; changes.rr = 30;
+                            changes.sysBp = BP_STEPS[3].sys; changes.diaBp = BP_STEPS[3].dia; // 70/45
+                            switch (state.rhythm) {
+                                case 'sinus': changes.saNodeRate = 130; break;
+                                case 'afib': changes.ventricularRate = 160; break;
+                                case 'aflutter': changes.flutterRatio = '1:2'; break;
+                                case 'svt': changes.svtRate = 195; break;
+                                case 'vtach': changes.vtRate = 205; break;
+                                case 'torsades': changes.torsadesRate = 230; break;
+                                case '1st_degree': changes.saNodeRate = 116; break;
+                                case '2nd_degree_type1': changes.saNodeRate = 140; break;
+                                case '2nd_degree_type2': changes.blockSeverity = 2; break;
+                                case '3rd_degree': changes.saNodeRate = 120; changes.escapeRate = 30; break;
+                            }
+                        }
+                        updateServerState(changes);
+                        // Sync sliders that updateUI doesn't cover
+                        if (changes.blockSeverity !== undefined) {
+                            const pos = BLOCK_RATIO_MAP.indexOf(changes.blockSeverity);
+                            const el = document.getElementById('input-blockSeverity');
+                            if (el && pos >= 0) el.value = pos;
+                            const lbl = document.getElementById('lbl-blockSeverity');
+                            if (lbl && pos >= 0) lbl.textContent = BLOCK_RATIO_LABELS[pos];
+                        }
+                        if (changes.flutterRatio !== undefined) {
+                            const el = document.getElementById('input-flutterRatio');
+                            if (el) el.value = changes.flutterRatio;
+                        }
+                    };
 
                     doShock = () => {
                         cancelCharge();
@@ -1252,7 +1308,8 @@ if ($isCtrl && $id) {
                     } else if (event.type === 'P' && dt < 0.2) {
                         v += 0.12 * Math.exp(-Math.pow((dt - 0.05) / 0.015, 2));
                     } else if (event.type === 'QRS') {
-                        if (event.wide && dt < 0.3) {
+                        if (event.torsadesSynthetic) { /* visual drawn by getBaselines — only here for beep/sync */ }
+                        else if (event.wide && dt < 0.3) {
                             v += 1.0 * Math.exp(-Math.pow((dt - 0.06) / 0.03, 2));
                             v -= 0.6 * Math.exp(-Math.pow((dt - 0.14) / 0.04, 2));
                         } else if (!event.wide && dt < 0.15) {
@@ -1431,6 +1488,11 @@ if ($isCtrl && $id) {
                             pushQRS(t, true, params.vtRate, true);
                             simSt.nextQRS = t + (60 / params.vtRate);
                         }
+                        if (rhythm === 'torsades' && t >= simSt.nextQRS) {
+                            // Synthetic marker only — visual is drawn by getBaselines, not evaluateEKGEvent
+                            evts.push({ type: 'QRS', start: simSt.nextQRS, wide: false, torsadesSynthetic: true });
+                            simSt.nextQRS = simSt.nextQRS + (60 / params.torsadesRate);
+                        }
                     }
                 };
 
@@ -1464,7 +1526,7 @@ if ($isCtrl && $id) {
                         simState.time += 0.005; 
                     }
 
-                    const pxPerSecond = 180;
+                    const pxPerSecond = ctrlMobile ? CTRL_MOBILE_TRACE_SPEED : 180; // ctrlMobile is module-scoped (safe here)
                     let pixelsToDraw = dt_real * pxPerSecond;
                     if (pixelsToDraw > 100) pixelsToDraw = 100;
 
@@ -1495,7 +1557,8 @@ if ($isCtrl && $id) {
                             }
                         });
 
-                        const newEkgY = (isController && window.innerWidth < 1024 ? 225 : 100) - ekgVal * 50;
+                        const ctrlMobileAmp = isController && window.innerWidth < 1024;
+                        const newEkgY = (ctrlMobileAmp ? 322 : 100) - ekgVal * (ctrlMobileAmp ? 160 : 50);
                         const newPlethY = 240 - plethVal * 45;
                         const newRespY = 380 - respVal * 35;
 
