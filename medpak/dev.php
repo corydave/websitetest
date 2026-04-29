@@ -81,6 +81,11 @@ $isLinks = ($action === 'start');
             #sim-view-wrapper #main-monitor { max-width: 100%; border-radius: 0; margin-bottom: 0; }
             #sim-view-wrapper .waves-area { height: calc(100vh - 2.5rem); height: calc(100svh - 2.5rem); }
         }
+        @keyframes charge-flash {
+            0%, 49% { background-color: #dc2626; border-color: #f87171; }
+            50%, 100% { background-color: #fca5a5; border-color: #fca5a5; color: #7f1d1d; }
+        }
+        .charge-flashing { animation: charge-flash 0.4s step-start infinite; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-200 font-sans min-h-screen flex flex-col items-center">
@@ -246,8 +251,24 @@ $isLinks = ($action === 'start');
                     <input type="range" id="input-learnerJoules" min="0" max="8" step="1" value="5" class="w-full max-w-[500px] accent-red-500 cursor-pointer" />
                 </div>
                 <div class="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
-                    <button id="btn-learner-sync" class="w-full bg-[#CF9C00] text-black font-bold rounded-xl py-2 px-8 border-2 border-[#CF9C00] text-sm uppercase tracking-widest transition-all">SYNC</button>
-                    <button id="btn-learner-shock" class="w-full bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all">
+                    <div class="flex gap-2">
+                        <button id="btn-learner-sync" class="flex-1 bg-[#CF9C00] text-black font-bold rounded-xl py-2 px-4 border-2 border-[#CF9C00] text-sm uppercase tracking-widest transition-all">SYNC</button>
+                        <button id="btn-learner-vol" class="bg-green-600 text-green-100 rounded-xl py-2 px-3 border-2 border-green-500 transition-colors flex items-center justify-center">
+                            <svg id="learner-vol-on" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12l-4-4H4V10h4l4-4z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 5.343a9 9 0 010 13.314"/>
+                            </svg>
+                            <svg id="learner-vol-off" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button id="btn-learner-charge" class="relative w-full overflow-hidden bg-slate-700 hover:bg-slate-600 text-white font-black rounded-xl py-3 px-8 border-2 border-slate-500 text-lg uppercase tracking-wide transition-colors">
+                        <div id="learner-charge-fill" class="absolute inset-y-0 left-0 bg-orange-400/60 pointer-events-none" style="width:0%"></div>
+                        <span class="relative">CHARGE</span>
+                    </button>
+                    <button id="btn-learner-shock" class="w-full bg-red-600 text-white font-black rounded-xl py-4 px-8 shadow-lg shadow-red-900/40 border-2 border-red-400 flex items-center justify-center gap-2 text-xl uppercase transition-all opacity-40 cursor-not-allowed" disabled>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         SHOCK
                     </button>
@@ -476,8 +497,24 @@ $isLinks = ($action === 'start');
                             <input type="range" id="input-shockThreshold" min="25" max="300" step="1" value="100" class="w-full accent-orange-500" />
                         </div>
                         <div class="flex flex-col gap-2">
-                            <button id="btn-sync" class="w-full bg-[#CF9C00] text-black font-bold rounded-lg p-2 transition-all border border-[#CF9C00] text-sm uppercase tracking-widest">SYNC</button>
-                            <button id="btn-shock" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg p-2.5 transition-colors shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2">
+                            <div class="flex gap-2">
+                                <button id="btn-sync" class="flex-1 bg-[#CF9C00] text-black font-bold rounded-lg p-2 transition-all border border-[#CF9C00] text-sm uppercase tracking-widest">SYNC</button>
+                                <button id="btn-ctrl-vol" class="bg-green-600 text-green-100 rounded-lg px-2 py-1 border border-green-500 transition-colors flex items-center justify-center">
+                                    <svg id="ctrl-vol-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12l-4-4H4V10h4l4-4z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 5.343a9 9 0 010 13.314"/>
+                                    </svg>
+                                    <svg id="ctrl-vol-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button id="btn-ctrl-charge" class="relative w-full overflow-hidden bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg p-2 border border-slate-500 text-sm uppercase tracking-widest transition-colors">
+                                <div id="ctrl-charge-fill" class="absolute inset-y-0 left-0 bg-orange-400/60 pointer-events-none" style="width:0%"></div>
+                                <span class="relative">CHARGE</span>
+                            </button>
+                            <button id="btn-shock" class="w-full bg-red-600 text-white font-bold rounded-lg p-2.5 shadow-lg shadow-red-900/20 border border-red-500 flex justify-center items-center gap-2 opacity-40 cursor-not-allowed" disabled>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                 DELIVER SHOCK
                             </button>
@@ -514,6 +551,11 @@ $isLinks = ($action === 'start');
                 let syncShockPending = false;
                 let doShock = null;
                 let lastKnownSyncMode = false;
+                let chargeState = 'idle'; // 'idle' | 'charging' | 'charged'
+                let chargeAnimId = null;
+                let chargeTimerId = null;
+                let chargeAudioCtx = null;
+                let volumeOn = true;
 
                 const markExistingQRSSynced = () => {
                     events.forEach(e => { if (e.type === 'QRS') e.syncMarked = true; });
@@ -528,6 +570,29 @@ $isLinks = ($action === 'start');
                         btn.classList.toggle('bg-[#CF9C00]', !state.syncMode);
                         btn.classList.toggle('border-[#CF9C00]', !state.syncMode);
                     });
+                };
+
+                const cancelCharge = () => {
+                    chargeState = 'idle';
+                    if (chargeAnimId) { cancelAnimationFrame(chargeAnimId); chargeAnimId = null; }
+                    if (chargeTimerId) { clearTimeout(chargeTimerId); chargeTimerId = null; }
+                    if (chargeAudioCtx) { chargeAudioCtx.close(); chargeAudioCtx = null; }
+                    ['learner-charge-fill', 'ctrl-charge-fill'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.style.width = '0%';
+                    });
+                    ['btn-learner-charge', 'btn-ctrl-charge'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('charge-flashing');
+                    });
+                    ['btn-learner-shock', 'btn-shock'].forEach(id => {
+                        const btn = document.getElementById(id);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.classList.add('opacity-40', 'cursor-not-allowed');
+                        }
+                    });
+                    syncShockPending = false;
                 };
 
                 // Setup Clocks
@@ -730,6 +795,7 @@ $isLinks = ($action === 'start');
                     document.getElementById('input-pacingCaptureEnabled')?.addEventListener('change', (e) => updateServerState({ pacingCaptureEnabled: e.target.checked }));
 
                     doShock = () => {
+                        cancelCharge();
                         const triggerTime = Date.now();
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
                         let changes = { shockTrigger: triggerTime };
@@ -768,6 +834,7 @@ $isLinks = ($action === 'start');
                     });
 
                     doShock = () => {
+                        cancelCharge();
                         const triggerTime = Date.now();
                         pendingTrigger = triggerTime;
                         events.push({ type: 'SHOCK', start: drawState.drawTime });
@@ -818,6 +885,88 @@ $isLinks = ($action === 'start');
                     document.getElementById('input-pacingOutput')?.addEventListener('input', (e) => learnerPush({ pacingOutput: Number(e.target.value) }));
 
                 }
+
+                const setupChargeButton = () => {
+                    ['btn-learner-charge', 'btn-ctrl-charge'].forEach(btnId => {
+                        const btn = document.getElementById(btnId);
+                        if (!btn) return;
+                        btn.addEventListener('click', () => {
+                            if (chargeState === 'charging') return;
+                            cancelCharge();
+                            chargeState = 'charging';
+                            const startTime = performance.now();
+                            const duration = 2500;
+                            const fillId = btnId === 'btn-learner-charge' ? 'learner-charge-fill' : 'ctrl-charge-fill';
+                            const fillEl = document.getElementById(fillId);
+
+                            if (volumeOn) {
+                                try {
+                                    chargeAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                                    const osc = chargeAudioCtx.createOscillator();
+                                    const gain = chargeAudioCtx.createGain();
+                                    osc.connect(gain);
+                                    gain.connect(chargeAudioCtx.destination);
+                                    osc.type = 'sine';
+                                    osc.frequency.setValueAtTime(300, chargeAudioCtx.currentTime);
+                                    osc.frequency.linearRampToValueAtTime(500, chargeAudioCtx.currentTime + duration / 1000);
+                                    gain.gain.setValueAtTime(0.3, chargeAudioCtx.currentTime);
+                                    osc.start();
+                                    osc.stop(chargeAudioCtx.currentTime + duration / 1000);
+                                } catch(e) { chargeAudioCtx = null; }
+                            }
+
+                            const animate = (now) => {
+                                const pct = Math.min((now - startTime) / duration, 1);
+                                if (fillEl) fillEl.style.width = (pct * 100) + '%';
+                                if (pct < 1) {
+                                    chargeAnimId = requestAnimationFrame(animate);
+                                } else {
+                                    chargeState = 'charged';
+                                    chargeAnimId = null;
+                                    if (chargeAudioCtx) { chargeAudioCtx.close(); chargeAudioCtx = null; }
+                                    ['btn-learner-shock', 'btn-shock'].forEach(id => {
+                                        const sb = document.getElementById(id);
+                                        if (sb) { sb.disabled = false; sb.classList.remove('opacity-40', 'cursor-not-allowed'); }
+                                    });
+                                    ['btn-learner-charge', 'btn-ctrl-charge'].forEach(id => {
+                                        const cb = document.getElementById(id);
+                                        if (cb) cb.classList.add('charge-flashing');
+                                    });
+                                    chargeTimerId = setTimeout(() => cancelCharge(), 10000);
+                                }
+                            };
+                            chargeAnimId = requestAnimationFrame(animate);
+                        });
+                    });
+
+                    const updateVolUI = () => {
+                        [['btn-learner-vol', 'learner-vol-on', 'learner-vol-off'],
+                         ['btn-ctrl-vol', 'ctrl-vol-on', 'ctrl-vol-off']].forEach(([btnId, onId, offId]) => {
+                            const btn = document.getElementById(btnId);
+                            if (!btn) return;
+                            btn.classList.toggle('bg-green-600', volumeOn);
+                            btn.classList.toggle('border-green-500', volumeOn);
+                            btn.classList.toggle('text-green-100', volumeOn);
+                            btn.classList.toggle('bg-slate-700', !volumeOn);
+                            btn.classList.toggle('border-slate-600', !volumeOn);
+                            btn.classList.toggle('text-slate-400', !volumeOn);
+                            const onEl = document.getElementById(onId);
+                            const offEl = document.getElementById(offId);
+                            if (onEl) onEl.classList.toggle('hidden', !volumeOn);
+                            if (offEl) offEl.classList.toggle('hidden', volumeOn);
+                        });
+                    };
+                    ['btn-learner-vol', 'btn-ctrl-vol'].forEach(btnId => {
+                        const btn = document.getElementById(btnId);
+                        if (!btn) return;
+                        btn.addEventListener('click', () => {
+                            volumeOn = !volumeOn;
+                            updateVolUI();
+                        });
+                    });
+                    updateVolUI();
+                };
+                setupChargeButton();
 
                 // Initial fetch and start polling
                 if (sessionId) {

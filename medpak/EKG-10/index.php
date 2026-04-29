@@ -142,7 +142,11 @@ $isLinks = ($action === 'start');
                         <span class="font-bold text-white tracking-widest">SIM-PAT-01</span>
                         <span class="text-slate-400">SESSION: <?= htmlspecialchars($id) ?></span>
                     </div>
-                    <div class="text-slate-400 flex gap-4">
+                    <div class="text-slate-400 flex gap-4 items-center">
+                        <button id="btn-beep-toggle" title="Toggle monitor beep" class="flex items-center gap-1 text-xs font-bold px-2 py-1 rounded border border-slate-700 hover:border-slate-500 transition-colors">
+                            <svg id="beep-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            <span id="beep-label">BEEP</span>
+                        </button>
                         <span id="time-display">--:--:--</span>
                     </div>
                 </div>
@@ -510,6 +514,45 @@ $isLinks = ($action === 'start');
                 let syncShockPending = false;
                 let doShock = null;
                 let lastKnownSyncMode = false;
+
+                // --- BEEP ---
+                let beepEnabled = false;
+                let audioCtx = null;
+                const markExistingQRSBeeped = () => {
+                    events.forEach(e => { if (e.type === 'QRS') e.beeped = true; });
+                };
+                const playBeep = () => {
+                    if (!audioCtx) audioCtx = new AudioContext();
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.value = 880;
+                    const now = audioCtx.currentTime;
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.28, now + 0.005);
+                    gain.gain.setValueAtTime(0.28, now + 0.055);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.085);
+                };
+                document.getElementById('btn-beep-toggle')?.addEventListener('click', () => {
+                    if (!audioCtx) audioCtx = new AudioContext();
+                    beepEnabled = !beepEnabled;
+                    if (beepEnabled) markExistingQRSBeeped();
+                    const btn = document.getElementById('btn-beep-toggle');
+                    const lbl = document.getElementById('beep-label');
+                    const ico = document.getElementById('beep-icon');
+                    if (btn) {
+                        btn.classList.toggle('text-green-400', beepEnabled);
+                        btn.classList.toggle('border-green-600', beepEnabled);
+                        btn.classList.toggle('text-slate-400', !beepEnabled);
+                        btn.classList.toggle('border-slate-700', !beepEnabled);
+                    }
+                    if (lbl) lbl.innerText = beepEnabled ? 'BEEP ON' : 'BEEP';
+                });
 
                 const markExistingQRSSynced = () => {
                     events.forEach(e => { if (e.type === 'QRS') e.syncMarked = true; });
@@ -1102,7 +1145,7 @@ $isLinks = ($action === 'start');
                             }
                         }
 
-                        // SYNC: triangle markers and delayed shock
+                        // SYNC: triangle markers and delayed shock; BEEP on QRS peak
                         for (const e of events) {
                             if (e.type !== 'QRS') continue;
                             const peakOffset = e.wide ? 0.06 : 0.045;
@@ -1121,6 +1164,10 @@ $isLinks = ($action === 'start');
                                 e.syncShockFired = true;
                                 syncShockPending = false;
                                 doShock?.();
+                            }
+                            if (beepEnabled && !e.beeped && drawState.drawTime >= peakTime) {
+                                e.beeped = true;
+                                playBeep();
                             }
                         }
 
