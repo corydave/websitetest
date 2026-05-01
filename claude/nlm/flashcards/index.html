@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Study App</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts - Comfortaa -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* ===== CONTAINER & LAYOUT ===== */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0046ad;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+        }
+
+        /* ===== INPUT SECTION ===== */
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .input-section h2 {
+            color: #0046ad;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .input-method {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0046ad;
+        }
+
+        .input-method h3 {
+            color: #555;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Round navigation buttons */
+        .nav-button-round {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            min-height: 48px;
+            max-width: 48px;
+            max-height: 48px;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            padding: 0 !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #0046ad;
+            position: relative;
+            flex-shrink: 0;
+            gap: 0;
+        }
+
+        .nav-button-round:hover {
+            background: #003580;
+        }
+
+        .nav-button-round:disabled {
+            background: #ccc;
+        }
+
+        /* Tooltip for round buttons */
+        .nav-button-round::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-button-round:hover::after {
+            opacity: 1;
+        }
+
+        /* ===== STUDY SECTION ===== */
+        .study-section {
+            display: none;
+        }
+
+        .study-section.active {
+            display: block;
+        }
+
+        /* ===== FLASHCARD STYLES ===== */
+        .flashcard {
+            perspective: 1000px;
+            min-height: 300px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            min-height: 300px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            min-height: 300px;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            font-size: 1.4em;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .controls button {
+            /*min-width: 120px;*/
+        }
+
+        .flip-button {
+            background: #764ba2;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            min-height: 48px;
+            max-width: 48px;
+            max-height: 48px;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            padding: 0 !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+            gap: 0;
+        }
+
+        .flip-button:hover {
+            background: #633d8a;
+        }
+
+        /* Tooltip for flip button */
+        .flip-button::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .flip-button:hover::after {
+            opacity: 1;
+        }
+
+        .remove-button {
+            background: #f5576c;
+            border-radius: 50px;
+        }
+
+        .remove-button:hover {
+            background: #e04559;
+        }
+
+        /* ===== PROGRESS INDICATOR ===== */
+        .progress {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #0046ad;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* ===== STATUS MESSAGES ===== */
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status.error {
+            background: #ffe5e5;
+            color: #d32f2f;
+            border: 2px solid #d32f2f;
+        }
+
+        .status.success {
+            background: #e5ffe5;
+            color: #2d7a2d;
+            border: 2px solid #2d7a2d;
+        }
+
+        .status.info {
+            background: #e5f3ff;
+            color: #1565c0;
+            border: 2px solid #1565c0;
+        }
+
+        /* ===== KEYBOARD HINT ===== */
+        .keyboard-hint {
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .keyboard-hint kbd {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+
+        /* ===== REMOVED CARDS INDICATOR ===== */
+        .removed-indicator {
+            text-align: center;
+            color: #f5576c;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .card-container {
+                padding: 20px;
+            }
+
+            .flashcard-front,
+            .flashcard-back {
+                padding: 30px 20px;
+                min-height: 250px;
+            }
+
+            .card-content {
+                font-size: 1.2em;
+            }
+
+            .controls button {
+                min-width: 100px;
+                padding: 10px 16px;
+            }
+        }
+
+        /* ===== FOCUS STYLES FOR ACCESSIBILITY ===== */
+        *:focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flashcard Study App</h1>
+
+        <!-- Input Section -->
+        <div class="card-container" id="inputContainer">
+            <div class="input-section">
+                <h2>Load Your Flashcards</h2>
+
+                <!-- File Upload -->
+                <div class="input-method">
+                    <h3>Upload CSV File</h3>
+                    <input 
+                        type="file" 
+                        id="fileInput" 
+                        accept=".csv"
+                        aria-label="Upload CSV file"
+                    >
+                </div>
+
+                <!-- Published Google Sheet -->
+                <div class="input-method" style="border-left-color: #58A618;">
+                    <h3>Published Google Sheet URL (Recommended)</h3>
+                    <p style="font-size: 0.9em; color: #666; margin-bottom: 8px;">
+                        <strong>How to publish:</strong> In Google Sheets → File → Share → Publish to web → Link → Entire Document → CSV<br>
+                        <em>Works seamlessly, auto-updates when you edit the sheet!</em>
+                    </p>
+                    <input 
+                        type="text" 
+                        id="sheetLink" 
+                        placeholder="https://docs.google.com/spreadsheets/d/e/2PACX-.../pubhtml or pub?output=csv"
+                        aria-label="Published Google Sheet link"
+                    >
+                    <button id="loadSheetBtn" aria-label="Load flashcards from published Google Sheet" style="background: #58A618;">
+                        Load from Sheet
+                    </button>
+                </div>
+
+                <div id="statusMessage"></div>
+            </div>
+        </div>
+
+        <!-- Study Section (hidden initially) -->
+        <div class="card-container study-section" id="studySection">
+            <div class="progress">
+                <div id="cardCounter">Card 1 of 0</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="removedIndicator" class="removed-indicator" style="display: none;">
+                Cards removed this session: <span id="removedCount">0</span>
+            </div>
+
+            <!-- Flashcard -->
+            <div 
+                class="flashcard" 
+                id="flashcard"
+                role="button"
+                tabindex="0"
+                aria-label="Flashcard - Click or press Space to flip"
+            >
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="card-label">Question</div>
+                        <div class="card-content" id="questionText"></div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-label">Answer</div>
+                        <div class="card-content" id="answerText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button 
+                    class="nav-button-round" 
+                    id="prevBtn"
+                    aria-label="Previous card"
+                    data-tooltip="Previous"
+                >
+                    <i data-lucide="chevron-left" style="width: 24px; height: 24px;"></i>
+                </button>
+                <button 
+                    class="flip-button" 
+                    id="flipBtn"
+                    aria-label="Flip card"
+                    data-tooltip="Flip Card"
+                >
+                    <i data-lucide="repeat" style="width: 24px; height: 24px;"></i>
+                </button>
+                <button 
+                    class="nav-button-round" 
+                    id="nextBtn"
+                    aria-label="Next card"
+                    data-tooltip="Next"
+                >
+                    <i data-lucide="chevron-right" style="width: 24px; height: 24px;"></i>
+                </button>
+            </div>
+
+            <div class="controls">
+                <button 
+                    class="remove-button" 
+                    id="removeBtn"
+                    aria-label="Remove this card from current session"
+                >
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                    Remove from Deck
+                </button>
+            </div>
+
+            <div class="keyboard-hint">
+                <strong>Keyboard Shortcuts:</strong>
+                <kbd>Space</kbd> or <kbd>Enter</kbd> to flip •
+                <kbd>←</kbd> <kbd>→</kbd> to navigate •
+                <kbd>D</kbd> to remove card
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== APPLICATION STATE =====
+        // This object holds all the data for our flashcard app
+        let appState = {
+            allCards: [],           // All cards loaded from CSV
+            activeCards: [],        // Cards that haven't been removed
+            currentIndex: 0,        // Which card we're currently viewing
+            removedCards: new Set(), // Set of removed card indices (Set prevents duplicates)
+            isFlipped: false        // Whether the current card is showing the answer
+        };
+
+        // ===== DOM ELEMENT REFERENCES =====
+        // Store references to elements we'll use frequently to avoid repeated lookups
+        const elements = {
+            fileInput: document.getElementById('fileInput'),
+            sheetLink: document.getElementById('sheetLink'),
+            loadSheetBtn: document.getElementById('loadSheetBtn'),
+            statusMessage: document.getElementById('statusMessage'),
+            inputContainer: document.getElementById('inputContainer'),
+            studySection: document.getElementById('studySection'),
+            flashcard: document.getElementById('flashcard'),
+            questionText: document.getElementById('questionText'),
+            answerText: document.getElementById('answerText'),
+            cardCounter: document.getElementById('cardCounter'),
+            progressFill: document.getElementById('progressFill'),
+            removedIndicator: document.getElementById('removedIndicator'),
+            removedCount: document.getElementById('removedCount'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            flipBtn: document.getElementById('flipBtn'),
+            removeBtn: document.getElementById('removeBtn')
+        };
+
+        // ===== INITIALIZATION =====
+        // This runs when the page loads
+        function init() {
+            // Set up all event listeners
+            setupEventListeners();
+            
+            // Check if there's a 'file' parameter in the URL
+            checkURLParameter();
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            // File upload
+            elements.fileInput.addEventListener('change', handleFileUpload);
+            
+            // Published Google Sheet link
+            elements.loadSheetBtn.addEventListener('click', handleSheetLink);
+            elements.sheetLink.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSheetLink();
+            });
+            
+            // Navigation buttons
+            elements.prevBtn.addEventListener('click', showPreviousCard);
+            elements.nextBtn.addEventListener('click', showNextCard);
+            elements.flipBtn.addEventListener('click', flipCard);
+            elements.removeBtn.addEventListener('click', removeCurrentCard);
+            
+            // Clicking the card flips it
+            elements.flashcard.addEventListener('click', flipCard);
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Make flashcard keyboard accessible
+            elements.flashcard.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    flipCard();
+                }
+            });
+        }
+
+        // ===== URL PARAMETER HANDLING =====
+        // Check if the URL has a 'file=' parameter for auto-loading from a published Google Sheet
+        function checkURLParameter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileParam = urlParams.get('file');
+            
+            if (fileParam) {
+                // User provided a file parameter - load it automatically
+                showStatus('Loading flashcards from URL parameter...', 'info');
+                
+                // Extract sheet ID and load from published Google Sheet
+                const sheetId = extractSheetId(fileParam);
+                if (sheetId) {
+                    loadFromPublishedSheet(sheetId);
+                } else {
+                    showStatus('Invalid Google Sheet URL in URL parameter', 'error');
+                }
+            }
+        }
+
+        // ===== PUBLISHED GOOGLE SHEET HANDLING =====
+        // Extract the sheet ID from various Google Sheets published URL formats
+        function extractSheetId(input) {
+            // Security note: We only extract the sheet ID, not execute any code from the URL
+            // The sheet ID is then used to construct a safe CSV export URL
+            
+            // Remove any whitespace
+            input = input.trim();
+            
+            // If it's already just a sheet ID (format: 2PACX-... or other alphanumeric pattern)
+            if (/^[a-zA-Z0-9_-]+$/.test(input)) {
+                return input;
+            }
+            
+            // Try to extract from common Google Sheets published URL patterns
+            // Pattern 1: /d/e/SHEET_ID/pub or /d/e/SHEET_ID/pubhtml
+            let match = input.match(/\/d\/e\/([a-zA-Z0-9_-]+)/);
+            if (match) return match[1];
+            
+            // Pattern 2: For older style sheets - /d/SHEET_ID/
+            match = input.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) return match[1];
+            
+            return null;
+        }
+
+        // Load CSV data from a published Google Sheet
+        async function loadFromPublishedSheet(sheetId) {
+            try {
+                // Convert the published sheet URL to a CSV export URL
+                // Published sheets are served with CORS headers that allow cross-origin requests
+                const csvUrl = `https://docs.google.com/spreadsheets/d/e/${sheetId}/pub?output=csv`;
+                
+                showStatus('Fetching flashcards from published Google Sheet...', 'info');
+                
+                // Fetch the CSV data
+                const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch sheet: ${response.status} ${response.statusText}`);
+                }
+                
+                // Get the CSV text
+                const csvText = await response.text();
+                
+                // Verify it's actually CSV content (not an error page)
+                if (csvText.includes('<html') || csvText.includes('<!DOCTYPE')) {
+                    throw new Error('Received HTML instead of CSV - make sure the sheet is published to web');
+                }
+                
+                // Parse and load the flashcards
+                parseAndLoadCSV(csvText);
+                
+                // Update the URL to include the file parameter
+                // This allows users to bookmark or share the direct link to these flashcards
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('file', sheetId);
+                window.history.replaceState({}, '', newUrl);
+                
+            } catch (error) {
+                console.error('Error loading from Google Sheet:', error);
+                showStatus(
+                    `Error loading from Google Sheet. Make sure it's published to web:<br>
+                    <strong>In Google Sheets:</strong> File → Share → Publish to web → Entire Document → CSV<br>
+                    <em>Error: ${error.message}</em>`,
+                    'error'
+                );
+            }
+        }
+
+        // Handle the published Google Sheet link button click
+        function handleSheetLink() {
+            const link = elements.sheetLink.value.trim();
+            
+            if (!link) {
+                showStatus('Please paste a published Google Sheet link', 'error');
+                return;
+            }
+            
+            const sheetId = extractSheetId(link);
+            
+            if (!sheetId) {
+                showStatus('Could not extract sheet ID from the link. Please check the URL.', 'error');
+                return;
+            }
+            
+            loadFromPublishedSheet(sheetId);
+        }
+
+        // ===== FILE UPLOAD HANDLING =====
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            
+            if (!file) return;
+            
+            // Security check: Verify it's a CSV file
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('Please upload a CSV file', 'error');
+                return;
+            }
+            
+            // Read the file
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const csvText = e.target.result;
+                parseAndLoadCSV(csvText);
+            };
+            
+            reader.onerror = function() {
+                showStatus('Error reading file', 'error');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // ===== CSV PARSING =====
+        // Parse CSV text and load flashcards
+        function parseAndLoadCSV(csvText) {
+            try {
+                // Parse CSV manually since we're avoiding dependencies
+                // This handles basic CSV with quoted fields
+                const cards = parseCSV(csvText);
+                
+                if (cards.length === 0) {
+                    showStatus('No flashcards found in the file', 'error');
+                    return;
+                }
+                
+                // Store the cards in our state
+                appState.allCards = cards;
+                appState.activeCards = [...cards]; // Create a copy
+                appState.currentIndex = 0;
+                appState.removedCards.clear();
+                appState.isFlipped = false;
+                
+                // Switch to study mode
+                elements.inputContainer.style.display = 'none';
+                elements.studySection.classList.add('active');
+                
+                // Display the first card
+                displayCurrentCard();
+                updateProgress();
+                
+                showStatus(`Loaded ${cards.length} flashcards successfully!`, 'success');
+                
+                // Clear the success message after 3 seconds
+                setTimeout(() => {
+                    elements.statusMessage.innerHTML = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error parsing CSV:', error);
+                showStatus('Error parsing CSV file. Please check the format.', 'error');
+            }
+        }
+
+        // Simple CSV parser that handles quoted fields
+        function parseCSV(text) {
+            const cards = [];
+            const lines = text.split('\n');
+            
+            for (let line of lines) {
+                // Skip empty lines
+                if (!line.trim()) continue;
+                
+                // Parse the line - handle quoted fields that may contain commas
+                const fields = parseCSVLine(line);
+                
+                if (fields.length >= 2) {
+                    cards.push({
+                        question: fields[0].trim(),
+                        answer: fields[1].trim()
+                    });
+                }
+            }
+            
+            return cards;
+        }
+
+        // Parse a single CSV line, handling quotes properly
+        function parseCSVLine(line) {
+            const fields = [];
+            let currentField = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
+                
+                if (char === '"') {
+                    // Handle escaped quotes ("")
+                    if (inQuotes && nextChar === '"') {
+                        currentField += '"';
+                        i++; // Skip the next quote
+                    } else {
+                        // Toggle quote state
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    // Field separator (only if not inside quotes)
+                    fields.push(currentField);
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            
+            // Add the last field
+            fields.push(currentField);
+            
+            return fields;
+        }
+
+        // ===== DISPLAY FUNCTIONS =====
+        // Display the current flashcard
+        function displayCurrentCard() {
+            if (appState.activeCards.length === 0) {
+                // No more cards!
+                elements.questionText.textContent = 'All cards completed!';
+                elements.answerText.textContent = 'Great job studying!';
+                elements.removeBtn.disabled = true;
+                elements.prevBtn.disabled = true;
+                elements.nextBtn.disabled = true;
+                elements.flipBtn.disabled = true;
+                return;
+            }
+            
+            // Make sure index is valid
+            if (appState.currentIndex >= appState.activeCards.length) {
+                appState.currentIndex = appState.activeCards.length - 1;
+            }
+            if (appState.currentIndex < 0) {
+                appState.currentIndex = 0;
+            }
+            
+            const card = appState.activeCards[appState.currentIndex];
+            
+            // Update card content
+            elements.questionText.textContent = card.question;
+            elements.answerText.textContent = card.answer;
+            
+            // Reset flip state
+            if (appState.isFlipped) {
+                elements.flashcard.classList.remove('flipped');
+                appState.isFlipped = false;
+            }
+            
+            // Enable/disable navigation buttons
+            elements.prevBtn.disabled = appState.currentIndex === 0;
+            elements.nextBtn.disabled = appState.currentIndex === appState.activeCards.length - 1;
+            elements.removeBtn.disabled = false;
+            elements.flipBtn.disabled = false;
+        }
+
+        // Update the progress indicators
+        function updateProgress() {
+            const total = appState.activeCards.length;
+            const current = appState.currentIndex + 1;
+            
+            // Update counter text
+            elements.cardCounter.textContent = `Card ${current} of ${total}`;
+            
+            // Update progress bar
+            const percentage = total > 0 ? (current / total) * 100 : 0;
+            elements.progressFill.style.width = percentage + '%';
+            
+            // Update removed cards indicator
+            const removedCount = appState.removedCards.size;
+            if (removedCount > 0) {
+                elements.removedIndicator.style.display = 'block';
+                elements.removedCount.textContent = removedCount;
+            } else {
+                elements.removedIndicator.style.display = 'none';
+            }
+        }
+
+        // ===== CARD ACTIONS =====
+        // Flip the current card
+        function flipCard() {
+            elements.flashcard.classList.toggle('flipped');
+            appState.isFlipped = !appState.isFlipped;
+            
+            // Update ARIA label for screen readers
+            const label = appState.isFlipped ? 
+                'Flashcard showing answer - Click or press Space to flip back to question' :
+                'Flashcard showing question - Click or press Space to flip to answer';
+            elements.flashcard.setAttribute('aria-label', label);
+        }
+
+        // Show the next card
+        function showNextCard() {
+            if (appState.currentIndex < appState.activeCards.length - 1) {
+                appState.currentIndex++;
+                displayCurrentCard();
+                updateProgress();
+            }
+        }
+
+        // Show the previous card
+        function showPreviousCard() {
+            if (appState.currentIndex > 0) {
+                appState.currentIndex--;
+                displayCurrentCard();
+                updateProgress();
+            }
+        }
+
+        // Remove the current card from the active set
+        function removeCurrentCard() {
+            if (appState.activeCards.length === 0) return;
+            
+            // Find the original index of this card in the allCards array
+            const currentCard = appState.activeCards[appState.currentIndex];
+            const originalIndex = appState.allCards.indexOf(currentCard);
+            
+            // Add to removed set
+            appState.removedCards.add(originalIndex);
+            
+            // Remove from active cards
+            appState.activeCards.splice(appState.currentIndex, 1);
+            
+            // Adjust current index if needed
+            if (appState.currentIndex >= appState.activeCards.length && appState.currentIndex > 0) {
+                appState.currentIndex--;
+            }
+            
+            // Update display
+            displayCurrentCard();
+            updateProgress();
+            
+            // Give feedback
+            showStatus('Card removed! It won\'t appear again this session.', 'success');
+            setTimeout(() => {
+                elements.statusMessage.innerHTML = '';
+            }, 2000);
+        }
+
+        // ===== KEYBOARD HANDLING =====
+        function handleKeyPress(event) {
+            // Only handle keyboard shortcuts when study section is active
+            if (!elements.studySection.classList.contains('active')) return;
+            
+            // Don't interfere if user is typing in an input field
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+            
+            switch(event.key) {
+                case ' ':           // Space bar
+                case 'Enter':       // Enter key
+                    event.preventDefault(); // Prevent page scroll on space
+                    flipCard();
+                    break;
+                case 'ArrowLeft':   // Left arrow
+                    event.preventDefault();
+                    showPreviousCard();
+                    break;
+                case 'ArrowRight':  // Right arrow
+                    event.preventDefault();
+                    showNextCard();
+                    break;
+                case 'r':           // R key
+                case 'D':
+                    event.preventDefault();
+                    removeCurrentCard();
+                    break;
+            }
+        }
+
+        // ===== RESET FUNCTION =====
+        function resetApp() {
+            // Clear the state
+            appState = {
+                allCards: [],
+                activeCards: [],
+                currentIndex: 0,
+                removedCards: new Set(),
+                isFlipped: false
+            };
+            
+            // Reset UI
+            elements.inputContainer.style.display = 'block';
+            elements.studySection.classList.remove('active');
+            elements.fileInput.value = '';
+            elements.sheetLink.value = '';
+            elements.statusMessage.innerHTML = '';
+        }
+
+        // ===== STATUS MESSAGES =====
+        function showStatus(message, type) {
+            elements.statusMessage.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // ===== START THE APP =====
+        // Initialize when the DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Initialize Lucide icons
+        // This converts all elements with data-lucide attributes into SVG icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"ce4c45e2557e4897bf35a88449e886d7","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
