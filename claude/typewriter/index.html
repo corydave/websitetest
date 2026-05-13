@@ -21,18 +21,20 @@
         #display {
             height: 75vh;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            display: block; 
+            overflow-y: auto;
             transition: background-color 0.3s;
         }
         
         #text-display {
             max-width: 80%;
+            margin: 10vh auto 0 auto; 
             font-size: 2rem;
             line-height: 1.5;
             white-space: pre-wrap;
+            text-align: left;
+            min-height: 1.5em;
+            transition: color 0.3s;
         }
         
         #settings {
@@ -114,7 +116,7 @@
     <div id="settings">
         <div class="control-row">
             <label for="text-input">Text:</label>
-            <input type="text" id="text-input" placeholder="Enter text to display" value="Welcome to the Typewriter Effect App! You can change this text, font, background color, and typing speed in the settings below.">
+            <input type="text" id="text-input" placeholder="Enter text to display" value="Welcome to the Typewriter Effect App! Now with customizable text colors.">
         </div>
         
         <div class="control-row">
@@ -129,6 +131,9 @@
                 <option value="Impact, sans-serif">Impact</option>
             </select>
             
+            <label for="text-color">Text Color:</label>
+            <input type="color" id="text-color" value="#333333">
+
             <label for="bg-color">Background:</label>
             <input type="color" id="bg-color" value="#ffffff">
             
@@ -144,37 +149,37 @@
     </div>
 
     <script>
-        // DOM elements
         const display = document.getElementById('display');
         const textDisplay = document.getElementById('text-display');
         const textInput = document.getElementById('text-input');
         const fontSelector = document.getElementById('font-selector');
+        const textColor = document.getElementById('text-color');
         const bgColor = document.getElementById('bg-color');
         const speedSlider = document.getElementById('speed-slider');
         const speedValue = document.getElementById('speed-value');
         const playButton = document.getElementById('play-button');
         const stopButton = document.getElementById('stop-button');
         
-        // Variables
         let typingInterval;
         let currentIndex = 0;
         let isTyping = false;
         
         // Initialize
-        updateBackgroundColor();
+        updateColors();
         updateFont();
         updateSpeedValue();
         
         // Event listeners
-        bgColor.addEventListener('input', updateBackgroundColor);
+        textColor.addEventListener('input', updateColors);
+        bgColor.addEventListener('input', updateColors);
         fontSelector.addEventListener('change', updateFont);
         speedSlider.addEventListener('input', updateSpeedValue);
         playButton.addEventListener('click', startTypewriter);
         stopButton.addEventListener('click', stopTypewriter);
         
-        // Functions
-        function updateBackgroundColor() {
+        function updateColors() {
             display.style.backgroundColor = bgColor.value;
+            textDisplay.style.color = textColor.value;
         }
         
         function updateFont() {
@@ -186,22 +191,18 @@
         }
         
         function startTypewriter() {
-            // Reset if already typing
             if (isTyping) {
                 stopTypewriter();
             }
             
-            // Prepare for typing
             const text = textInput.value;
             textDisplay.textContent = '';
             currentIndex = 0;
             isTyping = true;
             
-            // Update button states
             playButton.disabled = true;
             stopButton.disabled = false;
             
-            // Start typing
             typingInterval = setInterval(() => {
                 if (currentIndex < text.length) {
                     textDisplay.textContent += text.charAt(currentIndex);
@@ -215,8 +216,6 @@
         function stopTypewriter() {
             clearInterval(typingInterval);
             isTyping = false;
-            
-            // Update button states
             playButton.disabled = false;
             stopButton.disabled = true;
         }
