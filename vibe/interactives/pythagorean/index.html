@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Pythagorean Theorem — FLCC FLX AI Hub</title>
+
+  <!--
+    FLCC FLX AI Hub — Interactive Lesson
+    The Pythagorean Theorem
+    Three locked pages. Each page has a gate question.
+    Answer correctly to unlock the next page.
+
+    Page 1 — Meet the theorem (sliders, live SVG squares)
+    Page 2 — Drag & discover (canvas) + solve-for calculator
+    Page 3 — Pythagorean triples + final challenge
+  -->
+
+  <!-- Google Fonts: Comfortaa (headings) + Atkinson Hyperlegible (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ==========================================================
+       DESIGN TOKENS — FLCC FLX AI Hub brand
+       Change values here and they update everywhere.
+    ========================================================== */
+    :root {
+      --primary:  #0046ad;   /* Blue  — main brand color          */
+      --green:    #58a618;   /* Green — accent (white text ok)    */
+      --orange:   #f45922;   /* Orange — accent (white text ok)   */
+      --gray:     #cccccc;   /* Gray  — accent (white text ok)    */
+
+      --bg:       #eef3fb;   /* Page background                   */
+      --card:     #ffffff;   /* Card surface                      */
+      --text:     #1a1a2e;   /* Main text                         */
+      --muted:    #5a5a7a;   /* Subdued text                      */
+
+      --radius:   15px;      /* Border radius — used on all corners */
+      --shadow:   0 4px 24px rgba(0, 70, 173, 0.10);
+
+      --font-head: 'Comfortaa', cursive;
+      --font-body: 'Atkinson Hyperlegible', sans-serif;
+    }
+
+    /* ==========================================================
+       RESET & BASE
+    ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background:  var(--bg);
+      color:       var(--text);
+      min-height:  100vh;
+      padding:     24px 16px 80px;
+    }
+
+    h1, h2, h3, h4 { font-family: var(--font-head); }
+
+    /* ==========================================================
+       SITE HEADER
+    ========================================================== */
+    .hub-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      padding: 4px 14px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+    .site-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .site-sub { color: var(--muted); margin-top: 6px; font-size: 1rem; }
+    header    { text-align: center; margin-bottom: 28px; }
+
+    /* ==========================================================
+       PROGRESS STEPPER
+       Three dots connected by lines. Dots change colour as
+       the student completes each page.
+    ========================================================== */
+    .stepper {
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .step-dot {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 3px solid var(--gray);
+      background: #fff; color: var(--gray);
+      font-family: var(--font-head); font-weight: 700; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.3s;
+    }
+    .step-dot.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .step-dot.done   { border-color: var(--green);   background: var(--green);   color: #fff; cursor: pointer; }
+    .step-dot.done:hover { background: #4a9010; border-color: #4a9010; }
+    .step-line {
+      width: 70px; height: 3px;
+      background: var(--gray); flex-shrink: 0; transition: background 0.3s;
+    }
+    .step-line.done { background: var(--green); }
+
+    /* ==========================================================
+       PAGE SECTIONS
+       Only one section is visible at a time (class="active").
+    ========================================================== */
+    .page { display: none; max-width: 780px; margin: 0 auto; }
+    .page.active {
+      display: block;
+      animation: fadeUp 0.35s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================
+       CARDS
+    ========================================================== */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 26px 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 { color: var(--primary); font-size: 1.35rem; margin-bottom: 12px; }
+    .card p   { line-height: 1.75; margin-bottom: 12px; }
+    .card p:last-child { margin-bottom: 0; }
+
+    /* ==========================================================
+       BIG FORMULA BANNER
+    ========================================================== */
+    .formula-banner {
+      background: var(--primary); color: #fff;
+      border-radius: var(--radius);
+      padding: 18px 24px; text-align: center; margin: 16px 0;
+    }
+    .formula-banner .formula {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700; letter-spacing: 0.04em;
+    }
+    .formula-banner .formula-sub { font-size: 0.85rem; opacity: 0.85; margin-top: 6px; }
+
+    /* ==========================================================
+       SLIDER CONTROLS
+    ========================================================== */
+    .slider-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; margin: 18px 0;
+    }
+    @media (max-width: 480px) { .slider-row { grid-template-columns: 1fr; } }
+
+    .slider-label { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 6px; }
+
+    /* Small coloured pill that shows the current slider value */
+    .pill {
+      background: var(--primary); color: #fff;
+      font-family: var(--font-head); font-weight: 700;
+      padding: 2px 10px; border-radius: 20px;
+      min-width: 36px; text-align: center; font-size: 0.95rem;
+    }
+    .pill.green  { background: var(--green); }
+    .pill.orange { background: var(--orange); }
+
+    input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+
+    /* ==========================================================
+       LIVE EQUATION + COLOUR SPANS
+    ========================================================== */
+    .live-eq {
+      font-family: var(--font-head);
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      text-align: center; background: var(--bg);
+      border-radius: var(--radius); padding: 12px 16px;
+      margin: 10px 0; line-height: 1.9;
+    }
+    .cb { color: var(--primary); font-weight: 700; }
+    .cg { color: var(--green);   font-weight: 700; }
+    .co { color: var(--orange);  font-weight: 700; }
+
+    /* ==========================================================
+       PROPORTIONAL SQUARE BOXES ROW (the "areas" visual)
+    ========================================================== */
+    .sq-row {
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 10px; flex-wrap: wrap; margin: 14px 0;
+    }
+    .sq-item  { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    /* Fixed-size wrapper — never changes dimensions regardless of the value inside.
+       This prevents other boxes from appearing to shrink when one box grows. */
+    .sq-container {
+      width: 72px; height: 72px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg); border-radius: 8px;
+    }
+    .sq-box   { border-radius: 5px; transition: all 0.3s; }
+    .sq-sym   { font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; }
+    .sq-val   { font-size: 0.8rem; color: var(--muted); }
+    .sq-op    { font-family: var(--font-head); font-size: 1.4rem; color: var(--muted); align-self: center; }
+
+    /* ==========================================================
+       CALLOUT BLOCKS (colour-coded info boxes)
+    ========================================================== */
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: #eef4ff;
+      padding: 13px 16px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0; font-size: 0.97rem; line-height: 1.65;
+    }
+    .callout.orange { border-color: var(--orange); background: #fff3ee; }
+    .callout.green  { border-color: var(--green);  background: #f1f8e9; }
+
+    /* ==========================================================
+       CANVAS WRAPPER (draggable triangle, page 2)
+    ========================================================== */
+    .canvas-wrap {
+      border-radius: var(--radius); overflow: hidden;
+      border: 2px solid var(--gray); background: #fff;
+      margin-bottom: 10px;
+    }
+    canvas { display: block; width: 100%; touch-action: none; }
+
+    .drag-tip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--primary); color: #fff;
+      font-size: 0.8rem; padding: 4px 12px;
+      border-radius: 20px; margin-bottom: 10px;
+    }
+
+    /* ==========================================================
+       SOLVE-FOR CALCULATOR (page 2)
+    ========================================================== */
+    .calc-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 14px; margin: 16px 0;
+    }
+    @media (max-width: 480px) { .calc-grid { grid-template-columns: 1fr; } }
+
+    .calc-grid label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+    .calc-grid input {
+      width: 100%; padding: 10px 12px;
+      border: 2px solid var(--gray); border-radius: var(--radius);
+      font-family: var(--font-body); font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .calc-grid input:focus { outline: none; border-color: var(--primary); }
+
+    .calc-result {
+      background: var(--bg); border-radius: var(--radius);
+      padding: 12px 16px; font-family: var(--font-head);
+      font-size: 1rem; color: var(--primary);
+      min-height: 46px; margin-top: 12px;
+    }
+
+    /* ==========================================================
+       BUTTONS
+    ========================================================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border: none; border-radius: var(--radius);
+      font-family: var(--font-head); font-size: 0.97rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .btn-blue  { background: var(--primary); color: #fff; }
+    .btn-blue:hover  { background: #003a99; transform: translateY(-1px); }
+    .btn-green { background: var(--green);   color: #fff; }
+    .btn-green:hover { background: #4a9010; transform: translateY(-1px); }
+    .btn-gray  { background: var(--gray);    color: var(--text); }
+    .btn-gray:hover  { background: #bbb; transform: translateY(-1px); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+
+    /* ==========================================================
+       QUIZ GATE CARDS
+    ========================================================== */
+    .quiz-card { border: 2.5px dashed var(--primary); }
+    .quiz-tag {
+      color: var(--orange); font-family: var(--font-head); font-weight: 700;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .quiz-q  { color: var(--text); font-size: 1.05rem; margin-bottom: 8px; line-height: 1.6; }
+    .hint    { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-bottom: 12px; }
+
+    .quiz-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .quiz-input {
+      padding: 10px 14px; border: 2px solid var(--gray); border-radius: var(--radius);
+      font-family: var(--font-body); font-size: 1.05rem; width: 130px;
+      transition: border-color 0.2s;
+    }
+    .quiz-input:focus { outline: none; border-color: var(--primary); }
+
+    /* Feedback message that appears after a quiz attempt */
+    .feedback { margin-top: 12px; padding: 11px 15px; border-radius: var(--radius); font-weight: 700; display: none; }
+    .feedback.ok   { display: block; background: #e8f5e9; color: #2e7d32; border-left: 4px solid var(--green); }
+    .feedback.nope { display: block; background: #fff3ee; color: #bf3600; border-left: 4px solid var(--orange); }
+
+    /* ==========================================================
+       PYTHAGOREAN TRIPLES GRID (page 3)
+    ========================================================== */
+    .triples-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 12px; margin: 16px 0;
+    }
+    .triple-card {
+      background: var(--bg); border-radius: var(--radius);
+      padding: 15px; text-align: center;
+      border: 2px solid transparent;
+      cursor: pointer; transition: border-color 0.2s, transform 0.15s;
+    }
+    .triple-card:hover, .triple-card:focus { border-color: var(--primary); transform: translateY(-2px); outline: none; }
+    .triple-card.selected { border-color: var(--primary); }
+    .triple-nums { font-family: var(--font-head); font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .triple-eq   { font-size: 0.78rem; color: var(--green); }
+
+    /* ==========================================================
+       CELEBRATION CARD (shown after final quiz)
+    ========================================================== */
+    .celebration { text-align: center; padding: 36px 20px; }
+    .celebration .trophy { font-size: 3.5rem; margin-bottom: 14px; }
+    .celebration h2 { font-size: 1.7rem; margin-bottom: 10px; }
+    .celebration p  { color: var(--muted); max-width: 400px; margin: 0 auto 20px; font-size: 1rem; }
+
+    /* ==========================================================
+       WORD-PROBLEM SVG (ladder diagram, page 2)
+    ========================================================== */
+    .wp-svg { display: block; max-width: 300px; margin: 14px auto; }
+  </style>
+</head>
+<body>
+
+<!-- SITE HEADER ============================================ -->
+<header>
+  <div class="hub-badge">FLCC FLX AI Hub</div>
+  <h1 class="site-title">The Pythagorean Theorem</h1>
+  <p class="site-sub">An interactive lesson in three parts</p>
+</header>
+
+<!-- PROGRESS STEPPER ======================================= -->
+<nav class="stepper" aria-label="Lesson progress">
+  <div class="step-dot active" id="step1" aria-label="Part 1 — current">1</div>
+  <div class="step-line"       id="line1"></div>
+  <div class="step-dot"        id="step2" aria-label="Part 2 — locked">2</div>
+  <div class="step-line"       id="line2"></div>
+  <div class="step-dot"        id="step3" aria-label="Part 3 — locked">3</div>
+</nav>
+
+<!-- ===========================================================
+     PAGE 1 — MEET THE THEOREM
+     Student reads the intro, plays with sliders, answers quiz.
+=========================================================== -->
+<section class="page active" id="page1" aria-labelledby="p1-title">
+
+  <div class="card">
+    <h2 id="p1-title">What is the Pythagorean Theorem?</h2>
+    <p>Over 2,500 years ago, the Greek mathematician Pythagoras noticed something remarkable about every <strong>right triangle</strong> — a triangle with one perfect 90° corner.</p>
+    <p>No matter how big or small, those three sides always obey one rule:</p>
+    <div class="formula-banner">
+      <div class="formula">a² + b² = c²</div>
+      <div class="formula-sub">a and b are the two legs &nbsp;·&nbsp; c is the hypotenuse (the longest side, opposite the right angle)</div>
+    </div>
+    <p>Think of it this way: if you draw a square on each side of the triangle, the two smaller squares together have <em>exactly</em> the same area as the big square. Use the sliders below to watch that happen live!</p>
+  </div>
+
+  <div class="card">
+    <h2>Explore the Squares</h2>
+    <p>Drag the sliders to change the legs. Notice how the three coloured squares always balance — the blue + green always equals the orange.</p>
+
+    <!-- Sliders for leg a (blue) and leg b (green) -->
+    <div class="slider-row">
+      <div>
+        <div class="slider-label">
+          Leg <span class="cb">a</span>
+          <span class="pill" id="val-a">3</span>
+        </div>
+        <input type="range" id="slider-a" min="1" max="9" value="3" aria-label="Leg a"/>
+      </div>
+      <div>
+        <div class="slider-label">
+          Leg <span class="cg">b</span>
+          <span class="pill green" id="val-b">4</span>
+        </div>
+        <input type="range" id="slider-b" min="1" max="9" value="4" aria-label="Leg b"/>
+      </div>
+    </div>
+
+    <!-- SVG triangle — redrawn by JavaScript on every slider move -->
+    <svg
+      id="tri-svg"
+      style="display:block; width:100%; max-width:540px; height:auto; margin:0 auto 8px; overflow:visible;"
+      role="img"
+      aria-label="Right triangle with coloured squares on each side — updates live"
+    ></svg>
+
+    <!-- Live equation -->
+    <div class="live-eq" id="live-eq" aria-live="polite"></div>
+
+    <!-- Proportional square boxes -->
+    <div class="sq-row" id="sq-row" aria-live="polite"></div>
+  </div>
+
+  <!-- Gate quiz — must answer correctly to unlock page 2 -->
+  <div class="card quiz-card">
+    <p class="quiz-tag">🔑 Unlock Part 2</p>
+    <h2 class="quiz-q">If leg <span class="cb">a = 6</span> and leg <span class="cg">b = 8</span>, what is the hypotenuse <span class="co">c</span>?</h2>
+    <p class="hint">Try setting the sliders! Or: 6² + 8² = 36 + 64 = 100. What number squared equals 100?</p>
+    <div class="quiz-row">
+      <input type="number" class="quiz-input" id="q1-ans" placeholder="c = ?" min="0" max="999" aria-label="Your answer"/>
+      <button class="btn btn-blue" onclick="checkQ1()">Check →</button>
+    </div>
+    <div class="feedback" id="q1-fb"></div>
+  </div>
+
+</section>
+
+<!-- ===========================================================
+     PAGE 2 — DRAG & CALCULATE
+=========================================================== -->
+<section class="page" id="page2" aria-labelledby="p2-title">
+
+  <div class="card">
+    <h2 id="p2-title">Drag &amp; Discover</h2>
+    <p>Grab the <strong style="color:var(--orange)">orange dot</strong> and drag it anywhere. The right-angle corner stays locked — and no matter the shape, a² + b² = c² never breaks.</p>
+    <span class="drag-tip">☝ Drag the orange dot</span>
+    <div class="canvas-wrap">
+      <canvas id="drag-canvas" width="720" height="380" aria-label="Interactive triangle — drag the orange dot to change the shape"></canvas>
+    </div>
+    <div class="live-eq" id="drag-eq" aria-live="polite">Drag the dot to see live values!</div>
+  </div>
+
+  <div class="card">
+    <h2>A Real-World Problem</h2>
+    <div class="callout orange">
+      <strong>The Ladder Problem:</strong> A ladder leans against a wall. The foot is <strong>5 ft</strong> from the wall. The top touches the wall <strong>12 ft</strong> up. How long is the ladder?
+    </div>
+
+    <!-- Simple ladder diagram drawn in SVG -->
+    <svg class="wp-svg" viewBox="0 0 260 290" aria-label="Ladder, wall, and ground forming a right triangle">
+      <rect x="30"  y="256" width="200" height="8" rx="4" fill="#cccccc"/>
+      <rect x="30"  y="40"  width="8"   height="224" rx="4" fill="#0046ad"/>
+      <line x1="38" y1="68" x2="170" y2="264" stroke="#f45922" stroke-width="6" stroke-linecap="round"/>
+      <polyline points="38,236 58,236 58,256" fill="none" stroke="#58a618" stroke-width="3"/>
+      <text x="104" y="280" text-anchor="middle" font-family="Atkinson Hyperlegible" font-size="13" fill="#1a1a2e">5 ft</text>
+      <text x="14" y="160" text-anchor="middle" font-family="Atkinson Hyperlegible" font-size="13" fill="#0046ad" transform="rotate(-90 14 160)">12 ft</text>
+      <text x="118" y="150" text-anchor="middle" font-family="Atkinson Hyperlegible" font-size="13" fill="#f45922" transform="rotate(-57 118 150)">? ft</text>
+    </svg>
+
+    <p>We know <span class="cb">a = 5</span> and <span class="cg">b = 12</span>. So:</p>
+    <div class="live-eq">5² + 12² = 25 + 144 = <span class="co">169 = 13²</span></div>
+    <div class="callout green">✅ The ladder is <strong>13 feet</strong> long! The numbers 5–12–13 form a <em>Pythagorean Triple</em> — three whole numbers that perfectly satisfy the theorem.</div>
+  </div>
+
+  <div class="card">
+    <h2>Solve-for Calculator</h2>
+    <p>Fill in any <strong>two</strong> of the three sides and leave one blank. Hit <em>Calculate</em> to find the missing value.</p>
+    <div class="calc-grid">
+      <div>
+        <label for="ca" style="color:var(--primary)">Leg a</label>
+        <input type="number" id="ca" placeholder="leave blank" min="0" step="any"/>
+      </div>
+      <div>
+        <label for="cb2" style="color:var(--green)">Leg b</label>
+        <input type="number" id="cb2" placeholder="leave blank" min="0" step="any"/>
+      </div>
+      <div>
+        <label for="cc" style="color:var(--orange)">Hypotenuse c</label>
+        <input type="number" id="cc" placeholder="leave blank" min="0" step="any"/>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="runCalc()">Calculate ✓</button>
+      <button class="btn btn-gray" onclick="clearCalc()">Clear</button>
+    </div>
+    <div class="calc-result" id="calc-result"></div>
+  </div>
+
+  <!-- Gate quiz -->
+  <div class="card quiz-card">
+    <p class="quiz-tag">🔑 Unlock Part 3</p>
+    <h2 class="quiz-q">A baseball diamond is a square with sides of 90 feet. How far is it from home plate to second base? <em>(Round to the nearest foot.)</em></h2>
+    <p class="hint">The diagonal cuts the square into two right triangles. Both legs = 90 ft.</p>
+    <div class="quiz-row">
+      <input type="number" class="quiz-input" id="q2-ans" placeholder="? ft" min="0" max="9999" aria-label="Your answer"/>
+      <button class="btn btn-blue" onclick="checkQ2()">Check →</button>
+    </div>
+    <div class="feedback" id="q2-fb"></div>
+  </div>
+
+</section>
+
+<!-- ===========================================================
+     PAGE 3 — PYTHAGOREAN TRIPLES & FINAL CHALLENGE
+=========================================================== -->
+<section class="page" id="page3" aria-labelledby="p3-title">
+
+  <div class="card">
+    <h2 id="p3-title">Pythagorean Triples</h2>
+    <p>A <strong>Pythagorean Triple</strong> is a set of three <em>whole numbers</em> that perfectly satisfy a² + b² = c². Ancient builders used the 3–4–5 triple to construct perfect right angles without any measuring tools. Click any card to see the verification and load it into the checker below!</p>
+    <div class="triples-grid" id="triples-grid">
+      <!-- Filled by JavaScript -->
+    </div>
+    <div class="callout">
+      💡 Multiply any triple by a whole number to get another one: 3–4–5 becomes 6–8–10, then 9–12–15, and so on forever!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Triple Checker</h2>
+    <p>Enter any three positive numbers. The largest will be treated as the hypotenuse. Is it a triple?</p>
+    <div class="calc-grid">
+      <div>
+        <label for="ta" style="color:var(--primary)">First number</label>
+        <input type="number" id="ta" placeholder="e.g. 3" min="1" step="1"/>
+      </div>
+      <div>
+        <label for="tb" style="color:var(--green)">Second number</label>
+        <input type="number" id="tb" placeholder="e.g. 4" min="1" step="1"/>
+      </div>
+      <div>
+        <label for="tc" style="color:var(--orange)">Third number</label>
+        <input type="number" id="tc" placeholder="e.g. 5" min="1" step="1"/>
+      </div>
+    </div>
+    <button class="btn btn-blue" onclick="checkTriple()">Check Triple ✓</button>
+    <div class="calc-result" id="triple-result" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- Final quiz -->
+  <div class="card quiz-card">
+    <p class="quiz-tag">🏆 Final Challenge</p>
+    <h2 class="quiz-q">A rectangle is 7 units wide and 24 units tall. What is the exact length of its diagonal?</h2>
+    <p class="hint">The diagonal is the hypotenuse. Both legs are given — and the answer is a whole number!</p>
+    <div class="quiz-row">
+      <input type="number" class="quiz-input" id="q3-ans" placeholder="? units" min="0" max="9999" aria-label="Your answer"/>
+      <button class="btn btn-blue" onclick="checkQ3()">Submit →</button>
+    </div>
+    <div class="feedback" id="q3-fb"></div>
+  </div>
+
+  <!-- Celebration — hidden until the final quiz is answered correctly -->
+  <div class="card" id="celebration" style="display:none;">
+    <div class="celebration">
+      <div class="trophy">🏆</div>
+      <h2>Lesson Complete!</h2>
+      <p>You've just mastered one of the most famous theorems in all of mathematics — used every day by architects, game developers, GPS satellites, and engineers.</p>
+      <button class="btn btn-green" onclick="restart()">↩ Start Over</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===========================================================
+     JAVASCRIPT
+     Organised into clearly labelled sections:
+       1. Page navigation
+       2. Page 1 — SVG triangle (slider-driven)
+       3. Page 2 — Canvas triangle (draggable)
+       4. Page 2 — Solve-for calculator
+       5. Page 3 — Pythagorean triples
+       6. Quiz gate logic
+       7. Keyboard accessibility
+=========================================================== -->
+<script>
+
+/* ===========================================================
+   1. PAGE NAVIGATION
+   showPage(n) reveals page n and updates the stepper dots.
+   Pages are unlocked by passing quiz gates — students cannot
+   skip ahead.
+=========================================================== */
+
+let activePage = 1;
+// Tracks the highest page the student has unlocked — they can navigate back
+// to any page with a number ≤ maxUnlocked by clicking its stepper dot.
+let maxUnlocked = 1;
+
+function showPage(n) {
+  // Block skipping ahead — can only go to already-unlocked pages
+  if (n > maxUnlocked) return;
+
+  // Hide every page section, then reveal the target one
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + n).classList.add('active');
+
+  // Update the three stepper dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('step' + i);
+    dot.classList.remove('active', 'done');
+    dot.onclick    = null;
+    dot.onkeydown  = null;
+    dot.tabIndex   = -1;
+
+    if (i < n) {
+      // Pages already completed → green checkmark, CLICKABLE (go back)
+      dot.classList.add('done');
+      dot.textContent = '✓';
+      dot.setAttribute('aria-label', 'Part ' + i + ' — complete, click to revisit');
+      dot.tabIndex = 0;
+      // Capture i in a closure so each dot goes to the right page
+      dot.onclick   = ((page) => () => showPage(page))(i);
+      dot.onkeydown = ((page) => (e) => { if (e.key === 'Enter' || e.key === ' ') showPage(page); })(i);
+    } else if (i === n) {
+      // Current page → blue, not clickable (already here)
+      dot.classList.add('active');
+      dot.textContent = i;
+      dot.setAttribute('aria-label', 'Part ' + i + ' — current');
+    } else {
+      // Future pages → gray, locked
+      dot.textContent = i;
+      dot.setAttribute('aria-label', 'Part ' + i + ' — locked');
+    }
+  }
+
+  // Update the two connector lines between dots
+  document.getElementById('line1').classList.toggle('done', n > 1);
+  document.getElementById('line2').classList.toggle('done', n > 2);
+
+  activePage = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Kick off page-specific setup when first arriving
+  if (n === 2) initCanvas();
+  if (n === 3) buildTriples();
+}
+
+
+/* ===========================================================
+   2. PAGE 1 — SLIDER-DRIVEN SVG TRIANGLE
+
+   Every time a slider moves, updateSVG() completely redraws
+   the SVG. It draws:
+     · A blue  square on leg a (below the triangle)
+     · A green square on leg b (left of the triangle)
+     · An orange TILTED square on the hypotenuse (outside)
+     · The triangle itself on top
+     · Side labels and the right-angle marker
+
+   The tilted square is the classic visual proof: its area
+   (c²) equals the sum of the other two squares (a² + b²).
+=========================================================== */
+
+const sliderA = document.getElementById('slider-a');
+const sliderB = document.getElementById('slider-b');
+
+function updateSVG() {
+  const a = parseInt(sliderA.value);
+  const b = parseInt(sliderB.value);
+  const c = Math.sqrt(a * a + b * b);  // c = √(a² + b²)
+
+  // Update the pill badges next to the slider labels
+  document.getElementById('val-a').textContent = a;
+  document.getElementById('val-b').textContent = b;
+
+  // -------------------------------------------------------
+  // COORDINATE SYSTEM — fixed for ALL slider values.
+  //
+  // The viewBox is ALWAYS "0 0 580 560". SCALE is ALWAYS 18.
+  // This means:
+  //   · Moving slider a never changes how big b's square looks.
+  //   · Moving slider b never changes how big a's square looks.
+  //
+  // The diagram is designed so that a=9, b=9 (worst case)
+  // still fits comfortably within the fixed viewBox.
+  // -------------------------------------------------------
+  const SCALE = 18;  // Fixed pixels-per-unit. NEVER adapts to a or b.
+
+  // Set a fixed viewBox on the SVG element. This is the key to preventing
+  // visual rescaling — the SVG coordinate space never changes dimensions.
+  document.getElementById('tri-svg').setAttribute('viewBox', '0 0 580 560');
+
+  const Ax = 220, Ay = 350;           // Vertex A — right angle, fixed position
+  const Bx = Ax + a * SCALE, By = Ay; // Vertex B — end of horizontal leg
+  const Cx = Ax, Cy = Ay - b * SCALE; // Vertex C — end of vertical leg
+
+  // --- Tilted square on the hypotenuse ---
+  // Rotate the BC vector 90° counterclockwise to get the outward perpendicular.
+  // Rotating (dx, dy) counterclockwise: new vector = (-dy, dx).
+  const bcX = Cx - Bx, bcY = Cy - By;
+  const perpX = -bcY, perpY = bcX;
+
+  // Four corners of the orange square on the hypotenuse
+  const H1x = Bx,         H1y = By;
+  const H2x = Cx,         H2y = Cy;
+  const H3x = Cx + perpX, H3y = Cy + perpY;
+  const H4x = Bx + perpX, H4y = By + perpY;
+  // Centre of the orange square — used for the label position
+  const HcX = (H1x + H2x + H3x + H4x) / 4;
+  const HcY = (H1y + H2y + H3y + H4y) / 4;
+
+  // --- Build SVG string ---
+  // LABEL STRATEGY: zero text inside any shape, zero text on the triangle legs.
+  // Only the three area labels (a²=X, b²=X, c²=X) appear, each placed in a
+  // region that cannot conflict with the others:
+  //   · "a²=X" → BELOW the blue square (always south of Ay)
+  //   · "b²=X" → LEFT of the green square (always west of Ax), text-anchor="end"
+  //   · "c²=X" → INSIDE the orange tilted square (outside the triangle entirely)
+  // The numeric values of a, b, c are shown in the live equation row below.
+  let svg = '';
+
+  // Blue square on leg a (below the horizontal leg of the triangle)
+  svg += `<rect x="${Ax}" y="${Ay}" width="${a*SCALE}" height="${a*SCALE}"
+    fill="rgba(0,70,173,0.18)" stroke="#0046ad" stroke-width="2" rx="3"/>`;
+  // Label below the blue square — always south of all other elements
+  svg += `<text x="${Ax + a*SCALE/2}" y="${Ay + a*SCALE + 17}"
+    text-anchor="middle" font-family="Comfortaa" font-size="13"
+    fill="#0046ad" font-weight="700">a²=${a*a}</text>`;
+
+  // Green square on leg b (left of the vertical leg of the triangle)
+  svg += `<rect x="${Ax - b*SCALE}" y="${Cy}" width="${b*SCALE}" height="${b*SCALE}"
+    fill="rgba(88,166,24,0.18)" stroke="#58a618" stroke-width="2" rx="3"/>`;
+  // Label to the left of the green square, vertically centered on it.
+  // text-anchor="end" so the text grows leftward and never intrudes on the square.
+  svg += `<text x="${Ax - b*SCALE - 7}" y="${Cy + b*SCALE/2 + 5}"
+    text-anchor="end" font-family="Comfortaa" font-size="13"
+    fill="#58a618" font-weight="700">b²=${b*b}</text>`;
+
+  // Orange tilted square on the hypotenuse
+  svg += `<polygon points="${H1x},${H1y} ${H2x},${H2y} ${H3x},${H3y} ${H4x},${H4y}"
+    fill="rgba(244,89,34,0.18)" stroke="#f45922" stroke-width="2"/>`;
+  // Label at the geometric centre of the tilted square.
+  // The orange square is always OUTSIDE the triangle and outside the other two
+  // squares, so there is no overlap risk.
+  svg += `<text x="${HcX}" y="${HcY + 5}"
+    text-anchor="middle" font-family="Comfortaa" font-size="13"
+    fill="#c74010" font-weight="700">c²=${a*a + b*b}</text>`;
+
+  // Right-angle marker at vertex A
+  const RA = 13;
+  svg += `<polyline points="${Ax+RA},${Ay} ${Ax+RA},${Ay-RA} ${Ax},${Ay-RA}"
+    fill="none" stroke="#aaa" stroke-width="2"/>`;
+
+  // The main triangle — drawn last so it sits on top of the squares
+  svg += `<polygon points="${Ax},${Ay} ${Bx},${By} ${Cx},${Cy}"
+    fill="rgba(0,70,173,0.06)" stroke="#0046ad" stroke-width="3"
+    stroke-linejoin="round"/>`;
+
+  // Inject everything into the SVG element at once
+  document.getElementById('tri-svg').innerHTML = svg;
+
+  // --- Live equation text (below the SVG) ---
+  document.getElementById('live-eq').innerHTML =
+    `<span class="cb">a² = ${a}² = ${a*a}</span>
+     &nbsp;+&nbsp;
+     <span class="cg">b² = ${b}² = ${b*b}</span>
+     &nbsp;=&nbsp;
+     <span class="co">c² = ${a*a+b*b} &nbsp;→&nbsp; c ≈ ${c.toFixed(2)}</span>`;
+
+  // --- Proportional square boxes (below the equation) ---
+  //
+  // Each box's side length = value × K, where K is a FIXED constant.
+  // This means:
+  //   · The a-box only changes when slider a changes.
+  //   · The b-box only changes when slider b changes.
+  //   · The c-box changes when either slider changes (correct — c depends on both).
+  //
+  // Each box sits inside a FIXED 72×72 px container that never resizes,
+  // so boxes cannot appear to shrink when another box grows.
+  //
+  // K=5.5 gives: a=1→5.5px, a=9→49.5px, c_max(9,9)=9√2≈12.73→70px.
+  // All values comfortably fit inside the 72px container.
+  const K    = 5.5;
+  const boxA = Math.max(4, Math.round(a * K));
+  const boxB = Math.max(4, Math.round(b * K));
+  const boxC = Math.max(4, Math.round(c * K));
+
+  document.getElementById('sq-row').innerHTML = `
+    <div class="sq-item">
+      <div class="sq-container">
+        <div class="sq-box" style="width:${boxA}px;height:${boxA}px;background:#0046ad;opacity:.8;"></div>
+      </div>
+      <span class="sq-sym cb">a²</span>
+      <span class="sq-val">${a}² = ${a*a}</span>
+    </div>
+    <div class="sq-op">+</div>
+    <div class="sq-item">
+      <div class="sq-container">
+        <div class="sq-box" style="width:${boxB}px;height:${boxB}px;background:#58a618;opacity:.8;"></div>
+      </div>
+      <span class="sq-sym cg">b²</span>
+      <span class="sq-val">${b}² = ${b*b}</span>
+    </div>
+    <div class="sq-op">=</div>
+    <div class="sq-item">
+      <div class="sq-container">
+        <div class="sq-box" style="width:${boxC}px;height:${boxC}px;background:#f45922;opacity:.8;"></div>
+      </div>
+      <span class="sq-sym co">c²</span>
+      <span class="sq-val">${c.toFixed(2)}² ≈ ${(c*c).toFixed(1)}</span>
+    </div>`;
+}
+
+// Connect sliders → redraw
+sliderA.addEventListener('input', updateSVG);
+sliderB.addEventListener('input', updateSVG);
+
+// Draw immediately on page load (default: a=3, b=4, c=5)
+updateSVG();
+
+
+/* ===========================================================
+   3. PAGE 2 — DRAGGABLE CANVAS TRIANGLE
+
+   Geometry:
+     · Vertex A is FIXED on the left — one end of the hypotenuse.
+     · Vertex C is DRAGGABLE — the student moves this point.
+     · Vertex B is COMPUTED as (C.x, A.y) — directly below C,
+       at the same height as A. The RIGHT ANGLE always lives at B.
+     · Legs: A→B (horizontal, blue) and B→C (vertical, green).
+     · Hypotenuse: A→C (orange, dashed).
+
+   The orange dot is drawn at C and acts as the drag handle.
+=========================================================== */
+
+let canvas = null, ctx = null;
+let isDragging = false;
+let canvasReady = false;  // Guard so we only attach event listeners once
+
+// Starting position of the draggable vertex C
+let ptC = { x: 540, y: 80 };
+// Fixed position of vertex A (left end, part of the hypotenuse)
+const ptA = { x: 80, y: 310 };
+
+function initCanvas() {
+  if (canvasReady) {
+    // Canvas already set up — just reset the dot and redraw
+    ptC = { x: 540, y: 80 };
+    drawCanvas();
+    return;
+  }
+  canvasReady = true;
+  canvas = document.getElementById('drag-canvas');
+  ctx    = canvas.getContext('2d');
+
+  // Mouse events (desktop)
+  canvas.addEventListener('mousedown',  onDragStart);
+  window.addEventListener('mousemove',  onDragMove);
+  window.addEventListener('mouseup',    onDragEnd);
+
+  // Touch events (tablet / phone)
+  canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+  window.addEventListener('touchmove',  onTouchMove,  { passive: false });
+  window.addEventListener('touchend',   onDragEnd);
+
+  drawCanvas();
+}
+
+// Convert a mouse/pointer event's screen position into canvas coordinates.
+// This handles CSS scaling (the canvas may display smaller than its pixel size).
+function getPos(evt) {
+  const rect   = canvas.getBoundingClientRect();
+  const scaleX = canvas.width  / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (evt.clientX - rect.left) * scaleX,
+    y: (evt.clientY - rect.top)  * scaleY
+  };
+}
+
+// Returns true when the position is close enough to the drag dot to grab it
+function nearDot(pos) {
+  const dx = pos.x - ptC.x;
+  const dy = pos.y - ptC.y;
+  return Math.sqrt(dx*dx + dy*dy) < 28;
+}
+
+function onDragStart(e)  { if (nearDot(getPos(e))) { isDragging = true;  canvas.style.cursor = 'grabbing'; } }
+function onDragEnd()     { isDragging = false; if (canvas) canvas.style.cursor = 'default'; }
+function onDragMove(e)   { if (isDragging) moveDot(getPos(e)); }
+function onTouchStart(e) { const p = getPos(e.touches[0]); if (nearDot(p)) { isDragging = true; e.preventDefault(); } }
+function onTouchMove(e)  { if (isDragging) { e.preventDefault(); moveDot(getPos(e.touches[0])); } }
+
+function moveDot(pos) {
+  // Keep C above A (positive vertical leg) and to the right of A (positive horizontal leg)
+  ptC.x = Math.max(ptA.x + 40, Math.min(canvas.width  - 20, pos.x));
+  ptC.y = Math.max(20,          Math.min(ptA.y - 40,         pos.y));
+  drawCanvas();
+}
+
+function drawCanvas() {
+  if (!ctx) return;
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // B is the right-angle vertex — always directly below C at A's height
+  const B = { x: ptC.x, y: ptA.y };
+
+  // Pixel lengths of each side
+  const aLen = B.x   - ptA.x;  // horizontal leg
+  const bLen = B.y   - ptC.y;  // vertical leg
+  const cLen = Math.sqrt(aLen*aLen + bLen*bLen);
+
+  // Display units: 20 pixels = 1 unit
+  const U = 20;
+  const dispA = (aLen / U).toFixed(1);
+  const dispB = (bLen / U).toFixed(1);
+  const dispC = (cLen / U).toFixed(2);
+
+  // --- Filled triangle ---
+  ctx.beginPath();
+  ctx.moveTo(ptA.x, ptA.y);
+  ctx.lineTo(B.x,   B.y);
+  ctx.lineTo(ptC.x, ptC.y);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(0,70,173,0.07)';
+  ctx.fill();
+
+  ctx.lineWidth = 4; ctx.lineCap = 'round';
+
+  // Horizontal leg — blue
+  ctx.strokeStyle = '#0046ad';
+  ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+
+  // Vertical leg — green
+  ctx.strokeStyle = '#58a618';
+  ctx.beginPath(); ctx.moveTo(B.x, B.y); ctx.lineTo(ptC.x, ptC.y); ctx.stroke();
+
+  // Hypotenuse — orange, dashed
+  ctx.strokeStyle = '#f45922'; ctx.setLineDash([10, 5]);
+  ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y); ctx.lineTo(ptC.x, ptC.y); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Right-angle marker at B
+  const RA = 18;
+  ctx.strokeStyle = '#bbb'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(B.x - RA, B.y);
+  ctx.lineTo(B.x - RA, B.y - RA);
+  ctx.lineTo(B.x,      B.y - RA);
+  ctx.stroke();
+
+  // Vertex labels
+  ctx.font = 'bold 15px Comfortaa, cursive'; ctx.fillStyle = '#666';
+  ctx.fillText('A', ptA.x - 22, ptA.y + 6);
+  ctx.fillText('B', B.x   + 8,  B.y   + 6);
+  ctx.fillText('C', ptC.x + 8,  ptC.y + 5);
+
+  // Side labels
+  ctx.font = 'bold 14px Comfortaa, cursive';
+  ctx.fillStyle = '#0046ad';
+  ctx.fillText(`a = ${dispA}`, (ptA.x + B.x) / 2 - 24, ptA.y + 28);
+  ctx.fillStyle = '#58a618';
+  ctx.fillText(`b = ${dispB}`, B.x + 8, (B.y + ptC.y) / 2 + 5);
+  ctx.fillStyle = '#f45922';
+  ctx.fillText(`c = ${dispC}`, (ptA.x + ptC.x) / 2 - 48, (ptA.y + ptC.y) / 2 - 10);
+
+  // Draggable dot at C — outer glow ring + solid dot
+  ctx.beginPath(); ctx.arc(ptC.x, ptC.y, 20, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(244,89,34,0.18)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(ptC.x, ptC.y, 13, 0, Math.PI*2);
+  ctx.fillStyle = '#f45922'; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+
+  // Update live equation below the canvas
+  const a2 = (aLen*aLen / U / U).toFixed(1);
+  const b2 = (bLen*bLen / U / U).toFixed(1);
+  const c2 = (cLen*cLen / U / U).toFixed(1);
+  document.getElementById('drag-eq').innerHTML =
+    `<span class="cb">a² = ${dispA}² = ${a2}</span>
+     &nbsp;+&nbsp;
+     <span class="cg">b² = ${dispB}² = ${b2}</span>
+     &nbsp;=&nbsp;
+     <span class="co">c² ≈ ${c2} &nbsp;→&nbsp; c ≈ ${dispC}</span>`;
+}
+
+
+/* ===========================================================
+   4. PAGE 2 — SOLVE-FOR CALCULATOR
+
+   The student fills in exactly two of the three fields
+   (a, b, c) and leaves one blank. The calculator finds
+   which field is empty and solves for that missing side.
+=========================================================== */
+
+function runCalc() {
+  const vA = document.getElementById('ca').value.trim();
+  const vB = document.getElementById('cb2').value.trim();
+  const vC = document.getElementById('cc').value.trim();
+  const el  = document.getElementById('calc-result');
+
+  // Count how many fields the student left blank
+  const blanks = [vA, vB, vC].filter(v => v === '').length;
+  if (blanks !== 1) {
+    el.textContent = 'Please fill in exactly two fields and leave one blank.';
+    return;
+  }
+
+  const a = parseFloat(vA), b = parseFloat(vB), c = parseFloat(vC);
+
+  // Validate: all provided values must be positive numbers
+  if ((!isNaN(a) && a <= 0) || (!isNaN(b) && b <= 0) || (!isNaN(c) && c <= 0)) {
+    el.textContent = 'All values must be positive numbers.';
+    return;
+  }
+
+  let label;
+  if (vA === '') {
+    // Solve for a: a = √(c² − b²)
+    const val = c*c - b*b;
+    if (val <= 0) { el.textContent = 'c must be longer than b when solving for a.'; return; }
+    const result = Math.sqrt(val);
+    document.getElementById('ca').value = result.toFixed(4);
+    label = `a = √(${c}² − ${b}²) = √${val.toFixed(2)} ≈ ${result.toFixed(4)}`;
+  } else if (vB === '') {
+    // Solve for b: b = √(c² − a²)
+    const val = c*c - a*a;
+    if (val <= 0) { el.textContent = 'c must be longer than a when solving for b.'; return; }
+    const result = Math.sqrt(val);
+    document.getElementById('cb2').value = result.toFixed(4);
+    label = `b = √(${c}² − ${a}²) = √${val.toFixed(2)} ≈ ${result.toFixed(4)}`;
+  } else {
+    // Solve for c: c = √(a² + b²)
+    const val = a*a + b*b;
+    const result = Math.sqrt(val);
+    document.getElementById('cc').value = result.toFixed(4);
+    label = `c = √(${a}² + ${b}²) = √${val.toFixed(2)} ≈ ${result.toFixed(4)}`;
+  }
+
+  el.textContent = label;
+}
+
+function clearCalc() {
+  ['ca','cb2','cc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('calc-result').textContent = '';
+}
+
+
+/* ===========================================================
+   5. PAGE 3 — PYTHAGOREAN TRIPLES GRID & CHECKER
+=========================================================== */
+
+// Famous Pythagorean triples — [a, b, c] sorted smallest to largest
+const TRIPLES = [
+  [3,4,5], [5,12,13], [8,15,17], [7,24,25],
+  [20,21,29], [9,40,41], [6,8,10], [10,24,26]
+];
+
+function buildTriples() {
+  const grid = document.getElementById('triples-grid');
+  if (grid.children.length > 0) return; // Already built — don't duplicate
+
+  grid.innerHTML = TRIPLES.map(([a, b, c]) => `
+    <div class="triple-card" tabindex="0"
+      onclick="loadTriple(this,${a},${b},${c})"
+      onkeydown="if(event.key==='Enter'||event.key===' ')loadTriple(this,${a},${b},${c})"
+      aria-label="${a}–${b}–${c} Pythagorean triple, click to load into checker">
+      <div class="triple-nums">${a} · ${b} · ${c}</div>
+      <div class="triple-eq">✓ ${a}² + ${b}² = ${c}²</div>
+    </div>
+  `).join('');
+}
+
+// Clicking a triple card fills the checker inputs and runs the check
+function loadTriple(el, a, b, c) {
+  document.querySelectorAll('.triple-card').forEach(card => card.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('ta').value = a;
+  document.getElementById('tb').value = b;
+  document.getElementById('tc').value = c;
+  checkTriple();
+  document.getElementById('ta').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Sort the three numbers so we always compare: smaller² + middle² vs largest²
+function checkTriple() {
+  const a = parseFloat(document.getElementById('ta').value);
+  const b = parseFloat(document.getElementById('tb').value);
+  const c = parseFloat(document.getElementById('tc').value);
+  const el = document.getElementById('triple-result');
+
+  if ([a,b,c].some(n => isNaN(n) || n <= 0)) {
+    el.textContent = 'Please enter three positive numbers.';
+    el.style.color = '';
+    return;
+  }
+
+  const [s, m, L] = [a, b, c].sort((x, y) => x - y);
+  const leftSide  = s*s + m*m;
+  const rightSide = L*L;
+  const isTriple  = Math.abs(leftSide - rightSide) < 0.01; // tiny tolerance for decimals
+
+  if (isTriple) {
+    el.innerHTML = `✅ Yes! ${s}² + ${m}² = ${leftSide} = ${L}² — Pythagorean Triple!`;
+    el.style.color = 'var(--green)';
+  } else {
+    el.innerHTML = `❌ No. ${s}² + ${m}² = ${leftSide} but ${L}² = ${rightSide}. Not a triple.`;
+    el.style.color = 'var(--orange)';
+  }
+}
+
+
+/* ===========================================================
+   6. QUIZ GATE LOGIC
+
+   Each page has one quiz gate. A correct answer:
+     1. Shows a green success message
+     2. Waits 1.7 seconds, then moves to the next page
+
+   An incorrect answer shows an orange hint.
+=========================================================== */
+
+// Page 1 gate: a=6, b=8 → c = √(36+64) = √100 = 10
+function checkQ1() {
+  const ans = parseFloat(document.getElementById('q1-ans').value);
+  const fb  = document.getElementById('q1-fb');
+  if (isNaN(ans)) { showFB(fb, false, 'Please type a number first!'); return; }
+  if (Math.abs(ans - 10) < 0.05) {
+    showFB(fb, true, '🎉 Correct! 6² + 8² = 36 + 64 = 100, and √100 = 10. Unlocking Part 2…');
+    maxUnlocked = Math.max(maxUnlocked, 2);
+    setTimeout(() => showPage(2), 1700);
+  } else {
+    showFB(fb, false, 'Not quite. Try: 6² = 36, 8² = 64. So 36 + 64 = 100. What is √100?');
+  }
+}
+
+// Page 2 gate: baseball diamond → both legs = 90 ft → c = 90√2 ≈ 127.28 → round to 127
+function checkQ2() {
+  const ans     = parseFloat(document.getElementById('q2-ans').value);
+  const fb      = document.getElementById('q2-fb');
+  const correct = Math.sqrt(90*90 + 90*90);  // ≈ 127.28
+  if (isNaN(ans)) { showFB(fb, false, 'Please type a number first!'); return; }
+  // Accept 127 or 128 (different rounding choices)
+  if (Math.abs(ans - Math.round(correct)) <= 1) {
+    showFB(fb, true, '🎉 Correct! √(90² + 90²) = √16,200 ≈ 127 ft. Unlocking Part 3…');
+    maxUnlocked = Math.max(maxUnlocked, 3);
+    setTimeout(() => showPage(3), 1700);
+  } else {
+    showFB(fb, false, `Not quite. a = b = 90, so c = √(90² + 90²) = √16,200. Round to the nearest foot.`);
+  }
+}
+
+// Page 3 final: 7×24 rectangle diagonal → √(49+576) = √625 = 25
+function checkQ3() {
+  const ans = parseFloat(document.getElementById('q3-ans').value);
+  const fb  = document.getElementById('q3-fb');
+  if (isNaN(ans)) { showFB(fb, false, 'Please type a number first!'); return; }
+  if (Math.abs(ans - 25) < 0.05) {
+    showFB(fb, true, '🏆 Perfect! 7² + 24² = 49 + 576 = 625 = 25². And 7–24–25 is a Pythagorean Triple!');
+    setTimeout(() => {
+      const cel = document.getElementById('celebration');
+      cel.style.display = 'block';
+      cel.scrollIntoView({ behavior: 'smooth' });
+    }, 1200);
+  } else {
+    showFB(fb, false, 'Not quite. a = 7, b = 24. So c = √(7² + 24²) = √625. What is √625?');
+  }
+}
+
+// showFB — displays a green (ok) or orange (nope) feedback message
+function showFB(el, isOk, msg) {
+  el.textContent = msg;
+  el.className = 'feedback ' + (isOk ? 'ok' : 'nope');
+}
+
+// restart — resets the entire lesson back to page 1
+function restart() {
+  document.getElementById('celebration').style.display = 'none';
+  maxUnlocked = 1;  // Lock pages 2 and 3 again
+
+  // Clear all quiz inputs and feedback
+  ['q1-ans','q2-ans','q3-ans'].forEach(id => document.getElementById(id).value = '');
+  ['q1-fb','q2-fb','q3-fb'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = 'feedback'; el.textContent = '';
+  });
+
+  // Clear calculator fields
+  clearCalc();
+
+  // Reset triples grid so it rebuilds fresh on next visit
+  document.getElementById('triples-grid').innerHTML = '';
+  document.getElementById('triple-result').textContent = '';
+
+  // Reset sliders to the classic 3–4–5 triple
+  sliderA.value = 3; sliderB.value = 4; updateSVG();
+
+  // Reset canvas dot position
+  ptC = { x: 540, y: 80 };
+
+  showPage(1);
+}
+
+
+/* ===========================================================
+   7. KEYBOARD ACCESSIBILITY
+
+   Pressing Enter in any quiz or calculator input fires the
+   same action as clicking the corresponding button.
+   This lets keyboard users complete the lesson without
+   ever touching a mouse.
+=========================================================== */
+
+document.getElementById('q1-ans').addEventListener('keydown', e => { if (e.key === 'Enter') checkQ1(); });
+document.getElementById('q2-ans').addEventListener('keydown', e => { if (e.key === 'Enter') checkQ2(); });
+document.getElementById('q3-ans').addEventListener('keydown', e => { if (e.key === 'Enter') checkQ3(); });
+['ca','cb2','cc'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') runCalc(); });
+});
+['ta','tb','tc'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') checkTriple(); });
+});
+
+</script>
+</body>
+</html>
