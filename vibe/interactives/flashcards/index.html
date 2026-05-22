@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web App Flashcards — FLCC FLX AI Hub</title>
+
+  <!--
+    FLCC FLX AI Hub — Flashcard App
+    Topic: Building Your First Web App
+
+    HOW TO CUSTOMISE:
+    Scroll down to the CARDS array in the <script> block.
+    Add, remove, or edit cards there — no other code needs to change.
+
+    File structure expected on GitHub Pages:
+      flashcards.html        ← this file
+      images/
+        github-pages-flow.png
+        file-structure.png
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ==========================================================
+       DESIGN TOKENS — FLCC FLX AI Hub brand
+    ========================================================== */
+    :root {
+      --primary: #0046ad;
+      --green:   #58a618;
+      --orange:  #f45922;
+      --gray:    #cccccc;
+      --bg:      #eef3fb;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --muted:   #5a5a7a;
+      --radius:  15px;
+      --shadow:  0 6px 32px rgba(0,70,173,0.14);
+      --font-head: 'Comfortaa', cursive;
+      --font-body: 'Atkinson Hyperlegible', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 64px;
+    }
+
+    h1 { font-family: var(--font-head); }
+
+    /* ---- HEADER ---- */
+    .hub-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      padding: 4px 14px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+    header        { text-align: center; margin-bottom: 28px; }
+    .site-title   { font-size: clamp(1.7rem, 4vw, 2.6rem); color: var(--primary); }
+    .site-sub     { color: var(--muted); margin-top: 6px; font-size: 1rem; }
+
+    /* ---- APP WRAPPER ---- */
+    .app { max-width: 640px; margin: 0 auto; }
+
+    /* ---- PROGRESS ROW ---- */
+    .progress-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .progress-label { font-family: var(--font-head); color: var(--muted); font-size: 0.9rem; }
+    .progress-label strong { color: var(--primary); }
+
+    /* Shuffle button */
+    .shuffle-btn {
+      background: none; border: 2px solid var(--gray);
+      color: var(--muted); font-family: var(--font-head);
+      font-size: 0.82rem; padding: 5px 14px;
+      border-radius: 20px; cursor: pointer; transition: all 0.2s;
+    }
+    .shuffle-btn:hover         { border-color: var(--primary); color: var(--primary); }
+    .shuffle-btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .shuffle-btn.done          { border-color: var(--green); color: var(--green); }
+
+    /* ---- PROGRESS DOTS ---- */
+    .dots-row {
+      display: flex; gap: 7px; justify-content: center;
+      margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--gray); flex-shrink: 0; transition: all 0.25s;
+    }
+    .dot.seen   { background: var(--primary); opacity: 0.38; }
+    .dot.active { background: var(--primary); transform: scale(1.45); }
+
+    /* ---- 3D CARD SCENE ---- */
+    /* .card-scene sets the perspective — think of it as the "camera".
+       .card-3d is the element that actually rotates.
+       Both faces stack in the same position using position:absolute. */
+    .card-scene {
+      width: 100%;
+      height: 380px;       /* fixed so the flip looks correct */
+      perspective: 1200px; /* depth of the 3D effect */
+      margin-bottom: 20px;
+    }
+
+    .card-3d {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d; /* children live in 3D space */
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .card-3d:focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 6px;
+      border-radius: var(--radius);
+    }
+    /* Adding the class triggers the CSS flip animation */
+    .card-3d.is-flipped { transform: rotateY(180deg); }
+
+    /* Both faces share this base */
+    .card-face {
+      position: absolute; inset: 0;
+      border-radius: var(--radius);
+      backface-visibility: hidden;         /* hides the face when rotated away */
+      -webkit-backface-visibility: hidden; /* Safari */
+      padding: 28px 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+    }
+
+    /* FRONT — blue, question centred */
+    .face-front {
+      background: var(--primary);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* BACK — white, answer; pre-rotated so it starts hidden */
+    .face-back {
+      background: var(--card);
+      border: 2px solid var(--gray);
+      transform: rotateY(180deg);
+    }
+
+    /* ---- FACE LABELS ---- */
+    .face-label {
+      font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 12px; border-radius: 20px;
+      flex-shrink: 0; align-self: center; margin-bottom: 16px;
+    }
+    .face-front .face-label { background: rgba(255,255,255,0.2); color: #fff; }
+    .face-back  .face-label { background: var(--orange); color: #fff; }
+
+    /* ---- QUESTION TEXT ---- */
+    .question-text {
+      font-family: var(--font-head);
+      font-size: clamp(1.05rem, 2.8vw, 1.45rem);
+      line-height: 1.55; text-align: center; color: #fff;
+      flex: 1; display: flex; align-items: center;
+    }
+
+    /* ---- FLIP HINT ---- */
+    .flip-hint {
+      font-size: 0.75rem; opacity: 0.55;
+      margin-top: 16px; flex-shrink: 0; letter-spacing: 0.04em;
+    }
+
+    /* ---- ANSWER TEXT ---- */
+    .answer-text { font-size: 0.97rem; line-height: 1.78; color: var(--text); flex-shrink: 0; }
+
+    /* ---- CARD IMAGE ---- */
+    /* Sits below the answer text, pushed to the bottom by margin-top:auto.
+       Only shown when the card's "image" field is non-empty. */
+    .card-image {
+      width: 100%; max-height: 168px; object-fit: contain;
+      border-radius: 10px; margin-top: auto; padding-top: 14px; flex-shrink: 0;
+    }
+
+    /* ---- NAV CONTROLS ---- */
+    .controls {
+      display: flex; gap: 12px; justify-content: center; align-items: center;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 11px 22px; border: none; border-radius: var(--radius);
+      font-family: var(--font-head); font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .btn:disabled      { opacity: 0.38; cursor: not-allowed; transform: none !important; }
+
+    .btn-nav  { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+    .btn-nav:hover:not(:disabled) { background: var(--primary); color: #fff; }
+
+    .btn-flip { background: var(--primary); color: #fff; padding: 13px 36px; }
+    .btn-flip:hover { background: #003a99; transform: translateY(-1px); }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 480px) {
+      .card-scene { height: 340px; }
+      .card-face  { padding: 22px 20px; }
+      .btn        { padding: 10px 16px; font-size: 0.88rem; }
+      .btn-flip   { padding: 12px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SITE HEADER -->
+<header>
+  <div class="hub-badge">FLCC FLX AI Hub</div>
+  <h1 class="site-title">Building Web Apps</h1>
+  <p class="site-sub">8 key concepts — click any card to flip it</p>
+</header>
+
+<main class="app">
+
+  <!-- PROGRESS ROW: card counter + shuffle button -->
+  <div class="progress-row">
+    <p class="progress-label">
+      Card <strong id="cur">1</strong> of <strong id="tot">8</strong>
+    </p>
+    <button class="shuffle-btn" id="shuffle-btn"
+      onclick="shuffleCards()"
+      aria-label="Shuffle cards into a random order">
+      ↺ Shuffle
+    </button>
+  </div>
+
+  <!-- PROGRESS DOTS (one dot per card; filled in by JavaScript) -->
+  <div class="dots-row" id="dots-row" aria-hidden="true"></div>
+
+  <!-- THE 3D CARD SCENE
+       card-scene    = perspective "camera" (doesn't rotate)
+       card-3d       = the element that actually flips
+       .face-front   = question side (blue)
+       .face-back    = answer side (white)
+  -->
+  <div class="card-scene">
+    <div class="card-3d" id="card-3d"
+      tabindex="0" role="button"
+      onclick="flipCard()"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard();}">
+
+      <!-- FRONT FACE (question) -->
+      <div class="card-face face-front" id="face-front" aria-hidden="false">
+        <span class="face-label">Question</span>
+        <p class="question-text" id="q-text"></p>
+        <span class="flip-hint">click · tap · press Enter</span>
+      </div>
+
+      <!-- BACK FACE (answer + optional image) -->
+      <div class="card-face face-back" id="face-back" aria-hidden="true" aria-live="polite">
+        <span class="face-label">Answer</span>
+        <p class="answer-text" id="a-text"></p>
+        <!-- Image is only shown when the card's "image" field is non-empty.
+             Reference images as relative paths, e.g. "images/my-photo.png" -->
+        <img class="card-image" id="card-img" src="" alt="" style="display:none"/>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NAVIGATION BUTTONS -->
+  <div class="controls">
+    <button class="btn btn-nav" id="prev-btn" onclick="prevCard()" aria-label="Previous card">← Prev</button>
+    <button class="btn btn-flip"              onclick="flipCard()" aria-label="Flip card">Flip Card</button>
+    <button class="btn btn-nav" id="next-btn" onclick="nextCard()" aria-label="Next card">Next →</button>
+  </div>
+
+</main>
+
+<script>
+
+/* ==============================================================
+   ✏️  FLASHCARD DATA — EDIT THIS ARRAY TO CHANGE THE CARDS
+
+   Each card is an object with four fields:
+     front    — question shown on the blue side
+     back     — answer shown when the card is flipped
+     image    — path to an image shown with the answer, e.g:
+                  "images/my-diagram.png"
+                Leave as "" if this card needs no image.
+     imageAlt — plain-English description of the image for
+                screen readers. Leave as "" if no image.
+
+   ✏️  TO ADD A CARD:
+       Copy one { ... } block, paste it at the end of the
+       array (before the ]  ), put a comma after the block
+       above it, then fill in your content.
+
+   ✏️  TO REMOVE A CARD:
+       Delete the entire { ... } block AND the comma
+       that comes before or after it.
+
+   ✏️  TO REORDER CARDS:
+       Cut and paste the blocks into whatever order you want.
+       The Shuffle button will also randomise them at runtime.
+============================================================== */
+const CARDS = [
+  {
+    front:    "What is HTML, and what role does it play in a web page?",
+    back:     "HTML (HyperText Markup Language) is the skeleton of every web page. Tags like <h1>, <p>, and <img> define headings, paragraphs, and images — giving the browser the structure it needs to display content. Without HTML, there is nothing to style or interact with.",
+    image:    "",
+    imageAlt: ""
+  },
+  {
+    front:    "What is CSS, and what does it control?",
+    back:     "CSS (Cascading Style Sheets) is what makes a page look designed. It controls colours, fonts, spacing, borders, and layout. HTML builds the walls; CSS paints them, furnishes the rooms, and makes everything match your brand.",
+    image:    "",
+    imageAlt: ""
+  },
+  {
+    front:    "What does JavaScript add to a web page?",
+    back:     "JavaScript adds behaviour — it makes a page respond to what you do. Click a button, type in a field, or load the page, and JS can react: update content, fetch data from an API, or animate an element. HTML is structure, CSS is style, JS is action.",
+    image:    "",
+    imageAlt: ""
+  },
+  {
+    front:    "What is the DOM, and why does JavaScript need it?",
+    back:     "The DOM (Document Object Model) is the browser's live, editable map of your HTML. JavaScript uses it to reach in and change things on the fly, without reloading the page. document.getElementById('myBtn') finds an element in that map so JS can update, show, hide, or animate it.",
+    image:    "",
+    imageAlt: ""
+  },
+  {
+    front:    "How does GitHub Pages turn your local files into a live website?",
+    back:     "Push your HTML, CSS, and JS files to a GitHub repository, enable Pages in the repository settings, and GitHub hosts everything at a free public URL — no server to rent, no configuration beyond a single checkbox.",
+    image:    "images/github-pages-flow.png",
+    imageAlt: "Flow diagram: laptop to GitHub repository to GitHub Pages to a live public URL"
+  },
+  {
+    front:    "What does a simple vibe-coded web app's project folder look like?",
+    back:     "Usually just one HTML file (with CSS and JS written right inside it) plus an images/ folder for any graphics you reference. That is all GitHub Pages needs to publish your work to the world.",
+    image:    "images/file-structure.png",
+    imageAlt: "File tree showing flashcards.html at the root and an images folder containing two PNG files"
+  },
+  {
+    front:    "What is a CDN, and why is it useful for vibe coding?",
+    back:     "A CDN (Content Delivery Network) hosts popular libraries — Bootstrap, Font Awesome, Google Fonts — on fast global servers. Instead of downloading anything, you add a <link> or <script> tag and the library is instantly available. No installs, no package manager needed.",
+    image:    "",
+    imageAlt: ""
+  },
+  {
+    front:    "What is an API, and how does your vibe-coded app use one?",
+    back:     "An API (Application Programming Interface) is how two programs talk to each other. When your app sends a prompt to Claude or fetches today's weather, it is calling an API — sending a structured request and receiving a structured response back, like placing a food order and getting exactly what you asked for.",
+    image:    "",
+    imageAlt: ""
+  }
+];
+
+/* ==============================================================
+   APPLICATION STATE
+   These variables track what is happening at this moment.
+============================================================== */
+
+// displayOrder: an array of indices into CARDS.
+// Default = [0, 1, 2, 3, 4, 5, 6, 7]. After a shuffle the indices
+// are randomised — e.g. [3, 0, 5, 7, 1, 6, 2, 4].
+// The CARDS array itself is never reordered; we just change which
+// index we pull from it.
+let displayOrder = CARDS.map((_, i) => i);
+
+let currentIndex = 0;           // position inside displayOrder
+let isFlipped    = false;       // false = showing front; true = showing back
+let seenSet      = new Set([0]); // which positions have been visited (for dots)
+
+/* ==============================================================
+   RENDER
+   Reads state, then updates every piece of the UI to match.
+   Call this after any state change.
+============================================================== */
+function render() {
+  const card  = CARDS[displayOrder[currentIndex]];
+  const total = CARDS.length;
+
+  // ---- Card text ----
+  document.getElementById('q-text').textContent = card.front;
+  document.getElementById('a-text').textContent = card.back;
+
+  // ---- Image: show only when the card has one ----
+  const img = document.getElementById('card-img');
+  if (card.image) {
+    img.src           = card.image;
+    img.alt           = card.imageAlt;
+    img.style.display = 'block';
+    // Top-align the back face so the image doesn't get pushed off-screen
+    document.getElementById('face-back').style.justifyContent = 'flex-start';
+  } else {
+    img.style.display = 'none';
+    img.src           = '';
+    // Centre-align when there is no image — looks better with just text
+    document.getElementById('face-back').style.justifyContent = 'center';
+  }
+
+  // ---- 3D flip: toggling the class triggers the CSS transition ----
+  document.getElementById('card-3d').classList.toggle('is-flipped', isFlipped);
+
+  // ---- Hide the non-visible face from screen readers ----
+  document.getElementById('face-front').setAttribute('aria-hidden', isFlipped  ? 'true' : 'false');
+  document.getElementById('face-back').setAttribute('aria-hidden',  !isFlipped ? 'true' : 'false');
+
+  // ---- Progress counter ----
+  document.getElementById('cur').textContent = currentIndex + 1;
+  document.getElementById('tot').textContent = total;
+
+  // ---- Progress dots ----
+  document.getElementById('dots-row').innerHTML = displayOrder.map((_, i) => {
+    const cls = i === currentIndex ? 'dot active'
+              : seenSet.has(i)    ? 'dot seen'
+              :                     'dot';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  // ---- Button enabled/disabled state ----
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+  document.getElementById('next-btn').disabled = currentIndex === total - 1;
+
+  // ---- Accessible label on the card for screen readers ----
+  document.getElementById('card-3d').setAttribute('aria-label',
+    isFlipped
+      ? `Answer: ${card.back}. Press Enter to flip back.`
+      : `Question ${currentIndex + 1} of ${total}: ${card.front}. Press Enter to reveal the answer.`
+  );
+}
+
+/* ==============================================================
+   ACTIONS
+============================================================== */
+
+// Flip the current card (front ↔ back)
+function flipCard() {
+  isFlipped = !isFlipped;
+  render();
+}
+
+// Move to the NEXT card, always showing its front first
+function nextCard() {
+  if (currentIndex >= CARDS.length - 1) return;
+  currentIndex++;
+  isFlipped = false;
+  seenSet.add(currentIndex);  // mark this dot as visited
+  render();
+}
+
+// Move to the PREVIOUS card
+function prevCard() {
+  if (currentIndex <= 0) return;
+  currentIndex--;
+  isFlipped = false;
+  render();
+}
+
+// Shuffle the deck using the Fisher-Yates algorithm, then restart.
+//
+// Fisher-Yates works by walking backwards through the array and
+// swapping each element with a randomly chosen earlier element.
+// This guarantees a perfectly uniform random order with no bias.
+function shuffleCards() {
+  const arr = CARDS.map((_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];  // ES6 destructuring swap
+  }
+  displayOrder = arr;
+  currentIndex = 0;
+  isFlipped    = false;
+  seenSet      = new Set([0]);
+
+  // Visual confirmation — briefly change the button text
+  const btn = document.getElementById('shuffle-btn');
+  btn.textContent = '✓ Shuffled!';
+  btn.classList.add('done');
+  setTimeout(() => {
+    btn.textContent = '↺ Shuffle';
+    btn.classList.remove('done');
+  }, 1400);
+
+  render();
+}
+
+/* ==============================================================
+   KEYBOARD SHORTCUTS
+   Arrow keys work anywhere on the page.
+   Enter/Space on the card are handled by the inline onkeydown.
+============================================================== */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextCard();
+  if (e.key === 'ArrowLeft')  prevCard();
+});
+
+/* ==============================================================
+   INITIALISE — draw the first card when the page loads
+============================================================== */
+render();
+
+</script>
+</body>
+</html>
