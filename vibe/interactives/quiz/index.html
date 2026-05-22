@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Apps Quiz — FLCC FLX AI Hub</title>
+
+  <!--
+    FLCC FLX AI Hub — Quiz App
+    Single HTML file. To change the quiz, edit ONLY the two objects
+    at the top of the <script> block: CONFIG and QUESTIONS.
+    No other code needs to change.
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ==========================================================
+       DESIGN TOKENS — FLCC FLX AI Hub brand
+    ========================================================== */
+    :root {
+      --primary: #0046ad;
+      --green:   #58a618;
+      --orange:  #f45922;
+      --gray:    #cccccc;
+      --red:     #d32f2f;
+      --bg:      #eef3fb;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --muted:   #5a5a7a;
+      --radius:  15px;
+      --shadow:  0 4px 24px rgba(0,70,173,0.11);
+      --font-head: 'Comfortaa', cursive;
+      --font-body: 'Atkinson Hyperlegible', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 64px;
+    }
+
+    h1, h2, h3 { font-family: var(--font-head); }
+
+    /* Shared screen fade-in */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .screen { animation: fadeUp 0.3s ease; max-width: 680px; margin: 0 auto; }
+
+    /* ---- SHARED ELEMENTS ---- */
+    .hub-badge {
+      display: inline-block;
+      background: var(--primary); color: #fff;
+      font-family: var(--font-head); font-size: 0.72rem;
+      letter-spacing: 0.07em; padding: 4px 14px;
+      border-radius: var(--radius); margin-bottom: 10px;
+    }
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      padding: 28px 32px; margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border: none; border-radius: var(--radius);
+      font-family: var(--font-head); font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #003a99; transform: translateY(-1px); }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-green:hover { background: #4a9010; transform: translateY(-1px); }
+    .btn-ghost {
+      background: #fff; color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-ghost:hover { background: var(--primary); color: #fff; }
+
+    /* ==========================================================
+       SCREEN 1: START
+    ========================================================== */
+    #start-screen { text-align: center; padding-top: 20px; }
+
+    .start-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--primary); margin-bottom: 8px;
+    }
+    .start-sub {
+      color: var(--muted); font-size: 1.05rem; margin-bottom: 28px;
+    }
+
+    .start-meta {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 32px;
+    }
+    .meta-pill {
+      background: var(--card); border: 2px solid var(--gray);
+      border-radius: 20px; padding: 6px 16px;
+      font-family: var(--font-head); font-size: 0.85rem; color: var(--muted);
+    }
+    .meta-pill strong { color: var(--primary); }
+
+    /* Tip box on start screen */
+    .tip-box {
+      background: var(--bg); border-radius: var(--radius);
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px; text-align: left;
+      margin-bottom: 28px; font-size: 0.9rem; color: var(--muted);
+    }
+    .tip-box strong { color: var(--text); }
+
+    /* ==========================================================
+       SCREEN 2: QUESTION
+    ========================================================== */
+
+    /* Thin progress bar at the top */
+    .progress-track {
+      width: 100%; height: 6px;
+      background: var(--gray); border-radius: 3px;
+      margin-bottom: 8px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--primary);
+      border-radius: 3px; transition: width 0.4s ease;
+    }
+
+    .progress-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .progress-label {
+      font-family: var(--font-head); font-size: 0.85rem; color: var(--muted);
+    }
+    .progress-label strong { color: var(--primary); }
+
+    /* Keyboard hint */
+    .kbd-hint {
+      font-size: 0.78rem; color: var(--muted);
+      font-family: var(--font-head);
+    }
+    .kbd {
+      display: inline-block; background: var(--gray); color: var(--text);
+      border-radius: 4px; padding: 1px 5px; font-size: 0.75rem;
+      font-family: var(--font-head); font-weight: 700;
+    }
+
+    /* Question text */
+    .question-text {
+      font-family: var(--font-head); font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+      color: var(--primary); line-height: 1.5; margin-bottom: 22px;
+    }
+
+    /* ---- CHOICE BUTTONS ---- */
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+
+    .choice-btn {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; text-align: left;
+      background: #fff; border: 2px solid var(--gray);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-family: var(--font-body); font-size: 0.97rem; color: var(--text);
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--primary); background: #f0f5ff;
+    }
+    .choice-btn:focus-visible {
+      outline: 3px solid var(--orange); outline-offset: 2px;
+    }
+    .choice-btn:disabled { cursor: default; }
+
+    /* Letter badge (A B C D) inside each choice */
+    .choice-letter {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--gray); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* After answering — correct */
+    .choice-btn.is-correct {
+      border-color: var(--green); background: #f1f8e9;
+    }
+    .choice-btn.is-correct .choice-letter {
+      background: var(--green); color: #fff;
+    }
+
+    /* After answering — the student's wrong pick */
+    .choice-btn.is-wrong {
+      border-color: var(--red); background: #fff5f5;
+    }
+    .choice-btn.is-wrong .choice-letter {
+      background: var(--red); color: #fff;
+    }
+
+    /* After answering — unchosen wrong options: fade out slightly */
+    .choice-btn.is-dimmed { opacity: 0.45; }
+
+    /* ---- EXPLANATION CALLOUT ---- */
+    .explanation {
+      display: none;                /* shown by JS after answering */
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 18px;
+      animation: fadeUp 0.25s ease;
+    }
+    .explanation.correct-exp {
+      background: #f1f8e9; border-left: 4px solid var(--green);
+    }
+    .explanation.wrong-exp {
+      background: #fff5f5; border-left: 4px solid var(--red);
+    }
+    .exp-result {
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 0.95rem; margin-bottom: 6px;
+    }
+    .exp-result.ok   { color: var(--green); }
+    .exp-result.nope { color: var(--red); }
+    .exp-text { font-size: 0.93rem; line-height: 1.7; color: var(--text); }
+
+    /* ---- NEXT BUTTON ---- */
+    .next-wrap {
+      display: none;               /* shown by JS after answering */
+      margin-top: 20px; text-align: right;
+    }
+
+    /* ==========================================================
+       SCREEN 3: RESULTS
+    ========================================================== */
+    #results-screen { text-align: center; }
+
+    .results-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      color: var(--primary); margin-bottom: 6px;
+    }
+    .results-msg {
+      font-size: 1.1rem; color: var(--muted); margin-bottom: 24px;
+    }
+
+    /* Big score display */
+    .score-display {
+      display: flex; align-items: baseline;
+      justify-content: center; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .score-big {
+      font-family: var(--font-head); font-size: clamp(4rem, 12vw, 6rem);
+      font-weight: 700; color: var(--primary); line-height: 1;
+    }
+    .score-denom {
+      font-family: var(--font-head); font-size: clamp(1.5rem, 4vw, 2.2rem);
+      color: var(--muted); font-weight: 700;
+    }
+
+    /* Percentage badge */
+    .pct-badge {
+      display: inline-block;
+      font-family: var(--font-head); font-weight: 700;
+      font-size: 1.1rem; color: #fff;
+      padding: 5px 20px; border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    /* Outcome message */
+    .outcome-msg {
+      font-family: var(--font-head); font-size: 1.3rem;
+      font-weight: 700; margin-bottom: 28px; color: var(--text);
+    }
+
+    /* Review section — wrong answers */
+    .review-title {
+      font-size: 1.1rem; color: var(--text);
+      text-align: left; margin-bottom: 14px;
+    }
+
+    .wrong-item {
+      background: var(--card); border-radius: var(--radius);
+      padding: 18px 22px; margin-bottom: 12px;
+      box-shadow: var(--shadow); text-align: left;
+      border-left: 4px solid var(--orange);
+    }
+    .wrong-q {
+      font-family: var(--font-head); font-size: 0.97rem;
+      color: var(--primary); margin-bottom: 10px; line-height: 1.5;
+    }
+    .wrong-line {
+      font-size: 0.88rem; line-height: 1.6;
+      display: flex; gap: 8px; align-items: baseline;
+    }
+    .wrong-line + .wrong-line { margin-top: 4px; }
+    .line-label {
+      font-family: var(--font-head); font-weight: 700; font-size: 0.8rem;
+      padding: 1px 8px; border-radius: 10px; flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .label-wrong   { background: #fde8e8; color: var(--red); }
+    .label-correct { background: #e8f5e9; color: var(--green); }
+
+    .perfect-msg {
+      background: var(--card); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
+      font-family: var(--font-head); font-size: 1rem;
+      color: var(--green); font-weight: 700;
+    }
+
+    /* Results button row */
+    .results-btns {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; margin-top: 28px;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 480px) {
+      .card { padding: 20px 18px; }
+      .choice-btn { padding: 12px 14px; font-size: 0.92rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     SCREEN 1: START
+============================================================ -->
+<div id="start-screen" class="screen">
+  <div class="hub-badge" id="start-badge">FLCC FLX AI Hub</div>
+  <h1 class="start-title" id="start-title">Quiz title</h1>
+  <p class="start-sub" id="start-sub">Subtitle</p>
+
+  <div class="start-meta" id="start-meta">
+    <!-- Filled by JS: "10 questions · Multiple choice · Instant feedback" -->
+  </div>
+
+  <div class="tip-box">
+    <strong>Keyboard shortcuts:</strong> press <span class="kbd">1</span>
+    <span class="kbd">2</span> <span class="kbd">3</span> <span class="kbd">4</span>
+    to choose an answer, then <span class="kbd">Enter</span> to move on.
+    Arrow keys also work to move between the choices.
+  </div>
+
+  <button class="btn btn-primary" onclick="startQuiz()" style="font-size:1.1rem;padding:14px 40px;">
+    Start Quiz →
+  </button>
+</div>
+
+<!-- ============================================================
+     SCREEN 2: QUESTION
+============================================================ -->
+<div id="question-screen" class="screen" style="display:none">
+
+  <!-- Thin progress bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+
+  <div class="progress-row">
+    <p class="progress-label">
+      Question <strong id="q-num">1</strong> of <strong id="q-total">10</strong>
+    </p>
+    <span class="kbd-hint">
+      <span class="kbd">1–4</span> select &nbsp;·&nbsp; <span class="kbd">↑↓</span> move &nbsp;·&nbsp; <span class="kbd">Enter</span> next
+    </span>
+  </div>
+
+  <div class="card">
+    <!-- Question text -->
+    <p class="question-text" id="q-text"></p>
+
+    <!-- Four choice buttons — filled by JS -->
+    <div class="choices" id="choices"></div>
+
+    <!-- Explanation (hidden until answered) -->
+    <div class="explanation" id="explanation">
+      <p class="exp-result" id="exp-result"></p>
+      <p class="exp-text"   id="exp-text"></p>
+    </div>
+  </div>
+
+  <!-- Next button (hidden until answered) -->
+  <div class="next-wrap" id="next-wrap">
+    <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+      Next Question →
+    </button>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     SCREEN 3: RESULTS
+============================================================ -->
+<div id="results-screen" class="screen" style="display:none">
+
+  <div class="hub-badge">FLCC FLX AI Hub</div>
+  <h1 class="results-title">Quiz Complete!</h1>
+
+  <div class="card" style="margin-bottom:24px;">
+    <div class="score-display">
+      <span class="score-big" id="score-big">0</span>
+      <span class="score-denom" id="score-denom">/ 10</span>
+    </div>
+    <div>
+      <span class="pct-badge" id="pct-badge">0%</span>
+    </div>
+    <p class="outcome-msg" id="outcome-msg"></p>
+  </div>
+
+  <!-- Wrong answers review -->
+  <div id="review-section">
+    <h2 class="review-title" id="review-title"></h2>
+    <div id="wrong-list"></div>
+  </div>
+
+  <div class="results-btns">
+    <button class="btn btn-primary" onclick="restartQuiz()">↩ Try Again</button>
+    <button class="btn btn-ghost"   onclick="showScreen('start')">← Start Screen</button>
+  </div>
+
+</div>
+
+<script>
+
+/* ==============================================================
+   ✏️  CONFIGURATION — change the quiz title, subtitle, etc.
+============================================================== */
+const CONFIG = {
+  title:    "Building Web Apps",
+  subtitle: "Test your understanding of the key concepts",
+  badge:    "FLCC FLX AI Hub",
+};
+
+/* ==============================================================
+   ✏️  QUESTIONS — this is the only section you need to edit
+       to add, remove, or change quiz content.
+
+   Each question object has five fields:
+     question    — the question text
+     choices     — an array of exactly four answer strings
+     correct     — the INDEX (0–3) of the right answer
+                   (0 = first choice, 1 = second, etc.)
+     explanation — shown after the student answers; explains
+                   WHY the correct answer is right
+
+   ✏️  TO ADD a question: copy any { ... } block, paste it at
+       the end of the array (before the ] ), add a comma after
+       the block above it, and fill in your content.
+
+   ✏️  TO REMOVE a question: delete its { ... } block and the
+       comma that comes before or after it.
+
+   ✏️  TO CHANGE the correct answer: update the "correct" number.
+       Remember it is zero-based (0 = A, 1 = B, 2 = C, 3 = D).
+============================================================== */
+const QUESTIONS = [
+  {
+    question: "What is HTML's primary job in building a web page?",
+    choices: [
+      "Making the page interactive — responding to clicks and updating content",
+      "Defining the structure and content of the page",
+      "Controlling fonts, colours, spacing, and layout",
+      "Communicating with servers and external APIs"
+    ],
+    correct: 1,
+    explanation: "HTML (HyperText Markup Language) is the skeleton — it defines what exists on a page: headings, paragraphs, images, buttons. CSS handles the look; JavaScript handles the behaviour. Each language has its lane."
+  },
+  {
+    question: "You want every heading on your site to match your brand's blue colour. Which language do you use?",
+    choices: [
+      "HTML — add a colour attribute to every <h1> tag",
+      "JavaScript — find every heading and change it at runtime",
+      "CSS — write one rule and it applies everywhere",
+      "PHP — generate the headings with the colour baked in"
+    ],
+    correct: 2,
+    explanation: "CSS (Cascading Style Sheets) is the right tool. One rule — h1 { color: #0046ad; } — instantly styles every heading on every page that links to it. That's the 'cascading' part: one definition, unlimited reach."
+  },
+  {
+    question: "A student clicks a button and a new message appears on the page — no reload. What makes that possible?",
+    choices: [
+      "HTML — a hidden <message> tag activates on click",
+      "CSS — the :active selector swaps the content",
+      "GitHub Pages — it re-serves the page with new content",
+      "JavaScript — it listens for the click and updates the DOM"
+    ],
+    correct: 3,
+    explanation: "JavaScript is the behaviour layer. It can attach event listeners to elements and react to user actions — adding, hiding, or changing content on the fly through the DOM, without ever reloading the page."
+  },
+  {
+    question: "What does the DOM give JavaScript access to?",
+    choices: [
+      "The browser's live, editable map of the HTML on the page",
+      "A database of user information and settings",
+      "The CSS stylesheet so JS can change colours directly",
+      "The server files that generated the page"
+    ],
+    correct: 0,
+    explanation: "The Document Object Model is the browser's in-memory representation of your HTML as a tree of objects. document.getElementById(), querySelector(), and similar methods navigate that tree so JS can read, change, add, or remove elements without a page reload."
+  },
+  {
+    question: "Which best describes what GitHub Pages does?",
+    choices: [
+      "It stores your code privately so only you can see it",
+      "It converts your HTML into a downloadable desktop app",
+      "It hosts your HTML, CSS, and JS files at a free public URL",
+      "It runs a database and server-side code for your project"
+    ],
+    correct: 2,
+    explanation: "GitHub Pages reads the files in a repository and serves them as a live website at a URL like yourname.github.io/project-name. It's free, needs no server setup, and is ideal for sharing vibe-coded projects with the world."
+  },
+  {
+    question: "In JavaScript, what does document.getElementById('submitBtn') return?",
+    choices: [
+      "A new HTML element with the id 'submitBtn'",
+      "The text content of the element as a string",
+      "A reference to the existing element with that id",
+      "A CSS rule for styling the element"
+    ],
+    correct: 2,
+    explanation: "getElementById() searches the DOM and returns a reference to the element that has that specific id attribute. Once you have the reference, you can change its text, style, visibility, add event listeners, and much more."
+  },
+  {
+    question: "Your app sends a question to Claude and gets an answer back — without leaving the page. What is this an example of?",
+    choices: [
+      "The DOM updating the page in real time",
+      "An API call — your app sends a request and receives a response",
+      "A CDN delivering content from the nearest server",
+      "CSS animations triggered by new content"
+    ],
+    correct: 1,
+    explanation: "An API (Application Programming Interface) is how two programs talk to each other. Your app sends a structured request to Claude's API endpoint and receives a structured response. It's like placing a food order — you send specifics, and you get back exactly what you asked for."
+  },
+  {
+    question: "What does CDN stand for, and what problem does it solve?",
+    choices: [
+      "Coded Design Network — it auto-styles your HTML",
+      "Central Data Node — it backs up your files in the cloud",
+      "Content Delivery Network — it hosts libraries on global servers so you don't have to download them",
+      "Cascading Document Namespace — it organises your CSS rules"
+    ],
+    correct: 2,
+    explanation: "A Content Delivery Network hosts popular libraries — Bootstrap, Font Awesome, Google Fonts — on fast servers worldwide. Instead of downloading files, you add one <link> or <script> tag and the library is instantly available. No installs, no package manager."
+  },
+  {
+    question: "Why do vibe coders often build single-file web apps — with HTML, CSS, and JS all in one file?",
+    choices: [
+      "Browsers cannot load CSS or JS from separate files",
+      "Single-file apps load faster than multi-file apps",
+      "GitHub Pages only supports single-file projects",
+      "One file is easy to share, understand, and deploy — great for learning and prototyping"
+    ],
+    correct: 3,
+    explanation: "A single HTML file is beginner-friendly and deployment-friendly. There's nothing to install, no build step, no confusion about which file does what. Upload one file to GitHub Pages and you're live. As projects grow, you can always split into multiple files."
+  },
+  {
+    question: "A classmate adds Bootstrap to her page using only a <link> tag — no download, no install. What technology made that possible?",
+    choices: [
+      "GitHub Pages — it auto-includes popular libraries",
+      "The DOM — it fetches missing styles automatically",
+      "A CDN — the library is hosted on a global server she can link to",
+      "An API — Bootstrap sends styles in response to her request"
+    ],
+    correct: 2,
+    explanation: "Bootstrap (and Font Awesome, Google Fonts, and hundreds of other libraries) are hosted on CDNs. When a browser sees a CDN link, it fetches the file from the nearest server — often already cached from another site the user visited. Fast, free, and zero setup."
+  }
+];
+
+/* ==============================================================
+   APPLICATION STATE — tracks what's happening right now
+============================================================== */
+let currentQ  = 0;     // index of the question being shown
+let answered  = false; // has the student answered the current question?
+let score     = 0;     // count of correct answers
+let wrongOnes = [];    // questions answered incorrectly (for the review section)
+let focusedChoice = 0; // which choice button currently has keyboard focus
+
+/* ==============================================================
+   SCREEN MANAGEMENT
+============================================================== */
+function showScreen(name) {
+  // Hide all screens, then show the one we want
+  ['start', 'question', 'results'].forEach(id => {
+    const el = document.getElementById(id + '-screen');
+    el.style.display = 'none';
+  });
+  const target = document.getElementById(name + '-screen');
+  target.style.display = 'block';
+  target.style.animation = 'none';
+  // Trigger reflow so the animation restarts
+  target.offsetHeight;
+  target.style.animation = 'fadeUp 0.3s ease';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ==============================================================
+   START SCREEN — populate dynamic text from CONFIG + QUESTIONS
+============================================================== */
+function setupStartScreen() {
+  document.title = CONFIG.title + ' Quiz — FLCC FLX AI Hub';
+  document.getElementById('start-title').textContent = CONFIG.title;
+  document.getElementById('start-sub').textContent   = CONFIG.subtitle;
+
+  document.getElementById('start-meta').innerHTML = `
+    <span class="meta-pill"><strong>${QUESTIONS.length}</strong> questions</span>
+    <span class="meta-pill">Multiple choice</span>
+    <span class="meta-pill">Instant feedback</span>
+  `;
+}
+
+/* ==============================================================
+   START THE QUIZ — reset state, show first question
+============================================================== */
+function startQuiz() {
+  currentQ  = 0;
+  answered  = false;
+  score     = 0;
+  wrongOnes = [];
+  showScreen('question');
+  renderQuestion();
+}
+
+/* ==============================================================
+   RENDER QUESTION
+   Draws the current question and its four choices from scratch.
+   Called once per question (not on every interaction).
+============================================================== */
+function renderQuestion() {
+  const q     = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+
+  // Progress bar fills proportionally as we advance
+  const pct = (currentQ / total) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('q-num').textContent   = currentQ + 1;
+  document.getElementById('q-total').textContent = total;
+
+  // Question text
+  document.getElementById('q-text').textContent = q.question;
+
+  // Build the four choice buttons
+  // Each button has a letter badge (A/B/C/D) + the answer text.
+  const letters = ['A','B','C','D'];
+  document.getElementById('choices').innerHTML = q.choices.map((text, i) => `
+    <button
+      class="choice-btn"
+      id="choice-${i}"
+      onclick="selectAnswer(${i})"
+      aria-label="Choice ${letters[i]}: ${text}"
+    >
+      <span class="choice-letter">${letters[i]}</span>
+      <span class="choice-text">${text}</span>
+    </button>
+  `).join('');
+
+  // Hide explanation and Next button until the student answers
+  document.getElementById('explanation').style.display = 'none';
+  document.getElementById('next-wrap').style.display   = 'none';
+
+  answered      = false;
+  focusedChoice = 0;
+
+  // Put focus on the first choice so keyboard users can start immediately
+  document.getElementById('choice-0').focus();
+}
+
+/* ==============================================================
+   SELECT AN ANSWER
+   Called when the student clicks a choice button (or presses 1-4).
+   Shows colour feedback and the explanation, reveals the Next button.
+============================================================== */
+function selectAnswer(index) {
+  // Guard: ignore if already answered
+  if (answered) return;
+  answered = true;
+
+  const q         = QUESTIONS[currentQ];
+  const isCorrect = index === q.correct;
+
+  // Update score and track wrong answers
+  if (isCorrect) {
+    score++;
+  } else {
+    wrongOnes.push({
+      question:      q.question,
+      choices:       q.choices,
+      correct:       q.correct,
+      selectedIndex: index,
+    });
+  }
+
+  // Apply visual states to all four choices
+  for (let i = 0; i < q.choices.length; i++) {
+    const btn = document.getElementById('choice-' + i);
+    btn.disabled = true; // prevent re-clicking
+
+    if (i === q.correct) {
+      // Always highlight the correct answer in green
+      btn.classList.add('is-correct');
+    } else if (i === index) {
+      // Highlight the student's wrong pick in red
+      btn.classList.add('is-wrong');
+    } else {
+      // Dim the other unchosen wrong options
+      btn.classList.add('is-dimmed');
+    }
+  }
+
+  // Show the explanation callout
+  const expEl    = document.getElementById('explanation');
+  const resultEl = document.getElementById('exp-result');
+  const textEl   = document.getElementById('exp-text');
+
+  expEl.className  = 'explanation ' + (isCorrect ? 'correct-exp' : 'wrong-exp');
+  resultEl.className = 'exp-result ' + (isCorrect ? 'ok' : 'nope');
+  resultEl.textContent = isCorrect ? '✓  Correct!' : '✗  Not quite.';
+  textEl.textContent   = q.explanation;
+  expEl.style.display  = 'block';
+
+  // Show the Next / Finish button
+  const nextWrap = document.getElementById('next-wrap');
+  const nextBtn  = document.getElementById('next-btn');
+  const isLast   = currentQ === QUESTIONS.length - 1;
+  nextBtn.textContent = isLast ? 'See Results →' : 'Next Question →';
+  nextWrap.style.display = 'block';
+  nextBtn.focus(); // move keyboard focus to the Next button
+}
+
+/* ==============================================================
+   NEXT QUESTION (or finish)
+============================================================== */
+function nextQuestion() {
+  if (currentQ === QUESTIONS.length - 1) {
+    showResults();
+  } else {
+    currentQ++;
+    answered = false;
+    renderQuestion();
+  }
+}
+
+/* ==============================================================
+   SHOW RESULTS SCREEN
+   Displays the score, a percentage badge, an outcome message,
+   and a review of any questions the student got wrong.
+============================================================== */
+function showResults() {
+  showScreen('results');
+
+  const total = QUESTIONS.length;
+  const pct   = Math.round((score / total) * 100);
+
+  // Score display
+  document.getElementById('score-big').textContent    = score;
+  document.getElementById('score-denom').textContent  = '/ ' + total;
+
+  // Percentage badge — colour changes based on result
+  const badge = document.getElementById('pct-badge');
+  badge.textContent = pct + '%';
+  badge.style.background =
+    pct >= 80 ? 'var(--green)' :
+    pct >= 60 ? 'var(--orange)' :
+                'var(--primary)';
+
+  // Outcome message
+  const outcomes = [
+    { min: 90, msg: 'Outstanding! 🏆' },
+    { min: 70, msg: 'Well done! 🎉' },
+    { min: 50, msg: 'Good start! 📚' },
+    { min: 0,  msg: 'Keep at it! 💪' },
+  ];
+  const outcome = outcomes.find(o => pct >= o.min);
+  document.getElementById('outcome-msg').textContent = outcome.msg;
+
+  // Wrong answer review
+  const reviewTitle = document.getElementById('review-title');
+  const wrongList   = document.getElementById('wrong-list');
+
+  if (wrongOnes.length === 0) {
+    reviewTitle.style.display = 'none';
+    wrongList.innerHTML = `<div class="perfect-msg">
+      Perfect score — you got every question right! 🌟
+    </div>`;
+  } else {
+    reviewTitle.style.display = 'block';
+    reviewTitle.textContent =
+      `Review — ${wrongOnes.length} question${wrongOnes.length > 1 ? 's' : ''} to revisit`;
+
+    // For each missed question, show what the student chose vs. what was correct
+    wrongList.innerHTML = wrongOnes.map(q => `
+      <div class="wrong-item">
+        <p class="wrong-q">${q.question}</p>
+        <p class="wrong-line">
+          <span class="line-label label-wrong">Your answer</span>
+          ${q.choices[q.selectedIndex]}
+        </p>
+        <p class="wrong-line">
+          <span class="line-label label-correct">Correct answer</span>
+          ${q.choices[q.correct]}
+        </p>
+      </div>
+    `).join('');
+  }
+}
+
+/* ==============================================================
+   RESTART
+============================================================== */
+function restartQuiz() {
+  startQuiz();
+}
+
+/* ==============================================================
+   KEYBOARD SHORTCUTS
+
+   On the question screen:
+     1 2 3 4    — select a choice (same as clicking it)
+     ↑ ↓        — move focus between choices without selecting
+     Enter      — if not answered: select the focused choice
+                  if answered: go to next question
+     Space      — same as Enter
+
+   The start and results screens use standard button Tab navigation.
+============================================================== */
+document.addEventListener('keydown', e => {
+  const onQuestion = document.getElementById('question-screen').style.display !== 'none';
+  if (!onQuestion) return;
+
+  // Number keys 1–4 select a choice directly
+  if (['1','2','3','4'].includes(e.key) && !answered) {
+    e.preventDefault();
+    selectAnswer(parseInt(e.key) - 1);
+    return;
+  }
+
+  // Arrow keys move focus between the four choices
+  if ((e.key === 'ArrowDown' || e.key === 'ArrowRight') && !answered) {
+    e.preventDefault();
+    focusedChoice = Math.min(focusedChoice + 1, QUESTIONS[currentQ].choices.length - 1);
+    document.getElementById('choice-' + focusedChoice).focus();
+    return;
+  }
+  if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && !answered) {
+    e.preventDefault();
+    focusedChoice = Math.max(focusedChoice - 1, 0);
+    document.getElementById('choice-' + focusedChoice).focus();
+    return;
+  }
+
+  // Enter / Space: select focused choice if not answered, or advance if answered
+  if (e.key === 'Enter' || e.key === ' ') {
+    if (!answered) {
+      e.preventDefault();
+      selectAnswer(focusedChoice);
+    } else {
+      e.preventDefault();
+      nextQuestion();
+    }
+  }
+});
+
+// Track which choice has focus (for Enter key handling)
+document.addEventListener('focusin', e => {
+  const btn = e.target.closest('.choice-btn');
+  if (btn) {
+    const id = btn.id; // "choice-0", "choice-1", etc.
+    focusedChoice = parseInt(id.split('-')[1]);
+  }
+});
+
+/* ==============================================================
+   INITIALISE — fill in the start screen and show it
+============================================================== */
+setupStartScreen();
+
+</script>
+</body>
+</html>
