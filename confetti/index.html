@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Press Me! 🎉</title>
+
+  <!--
+    ============================================================
+    CONFETTI PARTY APP
+    ============================================================
+    A single-file vanilla JavaScript app.
+    When the button is clicked, confetti explodes everywhere!
+
+    HOW IT WORKS:
+    1. An HTML <canvas> element covers the entire screen.
+    2. When the button is pressed, we create many "confetti pieces"
+       (small colorful rectangles and circles) and store them in an array.
+    3. Each piece has its own position, velocity, color, rotation, etc.
+    4. A requestAnimationFrame() loop runs continuously, updating each
+       piece's position using simple physics (gravity + air resistance),
+       drawing them on the canvas, and removing them when they fall off screen.
+
+    ACCESSIBILITY:
+    - The button is keyboard-accessible (Enter/Space trigger it).
+    - aria-label provides a meaningful name for screen readers.
+    - Focus is visible via the outline style.
+    ============================================================
+  -->
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Full-height page with a fun gradient background */
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden; /* No scrollbars — confetti stays in-frame */
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a0533 0%, #0d1b4b 50%, #001a1a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /*
+      The canvas sits fixed behind everything else.
+      Confetti is drawn here. pointer-events: none means
+      clicks pass through it to the button underneath.
+    */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Clicks pass through to the button */
+      z-index: 10;          /* Above the background, below nothing */
+    }
+
+    /* Container that centers the button visually */
+    .center-stage {
+      position: relative;
+      z-index: 20; /* Button sits above the canvas */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Small label above the button */
+    .tagline {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /*
+      THE BIG BUTTON
+      - Large, bold, colorful
+      - Scales up slightly on hover (CSS transform)
+      - Bounces on click via the .pressed class (added/removed by JS)
+      - Has a clear focus ring for keyboard users
+    */
+    #party-btn {
+      font-size: clamp(1.4rem, 4vw, 2rem); /* Responsive font size */
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      padding: 1rem 2.8rem;
+      border: none;
+      border-radius: 100px;         /* Pill shape */
+      cursor: pointer;
+      position: relative;
+      outline: none;
+      user-select: none;            /* Don't highlight text on click */
+
+      /* Colorful gradient background */
+      background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+      background-size: 300% 300%;   /* Larger than button so animation works */
+      animation: gradientShift 4s ease infinite; /* Slowly animate the gradient */
+
+      /* Text shadow for depth */
+      color: #1a0533;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+
+      /* Box shadow for a "raised" effect */
+      box-shadow:
+        0 8px 32px rgba(255, 107, 107, 0.4),
+        0 2px 8px rgba(0,0,0,0.3);
+
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    /* Smooth hover: lift the button slightly */
+    #party-btn:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow:
+        0 16px 48px rgba(255, 107, 107, 0.5),
+        0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    /*
+      Accessible focus ring — visible when navigating via keyboard.
+      We use outline + offset instead of removing outline.
+    */
+    #party-btn:focus-visible {
+      outline: 3px solid #feca57;
+      outline-offset: 4px;
+    }
+
+    /* When the .pressed class is added by JS, the button squishes down */
+    #party-btn.pressed {
+      transform: scale(0.93);
+      box-shadow:
+        0 4px 16px rgba(255, 107, 107, 0.3),
+        0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    /* The gradient shifts position over time to create a shimmer effect */
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Small counter text below the button showing how many times it's been pressed */
+    #press-count {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      min-height: 1.2em; /* Reserve space so layout doesn't jump */
+      transition: color 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The canvas where confetti is painted. Sits behind the button. -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- Centered button layout -->
+  <div class="center-stage">
+    <p class="tagline">Ready to celebrate?</p>
+
+    <!--
+      The main button.
+      aria-label gives screen readers a clear description.
+    -->
+    <button
+      id="party-btn"
+      aria-label="Press to launch confetti celebration"
+    >
+      🎉 Press Me!
+    </button>
+
+    <!-- Press counter — hidden until first press -->
+    <p id="press-count" aria-live="polite"></p>
+  </div>
+
+  <script>
+    /*
+      ============================================================
+      CONFETTI ENGINE
+      ============================================================
+      This script manages everything:
+        - Setting up the canvas
+        - Spawning confetti pieces on button press
+        - Running the animation loop
+        - Cleaning up pieces that have left the screen
+
+      Key concepts for beginners:
+        - "canvas": an HTML element we can draw shapes on with JavaScript
+        - "ctx": the "2D drawing context" — the tool we use to draw on the canvas
+        - "particle": one single piece of confetti (its own object with position,
+           speed, color, rotation, etc.)
+        - "requestAnimationFrame": a browser API that calls our draw function
+           ~60 times per second, creating smooth animation
+      ============================================================
+    */
+
+    // ── Grab DOM elements ──────────────────────────────────────
+    const canvas  = document.getElementById('confetti-canvas');
+    const ctx     = canvas.getContext('2d');  // Our drawing tool
+    const button  = document.getElementById('party-btn');
+    const counter = document.getElementById('press-count');
+
+    // ── State ──────────────────────────────────────────────────
+    let particles  = [];   // Array holding all active confetti pieces
+    let animating  = false; // Is the animation loop currently running?
+    let pressCount = 0;     // How many times has the button been pressed?
+
+    /*
+      Keep the canvas the same size as the browser window.
+      Called once on load and again whenever the window resizes.
+    */
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // ── Color palette for confetti ─────────────────────────────
+    // A cheerful set of colors. Each piece picks one randomly.
+    const COLORS = [
+      '#ff6b6b', // red-pink
+      '#feca57', // golden yellow
+      '#48dbfb', // sky blue
+      '#ff9ff3', // pink
+      '#54a0ff', // blue
+      '#5f27cd', // purple
+      '#00d2d3', // teal
+      '#ff9f43', // orange
+      '#1dd1a1', // mint green
+      '#c8d6e5', // light silver
+    ];
+
+    /*
+      ── createParticle(x, y) ────────────────────────────────────
+      Creates a single confetti piece as a JavaScript object.
+      Each piece has its own random properties so they all behave
+      a little differently — that's what makes it look natural!
+
+      @param  x  Starting X position (pixels from left of screen)
+      @param  y  Starting Y position (pixels from top of screen)
+      @returns   A plain object describing one confetti piece
+    */
+    function createParticle(x, y) {
+      // Pick a random angle to shoot the piece outward.
+      // Math.random() gives 0.0–1.0; multiplying maps it to our desired range.
+      const angle  = Math.random() * Math.PI * 2;  // Full 360 degrees in radians
+
+      // How fast this piece moves (speed) and in which direction (angle)
+      const speed  = Math.random() * 12 + 4;       // 4–16 pixels per frame
+
+      // Confetti can be a small rectangle or a circle
+      const isCircle = Math.random() < 0.3;         // 30% chance of a circle
+
+      return {
+        x,                                          // Current X position
+        y,                                          // Current Y position
+        vx: Math.cos(angle) * speed,               // X velocity (left/right speed)
+        vy: Math.sin(angle) * speed - 8,           // Y velocity (up/down) — minus 8 gives an upward burst
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        width:  Math.random() * 10 + 5,            // 5–15 px wide
+        height: Math.random() * 6  + 3,            // 3–9 px tall (rectangles are flat)
+        rotation: Math.random() * Math.PI * 2,     // Starting angle of rotation
+        rotationSpeed: (Math.random() - 0.5) * 0.3, // How fast it spins each frame
+        opacity: 1.0,                               // Starts fully visible
+        gravity: 0.35 + Math.random() * 0.15,      // How fast gravity pulls it down
+        drag: 0.99,                                 // Air resistance (1.0 = no drag)
+        isCircle,                                   // Draw as circle or rectangle?
+      };
+    }
+
+    /*
+      ── launchConfetti(x, y, count) ─────────────────────────────
+      Spawns `count` new confetti pieces centered around (x, y).
+      We add a tiny bit of jitter to x/y so pieces don't all start
+      from the exact same pixel.
+
+      @param  x      Center X to launch from
+      @param  y      Center Y to launch from
+      @param  count  How many pieces to create
+    */
+    function launchConfetti(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        // Slight random offset so pieces spread from a small area
+        const jitterX = (Math.random() - 0.5) * 60;
+        const jitterY = (Math.random() - 0.5) * 20;
+        particles.push(createParticle(x + jitterX, y + jitterY));
+      }
+    }
+
+    /*
+      ── updateParticle(p) ───────────────────────────────────────
+      Applies physics to a single particle for one animation frame.
+      This gets called ~60 times per second for every particle.
+
+      @param  p  A particle object (mutated in-place)
+    */
+    function updateParticle(p) {
+      // Apply gravity — pulls the piece downward each frame
+      p.vy += p.gravity;
+
+      // Apply drag — slows the piece down slightly (like air resistance)
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+
+      // Move the piece based on its velocity
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Spin the piece
+      p.rotation += p.rotationSpeed;
+
+      // Fade out as it falls (opacity starts at 1, slowly decreases)
+      // Pieces near the bottom of the screen fade faster
+      if (p.y > canvas.height * 0.6) {
+        p.opacity -= 0.018;
+      } else if (p.opacity < 1) {
+        // do nothing — already fading
+      } else {
+        p.opacity -= 0.004; // Very slow fade while still high up
+      }
+    }
+
+    /*
+      ── drawParticle(p) ─────────────────────────────────────────
+      Draws a single particle onto the canvas using the 2D context.
+
+      Canvas drawing uses a "save/restore" pattern:
+        ctx.save()     — bookmark the current drawing state
+        <draw stuff>
+        ctx.restore()  — return to the bookmarked state
+      This prevents our rotation/opacity changes from affecting
+      other drawings.
+
+      @param  p  A particle object
+    */
+    function drawParticle(p) {
+      ctx.save();
+
+      // Move the canvas "pen" to the particle's position
+      ctx.translate(p.x, p.y);
+
+      // Rotate around the particle's center
+      ctx.rotate(p.rotation);
+
+      // Set transparency
+      ctx.globalAlpha = Math.max(0, p.opacity);
+
+      // Set fill color
+      ctx.fillStyle = p.color;
+
+      if (p.isCircle) {
+        // Draw a small circle
+        ctx.beginPath();
+        ctx.arc(0, 0, p.width / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Draw a flat rectangle (centered at 0,0 because we translated above)
+        ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
+      }
+
+      ctx.restore();
+    }
+
+    /*
+      ── animate() ────────────────────────────────────────────────
+      The main animation loop. Called ~60 times per second by the browser.
+
+      Each frame:
+        1. Clear the entire canvas
+        2. Update every particle (physics)
+        3. Draw every particle
+        4. Remove particles that have faded out or left the screen
+        5. If any particles remain, schedule the next frame
+           Otherwise, stop the loop (saves CPU when nothing is animating)
+    */
+    function animate() {
+      // Clear the canvas completely each frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update and draw each particle
+      for (const p of particles) {
+        updateParticle(p);
+        drawParticle(p);
+      }
+
+      /*
+        Remove "dead" particles:
+          - opacity <= 0  → fully transparent, invisible
+          - y > canvas.height + 100  → fallen off the bottom of the screen
+          - x < -200 or x > canvas.width + 200  → drifted off the sides
+        We filter these out so the array stays lean and fast.
+      */
+      particles = particles.filter(p =>
+        p.opacity > 0 &&
+        p.y < canvas.height + 100 &&
+        p.x > -200 &&
+        p.x < canvas.width + 200
+      );
+
+      if (particles.length > 0) {
+        // More particles remain — request another frame
+        requestAnimationFrame(animate);
+      } else {
+        // All done — stop the loop to save CPU/battery
+        animating = false;
+      }
+    }
+
+    /*
+      ── Button click handler ─────────────────────────────────────
+      This runs every time the button is pressed (mouse click OR
+      keyboard Enter/Space, because it's a <button> element).
+    */
+    button.addEventListener('click', (event) => {
+      // ── 1. Visual button "press" feedback ──
+      button.classList.add('pressed');
+      setTimeout(() => button.classList.remove('pressed'), 200);
+
+      // ── 2. Update the press counter display ──
+      pressCount++;
+      const word = pressCount === 1 ? 'time' : 'times';
+      counter.textContent = `Pressed ${pressCount} ${word}!`;
+
+      // ── 3. Figure out where the button is on screen ──
+      //    getBoundingClientRect() returns the button's position
+      //    relative to the visible viewport.
+      const rect   = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width  / 2;
+      const centerY = rect.top  + rect.height / 2;
+
+      // ── 4. Launch confetti from the button center ──
+      //    150 pieces for a satisfying explosion!
+      launchConfetti(centerX, centerY, 150);
+
+      // ── 5. Also launch some from random edge positions ──
+      //    This creates extra bursts across the screen.
+      const screenW = window.innerWidth;
+      const screenH = window.innerHeight;
+
+      // Left side burst
+      launchConfetti(screenW * 0.1, screenH * 0.5, 40);
+      // Right side burst
+      launchConfetti(screenW * 0.9, screenH * 0.5, 40);
+      // Top center burst
+      launchConfetti(screenW * 0.5, screenH * 0.15, 30);
+
+      // ── 6. Start the animation loop (if not already running) ──
+      if (!animating) {
+        animating = true;
+        requestAnimationFrame(animate);
+      }
+    });
+  </script>
+</body>
+</html>
