@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triangle Explorer — Geometry Class Interactive</title>
+
+<!-- Google Fonts, loaded from a CDN. "Kalam" gives us a hand-drawn, chalk-on-a-board
+     feel for headings; "Atkinson Hyperlegible" is a body font designed for maximum
+     readability (including for students with low vision or dyslexia). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     A small "chalkboard" palette. Everything below is built from
+     these few values so the whole page stays visually consistent.
+     ============================================================ */
+  :root{
+    --board-bg:      #1b2a22;   /* deep chalkboard green-black */
+    --board-bg-2:    #223227;  /* slightly lighter panel background */
+    --chalk-white:   #f4f1e6;  /* main "chalk" text color */
+    --chalk-yellow:  #e8c547;  /* equilateral / acute accent */
+    --chalk-coral:   #e2705a;  /* scalene / obtuse accent */
+    --chalk-blue:    #7fb3d5;  /* isosceles / right accent */
+    --chalk-teal:    #6fbfa0;  /* secondary accent (Pythagorean legs) */
+    --chalk-lavender:#b79fd1;  /* secondary accent (Pythagorean hypotenuse) */
+    --focus-ring:    #ffe08a;  /* high-contrast focus outline color */
+
+    --font-display: 'Kalam', cursive;
+    --font-body: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  }
+
+  /* Respect users who have asked their system to reduce motion. */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    background: var(--board-bg);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.04), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(255,255,255,0.03), transparent 55%);
+    color: var(--chalk-white);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    padding: 0 0 3rem 0;
+  }
+
+  header{
+    text-align: center;
+    padding: 2rem 1rem 1rem 1rem;
+  }
+  header h1{
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 0.25rem 0;
+    letter-spacing: 0.02em;
+  }
+  header p{
+    margin: 0;
+    opacity: 0.85;
+    font-size: 1.05rem;
+  }
+
+  main{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* ---------------- Tabs ---------------- */
+  .tabs{
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1.5rem 0 1rem 0;
+    flex-wrap: wrap;
+  }
+  .tabs button{
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    background: var(--board-bg-2);
+    color: var(--chalk-white);
+    border: 2px solid rgba(244,241,230,0.25);
+    border-radius: 10px;
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+  }
+  .tabs button[aria-selected="true"]{
+    background: var(--chalk-yellow);
+    color: #23281a;
+    border-color: var(--chalk-yellow);
+  }
+  .tabs button:focus-visible,
+  button:focus-visible,
+  [tabindex]:focus-visible{
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  section[role="tabpanel"]{
+    background: var(--board-bg-2);
+    border-radius: 16px;
+    padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+    border: 1px solid rgba(244,241,230,0.12);
+  }
+  section[role="tabpanel"] h2{
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin-top: 0;
+  }
+
+  /* ---------------- Diagram stage ---------------- */
+  .stage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  svg.diagram{
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    touch-action: none; /* we handle dragging ourselves, on both mouse and touch */
+  }
+  .vertex-handle{ cursor: grab; }
+  .vertex-handle:active{ cursor: grabbing; }
+  .vertex-ring{
+    fill: none;
+    stroke: var(--focus-ring);
+    stroke-width: 3;
+    opacity: 0; /* only shown when the handle has keyboard focus */
+    pointer-events: none;
+  }
+  .vertex-handle:focus-visible + .vertex-ring,
+  .vertex-handle.kbd-focused ~ .vertex-ring{ opacity: 1; }
+
+  .tri-fill{ fill: rgba(244,241,230,0.06); }
+  .tri-stroke{ fill: none; stroke: var(--chalk-white); stroke-width: 3; stroke-linejoin: round; }
+  .vertex-label{ font-family: var(--font-body); font-size: 15px; fill: var(--chalk-white); opacity: 0.75; }
+  .side-label{ font-family: var(--font-body); font-size: 14px; fill: var(--chalk-white); opacity: 0.8; }
+
+  /* ---------------- Badges (the "chalk circle" signature) ---------------- */
+  .badge-row{
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .badge{
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    border: 3px solid currentColor;
+    filter: url(#chalk-roughen);
+  }
+  .badge.side-scalene, .badge.angle-obtuse{ color: var(--chalk-coral); }
+  .badge.side-isosceles, .badge.angle-right{ color: var(--chalk-blue); }
+  .badge.side-equilateral, .badge.angle-acute{ color: var(--chalk-yellow); }
+
+  table.stats{
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    margin: 0 auto;
+  }
+  table.stats caption{ text-align:left; font-weight:700; margin-bottom: 0.25rem; }
+  table.stats th, table.stats td{
+    padding: 0.25rem 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(244,241,230,0.15);
+  }
+
+  /* ---------------- Preset buttons ---------------- */
+  .presets{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1.25rem 0;
+  }
+  .presets button, .action-btn{
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: transparent;
+    color: var(--chalk-white);
+    border: 2px dashed rgba(244,241,230,0.4);
+    border-radius: 8px;
+    padding: 0.45rem 0.8rem;
+    cursor: pointer;
+  }
+  .presets button:hover, .action-btn:hover{ background: rgba(244,241,230,0.08); }
+
+  /* ---------------- Reference cards ---------------- */
+  .reference-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .ref-card{
+    background: rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  .ref-card h3{ font-family: var(--font-display); margin: 0.25rem 0; font-size: 1.05rem; }
+  .ref-card p{ margin: 0; font-size: 0.85rem; opacity: 0.85; }
+  .ref-card svg{ width: 70px; height: 60px; }
+
+  .equation{
+    text-align: center;
+    font-size: 1.4rem;
+    font-family: var(--font-display);
+    margin: 1rem 0;
+  }
+  .equation .val{ font-family: var(--font-body); font-weight: 700; }
+
+  .note{
+    font-size: 0.9rem;
+    opacity: 0.8;
+    text-align: center;
+    max-width: 46em;
+    margin: 0.5rem auto 0 auto;
+  }
+
+  .sr-only{
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  footer{
+    text-align: center;
+    opacity: 0.6;
+    font-size: 0.85rem;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- This invisible SVG only holds a filter definition used to give the
+     classification badges a slightly "hand-drawn chalk" wobble. It has
+     no visible content of its own. -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="chalk-roughen">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2"/>
+  </filter>
+</svg>
+
+<header>
+  <h1>Triangle Explorer</h1>
+  <p>Drag the corners. Watch the triangle tell you what it is.</p>
+</header>
+
+<main>
+
+  <!-- ============ TAB CONTROLS ============ -->
+  <div class="tabs" role="tablist" aria-label="Lesson sections">
+    <button role="tab" id="tab-classify" aria-selected="true" aria-controls="panel-classify">
+      Classify a Triangle
+    </button>
+    <button role="tab" id="tab-pythagorean" aria-selected="false" aria-controls="panel-pythagorean" tabindex="-1">
+      Pythagorean Theorem
+    </button>
+  </div>
+
+  <!-- ============ PANEL 1: SIDE + ANGLE CLASSIFICATION ============ -->
+  <section id="panel-classify" role="tabpanel" aria-labelledby="tab-classify">
+    <h2>What kind of triangle is this?</h2>
+
+    <div class="stage">
+      <svg class="diagram" id="classifySvg" viewBox="0 0 600 420" role="img"
+           aria-label="Draggable triangle. Use Tab to reach each corner handle, then arrow keys to move it.">
+        <path class="tri-fill" id="classifyFill" d=""></path>
+        <path class="tri-stroke" id="classifyStroke" d=""></path>
+        <!-- side length labels -->
+        <text class="side-label" id="labelAB"></text>
+        <text class="side-label" id="labelBC"></text>
+        <text class="side-label" id="labelCA"></text>
+        <!-- vertex handles (drawn last so they sit on top) -->
+        <g id="vertexA"></g>
+        <g id="vertexB"></g>
+        <g id="vertexC"></g>
+      </svg>
+
+      <div class="badge-row">
+        <span class="badge" id="sideBadge">—</span>
+        <span class="badge" id="angleBadge">—</span>
+      </div>
+
+      <table class="stats">
+        <caption class="sr-only">Current side lengths and angle measures</caption>
+        <thead>
+          <tr><th scope="col">Side AB</th><th scope="col">Side BC</th><th scope="col">Side CA</th></tr>
+        </thead>
+        <tbody>
+          <tr><td id="statAB">—</td><td id="statBC">—</td><td id="statCA">—</td></tr>
+        </tbody>
+        <thead>
+          <tr><th scope="col">∠A</th><th scope="col">∠B</th><th scope="col">∠C</th></tr>
+        </thead>
+        <tbody>
+          <tr><td id="statAngA">—</td><td id="statAngB">—</td><td id="statAngC">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">Side lengths are shown in grid units, so you can compare them at a glance.
+       A triangle's side-type (scalene / isosceles / equilateral) and its angle-type
+       (acute / right / obtuse) are two <em>separate</em> ways of describing the same
+       shape — try the presets below and see which combinations show up together.</p>
+
+    <div class="presets" role="group" aria-label="Load an example triangle">
+      <button data-preset="equilateral">Equilateral</button>
+      <button data-preset="isosceles">Isosceles</button>
+      <button data-preset="scalene">Scalene</button>
+      <button data-preset="right">Right</button>
+      <button data-preset="acute">Acute</button>
+      <button data-preset="obtuse">Obtuse</button>
+    </div>
+
+    <div class="reference-grid">
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="35,6 6,54 64,54" fill="none" stroke="#e8c547" stroke-width="3"/></svg>
+        <h3>Equilateral</h3>
+        <p>All 3 sides equal. All 3 angles equal 60°.</p>
+      </div>
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="35,6 15,54 55,54" fill="none" stroke="#7fb3d5" stroke-width="3"/></svg>
+        <h3>Isosceles</h3>
+        <p>Exactly 2 sides equal (and the angles opposite them, too).</p>
+      </div>
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="20,8 8,54 64,44" fill="none" stroke="#e2705a" stroke-width="3"/></svg>
+        <h3>Scalene</h3>
+        <p>No sides equal. No angles equal.</p>
+      </div>
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="8,54 8,10 60,54" fill="none" stroke="#7fb3d5" stroke-width="3"/></svg>
+        <h3>Right</h3>
+        <p>One angle is exactly 90°.</p>
+      </div>
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="35,8 12,50 58,50" fill="none" stroke="#e8c547" stroke-width="3"/></svg>
+        <h3>Acute</h3>
+        <p>Every angle is less than 90°.</p>
+      </div>
+      <div class="ref-card">
+        <svg viewBox="0 0 70 60"><polygon points="10,40 60,50 40,12" fill="none" stroke="#e2705a" stroke-width="3"/></svg>
+        <h3>Obtuse</h3>
+        <p>One angle is greater than 90°.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 2: PYTHAGOREAN THEOREM ============ -->
+  <section id="panel-pythagorean" role="tabpanel" aria-labelledby="tab-pythagorean" hidden>
+    <h2>a² + b² = c²</h2>
+    <p class="note">This triangle's bottom-left corner is locked at a right angle.
+       Drag the two orange handles to change the leg lengths <strong>a</strong> and
+       <strong>b</strong>. Watch how the squares built on each side grow — and how the
+       two smaller squares always add up to the big one.</p>
+
+    <div class="stage">
+      <svg class="diagram" id="pythagSvg" viewBox="0 0 640 560" role="img"
+           aria-label="Right triangle with a square drawn on each side, illustrating the Pythagorean theorem.">
+        <path class="tri-fill" id="pythagFill" d=""></path>
+
+        <!-- squares on each leg and the hypotenuse -->
+        <polygon id="squareA" fill="rgba(111,191,160,0.28)" stroke="#6fbfa0" stroke-width="2"></polygon>
+        <polygon id="squareB" fill="rgba(111,191,160,0.28)" stroke="#6fbfa0" stroke-width="2"></polygon>
+        <polygon id="squareC" fill="rgba(183,159,209,0.28)" stroke="#b79fd1" stroke-width="2"></polygon>
+
+        <path class="tri-stroke" id="pythagStroke" d=""></path>
+
+        <text class="side-label" id="pyLabelA"></text>
+        <text class="side-label" id="pyLabelB"></text>
+        <text class="side-label" id="pyLabelC"></text>
+        <text class="side-label" id="areaLabelA" font-weight="700"></text>
+        <text class="side-label" id="areaLabelB" font-weight="700"></text>
+        <text class="side-label" id="areaLabelC" font-weight="700"></text>
+
+        <!-- right-angle marker -->
+        <path id="rightAngleMark" fill="none" stroke="var(--chalk-white)" stroke-width="2"></path>
+
+        <g id="handleA"></g>
+        <g id="handleB"></g>
+      </svg>
+
+      <div class="equation">
+        <span class="val" id="eqA">4²</span> + <span class="val" id="eqB">3²</span>
+        = <span class="val" id="eqC">5²</span>
+        &nbsp;&rarr;&nbsp;
+        <span class="val" id="eqSumLeft">16 + 9 = 25</span>
+      </div>
+    </div>
+
+    <div class="presets" role="group" aria-label="Load a classic right triangle">
+      <button data-pyth-preset="3-4-5">3–4–5 triangle</button>
+      <button data-pyth-preset="5-12-13">5–12–13 triangle</button>
+      <button data-pyth-preset="8-15-17">8–15–17 triangle</button>
+      <button class="action-btn" id="pyRandomBtn">Randomize</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Announcements for screen reader users. This element is visually hidden but
+     read aloud whenever the triangle's classification changes, so keyboard and
+     screen-reader students get the same feedback as sighted, mouse-using ones. -->
+<p id="liveRegion" class="sr-only" aria-live="polite"></p>
+
+<footer>Built for classroom use &mdash; drag with a mouse/touch, or Tab + arrow keys.</footer>
+
+<script>
+/* ================================================================
+   SHARED MATH HELPERS
+   Small, reusable functions used by both tabs. Keeping them separate
+   from the drawing code makes each piece easier to read on its own.
+   ================================================================ */
+
+// Straight-line distance between two points.
+function dist(p, q){
+  return Math.hypot(p.x - q.x, p.y - q.y);
+}
+
+// The interior angle (in degrees) at vertex `q`, formed by the corner p-q-r.
+// This uses the Law of Cosines: the side opposite the angle we want is `pr`.
+function angleAtVertex(p, q, r){
+  const sideOpposite = dist(p, r);
+  const sideAdjacent1 = dist(q, p);
+  const sideAdjacent2 = dist(q, r);
+  let cosine = (sideAdjacent1 ** 2 + sideAdjacent2 ** 2 - sideOpposite ** 2) /
+               (2 * sideAdjacent1 * sideAdjacent2);
+  // Floating point drift can push this a hair outside [-1, 1]; clamp it so
+  // Math.acos never returns NaN.
+  cosine = Math.max(-1, Math.min(1, cosine));
+  return (Math.acos(cosine) * 180) / Math.PI;
+}
+
+// Keeps a value between a minimum and a maximum.
+function clamp(value, min, max){
+  return Math.max(min, Math.min(max, value));
+}
+
+/* ================================================================
+   TAB SWITCHING
+   A standard accessible "tabs" pattern: Left/Right arrow keys move
+   between tabs, and the matching panel is shown/hidden with the
+   `hidden` attribute.
+   ================================================================ */
+(function setupTabs(){
+  const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+  const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
+
+  function activate(index){
+    tabs.forEach((tab, i) => {
+      const isSelected = i === index;
+      tab.setAttribute('aria-selected', String(isSelected));
+      tab.tabIndex = isSelected ? 0 : -1;
+      panels[i].hidden = !isSelected;
+    });
+    tabs[index].focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activate(i));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); activate((i + 1) % tabs.length); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); activate((i - 1 + tabs.length) % tabs.length); }
+    });
+  });
+})();
+
+/* ================================================================
+   TAB 1: CLASSIFY A TRIANGLE
+   ================================================================ */
+(function classifyTab(){
+  const svg = document.getElementById('classifySvg');
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const liveRegion = document.getElementById('liveRegion');
+
+  // The three corners of the triangle. Order matters for labeling:
+  // A, B, C go around the shape. Coordinates are in the SVG's own
+  // 600 x 420 unit system.
+  let points = {
+    A: { x: 150, y: 340 },
+    B: { x: 430, y: 360 },
+    C: { x: 300, y: 90  }
+  };
+
+  const UNIT_PX = 32; // how many SVG pixels count as "1 unit" for the readouts
+
+  // Build the draggable/keyboard-focusable handle for one vertex.
+  // Each handle is a small filled circle plus an outer ring that only
+  // becomes visible when the handle has keyboard focus.
+  function buildHandle(groupId, color){
+    const group = document.getElementById(groupId);
+    const circle = document.createElementNS(SVG_NS, 'circle');
+    circle.setAttribute('r', 10);
+    circle.setAttribute('fill', color);
+    circle.setAttribute('class', 'vertex-handle');
+    circle.setAttribute('tabindex', '0');
+    circle.setAttribute('role', 'button');
+
+    const ring = document.createElementNS(SVG_NS, 'circle');
+    ring.setAttribute('r', 16);
+    ring.setAttribute('class', 'vertex-ring');
+
+    group.appendChild(circle);
+    group.appendChild(ring);
+    return { circle, ring };
+  }
+
+  const handles = {
+    A: buildHandle('vertexA', 'var(--chalk-coral)'),
+    B: buildHandle('vertexB', 'var(--chalk-blue)'),
+    C: buildHandle('vertexC', 'var(--chalk-yellow)')
+  };
+
+  const fillPath = document.getElementById('classifyFill');
+  const strokePath = document.getElementById('classifyStroke');
+  const sideBadge = document.getElementById('sideBadge');
+  const angleBadge = document.getElementById('angleBadge');
+
+  let lastAnnouncement = '';
+  let announceTimer = null;
+
+  // Redraws the triangle and recalculates everything that depends on
+  // its current shape (side lengths, angles, badges, table).
+  function render(){
+    const { A, B, C } = points;
+    const d = `M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`;
+    fillPath.setAttribute('d', d);
+    strokePath.setAttribute('d', d);
+
+    // Position each handle (and its focus ring) at its vertex.
+    for (const key of ['A', 'B', 'C']) {
+      handles[key].circle.setAttribute('cx', points[key].x);
+      handles[key].circle.setAttribute('cy', points[key].y);
+      handles[key].ring.setAttribute('cx', points[key].x);
+      handles[key].ring.setAttribute('cy', points[key].y);
+    }
+
+    // Side lengths, in "units" (pixels / UNIT_PX), rounded to 1 decimal.
+    const abLen = dist(A, B) / UNIT_PX;
+    const bcLen = dist(B, C) / UNIT_PX;
+    const caLen = dist(C, A) / UNIT_PX;
+
+    document.getElementById('statAB').textContent = abLen.toFixed(1);
+    document.getElementById('statBC').textContent = bcLen.toFixed(1);
+    document.getElementById('statCA').textContent = caLen.toFixed(1);
+
+    labelSide('labelAB', A, B, abLen);
+    labelSide('labelBC', B, C, bcLen);
+    labelSide('labelCA', C, A, caLen);
+
+    // Interior angles at each vertex.
+    const angA = angleAtVertex(C, A, B);
+    const angB = angleAtVertex(A, B, C);
+    const angC = angleAtVertex(B, C, A);
+
+    document.getElementById('statAngA').textContent = angA.toFixed(0) + '°';
+    document.getElementById('statAngB').textContent = angB.toFixed(0) + '°';
+    document.getElementById('statAngC').textContent = angC.toFixed(0) + '°';
+
+    // --- Classify by side length ---
+    // We use a small relative tolerance because a human dragging a point
+    // with a mouse will rarely land on *exactly* equal lengths.
+    const avgLen = (abLen + bcLen + caLen) / 3;
+    const tolerance = avgLen * 0.035;
+    const abEqBc = Math.abs(abLen - bcLen) < tolerance;
+    const bcEqCa = Math.abs(bcLen - caLen) < tolerance;
+    const caEqAb = Math.abs(caLen - abLen) < tolerance;
+    const equalPairCount = [abEqBc, bcEqCa, caEqAb].filter(Boolean).length;
+
+    let sideType;
+    if (equalPairCount >= 2) sideType = 'Equilateral';
+    else if (equalPairCount === 1) sideType = 'Isosceles';
+    else sideType = 'Scalene';
+
+    sideBadge.textContent = sideType + ' Triangle';
+    sideBadge.className = 'badge side-' + sideType.toLowerCase();
+
+    // --- Classify by largest angle ---
+    const maxAngle = Math.max(angA, angB, angC);
+    const angleTolerance = 2; // degrees of wiggle room around "exactly 90"
+    let angleType;
+    if (Math.abs(maxAngle - 90) < angleTolerance) angleType = 'Right';
+    else if (maxAngle > 90) angleType = 'Obtuse';
+    else angleType = 'Acute';
+
+    angleBadge.textContent = angleType + ' Triangle';
+    angleBadge.className = 'badge angle-' + angleType.toLowerCase();
+
+    scheduleAnnouncement(`${sideType}, ${angleType} triangle. ` +
+      `Sides: ${abLen.toFixed(1)}, ${bcLen.toFixed(1)}, ${caLen.toFixed(1)} units. ` +
+      `Angles: ${angA.toFixed(0)}, ${angB.toFixed(0)}, ${angC.toFixed(0)} degrees.`);
+
+    // Keep each handle's accessible name up to date with the sides that
+    // meet at it, so keyboard/screen-reader users know what moving it will do.
+    handles.A.circle.setAttribute('aria-label',
+      `Corner A. Sides AB ${abLen.toFixed(1)} units, CA ${caLen.toFixed(1)} units. Arrow keys move this corner.`);
+    handles.B.circle.setAttribute('aria-label',
+      `Corner B. Sides AB ${abLen.toFixed(1)} units, BC ${bcLen.toFixed(1)} units. Arrow keys move this corner.`);
+    handles.C.circle.setAttribute('aria-label',
+      `Corner C. Sides BC ${bcLen.toFixed(1)} units, CA ${caLen.toFixed(1)} units. Arrow keys move this corner.`);
+  }
+
+  function labelSide(id, p1, p2, lengthUnits){
+    const el = document.getElementById(id);
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+    el.setAttribute('x', midX + 8);
+    el.setAttribute('y', midY - 8);
+    el.textContent = lengthUnits.toFixed(1);
+  }
+
+  // Debounced screen-reader announcement so we don't spam it on every
+  // pixel of movement while dragging — only after things settle briefly.
+  function scheduleAnnouncement(message){
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => {
+      if (message !== lastAnnouncement) {
+        liveRegion.textContent = message;
+        lastAnnouncement = message;
+      }
+    }, 500);
+  }
+
+  // ---------- Dragging (mouse, touch, and pen, via Pointer Events) ----------
+  let draggingKey = null;
+
+  function svgPointFromEvent(evt){
+    const rect = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+    const x = ((evt.clientX - rect.left) / rect.width) * viewBox.width;
+    const y = ((evt.clientY - rect.top) / rect.height) * viewBox.height;
+    return {
+      x: clamp(x, 20, viewBox.width - 20),
+      y: clamp(y, 20, viewBox.height - 20)
+    };
+  }
+
+  for (const key of ['A', 'B', 'C']) {
+    handles[key].circle.addEventListener('pointerdown', (e) => {
+      draggingKey = key;
+      handles[key].circle.setPointerCapture(e.pointerId);
+    });
+    handles[key].circle.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 20 : 6;
+      let moved = true;
+      if (e.key === 'ArrowLeft')  points[key].x -= step;
+      else if (e.key === 'ArrowRight') points[key].x += step;
+      else if (e.key === 'ArrowUp')    points[key].y -= step;
+      else if (e.key === 'ArrowDown')  points[key].y += step;
+      else moved = false;
+      if (moved) {
+        e.preventDefault();
+        const vb = svg.viewBox.baseVal;
+        points[key].x = clamp(points[key].x, 20, vb.width - 20);
+        points[key].y = clamp(points[key].y, 20, vb.height - 20);
+        render();
+      }
+    });
+  }
+
+  svg.addEventListener('pointermove', (e) => {
+    if (!draggingKey) return;
+    points[draggingKey] = svgPointFromEvent(e);
+    render();
+  });
+  ['pointerup', 'pointercancel'].forEach(evtName =>
+    svg.addEventListener(evtName, () => { draggingKey = null; })
+  );
+
+  // ---------- Presets, for quickly showing a specific example in class ----------
+  const presets = {
+    equilateral: { A: { x: 180, y: 320 }, B: { x: 420, y: 320 }, C: { x: 300, y: 112 } },
+    isosceles:   { A: { x: 160, y: 340 }, B: { x: 440, y: 340 }, C: { x: 300, y: 40  } },
+    scalene:     { A: { x: 120, y: 360 }, B: { x: 460, y: 380 }, C: { x: 320, y: 90  } },
+    right:       { A: { x: 430, y: 360 }, B: { x: 160, y: 120 }, C: { x: 160, y: 360 } },
+    acute:       { A: { x: 190, y: 340 }, B: { x: 420, y: 330 }, C: { x: 300, y: 110 } },
+    obtuse:      { A: { x: 150, y: 320 }, B: { x: 450, y: 320 }, C: { x: 320, y: 290 } }
+  };
+
+  document.querySelectorAll('[data-preset]').forEach(button => {
+    button.addEventListener('click', () => {
+      const preset = presets[button.dataset.preset];
+      points = { A: { ...preset.A }, B: { ...preset.B }, C: { ...preset.C } };
+      render();
+    });
+  });
+
+  render();
+})();
+
+/* ================================================================
+   TAB 2: PYTHAGOREAN THEOREM
+   The right angle always sits at corner C. Leg "a" runs horizontally
+   from C to A; leg "b" runs vertically from C to B. Because the legs
+   are locked to the horizontal/vertical axes, the angle at C is
+   always exactly 90 degrees, no matter how the handles are dragged.
+   ================================================================ */
+(function pythagoreanTab(){
+  const svg = document.getElementById('pythagSvg');
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  const UNIT_PX = 22;      // pixels per "unit" of side length
+  const MIN_UNITS = 2;
+  const MAX_UNITS = 7;
+  const C = { x: 210, y: 340 }; // fixed right-angle corner
+
+  let aUnits = 4; // horizontal leg (C to A)
+  let bUnits = 3; // vertical leg (C to B)
+
+  const fillPath = document.getElementById('pythagFill');
+  const strokePath = document.getElementById('pythagStroke');
+  const squareA = document.getElementById('squareA');
+  const squareB = document.getElementById('squareB');
+  const squareC = document.getElementById('squareC');
+  const rightAngleMark = document.getElementById('rightAngleMark');
+
+  function buildHandle(groupId, color){
+    const group = document.getElementById(groupId);
+    const circle = document.createElementNS(SVG_NS, 'circle');
+    circle.setAttribute('r', 10);
+    circle.setAttribute('fill', color);
+    circle.setAttribute('class', 'vertex-handle');
+    circle.setAttribute('tabindex', '0');
+    circle.setAttribute('role', 'button');
+    const ring = document.createElementNS(SVG_NS, 'circle');
+    ring.setAttribute('r', 16);
+    ring.setAttribute('class', 'vertex-ring');
+    group.appendChild(circle);
+    group.appendChild(ring);
+    return { circle, ring };
+  }
+
+  const handleA = buildHandle('handleA', 'var(--chalk-teal)');
+  const handleB = buildHandle('handleB', 'var(--chalk-teal)');
+
+  // Builds the four corners of a square drawn outward on the outside of
+  // one edge of the triangle (away from the triangle's interior), given
+  // the edge's two endpoints and its length in pixels.
+  function squareOutward(p1, p2, sideLengthPx, outwardHint){
+    const edge = { x: p2.x - p1.x, y: p2.y - p1.y };
+    // Two perpendicular directions to the edge; we pick whichever one
+    // points away from the triangle's interior (toward `outwardHint`).
+    const perpOptions = [
+      { x: -edge.y, y: edge.x },
+      { x: edge.y,  y: -edge.x }
+    ];
+    const midpoint = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+    const toHint = { x: midpoint.x - outwardHint.x, y: midpoint.y - outwardHint.y };
+    let perp = perpOptions[0];
+    if (perp.x * toHint.x + perp.y * toHint.y < 0) perp = perpOptions[1];
+    const perpLength = Math.hypot(perp.x, perp.y) || 1;
+    const unit = { x: perp.x / perpLength, y: perp.y / perpLength };
+
+    const p3 = { x: p2.x + unit.x * sideLengthPx, y: p2.y + unit.y * sideLengthPx };
+    const p4 = { x: p1.x + unit.x * sideLengthPx, y: p1.y + unit.y * sideLengthPx };
+    return [p1, p2, p3, p4];
+  }
+
+  function pointsToAttr(pts){
+    return pts.map(p => `${p.x},${p.y}`).join(' ');
+  }
+
+  function render(){
+    const aPx = aUnits * UNIT_PX;
+    const bPx = bUnits * UNIT_PX;
+    const A = { x: C.x + aPx, y: C.y };
+    const B = { x: C.x, y: C.y - bPx };
+    const cUnits = Math.sqrt(aUnits ** 2 + bUnits ** 2);
+    const cPx = cUnits * UNIT_PX;
+
+    const d = `M ${C.x} ${C.y} L ${A.x} ${A.y} L ${B.x} ${B.y} Z`;
+    fillPath.setAttribute('d', d);
+    strokePath.setAttribute('d', d);
+
+    handleA.circle.setAttribute('cx', A.x); handleA.circle.setAttribute('cy', A.y);
+    handleA.ring.setAttribute('cx', A.x);   handleA.ring.setAttribute('cy', A.y);
+    handleB.circle.setAttribute('cx', B.x); handleB.circle.setAttribute('cy', B.y);
+    handleB.ring.setAttribute('cx', B.x);   handleB.ring.setAttribute('cy', B.y);
+
+    // A small square drawn in the right-angle corner, the traditional
+    // symbol for "this angle is 90 degrees".
+    const markSize = 16;
+    rightAngleMark.setAttribute('d',
+      `M ${C.x} ${C.y - markSize} L ${C.x + markSize} ${C.y - markSize} L ${C.x + markSize} ${C.y}`);
+
+    // The triangle's centroid gives us a reliable "inward" point, so the
+    // squareOutward() helper knows which side of each edge is outside
+    // the triangle.
+    const centroid = {
+      x: (A.x + B.x + C.x) / 3,
+      y: (A.y + B.y + C.y) / 3
+    };
+
+    squareA.setAttribute('points', pointsToAttr(squareOutward(C, A, aPx, centroid)));
+    squareB.setAttribute('points', pointsToAttr(squareOutward(B, C, bPx, centroid)));
+    squareC.setAttribute('points', pointsToAttr(squareOutward(A, B, cPx, centroid)));
+
+    // Side length labels, placed at the midpoint of each leg/hypotenuse.
+    setLabel('pyLabelA', (C.x + A.x) / 2, C.y + 22, `a = ${aUnits.toFixed(1)}`);
+    setLabel('pyLabelB', C.x - 34, (C.y + B.y) / 2, `b = ${bUnits.toFixed(1)}`);
+    setLabel('pyLabelC', (A.x + B.x) / 2 + 18, (A.y + B.y) / 2 - 10, `c = ${cUnits.toFixed(1)}`);
+
+    // Area labels, placed roughly at the center of each square.
+    const centerOf = (pts) => ({
+      x: pts.reduce((sum, p) => sum + p.x, 0) / pts.length,
+      y: pts.reduce((sum, p) => sum + p.y, 0) / pts.length
+    });
+    const centerA = centerOf(squareOutward(C, A, aPx, centroid));
+    const centerB = centerOf(squareOutward(B, C, bPx, centroid));
+    const centerC = centerOf(squareOutward(A, B, cPx, centroid));
+    setLabel('areaLabelA', centerA.x, centerA.y, `a² = ${(aUnits ** 2).toFixed(1)}`);
+    setLabel('areaLabelB', centerB.x, centerB.y, `b² = ${(bUnits ** 2).toFixed(1)}`);
+    setLabel('areaLabelC', centerC.x, centerC.y, `c² = ${(cUnits ** 2).toFixed(1)}`);
+
+    // The equation readout at the bottom of the panel.
+    document.getElementById('eqA').textContent = `${aUnits.toFixed(1)}²`;
+    document.getElementById('eqB').textContent = `${bUnits.toFixed(1)}²`;
+    document.getElementById('eqC').textContent = `${cUnits.toFixed(1)}²`;
+    document.getElementById('eqSumLeft').textContent =
+      `${(aUnits ** 2).toFixed(1)} + ${(bUnits ** 2).toFixed(1)} = ${(cUnits ** 2).toFixed(1)}`;
+
+    handleA.circle.setAttribute('aria-label', `Corner A. Leg a is ${aUnits.toFixed(1)} units. Left and right arrows change it.`);
+    handleB.circle.setAttribute('aria-label', `Corner B. Leg b is ${bUnits.toFixed(1)} units. Up and down arrows change it.`);
+  }
+
+  function setLabel(id, x, y, text){
+    const el = document.getElementById(id);
+    el.setAttribute('x', x);
+    el.setAttribute('y', y);
+    el.textContent = text;
+  }
+
+  // ---------- Dragging: handle A only moves horizontally, handle B only vertically ----------
+  let draggingHandle = null;
+
+  function svgXFromEvent(evt){
+    const rect = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+    return ((evt.clientX - rect.left) / rect.width) * viewBox.width;
+  }
+  function svgYFromEvent(evt){
+    const rect = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+    return ((evt.clientY - rect.top) / rect.height) * viewBox.height;
+  }
+
+  handleA.circle.addEventListener('pointerdown', (e) => {
+    draggingHandle = 'A';
+    handleA.circle.setPointerCapture(e.pointerId);
+  });
+  handleB.circle.addEventListener('pointerdown', (e) => {
+    draggingHandle = 'B';
+    handleB.circle.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (draggingHandle === 'A') {
+      const x = svgXFromEvent(e);
+      aUnits = clamp((x - C.x) / UNIT_PX, MIN_UNITS, MAX_UNITS);
+      render();
+    } else if (draggingHandle === 'B') {
+      const y = svgYFromEvent(e);
+      bUnits = clamp((C.y - y) / UNIT_PX, MIN_UNITS, MAX_UNITS);
+      render();
+    }
+  });
+  ['pointerup', 'pointercancel'].forEach(evtName =>
+    svg.addEventListener(evtName, () => { draggingHandle = null; })
+  );
+
+  handleA.circle.addEventListener('keydown', (e) => {
+    const step = e.shiftKey ? 1 : 0.25;
+    if (e.key === 'ArrowRight') { aUnits = clamp(aUnits + step, MIN_UNITS, MAX_UNITS); e.preventDefault(); render(); }
+    if (e.key === 'ArrowLeft')  { aUnits = clamp(aUnits - step, MIN_UNITS, MAX_UNITS); e.preventDefault(); render(); }
+  });
+  handleB.circle.addEventListener('keydown', (e) => {
+    const step = e.shiftKey ? 1 : 0.25;
+    if (e.key === 'ArrowUp')   { bUnits = clamp(bUnits + step, MIN_UNITS, MAX_UNITS); e.preventDefault(); render(); }
+    if (e.key === 'ArrowDown') { bUnits = clamp(bUnits - step, MIN_UNITS, MAX_UNITS); e.preventDefault(); render(); }
+  });
+
+  // ---------- Presets ----------
+  // Each preset keeps the *true* Pythagorean ratio, just scaled down by a
+  // factor so the longer leg still fits inside the diagram's unit range.
+  const presets = {
+    '3-4-5':   { a: 4,          b: 3          },        // fits as-is
+    '5-12-13': { a: 5 * 0.55,   b: 12 * 0.55  },        // longest leg (12) -> 6.6 units
+    '8-15-17': { a: 8 * 0.45,   b: 15 * 0.45  }         // longest leg (15) -> 6.75 units
+  };
+  document.querySelectorAll('[data-pyth-preset]').forEach(button => {
+    button.addEventListener('click', () => {
+      const preset = presets[button.dataset.pythPreset];
+      aUnits = preset.a;
+      bUnits = preset.b;
+      render();
+    });
+  });
+
+  document.getElementById('pyRandomBtn').addEventListener('click', () => {
+    aUnits = Math.round((MIN_UNITS + Math.random() * (MAX_UNITS - MIN_UNITS)) * 2) / 2;
+    bUnits = Math.round((MIN_UNITS + Math.random() * (MAX_UNITS - MIN_UNITS)) * 2) / 2;
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
