@@ -1,0 +1,1738 @@
+<meta charset="utf-8">
+<title>CSC 150 Vocabulary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#f7f6f4;}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]){background:#121110;}}
+html[data-theme="dark"]{background:#121110;}
+/* ============================================================================
+   FLCC AI Specialist Microcredential - core.css
+   Shared by every page in every course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a colour except through a token.
+   ========================================================================= */
+:root {
+  /* Neutrals - very slightly warm, so they sit under orange, blue and olive
+     without any of the three reading as a clash. */
+  --ground:      #f7f6f4;
+  --surface:     #ffffff;
+  --surface-2:   #f0eeea;   /* inset wells, quiet fills */
+  --surface-3:   #e7e4df;   /* pressed / track */
+  --line:        #e3dfd9;
+  --line-strong: #cfc9c1;
+
+  --ink:   #1c1a18;
+  --ink-2: #57524c;
+  --ink-3: #8b837a;
+
+  /* Semantic - independent of the course accent */
+  --good:      #1f7a4d;
+  --good-soft: #e6f2eb;
+  --warn:      #9a5b00;
+  --warn-soft: #f8eede;
+  --bad:       #b3261e;
+  --bad-soft:  #fbe9e7;
+
+  /* Elevation */
+  --shadow-1: 0 1px 2px rgba(28,26,24,.05), 0 2px 6px rgba(28,26,24,.05);
+  --shadow-2: 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.08);
+  --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
+  --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
+
+  /* Geometry */
+  --r:    15px;
+  --r-sm: 10px;
+  --r-xs: 7px;
+  --r-pill: 999px;
+
+  /* Type */
+  --display: "Comfortaa", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --measure: 66ch;
+
+  /* Rhythm */
+  --gap-xs: .4rem;
+  --gap-s:  .75rem;
+  --gap-m:  1.25rem;
+  --gap-l:  2rem;
+  --gap-xl: 3.5rem;
+
+  /* Default accent (overridden per course below) */
+  --accent:      #f45922;
+  --accent-text: #c4400f;
+  --accent-fill: #c4400f;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+:root[data-theme="dark"] {
+  --ground:      #121110;
+  --surface:     #1d1b19;
+  --surface-2:   #262320;
+  --surface-3:   #322e2a;
+  --line:        #332f2b;
+  --line-strong: #4a443e;
+
+  --ink:   #ece8e2;
+  --ink-2: #a9a29a;
+  --ink-3: #7e766d;
+
+  --good:      #6ec294;
+  --good-soft: #1a2b22;
+  --warn:      #e0a75a;
+  --warn-soft: #2c241a;
+  --bad:       #f2938b;
+  --bad-soft:  #2e1c1a;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.42);
+  --shadow-3: 0 4px 8px rgba(0,0,0,.45), 0 24px 56px rgba(0,0,0,.55);
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.lesson {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; }
+p + p { margin-top: .9em; }
+
+a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+::selection { background: var(--accent); color: var(--accent-on); }.wrap {
+  width: min(100% - 2.5rem, 50rem);
+  margin-inline: auto;
+}
+
+.lesson__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-xl) 5rem;
+}
+
+/* A block = one beat of the lesson template. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1em; }
+
+/* Reading-width helper for anything that should not run full bleed */
+.narrow { max-width: var(--measure); }.railtrack {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: transparent;
+  z-index: 60;
+}
+.railtrack__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s linear;
+}.masthead {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-block: 1.6rem 1.9rem;
+}
+
+.masthead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-bottom: 1.1rem;
+}
+
+/* The `hidden` attribute only sets `display: none` in the UA sheet, so any
+   author `display` rule beats it - and a component with `display: grid` then
+   stays visible while its own JS believes it is hidden. This has been patched
+   three times in this codebase already (.term, .vgroup, .panel). Once, here,
+   instead. `hidden` is semantic: it should always win. */
+[hidden] { display: none !important; }
+
+.coursemark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .4rem .8rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.lessonno {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 2.9rem);
+  max-width: 18ch;
+}
+
+.standfirst {
+  margin-top: .9rem;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.metarow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+.metarow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.blockhead {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.blockhead h2 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+.blockhead p {
+  color: var(--ink-2);
+  max-width: var(--measure);
+}.i {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -.125em;
+}
+.i--lg { width: 1.35em; height: 1.35em; }
+
+.icontile {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  flex: none;
+}
+.icontile .i { width: 1.2rem; height: 1.2rem; }
+.icontile--quiet { background: var(--surface-2); color: var(--ink-2); }.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+}
+.card--flush { padding: 0; overflow: hidden; }
+.card--quiet { box-shadow: var(--shadow-1); }
+
+.well {
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.25rem;
+}.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .3rem .65rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip--accent { background: var(--accent-wash); color: var(--accent-text); }
+.chip--good   { background: var(--good-soft);  color: var(--good); }
+.chip--warn   { background: var(--warn-soft);  color: var(--warn); }
+.chip--outline{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink-3); }
+
+.chiprow { display: flex; flex-wrap: wrap; gap: .4rem; }.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.btn--ghost:hover { background: var(--accent-wash); color: var(--accent-text); }
+
+.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.field label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.field textarea {
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .8rem .9rem;
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.field textarea::placeholder { color: var(--ink-3); }
+
+.hint { font-size: .82rem; color: var(--ink-3); }.recall {
+  display: grid;
+  gap: var(--gap-s);
+}
+.recallcard {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: box-shadow .25s ease;
+}
+.recallcard.is-open { box-shadow: var(--shadow-2); }
+
+.provenance {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.provenance .i { width: .9rem; height: .9rem; }
+.provenance em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.recallcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+.answer {
+  font: inherit;
+  font-size: .92rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .55rem .95rem;
+  cursor: pointer;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+.answer:hover:not([disabled]) { background: var(--accent-wash); }
+.answer[disabled] { cursor: default; }
+.answer.is-right { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+.answer.is-wrong { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.answer.is-dim   { opacity: .45; }
+
+.feedback {
+  display: none;
+  gap: .7rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-2);
+}
+.feedback.is-shown { display: flex; }
+.feedback .i { margin-top: .25rem; color: var(--accent-text); }
+.feedback strong { color: var(--ink); }.deck { display: flex; flex-direction: column; gap: 1rem; max-width: 36rem; }
+
+.deck__stack {
+  display: grid;
+  touch-action: pan-y;
+  perspective: 1200px;
+  position: relative;
+  /* reserve room for the fanned + rotated cards behind the top one */
+  padding-bottom: 2.6rem;
+  transition: height .3s ease;
+}
+
+.fcard {
+  grid-area: 1 / 1;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  transform-origin: 50% 130%;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1),
+              opacity .3s ease,
+              box-shadow .3s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.fcard[data-pos="0"] { z-index: 4; transform: rotate(-1.1deg);                          box-shadow: var(--shadow-3); cursor: grab; }
+.fcard[data-pos="1"] { z-index: 3; transform: rotate(2.6deg)  translateY(13px) scale(.968); box-shadow: var(--shadow-2); }
+.fcard[data-pos="2"] { z-index: 2; transform: rotate(-3.4deg) translateY(24px) scale(.936); box-shadow: var(--shadow-1); }
+.fcard[data-pos="3"] { z-index: 1; transform: rotate(1.8deg)  translateY(33px) scale(.91);  opacity: 0; }
+
+.fcard:not([data-pos="0"]) { pointer-events: none; }
+.fcard[data-pos="0"].is-dragging { transition: none; cursor: grabbing; }
+/* A card that has left the deck is taken out of grid sizing, so the stack
+   collapses back to the height of the cards that remain. */
+.fcard.is-leaving { z-index: 9; }
+.fcard.is-gone {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.fcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+.fcard__grip {
+  display: flex;
+  gap: 3px;
+  opacity: .5;
+  flex: none;
+}
+.fcard__grip span {
+  width: 3px; height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.answer--pass {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--ink-3);
+}
+
+/* Bottom bar: dots, counter, advance */
+.deck__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  flex-wrap: wrap;
+}
+.deck__left { display: flex; align-items: center; gap: .7rem; }
+.deck__dots { display: flex; gap: .3rem; }
+.deck__dot {
+  width: 7px; height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  transition: background-color .25s ease, transform .25s ease;
+}
+.deck__dot.is-done   { background: var(--accent); opacity: .4; }
+.deck__dot.is-active { background: var(--accent); transform: scale(1.5); }
+.deck__count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.deck__hint {
+  font-size: .82rem;
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.deck__hint.is-nudging { color: var(--accent-text); font-weight: 700; }
+
+.deck__done {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+}
+.deck.is-finished .deck__stack,
+.deck.is-finished .deck__bar { display: none; }
+.deck.is-finished .deck__done { display: flex; }
+.deck__done strong { font-family: var(--display); font-size: 1.05rem; }
+.deck__done p { color: var(--ink-2); font-size: .93rem; max-width: 38ch; }
+
+/* The askew stack rotates up to 3.4deg, and a rotated rectangle is wider than
+   an upright one. On a wide page the deck's max-width absorbs that; on a phone
+   the corners push past the viewport and the whole page scrolls sideways, which
+   is the one thing an LMS embed must never do. Inset the stack so the rotation
+   has somewhere to go. */
+@media (max-width: 32rem) {
+  .deck__stack { margin-inline: .5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard[data-pos="0"],
+  .fcard[data-pos="1"],
+  .fcard[data-pos="2"],
+  .fcard[data-pos="3"] { transform: none; }
+  .fcard:not([data-pos="0"]) { opacity: 0; }
+}
+
+/* Callouts: a card with an icon tile. No coloured left rail, no tinted body. */
+.callout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.15rem 1.3rem;
+}
+.callout__body { display: flex; flex-direction: column; gap: .3rem; }
+.callout__label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.callout__body p { font-size: .97rem; color: var(--ink-2); }
+.callout__body p strong { color: var(--ink); }
+.callout--warn .icontile { background: var(--warn); color: var(--surface); }
+.callout--good .icontile { background: var(--good); color: var(--surface); }
+
+/* Interactive demo shells */
+.demo {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.demo__title .i { color: var(--accent-text); }
+.demo__body { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; }
+.demo__foot {
+  padding: .9rem 1.25rem;
+  background: var(--surface-2);
+  font-size: .88rem;
+  color: var(--ink-2);
+  min-height: 3.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.demo__foot > .i { margin-top: .35rem; flex: none; }details.disclosure {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+details.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .85rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+details.disclosure > summary::-webkit-details-marker { display: none; }
+details.disclosure > summary .i { transition: transform .2s ease; color: var(--ink-3); }
+details.disclosure[open] > summary .i { transform: rotate(180deg); }
+.disclosure__body { padding: 0 1.1rem 1.1rem; font-size: .95rem; color: var(--ink-2); }
+
+.lessonfoot {
+  border-top: 1px solid var(--line);
+  padding-block: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-s);
+  color: var(--ink-3);
+  font-size: .85rem;
+}.stepblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.stepblock__head { display: flex; gap: .9rem; align-items: flex-start; }
+.stepblock__n {
+  display: grid;
+  place-items: center;
+  width: 2rem; height: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: none;
+}
+.stepblock__head h2 { font-size: 1.35rem; }
+.stepblock__head p { color: var(--ink-2); margin-top: .35rem; max-width: var(--measure); }
+
+/* Confidence sliders ------------------------------------------------------ */
+
+.slrow {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+.slrow:last-child { border-bottom: 0; }
+.slrow__q { font-weight: 700; font-size: .97rem; }
+.slrow__q span { display: block; font-weight: 400; font-size: .82rem; color: var(--ink-3); margin-top: .15rem; }
+.slrow__val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--accent-text);
+  min-height: 1.2em;
+}
+
+input[type="range"].sl {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].sl::-webkit-slider-runnable-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-moz-range-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+input[type="range"].sl::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+.slticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+/* Multi-select chips ------------------------------------------------------ */
+
+.chipset { display: flex; flex-wrap: wrap; gap: .5rem; }
+.togchip {
+  font: inherit;
+  font-size: .9rem;
+  padding: .5rem .95rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .16s ease, color .16s ease;
+}
+.togchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.togchip[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.togchip .i { width: .85rem; height: .85rem; opacity: 0; }
+.togchip[aria-pressed="true"] .i { opacity: 1; }
+
+.copybox {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* vocabulary -------------------------------------------------------------- */
+.searchrow { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.search {
+  flex: 1 1 14rem;
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1); padding: .55rem 1rem;
+}
+.search .i { color: var(--ink-3); flex: none; }
+.search input {
+  font: inherit; font-size: .95rem; border: 0; background: transparent;
+  color: var(--ink); width: 100%; outline: none;
+}
+.search input::placeholder { color: var(--ink-3); }
+
+.termlist { display: flex; flex-direction: column; gap: .55rem; }
+.term {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.term[hidden] { display: none; }
+.term.is-locked { opacity: .55; }
+.term__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.term__name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.term__from { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.term.is-unlocked .term__from { color: var(--accent-text); }
+.term__def { font-size: .95rem; color: var(--ink-2); }
+.term__why { font-size: .88rem; color: var(--ink-3); font-style: italic; }
+
+.emptystate {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1);
+  padding: 2.25rem 1.5rem; text-align: center; color: var(--ink-2); font-size: .95rem;
+}
+
+.linkcard {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.3rem 1.5rem; text-decoration: none; color: inherit;
+  transition: transform .14s ease, box-shadow .2s ease;
+}
+.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.linkcard__t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.linkcard__d { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.linkcard__go { margin-left: auto; color: var(--accent-text); flex: none; }.statrow { display: flex; flex-wrap: wrap; gap: 1.75rem; }
+.stat { display: flex; flex-direction: column; }
+.stat b {
+  font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat--accent b { color: var(--accent-text); }.stack   { display: flex; flex-direction: column; gap: var(--gap-s); }
+.row     { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+.muted   { color: var(--ink-2); }
+.small   { font-size: .88rem; }
+.scrollx { overflow-x: auto; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 34rem) {
+  .card, .gate, .apply { padding: 1.2rem; }
+  .token { grid-template-columns: minmax(5rem, auto) 1fr 3rem; gap: .55rem; }
+}
+/* -------------------------------------------- shared with the curriculum docs
+   Small label, filter pill, and plain list - first written for the course
+   map, then wanted by learner pages too. They live here so neither side
+   has to load the other's sheet.
+   ------------------------------------------------------------------------ */
+
+.fbtn { font:inherit; font-family:var(--display); font-weight:700; font-size:.82rem; cursor:pointer;
+  border:0; background:var(--surface-2); color:var(--ink-2); padding:.45rem .85rem;
+  border-radius:var(--r-pill); transition:background-color .18s ease,color .18s ease; }
+.fbtn:hover { background:var(--accent-wash); color:var(--accent-text); }
+.fbtn[aria-pressed="true"] { background:var(--accent-fill); color:var(--accent-on); }
+.beatlabel { display:block; font-family:var(--display); font-weight:700; font-size:.7rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.3rem; }
+
+ul.plain, ul.lolist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+ul.plain li { font-size:.95rem; color:var(--ink-2); padding-left:1rem; position:relative; }
+ul.plain li::before { content:""; position:absolute; left:0; top:.65em; width:5px; height:5px;
+  border-radius:50%; background:var(--line-strong); }
+ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); align-items:flex-start; }
+.actbox__top .beatlabel { margin:0; color:var(--accent-text); }
+/* Whitespace and newline markers. Written for the Tokenizer, then wanted by
+   the Lesson 1 token demo - any page that shows text as discrete pieces
+   needs a way to make a space visible. */
+.tok__ws { color: var(--ink-3); opacity: .45; }
+.tok__nl {
+  color: var(--accent-text); font-weight: 700; opacity: .8;
+}
+
+/* -------------------------------------------------------------- 21. EMBEDS
+   Responsive 16:9 video frame. The rounded corners live on the WRAPPER with
+   overflow:hidden, not on the iframe - an iframe will not reliably clip its own
+   content to a border-radius, so styling the iframe alone leaves square corners
+   showing through in several browsers.
+   ------------------------------------------------------------------------ */
+
+.embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+}
+.embed iframe,
+.embed video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.embed--flat { box-shadow: none; }
+
+/* Optional caption underneath, matching the video block used in lessons. */
+.embed-cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  margin-top: .7rem; font-size: .85rem; color: var(--ink-3);
+}
+.embed-cap b {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+
+/* --- Two-click facade -----------------------------------------------------
+   Nothing reaches Google until the learner asks for the video. The frame you
+   see before the click is ours: our markup, our styles, and either a poster
+   image served from this site or no image at all. The iframe is created on
+   click and not a moment before.
+
+   A poster pulled from i.ytimg.com would still hand Google the visitor's IP on
+   page load, which is most of what the facade exists to prevent - so the
+   default is a self-hosted poster, and the fallback when there is none is a
+   designed placeholder rather than a third-party request.
+   ------------------------------------------------------------------------ */
+
+.embed--facade { position: relative; }
+
+.facade {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; cursor: pointer;
+  background: var(--surface-3);
+  font: inherit; color: var(--ink);
+  overflow: hidden;
+}
+.facade__poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.facade__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.55) 100%);
+}
+.facade--noposter { background: var(--surface-2); }
+.facade--noposter .facade__scrim { background: linear-gradient(150deg, var(--accent-wash), transparent 60%); }
+
+.facade__play {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill); color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.facade__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; margin-left: .18rem; }
+.facade:hover .facade__play, .facade:focus-visible .facade__play { transform: scale(1.07); }
+
+.facade__meta {
+  position: absolute; left: 1.1rem; right: 1.1rem; bottom: .95rem; z-index: 1;
+  display: flex; flex-direction: column; gap: .15rem; text-align: left;
+}
+.facade__title {
+  font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.3;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.facade--noposter .facade__title { color: var(--ink); text-shadow: none; }
+.facade__sub { font-size: .8rem; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.facade--noposter .facade__sub { color: var(--ink-3); text-shadow: none; }
+
+.embed-privacy {
+  display: flex; align-items: flex-start; gap: .45rem;
+  margin-top: .55rem; font-size: .8rem; color: var(--ink-3);
+}
+.embed-privacy .i { margin-top: .2rem; flex: none; }
+
+/* ── Inline vocabulary ──────────────────────────────────────────────────────
+   A term in the prose is bold + italic, per Dave's spec, with a dotted rule
+   under it so it reads as pressable rather than merely emphasised. The panel
+   is a child of the term so it needs no positioning library and no scroll
+   listener; the only correction it needs is a nudge off the right edge. */
+.vt {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--accent-text);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  border-radius: 2px;
+}
+.vt > i { font-style: italic; }
+.vt:hover { background: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.vt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vt[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.vt-demo { font-weight: 700; color: var(--accent-text); border-bottom: 1px dotted var(--accent); }
+
+.vpop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + .5rem);
+  left: 0;
+  width: min(23rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--ink);
+  text-align: left;
+  cursor: auto;
+  white-space: normal;
+}
+.vpop__top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.vpop__name { font-family: var(--display); font-size: .98rem; }
+.vpop__from { font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.vpop__def { font-size: .9rem; color: var(--ink-2); line-height: 1.5; }
+.vpop__why { font-size: .84rem; color: var(--ink-3); font-style: italic; line-height: 1.5; }
+.vpop__eg {
+  font-size: .84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+}
+.vpop__foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .15rem; }
+.vpop__more { font-size: .8rem; font-weight: 700; color: var(--accent-text); text-decoration: none; display: inline-flex; align-items: center; gap: .3rem; }
+.vpop__more:hover { text-decoration: underline; }
+.vpop__more .i { width: .85rem; height: .85rem; }
+.vpop__x { background: none; border: 0; padding: .2rem; color: var(--ink-3); cursor: pointer; display: inline-flex; border-radius: 6px; }
+.vpop__x:hover { color: var(--ink); background: var(--surface-2); }
+.vpop__x .i { width: 1rem; height: 1rem; }
+
+/* ── The standalone vocabulary page ─────────────────────────────────────── */
+.vsearch { display: grid; gap: .35rem; margin: 1.5rem 0 1.1rem; }
+.vsearch__lab { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.vsearch__in {
+  font: inherit;
+  padding: .7rem .9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--ink);
+}
+.vsearch__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.vsearch__count { margin: 0; }
+
+.vlist { display: flex; flex-direction: column; gap: .7rem; }
+.vgroup {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 1.4rem 0 .1rem;
+}
+.vgroup[hidden], .ventry[hidden] { display: none; }
+.ventry {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: .4rem;
+  scroll-margin-top: 1.5rem;
+}
+.ventry.is-target { box-shadow: 0 0 0 2px var(--accent), var(--shadow-2); }
+.ventry__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.ventry__name { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+.ventry__from { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ventry__def { font-size: .96rem; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.ventry__why { font-size: .88rem; color: var(--ink-3); font-style: italic; margin: 0; line-height: 1.5; }
+.ventry__eg { margin: .25rem 0 0; padding: .6rem .8rem .6rem 1.9rem; background: var(--surface-2); border-radius: 10px; display: grid; gap: .35rem; }
+.ventry__eg li { font-size: .89rem; color: var(--ink-2); line-height: 1.5; }
+.ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
+.ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
+
+/* Embedded in an LMS that already shows the page title above the frame. Showing
+   our masthead too gives the learner the same heading twice, with the course
+   code repeated three times on one screen. The host says whether it has its own
+   chrome; frame.js sets the attribute. */
+:root[data-host-chrome="1"] .masthead { display: none; }
+:root[data-host-chrome="1"] main.wrap { padding-top: 1.25rem; }
+:root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* ============================================================================
+   FLCC AI Specialist Microcredential - companion.css
+   The Learning Hub. One per course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a colour except through a token.
+   ========================================================================= */
+.hubtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--ground);
+  padding-block: .8rem;
+}
+.hubtab {
+  font: inherit;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem 1rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+}
+.hubtab:hover { color: var(--accent-text); }
+.hubtab[aria-selected="true"] {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.panel[hidden] { display: none; }
+.panel, .deck { scroll-margin-top: 5.5rem; }
+
+/* progress ---------------------------------------------------------------- */
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: .55rem;
+}
+.ptile {
+  font: inherit;
+  text-align: left;
+  border: 0;
+  cursor: pointer;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  transition: background-color .18s ease, box-shadow .18s ease, transform .12s ease;
+}
+.ptile:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.ptile__id { font-family: var(--display); font-weight: 700; font-size: .72rem; letter-spacing: .06em; color: var(--ink-3); }
+.ptile__t { font-size: .78rem; color: var(--ink-2); line-height: 1.3; }
+.ptile__check { margin-top: .25rem; width: 1.1rem; height: 1.1rem; border-radius: var(--r-xs); background: var(--surface-3); display: grid; place-items: center; color: transparent; }
+.ptile[aria-pressed="true"] { background: var(--accent-fill); }
+.ptile[aria-pressed="true"] .ptile__id,
+.ptile[aria-pressed="true"] .ptile__t { color: var(--accent-on); }
+.ptile[aria-pressed="true"] .ptile__t { opacity: .85; }
+.ptile[aria-pressed="true"] .ptile__check { background: rgba(255,255,255,.25); color: var(--accent-on); }
+.ptile__check .i { width: .8rem; height: .8rem; }
+
+/* reflection -------------------------------------------------------------- */
+.promptcard {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
+}
+.promptcard__kind {
+  font-family: var(--display); font-weight: 700; font-size: .7rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.promptcard__q { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.4; }
+.promptcard textarea { min-height: 8rem; }
+
+.jentry {
+  background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: .4rem;
+}
+.jentry__meta { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+.jentry__date { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.jentry__q { font-size: .9rem; color: var(--accent-text); font-weight: 700; }
+.jentry__a { font-size: .95rem; color: var(--ink-2); white-space: pre-wrap; }
+.linkbtn {
+  font: inherit; font-size: .78rem; background: none; border: 0; padding: 0;
+  color: var(--ink-3); cursor: pointer; text-decoration: underline;
+}
+.linkbtn:hover { color: var(--bad); }
+
+/* confidence -------------------------------------------------------------- */
+.deltarow {
+  display: grid;
+  grid-template-columns: 12rem 1fr auto;
+  gap: .9rem;
+  align-items: center;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.deltarow:last-child { border-bottom: 0; }
+.deltarow__label { font-size: .93rem; }
+.track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--surface-2); }
+.track__span { position: absolute; top: 0; bottom: 0; border-radius: var(--r-pill); background: var(--accent); opacity: .3; }
+.track__dot {
+  position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent);
+}
+.track__dot.is-now { background: var(--accent); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--accent); }
+.delta {
+  font-family: var(--display); font-weight: 700; font-size: .8rem;
+  padding: .2rem .5rem; border-radius: var(--r-xs); white-space: nowrap;
+  background: var(--surface-2); color: var(--ink-3);
+}
+.delta.is-up { background: var(--good-soft); color: var(--good); }
+.delta.is-down { background: var(--warn-soft); color: var(--warn); }
+
+@media (max-width: 40rem) {
+  .deltarow { grid-template-columns: 1fr; gap: .45rem; }
+  .hubtab { font-size: .8rem; padding: .5rem .8rem; }
+}
+/* ============================================================================
+   Course theme - CSC 150
+   Brand colour: #f45922
+
+   Derived, not hand-picked. Regenerate with:
+       python3 build/course_color.py 150 "#f45922" --write
+
+   Contrast (WCAG AA needs 4.5:1 for body text):
+     brand on white ............. 3.33:1  FAILS - which is why --accent-text is darkened
+     --accent-text on white ..... 4.63:1  PASS
+     --accent on dark surface ... 4.83:1  PASS
+     --accent-on over the fill .. 5.09:1  PASS
+   ========================================================================= */
+
+[data-course="150"] {
+  --accent:      #f45922;
+  --accent-text: #d4400b;
+  --accent-fill: #d4400b;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-course="150"],
+  :root:not([data-theme="light"]) [data-course="150"] {
+    --accent:      #d7673f;
+    --accent-text: #dc7b58;
+    --accent-fill: #d7673f;
+    --accent-on:   #290e05;
+    --accent-wash: rgba(215, 103, 63, .13);
+    --accent-glow: rgba(215, 103, 63, .16);
+  }
+}
+
+:root[data-theme="dark"][data-course="150"],
+:root[data-theme="dark"] [data-course="150"] {
+  --accent:      #d7673f;
+  --accent-text: #dc7b58;
+  --accent-fill: #d7673f;
+  --accent-on:   #290e05;
+  --accent-wash: rgba(215, 103, 63, .13);
+  --accent-glow: rgba(215, 103, 63, .16);
+}
+
+</style>
+<div class="lesson" data-course="150">
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__row">
+      <span class="coursemark"><svg class="i"><use href="#i-book-open"/></svg> CSC 150</span>
+      <span class="lessonno">Companion &middot; every word in the course</span>
+    </div>
+    <h1>Vocabulary</h1>
+    <p class="standfirst">Every term CSC 150 uses, in the order the course introduces them. Terms appear <b class="vt-demo"><i>like this</i></b> inside the lessons and open a short definition where they stand; this page is the long version, and it works on its own.</p>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <div class="vsearch">
+    <label class="vsearch__lab" for="vq">Search</label>
+    <input class="vsearch__in" type="search" id="vq" placeholder="Type a word, or part of a definition" autocomplete="off">
+    <p class="vsearch__count small muted" id="vcount">67 terms</p>
+  </div>
+
+  <div class="vlist" id="vlist">
+    <h3 class="vgroup" id="lesson-01">Lesson 01</h3><article class="ventry" id="artificial-intelligence-ai" data-search="artificial intelligence (ai) the whole field: any system built to do something that would need intelligence if a person did it. seventy years old, and most of it is not what you think. the broadest word on this list and the least useful on its own - always ask which kind."><div class="ventry__top"><h4 class="ventry__name">Artificial intelligence (AI)</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.</p><p class="ventry__why">The broadest word on this list and the least useful on its own - always ask which kind.</p><ul class="ventry__eg"><li>A 1997 chess computer, a spam filter, and a chatbot are all AI. Only one of them writes you a paragraph.</li><li>If a headline says &lsquo;AI can now&hellip;&rsquo;, the useful first question is which of the four rings it means.</li></ul><div class="ventry__dia"><svg viewBox="0 0 320 190" class="dia" role="img" aria-label="Four nested rings: AI contains machine learning, which contains deep learning, which contains large language models.">
+  <rect x="2" y="2" width="316" height="186" rx="15" fill="none" stroke="var(--line-strong)" stroke-width="2"/>
+  <rect x="26" y="26" width="268" height="138" rx="15" fill="none" stroke="var(--line-strong)" stroke-width="2"/>
+  <rect x="50" y="50" width="220" height="90" rx="15" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  <rect x="74" y="74" width="172" height="42" rx="15" fill="var(--accent)" opacity=".14" stroke="var(--accent)" stroke-width="2"/>
+  <text x="160" y="18" text-anchor="middle" font-size="11" fill="currentColor">Artificial intelligence</text>
+  <text x="160" y="42" text-anchor="middle" font-size="11" fill="currentColor">Machine learning</text>
+  <text x="160" y="66" text-anchor="middle" font-size="11" fill="currentColor">Deep learning</text>
+  <text x="160" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">Large language models</text>
+</svg></div></article><article class="ventry" id="machine-learning" data-search="machine learning systems that derive their behaviour from data rather than from rules a person wrote out. the shift that made most modern ai possible: nobody hand-wrote the rules for spotting spam."><div class="ventry__top"><h4 class="ventry__name">Machine learning</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">Systems that derive their behaviour from data rather than from rules a person wrote out.</p><p class="ventry__why">The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.</p><ul class="ventry__eg"><li>Nobody wrote a rule saying <em>emails containing &lsquo;wire transfer urgently&rsquo; are spam</em>. The filter derived that from a few million examples.</li><li>The counter-example: a thermostat that switches on below 68&deg;F is automation, not machine learning. Someone wrote that number down.</li></ul></article><article class="ventry" id="deep-learning" data-search="deep learning machine learning built on neural networks with many layers. the inner ring where language models live. explains why these systems are hard to inspect - nobody wrote the intermediate steps."><div class="ventry__top"><h4 class="ventry__name">Deep learning</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">Machine learning built on neural networks with many layers. The inner ring where language models live.</p><p class="ventry__why">Explains why these systems are hard to inspect - nobody wrote the intermediate steps.</p><ul class="ventry__eg"><li>Face unlock on your phone. Nobody described your face to it in words - it built its own internal representation and cannot explain it back to you.</li></ul></article><article class="ventry" id="neural-network" data-search="neural network a stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data. the mechanism underneath every tool in this course, and older than most people assume."><div class="ventry__top"><h4 class="ventry__name">Neural network</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.</p><p class="ventry__why">The mechanism underneath every tool in this course, and older than most people assume.</p><ul class="ventry__eg"><li>The idea dates to the 1950s. What changed was not the concept but the amount of data and computing power available to train one.</li></ul></article><article class="ventry" id="narrow-ai" data-search="narrow ai a system good at one bounded task and useless outside it. every tool in this course. cuts through most of the hype in one move."><div class="ventry__top"><h4 class="ventry__name">Narrow AI</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">A system good at one bounded task and useless outside it. Every tool in this course.</p><p class="ventry__why">Cuts through most of the hype in one move.</p><ul class="ventry__eg"><li>A model that writes a decent cover letter cannot book you a dentist appointment, and is not almost able to.</li><li>Every tool in this course, without exception.</li></ul></article><article class="ventry" id="general-ai-agi" data-search="general ai (agi) a hypothetical system matching human flexibility across arbitrary tasks. does not exist. worth naming precisely so you can tell when a headline is describing something else."><div class="ventry__top"><h4 class="ventry__name">General AI (AGI)</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.</p><p class="ventry__why">Worth naming precisely so you can tell when a headline is describing something else.</p><ul class="ventry__eg"><li>Not a product you can buy, a milestone anyone has demonstrated, or a thing this course teaches you to use.</li></ul></article><article class="ventry" id="generative-ai" data-search="generative ai the branch that produces new text, images or audio rather than sorting or scoring existing things. distinguishes the chatbot from the spam filter, which is the distinction most coverage skips."><div class="ventry__top"><h4 class="ventry__name">Generative AI</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">The branch that produces new text, images or audio rather than sorting or scoring existing things.</p><p class="ventry__why">Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.</p><ul class="ventry__eg"><li>Generative: a chatbot writing a paragraph, an image model drawing a poster.</li><li>Not generative: Netflix scoring how likely you are to finish a film. Both are AI; only one makes something new.</li></ul></article><article class="ventry" id="ai-winter" data-search="ai winter one of two long stretches when funding and interest collapsed after the field over-promised. the reason to be careful with any claim about what is about to happen next."><div class="ventry__top"><h4 class="ventry__name">AI winter</h4><span class="ventry__from">Lesson 01</span></div><p class="ventry__def">One of two long stretches when funding and interest collapsed after the field over-promised.</p><p class="ventry__why">The reason to be careful with any claim about what is about to happen next.</p><ul class="ventry__eg"><li>Two of them, roughly the mid-1970s and the late 1980s, each after a stretch of confident public promises the field could not keep.</li><li>Worth holding next to any sentence that begins &lsquo;within five years, AI will&hellip;&rsquo;.</li></ul></article><h3 class="vgroup" id="lesson-02">Lesson 02</h3><article class="ventry" id="token" data-search="token the chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;unbelievable&rdquo; might be three tokens. cost, speed and context limits are all measured in tokens, never in words."><div class="ventry__top"><h4 class="ventry__name">Token</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.</p><p class="ventry__why">Cost, speed and context limits are all measured in tokens, never in words.</p><ul class="ventry__eg"><li>&ldquo;Unbelievable&rdquo; is three tokens. &ldquo;Cat&rdquo; is one. A rare surname might be five.</li><li>Non-English text usually costs more tokens for the same meaning, which the Tokenizer tool lets you measure rather than take on trust.</li></ul><div class="ventry__dia"><svg viewBox="0 0 320 84" class="dia" role="img" aria-label="The word Unbelievable split into three tokens: Un, believ, able.">
+  <text x="6" y="20" font-size="11" fill="currentColor" opacity=".7">one word</text>
+  <text x="6" y="40" font-size="16" font-weight="700" fill="currentColor">Unbelievable</text>
+  <text x="150" y="40" font-size="13" fill="currentColor" opacity=".7">&#8594;</text>
+  <g>
+    <rect x="180" y="24" width="30" height="22" rx="6" fill="var(--accent)" opacity=".18"/>
+    <text x="195" y="39" text-anchor="middle" font-size="12" fill="currentColor">Un</text>
+    <rect x="214" y="24" width="48" height="22" rx="6" fill="var(--accent)" opacity=".18"/>
+    <text x="238" y="39" text-anchor="middle" font-size="12" fill="currentColor">believ</text>
+    <rect x="266" y="24" width="40" height="22" rx="6" fill="var(--accent)" opacity=".18"/>
+    <text x="286" y="39" text-anchor="middle" font-size="12" fill="currentColor">able</text>
+  </g>
+  <text x="6" y="68" font-size="10" fill="currentColor" opacity=".6">three tokens - and tokens are the unit you pay for</text>
+</svg></div></article><article class="ventry" id="large-language-model-llm" data-search="large language model (llm) a system trained on an enormous amount of text to predict what comes next. everything else it appears to do follows from that one job. if you keep one definition from this course, keep this one - most of module 3 is a consequence of it."><div class="ventry__top"><h4 class="ventry__name">Large language model (LLM)</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.</p><p class="ventry__why">If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.</p><ul class="ventry__eg"><li>ChatGPT, Claude and Gemini are products; the LLM is the thing underneath doing the predicting.</li></ul></article><article class="ventry" id="training" data-search="training the one-time process of building the model by having it predict text over and over across a huge corpus. it finished before you ever typed anything. the model is not learning from your conversation, whatever it sounds like."><div class="ventry__top"><h4 class="ventry__name">Training</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">The one-time process of building the model by having it predict text over and over across a huge corpus. It finished before you ever typed anything.</p><p class="ventry__why">The model is not learning from your conversation, whatever it sounds like.</p><ul class="ventry__eg"><li>It finished before you opened the tab. Nothing you type today changes the model - though it may be stored and used in a <em>later</em> training run, which is what Lesson 15 is about.</li></ul></article><article class="ventry" id="inference" data-search="inference what happens when you press enter: the finished model generating one token at a time. explains why the identical prompt can come back different twice in a row."><div class="ventry__top"><h4 class="ventry__name">Inference</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">What happens when you press enter: the finished model generating one token at a time.</p><p class="ventry__why">Explains why the identical prompt can come back different twice in a row.</p><ul class="ventry__eg"><li>The pause after you press enter is inference: the finished model producing one token, then the next, then the next.</li></ul></article><article class="ventry" id="temperature" data-search="temperature a setting controlling how strongly the model favours the single most likely next token over a less likely one. low is repetitive and safe, high is inventive and unreliable. most chat tools hide this."><div class="ventry__top"><h4 class="ventry__name">Temperature</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">A setting controlling how strongly the model favours the single most likely next token over a less likely one.</p><p class="ventry__why">Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.</p><ul class="ventry__eg"><li>Token Roulette&rsquo;s slider is this setting, exposed. Most chat tools hide it and pick a middling value for you.</li><li>It has no idea what is true. Turning it down buys you consistency, not accuracy - the same confident answer every time, right or wrong.</li></ul><div class="ventry__dia"><svg viewBox="0 0 320 118" class="dia" role="img" aria-label="At low temperature one option towers over the rest; at high temperature the options flatten towards each other.">
+  <text x="6" y="14" font-size="11" fill="currentColor" opacity=".7">temperature 0.2</text>
+  <g fill="var(--accent)">
+    <rect x="6"  y="26" width="18" height="56" rx="4"/>
+    <rect x="30" y="68" width="18" height="14" rx="4" opacity=".45"/>
+    <rect x="54" y="74" width="18" height="8"  rx="4" opacity=".45"/>
+    <rect x="78" y="77" width="18" height="5"  rx="4" opacity=".45"/>
+  </g>
+  <text x="6" y="98" font-size="10" fill="currentColor" opacity=".55">safe, and the same every time</text>
+  <text x="176" y="14" font-size="11" fill="currentColor" opacity=".7">temperature 1.2</text>
+  <g fill="var(--accent)">
+    <rect x="176" y="46" width="18" height="36" rx="4"/>
+    <rect x="200" y="52" width="18" height="30" rx="4" opacity=".7"/>
+    <rect x="224" y="56" width="18" height="26" rx="4" opacity=".7"/>
+    <rect x="248" y="60" width="18" height="22" rx="4" opacity=".7"/>
+  </g>
+  <text x="176" y="98" font-size="10" fill="currentColor" opacity=".55">inventive, and a gamble</text>
+</svg></div></article><article class="ventry" id="parameters" data-search="parameters the numbers inside the model that training adjusted. sizes are quoted in billions of them. the number marketing leans on hardest, and a poor predictor of whether a model suits your task."><div class="ventry__top"><h4 class="ventry__name">Parameters</h4><span class="ventry__from">Lesson 02</span></div><p class="ventry__def">The numbers inside the model that training adjusted. Sizes are quoted in billions of them.</p><p class="ventry__why">The number marketing leans on hardest, and a poor predictor of whether a model suits your task.</p><ul class="ventry__eg"><li>&ldquo;70 billion parameters&rdquo; tells you roughly how big a model is and almost nothing about whether it suits your task.</li><li>A smaller model tuned for one job routinely beats a larger general one at that job.</li></ul></article><h3 class="vgroup" id="lesson-03">Lesson 03</h3><article class="ventry" id="attention" data-search="attention the mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing. the answer to why the token machine wandered and current models do not."><div class="ventry__top"><h4 class="ventry__name">Attention</h4><span class="ventry__from">Lesson 03</span></div><p class="ventry__def">The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.</p><p class="ventry__why">The answer to why the token machine wandered and current models do not.</p><ul class="ventry__eg"><li>In <em>the trophy would not fit in the suitcase because it was too big</em>, attention is what lets the model connect <em>it</em> back to <em>trophy</em> rather than to the nearer word.</li><li>Change <em>big</em> to <em>small</em> and the connection moves to <em>suitcase</em>, with nothing else in the sentence touched.</li></ul><div class="ventry__dia"><svg viewBox="0 0 320 104" class="dia" role="img" aria-label="Arcs running from the word it back to trophy and to suitcase, the arc to trophy far heavier.">
+  <text x="8"   y="70" font-size="12" font-weight="700" fill="currentColor">trophy</text>
+  <text x="78"  y="70" font-size="12" fill="currentColor" opacity=".6">&#8230; suitcase &#8230;</text>
+  <text x="188" y="70" font-size="12" font-weight="700" fill="var(--accent-text)">it</text>
+  <text x="212" y="70" font-size="12" fill="currentColor" opacity=".6">was too big</text>
+  <path d="M190 56 Q 120 8 30 56" fill="none" stroke="var(--accent)" stroke-width="4"/>
+  <path d="M190 56 Q 158 26 112 56" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+  <text x="6" y="96" font-size="10" fill="currentColor" opacity=".55">stylised illustration, not a live model read-out</text>
+</svg></div></article><article class="ventry" id="transformer" data-search="transformer the architecture built on attention, introduced in 2017. effectively every model in this course is one. the single piece of architecture worth knowing by name - the t in gpt."><div class="ventry__top"><h4 class="ventry__name">Transformer</h4><span class="ventry__from">Lesson 03</span></div><p class="ventry__def">The architecture built on attention, introduced in 2017. Effectively every model in this course is one.</p><p class="ventry__why">The single piece of architecture worth knowing by name - the T in GPT.</p><ul class="ventry__eg"><li>Introduced in <em>Attention Is All You Need</em>, a 2017 paper from a team at Google.</li><li>The T in GPT. Effectively every model you will use this term is one.</li></ul></article><article class="ventry" id="context-long-range" data-search="context (long-range) material far from the current word that still determines its meaning. what a two-word memory cannot hold and attention can - and why paragraphs hold together now."><div class="ventry__top"><h4 class="ventry__name">Context (long-range)</h4><span class="ventry__from">Lesson 03</span></div><p class="ventry__def">Material far from the current word that still determines its meaning.</p><p class="ventry__why">What a two-word memory cannot hold and attention can - and why paragraphs hold together now.</p><ul class="ventry__eg"><li>A pronoun in the last line of a paragraph whose meaning was fixed in the first line.</li><li>Token Roulette has none of it - two words of memory - which is precisely why its sentences fall apart after about a line.</li></ul></article><h3 class="vgroup" id="lesson-04">Lesson 04</h3><article class="ventry" id="prompt" data-search="prompt everything you send in one turn - the question plus whatever context, examples and instructions come with it. most of what gets blamed on &ldquo;bad ai&rdquo; is a prompt problem."><div class="ventry__top"><h4 class="ventry__name">Prompt</h4><span class="ventry__from">Lesson 04</span></div><p class="ventry__def">Everything you send in one turn - the question plus whatever context, examples and instructions come with it.</p><p class="ventry__why">Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.</p><ul class="ventry__eg"><li>Everything in the box when you press enter: your question, whatever you pasted above it, and any instructions you added.</li></ul></article><article class="ventry" id="context" data-search="context the material you hand the model to work from: pasted text, uploaded files, earlier turns. grounding a request in real context is the single largest quality lever you control."><div class="ventry__top"><h4 class="ventry__name">Context</h4><span class="ventry__from">Lesson 04</span></div><p class="ventry__def">The material you hand the model to work from: pasted text, uploaded files, earlier turns.</p><p class="ventry__why">Grounding a request in real context is the single largest quality lever you control.</p><ul class="ventry__eg"><li>Pasting the actual assignment brief beats describing it. &lsquo;Write a lab report&rsquo; and &lsquo;here is the rubric, write to it&rsquo; are different requests.</li></ul></article><article class="ventry" id="few-shot-worked-example" data-search="few-shot (worked example) showing the model one or more examples of the output you want rather than describing it. far more reliable than adjectives for pinning down a format."><div class="ventry__top"><h4 class="ventry__name">Few-shot (worked example)</h4><span class="ventry__from">Lesson 04</span></div><p class="ventry__def">Showing the model one or more examples of the output you want rather than describing it.</p><p class="ventry__why">Far more reliable than adjectives for pinning down a format.</p><ul class="ventry__eg"><li>Instead of &lsquo;make it punchy&rsquo;, paste two headlines you like and say &lsquo;this style&rsquo;.</li><li>One example does more work than a paragraph of adjectives, because the model is matching a pattern rather than interpreting your taste.</li></ul></article><article class="ventry" id="system-prompt" data-search="system prompt standing instructions sitting behind a conversation that shape every reply in it. how custom assistants get their rules - and the foundation of csc 240."><div class="ventry__top"><h4 class="ventry__name">System prompt</h4><span class="ventry__from">Lesson 04</span></div><p class="ventry__def">Standing instructions sitting behind a conversation that shape every reply in it.</p><p class="ventry__why">How custom assistants get their rules - and the foundation of CSC 240.</p><ul class="ventry__eg"><li>&lsquo;You are a tutor for an introductory statistics course. Never give the final answer; ask a question that gets the student one step closer.&rsquo;</li><li>Set once, applies to every turn after it. The foundation of everything in CSC 240.</li></ul></article><article class="ventry" id="constraint" data-search="constraint a hard limit written into the prompt: word count, reading level, what to leave out, what to never say. constraints do real work. &ldquo;be good&rdquo; does none."><div class="ventry__top"><h4 class="ventry__name">Constraint</h4><span class="ventry__from">Lesson 04</span></div><p class="ventry__def">A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.</p><p class="ventry__why">Constraints do real work. &ldquo;Be good&rdquo; does none.</p><ul class="ventry__eg"><li>Works: <em>under 150 words, no bullet points, eighth-grade reading level, do not mention pricing</em>.</li><li>Does nothing: <em>be accurate, be creative, do a good job</em>.</li></ul></article><h3 class="vgroup" id="lesson-05">Lesson 05</h3><article class="ventry" id="context-window" data-search="context window the maximum amount of text a model can hold in view at once, your prompt and its reply together. go past it and the earliest material silently drops out of view - no warning."><div class="ventry__top"><h4 class="ventry__name">Context window</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">The maximum amount of text a model can hold in view at once, your prompt and its reply together.</p><p class="ventry__why">Go past it and the earliest material silently drops out of view - no warning.</p><ul class="ventry__eg"><li>In a long conversation the earliest turns fall out of view. Nothing warns you; the model simply stops being able to see them.</li><li>Which is why a fresh chat sometimes beats one more follow-up in a thread that has gone on for an hour.</li></ul><div class="ventry__dia"><svg viewBox="0 0 320 108" class="dia" role="img" aria-label="A long conversation with a window over its most recent part; earlier turns fall outside and are no longer visible to the model.">
+  <text x="6" y="16" font-size="11" fill="currentColor" opacity=".7">your whole conversation</text>
+  <g opacity=".35">
+    <rect x="6" y="26" width="120" height="10" rx="5" fill="currentColor"/>
+    <rect x="6" y="42" width="96"  height="10" rx="5" fill="currentColor"/>
+  </g>
+  <rect x="130" y="20" width="184" height="46" rx="12" fill="var(--accent)" opacity=".12"/>
+  <rect x="130" y="20" width="184" height="46" rx="12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  <rect x="140" y="26" width="164" height="10" rx="5" fill="currentColor" opacity=".75"/>
+  <rect x="140" y="42" width="132" height="10" rx="5" fill="currentColor" opacity=".75"/>
+  <text x="6"   y="86" font-size="10" fill="currentColor" opacity=".55">dropped out of view</text>
+  <text x="222" y="86" text-anchor="middle" font-size="10" fill="var(--accent-text)">the context window</text>
+</svg></div></article><article class="ventry" id="knowledge-cutoff" data-search="knowledge cutoff the date after which a model&rsquo;s training data stops. it knows nothing later unless a tool fetches it. the single most common cause of a confidently wrong answer about anything current."><div class="ventry__top"><h4 class="ventry__name">Knowledge cutoff</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.</p><p class="ventry__why">The single most common cause of a confidently wrong answer about anything current.</p><ul class="ventry__eg"><li>Ask a bare chat model who won an election held after its cutoff and you will often get a fluent, specific, wrong answer rather than a refusal.</li><li>The single most common cause of a confidently incorrect answer about anything current.</li></ul></article><article class="ventry" id="multimodal" data-search="multimodal a model that handles more than text - images, audio, sometimes video, as input or output. decides whether you can paste a screenshot at all."><div class="ventry__top"><h4 class="ventry__name">Multimodal</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">A model that handles more than text - images, audio, sometimes video, as input or output.</p><p class="ventry__why">Decides whether you can paste a screenshot at all.</p><ul class="ventry__eg"><li>Photographing a handwritten page and asking for a transcript. If a tool is text-only, that is not a prompting problem - it simply cannot see.</li></ul></article><article class="ventry" id="reasoning-model" data-search="reasoning model a model that spends extra computation working through a problem in steps before answering. slower and costlier. worth it for multi-step problems, wasted on a rewrite."><div class="ventry__top"><h4 class="ventry__name">Reasoning model</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">A model that spends extra computation working through a problem in steps before answering.</p><p class="ventry__why">Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.</p><ul class="ventry__eg"><li>Worth the wait for a multi-step word problem. Wasted on &lsquo;make this email shorter&rsquo;.</li></ul></article><article class="ventry" id="foundation-model" data-search="foundation model a large general-purpose model that other products are built on top of. several tools you use may be the same model wearing different clothes."><div class="ventry__top"><h4 class="ventry__name">Foundation model</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">A large general-purpose model that other products are built on top of.</p><p class="ventry__why">Several tools you use may be the same model wearing different clothes.</p><ul class="ventry__eg"><li>Several products you think of as different tools may be the same foundation model with different instructions wrapped around it.</li></ul></article><article class="ventry" id="rate-limit" data-search="rate limit a cap on how much you can use a tool in a given window, usually much tighter on free tiers. find yours before an assignment is due, not during."><div class="ventry__top"><h4 class="ventry__name">Rate limit</h4><span class="ventry__from">Lesson 05</span></div><p class="ventry__def">A cap on how much you can use a tool in a given window, usually much tighter on free tiers.</p><p class="ventry__why">Find yours before an assignment is due, not during.</p><ul class="ventry__eg"><li>Find yours on a Tuesday, not at 11pm the night an assignment is due.</li></ul></article><h3 class="vgroup" id="lesson-06">Lesson 06</h3><article class="ventry" id="benchmark" data-search="benchmark a standard test used to compare models on one specific skill. models can be tuned to score well on benchmarks without being better at your actual work."><div class="ventry__top"><h4 class="ventry__name">Benchmark</h4><span class="ventry__from">Lesson 06</span></div><p class="ventry__def">A standard test used to compare models on one specific skill.</p><p class="ventry__why">Models can be tuned to score well on benchmarks without being better at your actual work.</p></article><article class="ventry" id="leaderboard" data-search="leaderboard a ranked table of models by benchmark score or human preference. genuinely useful and routinely over-read."><div class="ventry__top"><h4 class="ventry__name">Leaderboard</h4><span class="ventry__from">Lesson 06</span></div><p class="ventry__def">A ranked table of models by benchmark score or human preference.</p><p class="ventry__why">Genuinely useful and routinely over-read.</p></article><article class="ventry" id="blind-comparison" data-search="blind comparison rating two outputs without knowing which model produced either. the only way to measure the answer instead of the brand."><div class="ventry__top"><h4 class="ventry__name">Blind comparison</h4><span class="ventry__from">Lesson 06</span></div><p class="ventry__def">Rating two outputs without knowing which model produced either.</p><p class="ventry__why">The only way to measure the answer instead of the brand.</p></article><article class="ventry" id="elo-rating" data-search="elo rating a ranking score borrowed from chess, updated every time one option beats another head to head. how lm arena turns a pile of votes into an ordered list."><div class="ventry__top"><h4 class="ventry__name">Elo rating</h4><span class="ventry__from">Lesson 06</span></div><p class="ventry__def">A ranking score borrowed from chess, updated every time one option beats another head to head.</p><p class="ventry__why">How LM Arena turns a pile of votes into an ordered list.</p></article><h3 class="vgroup" id="lesson-07">Lesson 07</h3><article class="ventry" id="thread" data-search="thread one continuous conversation. everything in it stays in context until the window fills up. a long thread can quietly poison a new question asked inside it."><div class="ventry__top"><h4 class="ventry__name">Thread</h4><span class="ventry__from">Lesson 07</span></div><p class="ventry__def">One continuous conversation. Everything in it stays in context until the window fills up.</p><p class="ventry__why">A long thread can quietly poison a new question asked inside it.</p></article><article class="ventry" id="context-accumulation" data-search="context accumulation the build-up of earlier turns, which increasingly shapes every later answer. the reason a fresh chat sometimes beats one more follow-up."><div class="ventry__top"><h4 class="ventry__name">Context accumulation</h4><span class="ventry__from">Lesson 07</span></div><p class="ventry__def">The build-up of earlier turns, which increasingly shapes every later answer.</p><p class="ventry__why">The reason a fresh chat sometimes beats one more follow-up.</p></article><article class="ventry" id="regeneration" data-search="regeneration asking for another attempt at the same prompt instead of editing the prompt. cheap to try, and it tells you whether the problem is your prompt or the luck of the draw."><div class="ventry__top"><h4 class="ventry__name">Regeneration</h4><span class="ventry__from">Lesson 07</span></div><p class="ventry__def">Asking for another attempt at the same prompt instead of editing the prompt.</p><p class="ventry__why">Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.</p></article><h3 class="vgroup" id="lesson-08">Lesson 08</h3><article class="ventry" id="hallucination" data-search="hallucination a fluent, confident, well-formatted output that is simply untrue. &ldquo;fabrication&rdquo; is the plainer word for it. not a malfunction. the same machinery that produces correct answers produces these."><div class="ventry__top"><h4 class="ventry__name">Hallucination</h4><span class="ventry__from">Lesson 08</span></div><p class="ventry__def">A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.</p><p class="ventry__why">Not a malfunction. The same machinery that produces correct answers produces these.</p></article><article class="ventry" id="confabulation" data-search="confabulation filling a gap with plausible invention instead of signalling uncertainty. borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;."><div class="ventry__top"><h4 class="ventry__name">Confabulation</h4><span class="ventry__from">Lesson 08</span></div><p class="ventry__def">Filling a gap with plausible invention instead of signalling uncertainty.</p><p class="ventry__why">Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.</p></article><article class="ventry" id="plausibility" data-search="plausibility how right something sounds. exactly what the model optimises for, and therefore useless as a truth test. the trap inside every fabricated citation you will ever see."><div class="ventry__top"><h4 class="ventry__name">Plausibility</h4><span class="ventry__from">Lesson 08</span></div><p class="ventry__def">How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.</p><p class="ventry__why">The trap inside every fabricated citation you will ever see.</p></article><h3 class="vgroup" id="lesson-09">Lesson 09</h3><article class="ventry" id="grounding" data-search="grounding tying an answer to specific retrieved source material rather than to training alone. the main structural defence against fabrication."><div class="ventry__top"><h4 class="ventry__name">Grounding</h4><span class="ventry__from">Lesson 09</span></div><p class="ventry__def">Tying an answer to specific retrieved source material rather than to training alone.</p><p class="ventry__why">The main structural defence against fabrication.</p></article><article class="ventry" id="retrieval" data-search="retrieval fetching documents or search results and putting them into the model&rsquo;s context before it answers. what lets a tool discuss last week at all."><div class="ventry__top"><h4 class="ventry__name">Retrieval</h4><span class="ventry__from">Lesson 09</span></div><p class="ventry__def">Fetching documents or search results and putting them into the model&rsquo;s context before it answers.</p><p class="ventry__why">What lets a tool discuss last week at all.</p></article><article class="ventry" id="citation" data-search="citation a reference to a source. check two things: that it exists, and that it says what was claimed. the second check is the one almost everybody skips."><div class="ventry__top"><h4 class="ventry__name">Citation</h4><span class="ventry__from">Lesson 09</span></div><p class="ventry__def">A reference to a source. Check two things: that it exists, and that it says what was claimed.</p><p class="ventry__why">The second check is the one almost everybody skips.</p></article><h3 class="vgroup" id="lesson-10">Lesson 10</h3><article class="ventry" id="bias" data-search="bias systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself. a different problem from being wrong, and it needs a different fix."><div class="ventry__top"><h4 class="ventry__name">Bias</h4><span class="ventry__from">Lesson 10</span></div><p class="ventry__def">Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.</p><p class="ventry__why">A different problem from being wrong, and it needs a different fix.</p></article><article class="ventry" id="rlhf" data-search="rlhf reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred. the second place bias enters, after the training data."><div class="ventry__top"><h4 class="ventry__name">RLHF</h4><span class="ventry__from">Lesson 10</span></div><p class="ventry__def">Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.</p><p class="ventry__why">The second place bias enters, after the training data.</p></article><article class="ventry" id="probe" data-search="probe a deliberately controlled prompt pair that changes exactly one variable to surface a difference. turns &ldquo;it feels biased&rdquo; into something you can show someone."><div class="ventry__top"><h4 class="ventry__name">Probe</h4><span class="ventry__from">Lesson 10</span></div><p class="ventry__def">A deliberately controlled prompt pair that changes exactly one variable to surface a difference.</p><p class="ventry__why">Turns &ldquo;it feels biased&rdquo; into something you can show someone.</p></article><h3 class="vgroup" id="lesson-11">Lesson 11</h3><article class="ventry" id="verification" data-search="verification independently confirming a claim before you rely on it. the habit this entire course exists to install."><div class="ventry__top"><h4 class="ventry__name">Verification</h4><span class="ventry__from">Lesson 11</span></div><p class="ventry__def">Independently confirming a claim before you rely on it.</p><p class="ventry__why">The habit this entire course exists to install.</p></article><article class="ventry" id="provenance" data-search="provenance where a piece of content came from and what happened to it along the way. increasingly the thing you will be asked to document."><div class="ventry__top"><h4 class="ventry__name">Provenance</h4><span class="ventry__from">Lesson 11</span></div><p class="ventry__def">Where a piece of content came from and what happened to it along the way.</p><p class="ventry__why">Increasingly the thing you will be asked to document.</p></article><article class="ventry" id="stakes" data-search="stakes what happens if this is wrong, and how hard it would be to check. together these decide how much verification a task actually deserves."><div class="ventry__top"><h4 class="ventry__name">Stakes</h4><span class="ventry__from">Lesson 11</span></div><p class="ventry__def">What happens if this is wrong, and how hard it would be to check.</p><p class="ventry__why">Together these decide how much verification a task actually deserves.</p></article><h3 class="vgroup" id="lesson-12">Lesson 12</h3><article class="ventry" id="diffusion-model" data-search="diffusion model the kind of model behind most image generators. it starts from noise and repeatedly refines toward your prompt. explains why counting, hands and text-in-images are so hard for it."><div class="ventry__top"><h4 class="ventry__name">Diffusion model</h4><span class="ventry__from">Lesson 12</span></div><p class="ventry__def">The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.</p><p class="ventry__why">Explains why counting, hands and text-in-images are so hard for it.</p></article><article class="ventry" id="negative-prompt" data-search="negative prompt a separate field listing what you do not want. not the same as writing &ldquo;no x&rdquo; in the prompt itself. &ldquo;no people&rdquo; in the main prompt reliably produces people."><div class="ventry__top"><h4 class="ventry__name">Negative prompt</h4><span class="ventry__from">Lesson 12</span></div><p class="ventry__def">A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.</p><p class="ventry__why">&ldquo;No people&rdquo; in the main prompt reliably produces people.</p></article><article class="ventry" id="seed" data-search="seed the starting random number. the same seed with the same prompt reproduces the same image. how you change one thing without losing the whole picture."><div class="ventry__top"><h4 class="ventry__name">Seed</h4><span class="ventry__from">Lesson 12</span></div><p class="ventry__def">The starting random number. The same seed with the same prompt reproduces the same image.</p><p class="ventry__why">How you change one thing without losing the whole picture.</p></article><h3 class="vgroup" id="lesson-13">Lesson 13</h3><article class="ventry" id="speech-to-text-asr" data-search="speech-to-text (asr) automatic transcription of recorded speech into written text. error rates are not evenly distributed across accents, names, or speakers."><div class="ventry__top"><h4 class="ventry__name">Speech-to-text (ASR)</h4><span class="ventry__from">Lesson 13</span></div><p class="ventry__def">Automatic transcription of recorded speech into written text.</p><p class="ventry__why">Error rates are not evenly distributed across accents, names, or speakers.</p></article><article class="ventry" id="text-to-speech" data-search="text-to-speech generating spoken audio from written text. good enough now that consent is a real question rather than a hypothetical."><div class="ventry__top"><h4 class="ventry__name">Text-to-speech</h4><span class="ventry__from">Lesson 13</span></div><p class="ventry__def">Generating spoken audio from written text.</p><p class="ventry__why">Good enough now that consent is a real question rather than a hypothetical.</p></article><article class="ventry" id="voice-cloning" data-search="voice cloning producing synthetic speech in a specific person&rsquo;s voice from a sample of it. legally and ethically the sharpest edge anywhere in this course."><div class="ventry__top"><h4 class="ventry__name">Voice cloning</h4><span class="ventry__from">Lesson 13</span></div><p class="ventry__def">Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.</p><p class="ventry__why">Legally and ethically the sharpest edge anywhere in this course.</p></article><article class="ventry" id="word-error-rate-wer" data-search="word error rate (wer) the standard measure of transcription accuracy: errors divided by words spoken. lets you compare two tools instead of arguing about which felt better."><div class="ventry__top"><h4 class="ventry__name">Word error rate (WER)</h4><span class="ventry__from">Lesson 13</span></div><p class="ventry__def">The standard measure of transcription accuracy: errors divided by words spoken.</p><p class="ventry__why">Lets you compare two tools instead of arguing about which felt better.</p></article><h3 class="vgroup" id="lesson-14">Lesson 14</h3><article class="ventry" id="vision-input" data-search="vision input giving a model an image - screenshot, photo, scan - as part of the prompt. degrades badly with skew, handwriting and dense tables, and does so silently."><div class="ventry__top"><h4 class="ventry__name">Vision input</h4><span class="ventry__from">Lesson 14</span></div><p class="ventry__def">Giving a model an image - screenshot, photo, scan - as part of the prompt.</p><p class="ventry__why">Degrades badly with skew, handwriting and dense tables, and does so silently.</p></article><article class="ventry" id="ocr" data-search="ocr optical character recognition: pulling text out of an image of text. frequently the better tool than a vision model when the scan is clean."><div class="ventry__top"><h4 class="ventry__name">OCR</h4><span class="ventry__from">Lesson 14</span></div><p class="ventry__def">Optical character recognition: pulling text out of an image of text.</p><p class="ventry__why">Frequently the better tool than a vision model when the scan is clean.</p></article><article class="ventry" id="modality" data-search="modality a kind of input or output: text, image, audio, video. choosing the right one is usually a bigger win than improving the prompt."><div class="ventry__top"><h4 class="ventry__name">Modality</h4><span class="ventry__from">Lesson 14</span></div><p class="ventry__def">A kind of input or output: text, image, audio, video.</p><p class="ventry__why">Choosing the right one is usually a bigger win than improving the prompt.</p></article><h3 class="vgroup" id="lesson-15">Lesson 15</h3><article class="ventry" id="personally-identifiable-information-pii" data-search="personally identifiable information (pii) anything that identifies a specific person, on its own or combined with other data. the category that decides what you may and may not paste."><div class="ventry__top"><h4 class="ventry__name">Personally identifiable information (PII)</h4><span class="ventry__from">Lesson 15</span></div><p class="ventry__def">Anything that identifies a specific person, on its own or combined with other data.</p><p class="ventry__why">The category that decides what you may and may not paste.</p></article><article class="ventry" id="data-retention" data-search="data retention how long a vendor keeps what you send, and what they are permitted to do with it. varies by tier, and lives in the settings rather than the marketing."><div class="ventry__top"><h4 class="ventry__name">Data retention</h4><span class="ventry__from">Lesson 15</span></div><p class="ventry__def">How long a vendor keeps what you send, and what they are permitted to do with it.</p><p class="ventry__why">Varies by tier, and lives in the settings rather than the marketing.</p></article><article class="ventry" id="training-opt-out" data-search="training opt-out a setting that stops your conversations being used to improve the vendor&rsquo;s models. off by default on a number of consumer tiers. lesson 15 has you go and find yours."><div class="ventry__top"><h4 class="ventry__name">Training opt-out</h4><span class="ventry__from">Lesson 15</span></div><p class="ventry__def">A setting that stops your conversations being used to improve the vendor&rsquo;s models.</p><p class="ventry__why">Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.</p></article><article class="ventry" id="ferpa" data-search="ferpa us federal law protecting student education records. applies to anyone at flcc handling student data - including inside a chatbot."><div class="ventry__top"><h4 class="ventry__name">FERPA</h4><span class="ventry__from">Lesson 15</span></div><p class="ventry__def">US federal law protecting student education records.</p><p class="ventry__why">Applies to anyone at FLCC handling student data - including inside a chatbot.</p></article><article class="ventry" id="zero-retention" data-search="zero-retention an arrangement in which the vendor does not store your inputs at all. usually enterprise-only, and worth knowing exists before you need it."><div class="ventry__top"><h4 class="ventry__name">Zero-retention</h4><span class="ventry__from">Lesson 15</span></div><p class="ventry__def">An arrangement in which the vendor does not store your inputs at all.</p><p class="ventry__why">Usually enterprise-only, and worth knowing exists before you need it.</p></article><h3 class="vgroup" id="lesson-16">Lesson 16</h3><article class="ventry" id="attribution" data-search="attribution crediting a source you drew on. a different obligation from disclosure, and often confused with it."><div class="ventry__top"><h4 class="ventry__name">Attribution</h4><span class="ventry__from">Lesson 16</span></div><p class="ventry__def">Crediting a source you drew on.</p><p class="ventry__why">A different obligation from disclosure, and often confused with it.</p></article><article class="ventry" id="disclosure" data-search="disclosure stating that you used ai, and saying how. the line moves by context - a school, an employer and a journal each draw it differently."><div class="ventry__top"><h4 class="ventry__name">Disclosure</h4><span class="ventry__from">Lesson 16</span></div><p class="ventry__def">Stating that you used AI, and saying how.</p><p class="ventry__why">The line moves by context - a school, an employer and a journal each draw it differently.</p></article><article class="ventry" id="ai-use-statement" data-search="ai-use statement a short written note describing what ai did in a piece of work. increasingly required. you write your own in lesson 16."><div class="ventry__top"><h4 class="ventry__name">AI-use statement</h4><span class="ventry__from">Lesson 16</span></div><p class="ventry__def">A short written note describing what AI did in a piece of work.</p><p class="ventry__why">Increasingly required. You write your own in Lesson 16.</p></article><article class="ventry" id="derivative-work" data-search="derivative work something based on existing copyrighted material. the genuinely open legal question sitting under image generation."><div class="ventry__top"><h4 class="ventry__name">Derivative work</h4><span class="ventry__from">Lesson 16</span></div><p class="ventry__def">Something based on existing copyrighted material.</p><p class="ventry__why">The genuinely open legal question sitting under image generation.</p></article><h3 class="vgroup" id="lesson-17">Lesson 17</h3><article class="ventry" id="personal-ai-policy" data-search="personal ai policy your own written rules: what you use it for, what you never paste, how you verify, how you disclose. the capstone deliverable, and the only thing here that is entirely yours."><div class="ventry__top"><h4 class="ventry__name">Personal AI policy</h4><span class="ventry__from">Lesson 17</span></div><p class="ventry__def">Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.</p><p class="ventry__why">The capstone deliverable, and the only thing here that is entirely yours.</p></article>
+  </div>
+</main>
+</div>
+<script>
+/* Two-click YouTube facade.
+ *
+ * A .embed--facade renders as our own markup - no iframe, no request to Google.
+ * The iframe is built on click, with autoplay, because by then the learner has
+ * asked for it. One delegated listener handles every facade on the page, and
+ * including this file twice is harmless.
+ *
+ * Markup it expects:
+ *   <div class="embed embed--facade"
+ *        data-video="VIDEO_ID"
+ *        data-title="What the video is"
+ *        data-sub="Demo · 2:40"            (optional)
+ *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
+ *        data-start="95">                  (optional, seconds)
+ *   </div>
+ */
+(function () {
+  "use strict";
+  if (window.__facadeReady) return;
+  window.__facadeReady = true;
+
+  var PLAY = '<svg viewBox="0 0 24 24" class="i" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
+
+  function build(el) {
+    if (el.querySelector(".facade")) return;
+    var poster = el.getAttribute("data-poster");
+    var title  = el.getAttribute("data-title") || "Play video";
+    var sub    = el.getAttribute("data-sub") || "";
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "facade" + (poster ? "" : " facade--noposter");
+    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.innerHTML =
+      (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
+      '<span class="facade__scrim"></span>' +
+      '<span class="facade__play">' + PLAY + "</span>" +
+      '<span class="facade__meta"><span class="facade__title"></span>' +
+      (sub ? '<span class="facade__sub"></span>' : "") + "</span>";
+    b.querySelector(".facade__title").textContent = title;
+    if (sub) b.querySelector(".facade__sub").textContent = sub;
+    // A poster that fails to load should degrade to the designed placeholder
+    // rather than leaving a broken image over the play button.
+    var img = b.querySelector(".facade__poster");
+    if (img) img.addEventListener("error", function () {
+      img.remove(); b.classList.add("facade--noposter");
+    });
+    el.appendChild(b);
+  }
+
+  function play(el) {
+    var id = el.getAttribute("data-video");
+    if (!id) return;
+    var start = el.getAttribute("data-start");
+    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var f = document.createElement("iframe");
+    f.setAttribute("src", src);
+    f.setAttribute("title", el.getAttribute("data-title") || "Video");
+    f.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
+    f.setAttribute("allowfullscreen", "");
+    el.innerHTML = "";
+    el.appendChild(f);
+    el.classList.add("is-playing");
+    f.focus();
+    var note = el.parentNode && el.parentNode.querySelector(".embed-privacy");
+    if (note) note.remove();
+  }
+
+  function init(root) {
+    Array.prototype.slice.call((root || document).querySelectorAll(".embed--facade")).forEach(build);
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest(".facade");
+    if (btn && btn.parentNode.classList.contains("embed--facade")) play(btn.parentNode);
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { init(); });
+  } else { init(); }
+  window.initFacades = init;
+})();
+
+</script>
+<script>
+/* Talks to a host page when this lesson is embedded in one.
+
+   The point is to kill the double scrollbar: the page reports how tall it
+   actually is, the host resizes the iframe to match, and the inner scrollbar
+   never appears. Everything scrolls once, in the outer page, the way a reader
+   expects.
+
+   Loaded on every page. When the page is not in a frame, the whole thing is a
+   no-op - there is nobody to talk to. */
+(function () {
+  "use strict";
+  if (window.parent === window) return;          /* not embedded; nothing to do */
+
+  var TAG = "csc150";
+  var last = 0;
+  var host = null;                 /* what the embedding page told us about itself */
+
+  /* Measure the content wrapper, not the document.
+
+     Both documentElement and body stretch to fill the iframe's viewport, so
+     once the host has made the frame tall neither of them can report a smaller
+     number - the frame ratchets upward and never comes back down. Measured on
+     the vocabulary page: filter 67 terms to 1 and the content is 679px while
+     html and body both still report 13,469. scrollHeight has this problem and
+     so does getBoundingClientRect; it is not a difference between them.
+
+     The wrapper is content-sized, so it tells the truth in both directions. */
+  function contentEl() {
+    return document.querySelector(".lesson") ||
+           document.querySelector("main.wrap") ||
+           document.body;
+  }
+
+  function height() {
+    var el = contentEl();
+    var h = Math.ceil(el.getBoundingClientRect().height);
+    /* Margins on the wrapper's children can escape its box; add whatever sits
+       below it so the last line is never clipped. */
+    var cs = window.getComputedStyle(el);
+    return h + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0) + 8;
+  }
+
+  function send() {
+    var h = height();
+    if (Math.abs(h - last) < 2) return;          /* sub-pixel churn is not news */
+    last = h;
+    /* Target the host's origin once the handshake has told us what it is.
+       Before that it is unknown, so "*" is the only option - and height is not
+       sensitive, which is why sending it before the handshake is acceptable. */
+    window.parent.postMessage({ tag: TAG, type: "height", height: h },
+                              (host && host.origin) || "*");
+  }
+
+  /* ---- handshake ---------------------------------------------------------
+     The page announces itself; a host that understands the protocol answers
+     with what it knows about the surrounding context. Everything in that reply
+     is untrusted - it arrives from a window we did not write - so it is used
+     only for cosmetics and for ids that are sanitised before use. */
+  window.addEventListener("message", function (e) {
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || d.tag !== TAG || d.type !== "host") return;
+    host = {
+      name: String(d.host || "").slice(0, 32).replace(/[^a-z0-9-]/gi, ""),
+      course: String(d.course || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      topic: String(d.topic || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      chrome: !!d.chrome,
+      origin: e.origin && e.origin !== "null" ? e.origin : null
+    };
+    var r = document.documentElement;
+    r.setAttribute("data-embedded", host.name || "1");
+    /* The host already shows a title above this frame, so showing ours too
+       gives the learner the same heading twice. */
+    if (host.chrome) r.setAttribute("data-host-chrome", "1");
+    if (host.course) r.setAttribute("data-course-id", host.course);
+    if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
+      var el = document.getElementById(String(d.hash).replace(/^#/, ""));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    send();
+  });
+
+  window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+
+  /* The interactives change height constantly - the gate unlocks, a deck card
+     leaves, a candidate list redraws - so polling on load is not enough. */
+  if (window.ResizeObserver) {
+    /* Observing documentElement is useless for the same reason measuring it is:
+       it does not change when the content shrinks inside a tall frame. */
+    new ResizeObserver(send).observe(contentEl());
+  } else {
+    setInterval(send, 400);
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  document.addEventListener("DOMContentLoaded", send);
+
+  /* A full-height iframe has nothing to scroll, so scrollIntoView inside it
+     does nothing - the element the page wanted to show is still off-screen,
+     because the *frame* is off-screen. Redirect those calls to the host, which
+     is the only window that can actually move.
+
+     Patching a DOM prototype is worth a wince. It is done here rather than at
+     the call sites because the call sites are spread across generated pages and
+     will keep being added, and because this is precisely the boundary where
+     the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  var native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (arg) {
+    try {
+      var r = this.getBoundingClientRect();
+      var top = r.top + (window.scrollY || 0);
+      var block = (arg && typeof arg === "object" && arg.block) || "start";
+      window.parent.postMessage({
+        tag: TAG, type: "scroll", top: top, height: r.height, block: block,
+        smooth: !(arg && arg.behavior === "auto")
+      }, "*");
+    } catch (e) {
+      native.apply(this, arguments);
+    }
+  };
+})();
+
+</script>
+<script>
+/* Steady: stop interactives changing height under the learner's cursor.
+
+   Every demo in this course has the same shape - content that swaps, and
+   controls underneath it. When the content changes height the controls move,
+   and a learner who is clicking the same button repeatedly ends up chasing it
+   down the page. Token Roulette had this, Prompt Surgery had it, and every
+   future interactive would have got it too.
+
+   Two ways to hold a container still, and the difference matters:
+
+     prime(el, n, render)  the states are enumerable, so render all of them
+                           once before the learner sees anything, take the
+                           tallest, and reserve it. No jump, ever.
+
+     hold(el)              the states are combinatorial, so the best available
+                           is a latch: never shrink below the tallest seen. It
+                           can still grow once per new maximum.
+
+   Prefer prime. hold is the fallback, not the default.
+
+   Both re-measure on resize and once the real typeface has loaded, because a
+   height measured in the fallback font is wrong by about a line. */
+(function () {
+  "use strict";
+  var primed = [];
+  /* measureAll re-renders the element to size each state, which is itself a
+     layout change that a ResizeObserver will report. Without this flag the
+     observer re-enters measureAll forever and the page hangs. */
+  var measuring = false;
+
+  function natural(el) {
+    var prev = el.style.minHeight;
+    el.style.minHeight = "";
+    var h = el.getBoundingClientRect().height;
+    el.style.minHeight = prev;
+    return h;
+  }
+
+  function measureAll(el, n, render) {
+    measuring = true;
+    var prev = el.style.minHeight;
+    el.style.minHeight = "";
+    var max = 0;
+    for (var i = 0; i < n; i++) {
+      render(i);
+      var h = el.getBoundingClientRect().height;
+      if (h > max) max = h;
+    }
+    el.style.minHeight = prev;
+    measuring = false;
+    return max;
+  }
+
+  var Steady = {
+    /* render(i) must be side-effect-free apart from painting state i into el.
+       The caller re-renders whatever state it actually wants afterwards; this
+       runs in one synchronous turn, so nothing intermediate reaches the screen. */
+    prime: function (el, n, render) {
+      if (!el || !n) return 0;
+      var rec = null;
+      for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
+      if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
+      rec.n = n; rec.render = render;
+
+      /* A demo inside an unopened prediction gate is display:none, so every
+         state measures zero. Reserving 0px would be harmless but misleading;
+         leave it unset and let the width observer take a real measurement the
+         moment the gate opens. */
+      var max = measureAll(el, n, render);
+      if (max > 0) el.style.minHeight = max + "px";
+      rec.w = el.getBoundingClientRect().width;
+
+      /* A height measured at the wrong width is the wrong height, and these
+         demos are routinely measured at the wrong width: they sit inside the
+         prediction gate at load, which is narrower and sometimes display:none,
+         and the page may later be embedded in a resizing frame. Watch the
+         element's own width and re-measure when it actually changes. Height
+         changes are ignored, so re-measuring cannot feed itself. */
+      if (window.ResizeObserver && !rec.ro) {
+        rec.ro = new ResizeObserver(function () {
+          if (measuring) return;
+          var w = el.getBoundingClientRect().width;
+          if (!w || Math.abs(w - rec.w) < 1) return;
+          rec.w = w;
+          el.style.minHeight = "";
+          var m = measureAll(el, rec.n, rec.render);
+          if (m > 0) el.style.minHeight = m + "px";
+          rec.w = el.getBoundingClientRect().width;
+        });
+        rec.ro.observe(el);
+      }
+      return max;
+    },
+
+    hold: function (el) {
+      if (!el) return;
+      var h = natural(el);
+      var cur = parseFloat(el.style.minHeight) || 0;
+      if (h > cur) el.style.minHeight = h + "px";
+    },
+
+    /* Drop every reservation and take them again. */
+    remeasure: function () {
+      primed.forEach(function (p) {
+        p.el.style.minHeight = "";
+        p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
+      });
+    },
+
+    /* Containers held by latch cannot be re-measured without knowing their
+       states, so on resize they are released and allowed to re-latch. */
+    release: function (el) { if (el) el.style.minHeight = ""; }
+  };
+
+  var t;
+  window.addEventListener("resize", function () {
+    clearTimeout(t);
+    t = setTimeout(function () { Steady.remeasure(); }, 150);
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { Steady.remeasure(); });
+  }
+
+  window.Steady = Steady;
+})();
+
+</script>
+
+<script>
+/* The standalone vocabulary page: filter as you type. */
+(function () {
+  "use strict";
+  var q = document.getElementById("vq");
+  if (!q) return;
+  var entries = [].slice.call(document.querySelectorAll(".ventry"));
+  var groups  = [].slice.call(document.querySelectorAll(".vgroup"));
+  var count   = document.getElementById("vcount");
+
+  function run() {
+    var v = q.value.trim().toLowerCase();
+    var shown = 0;
+    entries.forEach(function (e) {
+      var hit = !v || e.getAttribute("data-search").indexOf(v) !== -1;
+      e.hidden = !hit;
+      if (hit) shown++;
+    });
+    /* A lesson heading with nothing under it is noise. */
+    groups.forEach(function (g) {
+      var any = false, n = g.nextElementSibling;
+      while (n && !n.classList.contains("vgroup")) {
+        if (n.classList.contains("ventry") && !n.hidden) { any = true; break; }
+        n = n.nextElementSibling;
+      }
+      g.hidden = !any;
+    });
+    count.textContent = !v ? entries.length + " terms"
+      : shown + " of " + entries.length + (shown === 1 ? " term matches" : " terms match");
+  }
+  q.addEventListener("input", run);
+
+  /* Arriving from a lesson's "full entry" link: make the target obvious. */
+  function flash() {
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add("is-target");
+    setTimeout(function () { el.classList.remove("is-target"); }, 2200);
+  }
+  window.addEventListener("hashchange", flash);
+  flash();
+})();
+
+</script>
