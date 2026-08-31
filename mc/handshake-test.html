@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LMS handshake test</title>
+<style>
+  :root{
+    --ink:#1c1a18; --ink2:#57524c; --ink3:#8b837a;
+    --line:#e4ded6; --wash:#f6f2ed; --acc:#c4400f;
+    --ok:#1a7f4b; --okw:#e8f5ee; --bad:#b3261e; --badw:#fdecea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);
+       font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  #content{max-width:760px;margin:0 auto;padding:22px 20px 34px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--ink2);margin:0 0 18px;font-size:14px}
+  .verdict{border-radius:10px;padding:14px 16px;margin:0 0 18px;font-weight:600;
+           border:1px solid var(--line);background:var(--wash)}
+  .verdict.ok{background:var(--okw);border-color:#bfe3cf;color:var(--ok)}
+  .verdict.bad{background:var(--badw);border-color:#f3c9c5;color:var(--bad)}
+  .verdict small{display:block;font-weight:400;margin-top:5px;color:inherit;opacity:.85}
+  table{border-collapse:collapse;width:100%;margin:0 0 18px;font-size:13.5px}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{width:190px;color:var(--ink2);font-weight:600}
+  td{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:24px 0 8px}
+  button{font:inherit;padding:8px 13px;border-radius:8px;border:1px solid var(--line);
+         background:#fff;cursor:pointer;margin:0 6px 6px 0}
+  button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+  pre{background:#2b2724;color:#f2ede7;padding:14px;border-radius:10px;overflow-x:auto;
+      font-size:12px;line-height:1.5;margin:0 0 8px;white-space:pre-wrap;word-break:break-all}
+  #log{background:var(--wash);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+       font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;max-height:190px;overflow:auto}
+  #log div{padding:2px 0;border-bottom:1px solid #eae4dc}
+  #log div:last-child{border:0}
+  .filler{background:var(--wash);border:1px dashed var(--line);border-radius:10px;
+          padding:14px;margin:8px 0;color:var(--ink2);font-size:14px}
+</style>
+</head>
+<body>
+<!-- Everything the page measures lives inside #content. Never measure
+     documentElement or body in an iframe: both stretch to the frame's height
+     and can therefore never report a SMALLER number than the frame already is,
+     so the frame can grow but never shrink. -->
+<div id="content">
+
+  <h1>LMS handshake test</h1>
+  <p class="sub">One file. Upload it, point an iframe at it, and this page tells you whether the two halves are talking.</p>
+
+  <div class="verdict" id="verdict">Checking&hellip;</div>
+
+  <table>
+    <tr><th>Running inside a frame</th><td id="rFramed">-</td></tr>
+    <tr><th>Greeted by host</th><td id="rGreet">-</td></tr>
+    <tr><th>Host origin seen</th><td id="rOrigin">-</td></tr>
+    <tr><th>This page's origin</th><td id="rSelf">-</td></tr>
+    <tr><th>Messages sent / received</th><td id="rCount">0 / 0</td></tr>
+    <tr><th>Content height reported</th><td id="rHeight">-</td></tr>
+    <tr><th>This page's URL</th><td id="rUrl">-</td></tr>
+  </table>
+
+  <h2>Prove the resize works</h2>
+  <p class="sub" style="margin-bottom:10px">Add blocks and watch the frame grow. Remove them and watch it shrink - shrinking is the half that usually fails.</p>
+  <button class="p" type="button" id="add">Add a block</button>
+  <button type="button" id="rm">Remove a block</button>
+  <button type="button" id="ping">Report height now</button>
+  <div id="filler"></div>
+
+  <h2 id="snipHead">Paste this into Brightspace</h2>
+  <p class="sub" style="margin-bottom:10px">Create an HTML page in Brightspace, switch to source view, and paste this. The URL below is already filled in with wherever this file is hosted.</p>
+  <pre id="snippet">-</pre>
+  <button type="button" id="copy">Copy snippet</button>
+
+  <h2>Message log</h2>
+  <div id="log"></div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var sent = 0, got = 0, greeted = false, hostOrigin = null, lastH = 0;
+  var framed = window.parent !== window;
+
+  function log(s) {
+    var d = document.createElement("div");
+    d.textContent = new Date().toLocaleTimeString() + "  " + s;
+    $("log").insertBefore(d, $("log").firstChild);
+  }
+
+  /* Measure the wrapper, not the document. */
+  function contentHeight() {
+    var el = $("content");
+    var r = el.getBoundingClientRect();
+    var cs = window.getComputedStyle(el);
+    return Math.ceil(r.height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+  }
+
+  function send(msg) {
+    if (!framed) return;
+    /* "*" is correct for the CHILD half of a POC: the child cannot know the
+       host's origin in advance, and it is publishing its own height, not
+       receiving anything. The HOST half below does validate. */
+    window.parent.postMessage(msg, "*");
+    sent++;
+    $("rCount").textContent = sent + " / " + got;
+  }
+
+  function report(why) {
+    var h = contentHeight();
+    if (h === lastH && why !== "forced") return;
+    lastH = h;
+    $("rHeight").textContent = h + "px";
+    send({ type: "poc:height", height: h });
+    log("sent height " + h + "px  (" + why + ")");
+  }
+
+  function paint() {
+    $("rFramed").textContent = framed ? "yes" : "no - open this inside an iframe to test";
+    $("rGreet").textContent  = greeted ? "yes" : (framed ? "not yet" : "n/a");
+    $("rOrigin").textContent = hostOrigin || "-";
+    var v = $("verdict");
+    if (!framed) {
+      v.className = "verdict";
+      v.innerHTML = "Not embedded." +
+        "<small>This is the standalone view. Paste the snippet below into Brightspace, then open that page.</small>";
+    } else if (greeted) {
+      v.className = "verdict ok";
+      v.innerHTML = "Handshake OK - both halves are talking." +
+        "<small>The host answered from " + hostOrigin +
+        ". Add and remove blocks below; the frame should follow.</small>";
+    } else {
+      v.className = "verdict bad";
+      v.innerHTML = "Embedded, but the host has not answered." +
+        "<small>The page is in a frame and is sending. Either the snippet is missing " +
+        "its script, or the host's origin check is rejecting this page. " +
+        "The log below shows what was sent.</small>";
+    }
+  }
+
+  window.addEventListener("message", function (e) {
+    var d = e.data || {};
+    if (d.type !== "poc:hello") return;
+    got++;
+    if (!greeted) {
+      greeted = true; hostOrigin = e.origin;
+      log("greeted by host at " + e.origin);
+    }
+    $("rCount").textContent = sent + " / " + got;
+    paint();
+    report("forced");
+  });
+
+  $("add").addEventListener("click", function () {
+    var d = document.createElement("div");
+    d.className = "filler";
+    d.textContent = "Block " + ($("filler").children.length + 1) +
+      " - added to make the page taller. The frame should grow to fit it.";
+    $("filler").appendChild(d);
+    report("added a block");
+  });
+  $("rm").addEventListener("click", function () {
+    var f = $("filler");
+    if (f.lastChild) { f.removeChild(f.lastChild); report("removed a block"); }
+  });
+  $("ping").addEventListener("click", function () { report("forced"); });
+
+  $("copy").addEventListener("click", function () {
+    var t = $("snippet").textContent;
+    if (navigator.clipboard) { navigator.clipboard.writeText(t); }
+    else {
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+    }
+    this.textContent = "Copied";
+    var b = this; setTimeout(function () { b.textContent = "Copy snippet"; }, 1400);
+  });
+
+  /* The snippet, with this page's real URL already in it. */
+  var url = location.href.split("#")[0];
+  $("rUrl").textContent = url;
+  $("rSelf").textContent = location.origin;
+  $("snippet").textContent =
+'<div style="max-width:900px;margin:0 auto">\n' +
+'  <iframe id="pocFrame"\n' +
+'          src="' + url + '"\n' +
+'          title="LMS handshake test"\n' +
+'          style="width:100%;height:600px;border:0;display:block"\n' +
+'          allow="clipboard-write"></iframe>\n' +
+'</div>\n' +
+'<script>\n' +
+'(function () {\n' +
+'  var f = document.getElementById("pocFrame");\n' +
+'  /* Derive the origin from the iframe\'s own src. Typing it by hand is how\n' +
+'     the trailing-slash bug happens: event.origin never has a trailing\n' +
+'     slash and never has a path. */\n' +
+'  var ORIGIN = new URL(f.src, location.href).origin;\n' +
+'  window.addEventListener("message", function (e) {\n' +
+'    if (e.origin !== ORIGIN) return;\n' +
+'    var d = e.data || {};\n' +
+'    if (d.type === "poc:ready") {\n' +
+'      f.contentWindow.postMessage({ type: "poc:hello" }, ORIGIN);\n' +
+'    } else if (d.type === "poc:height") {\n' +
+'      var h = Math.max(200, Math.min(20000, parseInt(d.height, 10) || 0));\n' +
+'      if (h) { f.style.height = h + "px"; }\n' +
+'    }\n' +
+'  });\n' +
+'}());\n' +
+'<\/script>';
+
+  paint();
+  log(framed ? "embedded - announcing" : "standalone - nothing to announce");
+
+  /* Announce repeatedly until greeted. The host's script may run after the
+     iframe has already loaded, so a single announcement can be missed. */
+  var tries = 0;
+  (function announce() {
+    if (greeted || tries >= 12) { if (!greeted && framed) log("gave up after " + tries + " announcements"); return; }
+    tries++;
+    send({ type: "poc:ready" });
+    log("announced ready (" + tries + ")");
+    report("announce");
+    setTimeout(announce, 400);
+  }());
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () { report("content resized"); }).observe($("content"));
+  }
+  window.addEventListener("load", function () { report("forced"); });
+}());
+</script>
+</body>
+</html>
