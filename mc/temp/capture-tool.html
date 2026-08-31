@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module 2 capture harness</title>
+<style>
+ :root{--ink:#1c1a18;--ink2:#57524c;--ink3:#8b837a;--line:#e4ded6;--wash:#f6f2ed;
+       --acc:#c4400f;--ok:#1a7f4b;--okw:#e8f5ee}
+ *{box-sizing:border-box}
+ body{margin:0;background:#fff;color:var(--ink);
+   font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+ .wrap{max-width:860px;margin:0 auto;padding:24px 20px 90px}
+ h1{font-size:23px;margin:0 0 3px}
+ .sub{color:var(--ink2);margin:0 0 8px;font-size:14px}
+ h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);
+    margin:30px 0 10px;border-top:1px solid var(--line);padding-top:16px}
+ .cap{border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:0 0 14px}
+ .cap.done{background:var(--okw);border-color:#bfe3cf}
+ .cap__h{display:flex;gap:10px;align-items:baseline;margin-bottom:6px}
+ .cap__k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;font-weight:700}
+ .cap__t{color:var(--ink2);font-size:13px}
+ .cap__d{color:var(--ink2);font-size:13.5px;margin:0 0 9px}
+ pre{background:var(--wash);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+     font-size:12.5px;white-space:pre-wrap;margin:0 0 8px;font-family:ui-monospace,Menlo,Consolas,monospace}
+ textarea{width:100%;min-height:110px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;
+   padding:9px 11px;border:1px solid var(--line);border-radius:8px;resize:vertical}
+ input[type=text]{font:13px ui-monospace,Menlo,Consolas,monospace;padding:6px 9px;
+   border:1px solid var(--line);border-radius:7px;width:210px}
+ label.f{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--ink2);
+   margin:8px 14px 0 0}
+ button{font:inherit;font-size:13.5px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);
+   background:#fff;cursor:pointer}
+ button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+ .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+   padding:11px 20px;display:flex;gap:12px;align-items:center;justify-content:center;
+   box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+ .count{font-weight:700}
+ .warn{background:#fdecea;border:1px solid #f3c9c5;color:#b3261e;border-radius:9px;
+   padding:11px 13px;font-size:13.5px;margin:0 0 16px}
+ .note{background:var(--wash);border-left:3px solid var(--acc);border-radius:0 9px 9px 0;
+   padding:11px 14px;font-size:13.5px;margin:0 0 18px}
+</style></head><body><div class="wrap">
+
+<h1>Module 2 capture harness</h1>
+<p class="sub">Seventeen captures for Class Arena and Repair Bench. Work top to bottom.
+Everything is saved in this browser as you type.</p>
+
+<div class="note"><strong>Paste responses verbatim.</strong> Do not tidy, shorten or
+fix them. Both panels tell students on screen that this is what the models actually
+said - Lesson 3's Spotlight is labelled a stylized illustration precisely because it
+is one, and these are not.</div>
+
+<div id="warnScores" class="warn" style="display:none"></div>
+
+<h2>Part 1 &middot; Class Arena, Lesson 6 &middot; 6 captures</h2>
+<div class="cap"><div class="cap__h"><span class="cap__k">arena 1/3 &middot; creative</span><span class="cap__t">A creative brief</span></div>
+<p class="cap__d">Run this in <strong>battle mode</strong> on a blind comparison arena. Read both, vote, then unmask. If the two answers are near-identical or one is plainly broken, re-roll - a hard choice is the good case here, not the failed one.</p>
+<pre id="apcreative">Write a two-sentence tagline for a community college course that teaches people to use AI honestly. No exclamation marks.</pre>
+<button type="button" data-copy="apcreative">Copy prompt</button>
+<p class="cap__d" style="margin-top:12px"><strong>Response A</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~creative~a~text" placeholder="Paste response A exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~creative~a~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~creative~a~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Response B</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~creative~b~text" placeholder="Paste response B exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~creative~b~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~creative~b~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Round note</strong> - one or two sentences shown after the reveal. What actually happened, not what was supposed to.</p>
+<textarea style="min-height:60px" data-bind="arena~creative~~note"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">arena 2/3 &middot; factual</span><span class="cap__t">A factual lookup</span></div>
+<p class="cap__d">Run this in <strong>battle mode</strong> on a blind comparison arena. Read both, vote, then unmask. If the two answers are near-identical or one is plainly broken, re-roll - a hard choice is the good case here, not the failed one.</p>
+<pre id="apfactual">How many federal holidays does the United States observe, and which one was added most recently?</pre>
+<button type="button" data-copy="apfactual">Copy prompt</button>
+<p class="cap__d" style="margin-top:12px"><strong>Response A</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~factual~a~text" placeholder="Paste response A exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~factual~a~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~factual~a~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Response B</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~factual~b~text" placeholder="Paste response B exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~factual~b~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~factual~b~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Round note</strong> - one or two sentences shown after the reveal. What actually happened, not what was supposed to.</p>
+<textarea style="min-height:60px" data-bind="arena~factual~~note"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">arena 3/3 &middot; code</span><span class="cap__t">A short code fix</span></div>
+<p class="cap__d">Run this in <strong>battle mode</strong> on a blind comparison arena. Read both, vote, then unmask. If the two answers are near-identical or one is plainly broken, re-roll - a hard choice is the good case here, not the failed one.</p>
+<pre id="apcode">What is wrong with this Python function, and how would you fix it?
+
+def average(nums):
+    total = 0
+    for n in nums:
+        total += n
+    return total / len(nums)</pre>
+<button type="button" data-copy="apcode">Copy prompt</button>
+<p class="cap__d" style="margin-top:12px"><strong>Response A</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~code~a~text" placeholder="Paste response A exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~code~a~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~code~a~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Response B</strong> - verbatim, roughly 900 characters or less.</p>
+<textarea data-main data-bind="arena~code~b~text" placeholder="Paste response B exactly as it came back"></textarea>
+<label class="f">Model name at reveal <input type="text" data-bind="arena~code~b~model" placeholder="as the arena named it"></label>
+<label class="f"><input type="checkbox" data-bind="arena~code~b~cheap"> this was the smaller / cheaper one</label>
+<p class="cap__d" style="margin-top:12px"><strong>Round note</strong> - one or two sentences shown after the reveal. What actually happened, not what was supposed to.</p>
+<textarea style="min-height:60px" data-bind="arena~code~~note"></textarea>
+</div>
+<h2>Part 2 &middot; Repair Bench, Lesson 7 &middot; 11 captures</h2>
+<div class="note">Use a bare chat model with no web access, and the <strong>same five short complaints</strong> every single time. Where a row says FRESH conversation, it has to be a genuinely new thread - that is what makes each capture an honest answer to "what does this move do from this state".</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 1/11 &middot; start</span></div>
+<p class="cap__d">Open a bare chat model with no web access. Send the opening prompt. This first output should show all three faults: paragraphs rather than one-liners, a chatty preamble per item, and invented sentiment scores.</p>
+<pre id="bp1">Summarize each of these five customer complaints in a way my operations manager can scan, and tell me how the customer felt about it.
+
+[paste your five short complaints here - use the SAME five every time]</pre>
+<button type="button" data-copy="bp1">Copy what to send</button>
+<textarea data-main data-bind="bench~start~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 2/11 &middot; long+preamble+scores|vague</span></div>
+<p class="cap__d">Same thread, straight after `start`. Send the vague nudge.</p>
+<pre id="bp2">Shorter, please.</pre>
+<button type="button" data-copy="bp2">Copy what to send</button>
+<textarea data-main data-bind="bench~long+preamble+scores|vague~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 3/11 &middot; long+preamble+scores|constraint</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then the constraint. Keep this thread open - it becomes the `scores` state for the four captures below.</p>
+<pre id="bp3">One line each, twelve words maximum. No preamble.</pre>
+<button type="button" data-copy="bp3">Copy what to send</button>
+<textarea data-main data-bind="bench~long+preamble+scores|constraint~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 4/11 &middot; scores|vague</span></div>
+<p class="cap__d">Continue the thread you just made (opening + constraint). Send the vague nudge.</p>
+<pre id="bp4">Shorter, please.</pre>
+<button type="button" data-copy="bp4">Copy what to send</button>
+<textarea data-main data-bind="bench~scores|vague~~text" placeholder="Paste the reply verbatim"></textarea>
+<label class="f"><input type="checkbox" checked data-bind="bench~scores|vague~~has_scores"> the reply still contains invented sentiment scores</label>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 5/11 &middot; scores|constraint</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then constraint, then constraint again.</p>
+<pre id="bp5">One line each, twelve words maximum. No preamble.</pre>
+<button type="button" data-copy="bp5">Copy what to send</button>
+<textarea data-main data-bind="bench~scores|constraint~~text" placeholder="Paste the reply verbatim"></textarea>
+<label class="f"><input type="checkbox" checked data-bind="bench~scores|constraint~~has_scores"> the reply still contains invented sentiment scores</label>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 6/11 &middot; scores|example</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then constraint, then paste one line written exactly the way you want it and nothing else.</p>
+<pre id="bp6">(one exemplar line, nothing else)</pre>
+<button type="button" data-copy="bp6">Copy what to send</button>
+<textarea data-main data-bind="bench~scores|example~~text" placeholder="Paste the reply verbatim"></textarea>
+<label class="f"><input type="checkbox" checked data-bind="bench~scores|example~~has_scores"> the reply still contains invented sentiment scores</label>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 7/11 &middot; scores|negative</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then constraint, then the pure negative.</p>
+<pre id="bp7">That&#x27;s not what I asked for. Try again.</pre>
+<button type="button" data-copy="bp7">Copy what to send</button>
+<textarea data-main data-bind="bench~scores|negative~~text" placeholder="Paste the reply verbatim"></textarea>
+<label class="f"><input type="checkbox" checked data-bind="bench~scores|negative~~has_scores"> the reply still contains invented sentiment scores</label>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 8/11 &middot; long+preamble+scores|example</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then paste one exemplar line and nothing else.</p>
+<pre id="bp8">(one exemplar line, nothing else)</pre>
+<button type="button" data-copy="bp8">Copy what to send</button>
+<textarea data-main data-bind="bench~long+preamble+scores|example~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 9/11 &middot; long+preamble+scores|negative</span></div>
+<p class="cap__d">FRESH conversation. Opening prompt, then the pure negative.</p>
+<pre id="bp9">That&#x27;s not what I asked for. Try again.</pre>
+<button type="button" data-copy="bp9">Copy what to send</button>
+<textarea data-main data-bind="bench~long+preamble+scores|negative~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 10/11 &middot; long+preamble+scores|restart</span></div>
+<p class="cap__d">FRESH conversation. Send the CORRECTED prompt (the feelings clause removed). Nothing before it.</p>
+<pre id="bp10">Summarize each of these five customer complaints in a way my operations manager can scan. One line each, twelve words maximum, no preamble.
+
+[the same five complaints]</pre>
+<button type="button" data-copy="bp10">Copy what to send</button>
+<textarea data-main data-bind="bench~long+preamble+scores|restart~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+<div class="cap"><div class="cap__h"><span class="cap__k">bench 11/11 &middot; scores|restart</span></div>
+<p class="cap__d">FRESH conversation, corrected prompt again. Yes, this is the same move as the row above from a different state - capture it separately so the panel is honest about which state it came from.</p>
+<pre id="bp11">Summarize each of these five customer complaints in a way my operations manager can scan. One line each, twelve words maximum, no preamble.
+
+[the same five complaints]</pre>
+<button type="button" data-copy="bp11">Copy what to send</button>
+<textarea data-main data-bind="bench~scores|restart~~text" placeholder="Paste the reply verbatim"></textarea>
+</div>
+
+</div>
+<div class="bar">
+  <span class="count" id="count">0 of 17</span>
+  <button class="p" type="button" id="dl">Download captures.json</button>
+  <button type="button" id="clear">Clear all</button>
+</div>
+<script>
+var KEY = "csc150-m2-captures";
+function state(){ try { return JSON.parse(localStorage.getItem(KEY)) || {arena:{},bench:{}}; }
+                  catch(e){ return {arena:{},bench:{}}; } }
+function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){} }
+var S = state();
+if (!S.arena) S.arena = {}; if (!S.bench) S.bench = {};
+
+function setDeep(kind, id, side, field, v){
+  if (kind === "arena") {
+    S.arena[id] = S.arena[id] || {};
+    if (side) { S.arena[id][side] = S.arena[id][side] || {}; S.arena[id][side][field] = v; }
+    else { S.arena[id][field] = v; }
+  } else {
+    S.bench[id] = S.bench[id] || {};
+    S.bench[id][field] = v;
+  }
+  save(S); paint();
+}
+function getDeep(kind, id, side, field){
+  try { return kind === "arena"
+      ? (side ? S.arena[id][side][field] : S.arena[id][field])
+      : S.bench[id][field]; } catch(e){ return ""; }
+}
+
+function count(){
+  var n = 0;
+  document.querySelectorAll("textarea[data-main]").forEach(function(t){ if (t.value.trim()) n++; });
+  return n;
+}
+function paint(){
+  document.querySelectorAll(".cap").forEach(function(c){
+    var t = c.querySelector("textarea[data-main]");
+    c.classList.toggle("done", !!(t && t.value.trim()));
+  });
+  var n = count();
+  document.getElementById("count").textContent = n + " of 17";
+
+  /* The claim Lesson 7 rests on: no follow-up clears the invented scores. */
+  var keys = ["scores|vague","scores|constraint","scores|example","scores|negative"];
+  var bad = keys.filter(function(k){
+    var b = S.bench[k]; return b && b.text && b.text.trim() && b.has_scores === false; });
+  var w = document.getElementById("warnScores");
+  if (bad.length){
+    w.style.display = "block";
+    w.innerHTML = "<strong>Stop and read this.</strong> You marked " + bad.join(", ") +
+      " as no longer containing invented scores. Lesson 7's whole spine is that no " +
+      "follow-up can clear them, because they are a fault in the question. If that is " +
+      "really what happened, the lesson needs rewriting - do not swap the capture for " +
+      "a more convenient one.";
+  } else { w.style.display = "none"; }
+}
+
+document.querySelectorAll("[data-bind]").forEach(function(el){
+  var p = el.getAttribute("data-bind").split("~");   // kind~id~side~field
+  var v = getDeep(p[0], p[1], p[2] || null, p[3]);
+  if (el.type === "checkbox") { el.checked = !!v; } else if (v) { el.value = v; }
+  el.addEventListener(el.type === "checkbox" ? "change" : "input", function(){
+    setDeep(p[0], p[1], p[2] || null, p[3],
+            el.type === "checkbox" ? el.checked : el.value);
+  });
+});
+document.querySelectorAll("button[data-copy]").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = document.getElementById(b.getAttribute("data-copy")).textContent;
+    navigator.clipboard.writeText(t);
+    var o = b.textContent; b.textContent = "Copied";
+    setTimeout(function(){ b.textContent = o; }, 1200);
+  });
+});
+document.getElementById("dl").addEventListener("click", function(){
+  var blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "captures.json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+});
+document.getElementById("clear").addEventListener("click", function(){
+  if (!confirm("Clear all captures from this browser?")) return;
+  localStorage.removeItem(KEY); location.reload();
+});
+paint();
+</script></body></html>
