@@ -12,7 +12,7 @@ html[data-theme="dark"]{background:#121110;}
    Shared by every page in every course.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a color except through a token.
+   theme. Nothing here sets a colour except through a token.
    ========================================================================= */
 :root {
   /* Neutrals - very slightly warm, so they sit under orange, blue and olive
@@ -569,7 +569,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   .fcard:not([data-pos="0"]) { opacity: 0; }
 }
 
-/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+/* Callouts: a card with an icon tile. No coloured left rail, no tinted body. */
 .callout {
   display: flex;
   gap: 1rem;
@@ -1109,46 +1109,12 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
    the spacing of a two-column row. */
 :root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
 
-/* -- Authoring notes ------------------------------------------------------
-   Hazard stripes, so a note addressed to whoever is building the course can
-   never be mistaken for something addressed to a student. publish.py refuses
-   to build publish/ while one is still visible.
-
-   This lived in onboarding.css until Module 2's uncaptured panels needed it on
-   a lesson page. Third genre to reach for it, so it moves here - the same call
-   the step block and the callout got. */
-.authoring {
-  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
-  border-radius: var(--r-sm);
-  padding: 1rem 1.15rem;
-  font-size: .9rem;
-  color: var(--warn);
-}
-.authoring strong { font-family: var(--display); }
-
-/* -- Preset chips ---------------------------------------------------------
-   Small pill buttons that pick one of a fixed set of inputs. Written for the
-   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
-   question buttons with className = "preset" - so on a lesson page they were
-   rendering as bare unstyled <button>s. check_sheets.py could not see it until
-   it learned to read className assignments as well as class attributes.
-   Second genre to want it, so it lives here now. */
-.preset {
-  font: inherit; font-size: .85rem;
-  background: var(--surface); box-shadow: var(--shadow-1);
-  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
-  padding: .4rem .85rem; cursor: pointer;
-  transition: color .16s ease, background-color .16s ease;
-}
-.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
-.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
-
 /* ============================================================================
    FLCC AI Specialist Microcredential - instrument.css
    Instruments only - inventories, surveys, anything that collects.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a color except through a token.
+   theme. Nothing here sets a colour except through a token.
    ========================================================================= */
 
 
@@ -1476,7 +1442,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
 /* ============================================================================
    Course theme - CSC 150
-   Brand color: #f45922
+   Brand colour: #f45922
 
    Derived, not hand-picked. Regenerate with:
        python3 build/course_color.py 150 "#f45922" --write
@@ -1520,8 +1486,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
-<div data-build="d0f6a6e" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<div class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1799,7 +1764,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           <p>Pick as many as apply. This is what steers the examples we will use in this class.</p>
         </div>
       </div>
-      <div class="chipset" id="goals"><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Writing &amp; editing</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Research &amp; summarizing</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Data &amp; spreadsheets</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Images &amp; design</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Coding</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Teaching &amp; training</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Client or customer communication</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Admin &amp; scheduling</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Job hunting</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Honestly, just curious</button></div>
+      <div class="chipset" id="goals"><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Writing &amp; editing</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Research &amp; summarising</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Data &amp; spreadsheets</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Images &amp; design</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Coding</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Teaching &amp; training</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Client or customer communication</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Admin &amp; scheduling</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Job hunting</button><button class="togchip" type="button" aria-pressed="false"><svg class="i"><use href="#i-check"/></svg>Honestly, just curious</button></div>
       <div class="field">
         <label for="task">Is there one specific task at work or in school you&rsquo;re hoping to hand off? <span class="hint">Optional</span></label>
         <textarea id="task" placeholder="e.g. &ldquo;I write the same kind of incident report forty times a semester.&rdquo;"></textarea>
@@ -1814,7 +1779,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <span class="stepblock__n">5</span>
         <div>
           <h2>How you actually feel about it</h2>
-          <p>There is no right answer here and it does not affect anything. Skepticism is a useful trait in this course, not a problem to be fixed.</p>
+          <p>There is no right answer here and it does not affect anything. Scepticism is a useful trait in this course, not a problem to be fixed.</p>
         </div>
       </div>
       <div class="card card--flush">
@@ -1900,7 +1865,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <span class="eyebrow"><svg class="i"><use href="#i-upload"/></svg> Submit this</span>
         <p class="small muted">Download it as a PDF and submit that in Brightspace. The text version below is editable if you would rather paste it somewhere - either way, this is the only thing that leaves your browser.</p>
         <div class="whorow">
-          <label class="whorow__lab" for="who">Your name <span>optional - it goes on the PDF and in its filename, and nowhere else</span></label>
+          <label class="whorow__lab" for="who">Your name <span>optional, and only used to title the PDF</span></label>
           <input class="whorow__in" type="text" id="who" autocomplete="name" placeholder="Leave blank if you would rather not">
         </div>
         <div class="copybox" id="summary" contenteditable="true" spellcheck="false"></div>
@@ -1915,11 +1880,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     </div>
   </section>
 
-  <!-- Hidden by Dave: inside Brightspace the Next link competes with the LMS's
-       own navigation. Drop the inline style to bring it back. -->
   <footer class="lessonfoot" style="display: none;">
-    <span>CSC 150 &middot; AI Foundations &middot; Lesson 0 of 17</span>
-    <span class="row" style="gap:.4rem">Next: <a href="../01-intro/01-what-this-even-is.html">Lesson 1 - What This Even Is</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
+    <span>CSC 150 &middot; AI Foundations &middot; Lesson 0 of 15</span>
+    <span class="row" style="gap:.4rem">Next: <a href="01-what-this-even-is.html">Lesson 1 - What This Even Is</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
   </footer>
 </main>
 </div>
@@ -2248,43 +2211,22 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   var Steady = {
-    /* render(i) paints state i into el. measureAll leaves el in the LAST state
-       it rendered, so somebody has to put it back.
-
-       Passing restore() is strongly preferred over doing it after the call.
-       Measuring happens more than once - on font load, on resize, and when a
-       demo's prediction gate finally opens and gives it a real width - and only
-       the first of those is followed by the caller's own code. Without restore,
-       every later re-measure silently leaves the panel in its last state. That
-       shipped as: Class Arena opening on its empty end-of-round summary, with
-       the button that starts round one hidden.
-
-       Two hooks, not one, because measuring MUTATES the panel's own state:
-       render(i) drives the same variables the learner's clicks drive. So
-
-         save()        -> an opaque snapshot of where the learner is, taken
-                          immediately before a measurement pass
-         restore(snap) -> put that back, and repaint
-
-       Passing only restore is not enough: it would repaint from variables the
-       measurement pass has already trampled. That is how Class Arena came to
-       open on round three - the picker was visible, but ix had been left at 2
-       by the last state measured. */
-    prime: function (el, n, render, save, restore) {
+    /* render(i) must be side-effect-free apart from painting state i into el.
+       The caller re-renders whatever state it actually wants afterwards; this
+       runs in one synchronous turn, so nothing intermediate reaches the screen. */
+    prime: function (el, n, render) {
       if (!el || !n) return 0;
       var rec = null;
       for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
       if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
-      rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
+      rec.n = n; rec.render = render;
 
       /* A demo inside an unopened prediction gate is display:none, so every
          state measures zero. Reserving 0px would be harmless but misleading;
          leave it unset and let the width observer take a real measurement the
          moment the gate opens. */
-      var snap = save ? save() : null;
       var max = measureAll(el, n, render);
       if (max > 0) el.style.minHeight = max + "px";
-      if (restore) restore(snap);
       rec.w = el.getBoundingClientRect().width;
 
       /* A height measured at the wrong width is the wrong height, and these
@@ -2300,10 +2242,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           if (!w || Math.abs(w - rec.w) < 1) return;
           rec.w = w;
           el.style.minHeight = "";
-          var sn = rec.save ? rec.save() : null;
           var m = measureAll(el, rec.n, rec.render);
           if (m > 0) el.style.minHeight = m + "px";
-          if (rec.restore) rec.restore(sn);
           rec.w = el.getBoundingClientRect().width;
         });
         rec.ro.observe(el);
@@ -2321,10 +2261,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     /* Drop every reservation and take them again. */
     remeasure: function () {
       primed.forEach(function (p) {
-        var sn = p.save ? p.save() : null;
         p.el.style.minHeight = "";
         p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
-        if (p.restore) p.restore(sn);
       });
     },
 
@@ -2957,9 +2895,6 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
 
     /* One computed object, three consumers: the page, the PDF, and print. */
     window.INVENTORY_SUMMARY = {
-      /* Always "" at this point - #who sits inside #result, which is still
-         hidden when this handler runs. The listener at the end of this file
-         keeps it current, and the PDF builder reads the field directly too. */
       name: val("who"),
       date: new Date().toLocaleDateString(undefined,
               { year: "numeric", month: "long", day: "numeric" }),
@@ -3046,17 +2981,6 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   onScroll();
-  /* Keep the summary's name current as it is typed. Without this the field is
-     read once, before it exists, and the learner's name never reaches the PDF. */
-  var whoIn = document.getElementById("who");
-  if (whoIn) {
-    whoIn.addEventListener("input", function () {
-      if (window.INVENTORY_SUMMARY) {
-        window.INVENTORY_SUMMARY.name = whoIn.value.replace(/\s+/g, " ").trim();
-      }
-    });
-  }
-
 })();
 
 /* The inventory's PDF summary.
@@ -3098,7 +3022,7 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
       pageOne(d, S);
       d.addPage();
       pageTwo(d, S);
-      stamp(d, S);
+      stamp(d);
       d.save(filename(S));
       note("Saved. Submit that file in Brightspace.");
     } catch (e) {
@@ -3106,27 +3030,13 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
     }
   });
 
-  /* Read the field directly rather than trusting S.name. The summary object is
-     assembled when "Build my profile" is clicked, at which point #who is still
-     inside the hidden result section and therefore empty - so S.name was always
-     "" and the learner's name never made it onto the document. */
-  function learner(S) {
-    var el = document.getElementById("who");
-    var v = el ? el.value : "";
-    return (v || (S && S.name) || "").replace(/\s+/g, " ").trim();
-  }
-
   function note(t) {
     var n = document.getElementById("pdfNote");
     if (n) n.textContent = t;
   }
   function filename(S) {
-    /* Dave's format: "Ada Lovelace - csc150-inventory.pdf", so a folder of
-       submissions sorts by student. Strip only what a filesystem rejects -
-       the name keeps its spaces and capitals - and cap the length, because
-       some browsers truncate a long download name in unhelpful places. */
-    var who = learner(S).replace(/[<>:"/\\|?*\x00-\x1f]/g, "").trim().slice(0, 60);
-    return (who ? who + " - " : "") + "csc150-inventory.pdf";
+    var who = (S.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return "csc150-inventory" + (who ? "-" + who : "") + ".pdf";
   }
 
   /* ---- primitives ------------------------------------------------------- */
@@ -3172,9 +3082,8 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
 
   /* ---- page 1 ----------------------------------------------------------- */
   function pageOne(d, S) {
-    var who = learner(S);
     var y = head(d, "CSC 150 · AI Foundations", "Where You're Starting From",
-                 (who ? who + "  ·  " : "") + S.date);
+                 (S.name ? S.name + "  ·  " : "") + S.date);
 
     /* the band, in a well */
     var bt = d.splitTextToSize(S.band.text, COL - 36);
@@ -3300,17 +3209,13 @@ var LESSONS={"1":{"t":"What This Even Is","m":1,"mn":"What You're Actually Talki
     para(d, H - 60 - th + 18, t, { size: 9.5, w: COL - 36, x: M + 18, color: INK2 });
   }
 
-  function stamp(d, S) {
-    /* The name goes in the running footer as well as the first-page head, so a
-       page that gets separated from page one still says whose it is. */
+  function stamp(d) {
     var n = d.getNumberOfPages();
-    var who = learner(S);
-    var left = "CSC 150 · Week 1 self-inventory" + (who ? " · " + who : "");
     for (var i = 1; i <= n; i++) {
       d.setPage(i);
       d.setFont("helvetica", "normal"); d.setFontSize(8);
       d.setTextColor.apply(d, INK3);
-      d.text(left, M, H - 30);
+      d.text("CSC 150 · Week 1 self-inventory", M, H - 30);
       d.text(i + " of " + n, W - M, H - 30, { align: "right" });
     }
   }

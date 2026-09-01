@@ -12,7 +12,7 @@ html[data-theme="dark"]{background:#121110;}
    Shared by every page in every course.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a color except through a token.
+   theme. Nothing here sets a colour except through a token.
    ========================================================================= */
 :root {
   /* Neutrals - very slightly warm, so they sit under orange, blue and olive
@@ -569,7 +569,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   .fcard:not([data-pos="0"]) { opacity: 0; }
 }
 
-/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+/* Callouts: a card with an icon tile. No coloured left rail, no tinted body. */
 .callout {
   display: flex;
   gap: 1rem;
@@ -1109,46 +1109,12 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
    the spacing of a two-column row. */
 :root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
 
-/* -- Authoring notes ------------------------------------------------------
-   Hazard stripes, so a note addressed to whoever is building the course can
-   never be mistaken for something addressed to a student. publish.py refuses
-   to build publish/ while one is still visible.
-
-   This lived in onboarding.css until Module 2's uncaptured panels needed it on
-   a lesson page. Third genre to reach for it, so it moves here - the same call
-   the step block and the callout got. */
-.authoring {
-  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
-  border-radius: var(--r-sm);
-  padding: 1rem 1.15rem;
-  font-size: .9rem;
-  color: var(--warn);
-}
-.authoring strong { font-family: var(--display); }
-
-/* -- Preset chips ---------------------------------------------------------
-   Small pill buttons that pick one of a fixed set of inputs. Written for the
-   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
-   question buttons with className = "preset" - so on a lesson page they were
-   rendering as bare unstyled <button>s. check_sheets.py could not see it until
-   it learned to read className assignments as well as class attributes.
-   Second genre to want it, so it lives here now. */
-.preset {
-  font: inherit; font-size: .85rem;
-  background: var(--surface); box-shadow: var(--shadow-1);
-  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
-  padding: .4rem .85rem; cursor: pointer;
-  transition: color .16s ease, background-color .16s ease;
-}
-.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
-.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
-
 /* ============================================================================
    FLCC AI Specialist Microcredential - onboarding.css
    Week 1 pages - orientation, setup, intro.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a color except through a token.
+   theme. Nothing here sets a colour except through a token.
    ========================================================================= */
 .beatpicker { display: flex; flex-wrap: wrap; gap: .45rem; }
 .beatchip {
@@ -1189,9 +1155,17 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .checkitem__d { font-size: .9rem; color: var(--ink-2); margin-top: .2rem; }
 .checkitem__time { font-size: .74rem; color: var(--ink-3); margin-top: .3rem; display: block; }
 
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
 /* ============================================================================
    Course theme - CSC 150
-   Brand color: #f45922
+   Brand colour: #f45922
 
    Derived, not hand-picked. Regenerate with:
        python3 build/course_color.py 150 "#f45922" --write
@@ -1235,8 +1209,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
-<div data-build="d0f6a6e" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<div class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1284,8 +1257,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <!-- 0A -------------------------------------------------------------- -->
   <section class="block" id="a">
-    <div class="stepblock__head">
-      <span class="stepblock__n">0A</span>
+    <div class="invstep__head">
+      <span class="invstep__n">0A</span>
       <div>
         <h2>How this course works</h2>
         <p>Fifteen lessons, five modules, one hour a week if you keep up and rather more if you don&rsquo;t. Every lesson is built the same way, which means the shape stops being something you have to think about after the second one.</p>
@@ -1322,8 +1295,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <!-- 0B -------------------------------------------------------------- -->
   <section class="block" id="b">
-    <div class="stepblock__head">
-      <span class="stepblock__n">0B</span>
+    <div class="invstep__head">
+      <span class="invstep__n">0B</span>
       <div>
         <h2>Where you&rsquo;re starting from</h2>
         <p>A five-minute inventory. Ungraded, and it gives you a profile back rather than just collecting data about you. Do this one before the tool setup - what you tell me here shapes what I suggest you install.</p>
@@ -1341,8 +1314,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <!-- 0C -------------------------------------------------------------- -->
   <section class="block" id="c">
-    <div class="stepblock__head">
-      <span class="stepblock__n">0C</span>
+    <div class="invstep__head">
+      <span class="invstep__n">0C</span>
       <div>
         <h2>Getting your tools</h2>
         <p>You need exactly one working AI account to start this course. Not three. You will add more as you go, and Lesson 6 makes you compare them properly rather than by reputation.</p>
@@ -1411,8 +1384,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <!-- 0D -------------------------------------------------------------- -->
   <section class="block" id="d">
-    <div class="stepblock__head">
-      <span class="stepblock__n">0D</span>
+    <div class="invstep__head">
+      <span class="invstep__n">0D</span>
       <div>
         <h2>Introduce yourself</h2>
         <p>One post on the discussion board, then two replies. I know. But this is an online course and a room where nobody knows anybody is a worse room, so let&rsquo;s get it over with efficiently.</p>
@@ -1431,7 +1404,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           <textarea id="i2" placeholder="Be specific if you can. &ldquo;Everything&rdquo; is a common answer but not a useful one."></textarea>
         </div>
         <div class="field">
-          <label for="i3">One thing about it that makes you skeptical or uneasy</label>
+          <label for="i3">One thing about it that makes you sceptical or uneasy</label>
           <textarea id="i3" placeholder="Genuinely wanted. A room of enthusiasts is a bad room for this subject."></textarea>
         </div>
         <div class="field">
@@ -1458,7 +1431,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="icontile"><svg class="i"><use href="#i-message-square"/></svg></div>
       <div class="callout__body">
         <p class="callout__label">Then reply to two people</p>
-        <p>A reply that says &ldquo;great post!&rdquo; helps nobody and we both know it. Reply to someone whose <strong>skepticism you share</strong>, or whose <strong>hoped-for use case is close to yours</strong> - and say why. Two sentences is plenty. If a thread starts, so much the better; several of these turn into the examples I use later in the course.</p>
+        <p>A reply that says &ldquo;great post!&rdquo; helps nobody and we both know it. Reply to someone whose <strong>scepticism you share</strong>, or whose <strong>hoped-for use case is close to yours</strong> - and say why. Two sentences is plenty. If a thread starts, so much the better; several of these turn into the examples I use later in the course.</p>
       </div>
     </div>
   </section>
@@ -1470,7 +1443,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <h2>The Learning Hub</h2>
       <p>Open all term, never graded, never submitted. Your progress, the whole vocabulary list, a reflection journal with prompts, and the confidence check you just took - so you can watch it move. Bookmark it now; you will want it around Lesson 7.</p>
     </div>
-    <a class="linkcard" href="../learning-hub.html" id="hubLink">
+    <a class="linkcard" href="learning-hub.html" id="hubLink">
       <div class="icontile"><svg class="i"><use href="#i-book-open"/></svg></div>
       <div>
         <span class="linkcard__t">Open the Learning Hub</span>
@@ -1482,7 +1455,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <footer class="lessonfoot">
     <span>CSC 150 &middot; AI Foundations &middot; Week 1</span>
-    <span class="row" style="gap:.4rem">Next: <a href="../01-intro/01-what-this-even-is.html">Lesson 1 - What This Even Is</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
+    <span class="row" style="gap:.4rem">Next: <a href="01-what-this-even-is.html">Lesson 1 - What This Even Is</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
   </footer>
 </main>
 </div>
@@ -1811,43 +1784,22 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   var Steady = {
-    /* render(i) paints state i into el. measureAll leaves el in the LAST state
-       it rendered, so somebody has to put it back.
-
-       Passing restore() is strongly preferred over doing it after the call.
-       Measuring happens more than once - on font load, on resize, and when a
-       demo's prediction gate finally opens and gives it a real width - and only
-       the first of those is followed by the caller's own code. Without restore,
-       every later re-measure silently leaves the panel in its last state. That
-       shipped as: Class Arena opening on its empty end-of-round summary, with
-       the button that starts round one hidden.
-
-       Two hooks, not one, because measuring MUTATES the panel's own state:
-       render(i) drives the same variables the learner's clicks drive. So
-
-         save()        -> an opaque snapshot of where the learner is, taken
-                          immediately before a measurement pass
-         restore(snap) -> put that back, and repaint
-
-       Passing only restore is not enough: it would repaint from variables the
-       measurement pass has already trampled. That is how Class Arena came to
-       open on round three - the picker was visible, but ix had been left at 2
-       by the last state measured. */
-    prime: function (el, n, render, save, restore) {
+    /* render(i) must be side-effect-free apart from painting state i into el.
+       The caller re-renders whatever state it actually wants afterwards; this
+       runs in one synchronous turn, so nothing intermediate reaches the screen. */
+    prime: function (el, n, render) {
       if (!el || !n) return 0;
       var rec = null;
       for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
       if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
-      rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
+      rec.n = n; rec.render = render;
 
       /* A demo inside an unopened prediction gate is display:none, so every
          state measures zero. Reserving 0px would be harmless but misleading;
          leave it unset and let the width observer take a real measurement the
          moment the gate opens. */
-      var snap = save ? save() : null;
       var max = measureAll(el, n, render);
       if (max > 0) el.style.minHeight = max + "px";
-      if (restore) restore(snap);
       rec.w = el.getBoundingClientRect().width;
 
       /* A height measured at the wrong width is the wrong height, and these
@@ -1863,10 +1815,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           if (!w || Math.abs(w - rec.w) < 1) return;
           rec.w = w;
           el.style.minHeight = "";
-          var sn = rec.save ? rec.save() : null;
           var m = measureAll(el, rec.n, rec.render);
           if (m > 0) el.style.minHeight = m + "px";
-          if (rec.restore) rec.restore(sn);
           rec.w = el.getBoundingClientRect().width;
         });
         rec.ro.observe(el);
@@ -1884,10 +1834,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     /* Drop every reservation and take them again. */
     remeasure: function () {
       primed.forEach(function (p) {
-        var sn = p.save ? p.save() : null;
         p.el.style.minHeight = "";
         p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
-        if (p.restore) p.restore(sn);
       });
     },
 
@@ -1911,7 +1859,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 </script>
 
 <script>
-var BEATS=[["A one-paragraph summary", "Every lesson opens with a short paragraph saying what it is about, before anything else - including the question that gates the page. It tells you the territory, never the verdict: if it gave away the answer to the question underneath it, the question would be pointless. Use it to decide whether you have time for this now, and to find your way back to something weeks later."], ["A guess before you start", "Every lesson opens with one question you are not expected to know the answer to, and the rest of the page will not open until you commit to a guess and a one-line reason. This is not a hazing ritual. Guessing wrong <em>before<\/em> you are taught something makes the correct answer stick measurably harder than reading it cold - it is one of the better-replicated findings in learning research. There is always a skip link. Using it costs you nothing but the effect."], ["What you&rsquo;ll be able to do", "Four or five specific, checkable things, each tied to one of the four course outcomes. They are written as verbs on purpose. If you cannot do them by the end of the lesson, the lesson failed - tell me, because that is useful information."], ["Three cards from earlier", "A small deck of questions from previous lessons, some recent, some from weeks ago. They are drawn from a pool rather than written fresh for the day. Students find this mildly irritating in week three and are glad of it in week twelve, which is roughly the point. A card will not swipe away until you have attempted it or tapped &ldquo;not sure yet&rdquo; - the attempt is what does the work, not the score."], ["The content, in pieces", "Never more than a few minutes of reading before something asks you to click, drag, sort or predict. If you find yourself scrolling through a wall of text, that is a bug and I want to hear about it."], ["A short video", "Two to three minutes, landscape, captioned, with a full transcript underneath. Every video has a declared job - a demonstration, a concept, or just me talking to you. <strong>You can finish any lesson without ever pressing play.<\/strong> The video supports the page; it never carries it."], ["More content, more doing", "The second half, usually with the harder interactive in it. This is where the lesson earns its keep."], ["Back to your guess", "At the moment the content answers the opening question, you get shown what you predicted and the reason you typed. This is the beat that makes the guess worth making; without it the opening question is just a quiz."], ["Something real to do", "One task in an actual tool, with an actual deliverable. Usually ten to twenty minutes. These are the graded part of the course."], ["Two questions on the way out", "Ungraded. They go into the pool and come back at you weeks later without warning, in a lesson you would not have connected them to. That is the design, not an accident, and the page tells you which lessons they will resurface in."]];
+var BEATS=[["A one-paragraph summary", "Every lesson opens with a short paragraph saying what it is about, before anything else - including the question that gates the page. It tells you the territory, never the verdict: if it gave away the answer to the question underneath it, the question would be pointless. Use it to decide whether you have time for this now, and to find your way back to something weeks later."], ["A guess before you start", "Every lesson opens with one question you are not expected to know the answer to, and the rest of the page will not open until you commit to a guess and a one-line reason. This is not a hazing ritual. Guessing wrong <em>before</em> you are taught something makes the correct answer stick measurably harder than reading it cold - it is one of the better-replicated findings in learning research. There is always a skip link. Using it costs you nothing but the effect."], ["What you&rsquo;ll be able to do", "Four or five specific, checkable things, each tied to one of the four course outcomes. They are written as verbs on purpose. If you cannot do them by the end of the lesson, the lesson failed - tell me, because that is useful information."], ["Three cards from earlier", "A small deck of questions from previous lessons, some recent, some from weeks ago. They are drawn from a pool rather than written fresh for the day. Students find this mildly irritating in week three and are glad of it in week twelve, which is roughly the point. A card will not swipe away until you have attempted it or tapped &ldquo;not sure yet&rdquo; - the attempt is what does the work, not the score."], ["The content, in pieces", "Never more than a few minutes of reading before something asks you to click, drag, sort or predict. If you find yourself scrolling through a wall of text, that is a bug and I want to hear about it."], ["A short video", "Two to three minutes, landscape, captioned, with a full transcript underneath. Every video has a declared job - a demonstration, a concept, or just me talking to you. <strong>You can finish any lesson without ever pressing play.</strong> The video supports the page; it never carries it."], ["More content, more doing", "The second half, usually with the harder interactive in it. This is where the lesson earns its keep."], ["Back to your guess", "At the moment the content answers the opening question, you get shown what you predicted and the reason you typed. This is the beat that makes the guess worth making; without it the opening question is just a quiz."], ["Something real to do", "One task in an actual tool, with an actual deliverable. Usually ten to twenty minutes. These are the graded part of the course."], ["Two questions on the way out", "Ungraded. They go into the pool and come back at you weeks later without warning, in a lesson you would not have connected them to. That is the design, not an accident, and the page tells you which lessons they will resurface in."]];
 
 (function () {
   "use strict";

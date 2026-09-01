@@ -12,7 +12,7 @@ html[data-theme="dark"]{background:#121110;}
    Shared by every page in every course.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a colour except through a token.
+   theme. Nothing here sets a color except through a token.
    ========================================================================= */
 :root {
   /* Neutrals - very slightly warm, so they sit under orange, blue and olive
@@ -569,7 +569,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   .fcard:not([data-pos="0"]) { opacity: 0; }
 }
 
-/* Callouts: a card with an icon tile. No coloured left rail, no tinted body. */
+/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
 .callout {
   display: flex;
   gap: 1rem;
@@ -1085,20 +1085,70 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
 .ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
 
-/* Embedded in an LMS that already shows the page title above the frame. Showing
-   our masthead too gives the learner the same heading twice, with the course
-   code repeated three times on one screen. The host says whether it has its own
-   chrome; frame.js sets the attribute. */
-:root[data-host-chrome="1"] .masthead { display: none; }
-:root[data-host-chrome="1"] main.wrap { padding-top: 1.25rem; }
+/* Embedded in an LMS that already shows the page title above the frame.
+   Hide ONLY the duplicated heading. The first version hid the whole masthead,
+   which also threw away the standfirst and the metarow - how long the lesson
+   takes, whether it has a video, whether it has a deliverable. None of that is
+   duplicated by the LMS, and losing it reads to the learner as the top of the
+   page being missing. It was.
+
+   The module and lesson number stay too: Brightspace shows the topic title but
+   not where it sits in the course. */
+:root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
+:root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
+:root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
 :root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* LMS mode. Set by ?lmsembed=true, or automatically when the host identifies
+   itself in the handshake. One rule does the hiding; frame.js decides what
+   carries the attribute, so adding an element later is a one-line change there
+   or a data-lms-hide in the markup, never a change here. */
+:root[data-lms="1"] [data-lms-hide] { display: none !important; }
+
+/* With the forward link gone the footer is a single line, so it should not keep
+   the spacing of a two-column row. */
+:root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
+
+/* -- Authoring notes ------------------------------------------------------
+   Hazard stripes, so a note addressed to whoever is building the course can
+   never be mistaken for something addressed to a student. publish.py refuses
+   to build publish/ while one is still visible.
+
+   This lived in onboarding.css until Module 2's uncaptured panels needed it on
+   a lesson page. Third genre to reach for it, so it moves here - the same call
+   the step block and the callout got. */
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
+
+/* -- Preset chips ---------------------------------------------------------
+   Small pill buttons that pick one of a fixed set of inputs. Written for the
+   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
+   question buttons with className = "preset" - so on a lesson page they were
+   rendering as bare unstyled <button>s. check_sheets.py could not see it until
+   it learned to read className assignments as well as class attributes.
+   Second genre to want it, so it lives here now. */
+.preset {
+  font: inherit; font-size: .85rem;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
+  padding: .4rem .85rem; cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
+.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
 
 /* ============================================================================
    FLCC AI Specialist Microcredential - instrument.css
    Instruments only - inventories, surveys, anything that collects.
 
    Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a colour except through a token.
+   theme. Nothing here sets a color except through a token.
    ========================================================================= */
 
 
@@ -1426,7 +1476,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
 /* ============================================================================
    Course theme - CSC 150
-   Brand colour: #f45922
+   Brand color: #f45922
 
    Derived, not hand-picked. Regenerate with:
        python3 build/course_color.py 150 "#f45922" --write
@@ -1470,7 +1520,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<div class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
+<div data-build="d0f6a6e" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1502,8 +1553,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
       <span class="lessonno">Module 1 &middot; Capstone</span>
     </div>
-    <h1>Show me you have the model</h1>
-    <p class="standfirst">One piece of work at the end of Module&nbsp;1, in whichever of five
+    <h1>Show Me You Have The Model</h1>
+    <p class="standfirst">One piece of work at the end of Module&nbsp;1, in whichever of six
     forms suits how you think. They are marked identically - the choice is about
     temperament, not difficulty, and picking the one that looks easiest will not help you.</p>
   </div>
@@ -1531,8 +1582,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             <div class="crit__top"><h3 class="crit__n">Mechanism</h3>
               <p class="crit__q">Do you explain what happened using the machinery, rather than the machine's personality?</p></div>
             <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behaviour with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behaviour.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behavior with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behavior.</p></div>
               <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Reaches for the right level of mechanism without prompting, including where attention or the context window is the actual explanation, and does not over-claim beyond what the mechanism supports.</p></div>
             </div>
           </article><article class="crit">
@@ -1596,7 +1647,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <p>A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
+                <span class="caphow__lab">How the five criteria land on this one</span>
                 <p><strong>Mechanism</strong> lives in your <em>why</em> column and your annotations. <strong>Evidence</strong> is the pasted output. <strong>Calibration</strong> is the confidence column doing honest work - a ledger where every row says 5/5 scores badly even if every prediction was right. <strong>Transfer</strong> is in your choice of prompts.</p>
               </div>
               <div class="btnrow">
@@ -1615,13 +1666,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <svg class="i"><use href="#i-chevron-down"/></svg></span>
             </button>
             <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a behaviour in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.</li><li>Reproduce it. Then <strong>minimise it</strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.</li><li>File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.</li><li>Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.</li><li>Add a workaround a classmate could use tomorrow, and say what it costs them.</li></ol>
+              <ol class="capsteps"><li>Find a behavior in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.</li><li>Reproduce it. Then <strong>minimize it</strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.</li><li>File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.</li><li>Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.</li><li>Add a workaround a classmate could use tomorrow, and say what it costs them.</li></ol>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
+                <span class="caphow__lab">How the five criteria land on this one</span>
                 <p><strong>Mechanism</strong> is the root-cause section, and it carries the report. <strong>Evidence</strong> is the repro steps - a reader must be able to follow them and see it happen. <strong>Calibration</strong> is the reproduction rate and your honesty about what you could not pin down. <strong>Transfer</strong> is finding this yourself rather than reproducing Lesson 8.</p>
               </div>
               <div class="btnrow">
@@ -1646,7 +1697,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <p>A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
+                <span class="caphow__lab">How the five criteria land on this one</span>
                 <p><strong>Mechanism</strong> is the whole point of the banned list. <strong>Evidence</strong> is your demonstration. <strong>Calibration</strong> is saying, out loud, where the explanation is simplified. <strong>Transfer</strong> is the fit to your specific listener - a generic explainer scores low here no matter how polished.</p>
               </div>
               <div class="btnrow">
@@ -1660,19 +1711,19 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <span class="capopt__time">60&ndash;90 min</span></span>
               <span class="capopt__name">The Teardown</span>
               <span class="capopt__premise">Take one real AI claim in the wild and annotate it line by line against what you now know is actually happening.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You read things sceptically already and would like a licence to do it properly.</span>
+              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You read things skeptically already and would like a license to do it properly.</span>
               <span class="capopt__more"><span>See what it involves</span>
                 <svg class="i"><use href="#i-chevron-down"/></svg></span>
             </button>
             <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.</li><li>At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.</li><li>Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the centre of the assignment.</li><li>One closing paragraph: what would a reader have to already know to spot what you spotted?</li></ol>
+              <ol class="capsteps"><li>Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.</li><li>At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.</li><li>Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.</li><li>One closing paragraph: what would a reader have to already know to spot what you spotted?</li></ol>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
-                <p><strong>Mechanism</strong> is what your annotations are measured against. <strong>Evidence</strong> is exact quotation - paraphrasing the source costs you here. <strong>Calibration</strong> is the required defence and the distinction between <em>imprecise</em> and <em>wrong</em>. <strong>Transfer</strong> is that no lesson covered your artefact.</p>
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p><strong>Mechanism</strong> is what your annotations are measured against. <strong>Evidence</strong> is exact quotation - paraphrasing the source costs you here. <strong>Calibration</strong> is the required defense and the distinction between <em>imprecise</em> and <em>wrong</em>. <strong>Transfer</strong> is that no lesson covered your artefact.</p>
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
@@ -1696,8 +1747,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <p>Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
-                <p>This route is written, so it is the easiest one to fill with words and the easiest one to mark down for it. <strong>Mechanism</strong> is the correction paragraph and nothing else will rescue it. <strong>Evidence</strong> is the quoted moment - an unquoted &lsquo;I realised during Lesson 2&rsquo; scores <em>Not yet</em>. <strong>Calibration</strong> is the whole final section, which is why it is not optional. <strong>Transfer</strong> is the test you design. Word count is a guide, not a target: nothing is marked for length.</p>
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p>This route is written, so it is the easiest one to fill with words and the easiest one to mark down for it. <strong>Mechanism</strong> is the correction paragraph and nothing else will rescue it. <strong>Evidence</strong> is the quoted moment - an unquoted &lsquo;I realized during Lesson 2&rsquo; scores <em>Not yet</em>. <strong>Calibration</strong> is the whole final section, which is why it is not optional. <strong>Transfer</strong> is the test you design. Word count is a guide, not a target: nothing is marked for length.</p>
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
@@ -1721,7 +1772,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <p>The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words.</p>
               </div>
               <div class="caphow">
-                <span class="caphow__lab">How the four criteria land on this one</span>
+                <span class="caphow__lab">How the five criteria land on this one</span>
                 <p><strong>Mechanism</strong> is what you actually said to them, reported accurately. <strong>Evidence</strong> is what you showed them and how they responded. <strong>Calibration</strong> is the honest account of what did not land. <strong>Transfer</strong> is that a real person's actual confusion never matches a lesson example.</p>
               </div>
               <div class="btnrow">
@@ -1742,7 +1793,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="capcheck" id="capcheck"></div>
       <div class="btnrow">
         <button class="btn btn--ghost" type="button" id="capBack">
-          <svg class="i"><use href="#i-arrow-right"/></svg> Look at the other four again</button>
+          <svg class="i"><use href="#i-arrow-right"/></svg> Look at the other five again</button>
       </div>
       <p class="small muted">Ticking these is for your benefit only - nothing here is
       submitted or seen. Hand the work in through the Module&nbsp;1 assignment.</p>
@@ -1751,7 +1802,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <footer class="lessonfoot">
     <span>CSC 150 &middot; AI Foundations &middot; Module 1 capstone</span>
-    <span class="row" style="gap:.4rem">Marked out of 16 &middot; four criteria, four points each</span>
+    <span class="row" style="gap:.4rem">Marked out of 20 &middot; five criteria, four points each</span>
   </footer>
 </main>
 </div>
@@ -1850,9 +1901,47 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    Loaded on every page. When the page is not in a frame, the whole thing is a
    no-op - there is nobody to talk to. */
+/* ---- LMS mode -------------------------------------------------------------
+   Two ways in, on purpose:
+
+     ?lmsembed=true   forced. Lets Dave open any page and see exactly what a
+                      student in Brightspace sees, without an LMS.
+     the handshake    automatic. The host says it is an LMS, so nothing has to
+                      be added to a URL and there is nothing to mistype.
+
+   What it hides is a list of ids, below. Anything carrying data-lms-hide is
+   hidden too, so a new element can opt in where it is authored rather than by
+   editing this file. */
 (function () {
   "use strict";
-  if (window.parent === window) return;          /* not embedded; nothing to do */
+
+  /* Elements that make sense on a standalone page and get in the way inside an
+     LMS. Add ids here, or put data-lms-hide on the element itself.
+
+     lessonNext - the "next lesson" link. In Brightspace the learner should use
+     the LMS's own navigation: it records progress, and it does not leave them
+     staring at blank space when the next lesson is shorter than this one and
+     the frame has not shrunk yet. */
+  var LMS_HIDE = ["lessonNext"];
+
+  function applyLmsMode() {
+    var r = document.documentElement;
+    if (r.getAttribute("data-lms") === "1") return;
+    r.setAttribute("data-lms", "1");
+    LMS_HIDE.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("data-lms-hide", "");
+    });
+  }
+  window.applyLmsMode = applyLmsMode;
+
+  if (/[?&]lmsembed=true\b/i.test(location.search)) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLmsMode);
+    } else { applyLmsMode(); }
+  }
+
+  if (window.parent === window) return;          /* not embedded; nothing more */
 
   var TAG = "csc150";
   var last = 0;
@@ -1916,6 +2005,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
        gives the learner the same heading twice. */
     if (host.chrome) r.setAttribute("data-host-chrome", "1");
     if (host.course) r.setAttribute("data-course-id", host.course);
+    applyLmsMode();
     if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
       var el = document.getElementById(String(d.hash).replace(/^#/, ""));
       if (el) el.scrollIntoView({ block: "start" });
@@ -1923,7 +2013,15 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     send();
   });
 
-  window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+  /* Announce, then a few more times, then stop. The host's listener may be a
+     separate file that has not finished loading when this runs, and a single
+     announcement that arrives before anyone is listening is simply lost. The
+     host also greets on first contact, so this is the belt to that braces. */
+  (function announce(n) {
+    if (host) return;                       /* greeted; nothing more to say */
+    window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+    if (n > 0) setTimeout(function () { announce(n - 1); }, 250);
+  })(8);
 
   /* The interactives change height constantly - the gate unlocks, a deck card
      leaves, a candidate list redraws - so polling on load is not enough. */
@@ -1947,12 +2045,26 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
      the call sites because the call sites are spread across generated pages and
      will keep being added, and because this is precisely the boundary where
      the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  /* Only forward a scroll once the learner has actually done something. A page
+     that moves the host window while it is still loading takes the reader
+     somewhere they did not ask to go - and the LMS header and the lesson's own
+     title scroll out of view, which looks like the top of the page vanishing.
+     Anything a page does to itself on load stays inside the frame. */
+  var touched = false;
+  ["pointerdown", "keydown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, function () { touched = true; }, true);
+  });
+
   var native = Element.prototype.scrollIntoView;
   Element.prototype.scrollIntoView = function (arg) {
+    if (!touched) return native.apply(this, arguments);
     try {
       var r = this.getBoundingClientRect();
       var top = r.top + (window.scrollY || 0);
       var block = (arg && typeof arg === "object" && arg.block) || "start";
+      /* Already in view: leave the host alone. Scrolling to something the
+         reader can see is pure disruption. */
+      if (r.top >= 0 && r.bottom <= (window.innerHeight || 0)) return;
       window.parent.postMessage({
         tag: TAG, type: "scroll", top: top, height: r.height, block: block,
         smooth: !(arg && arg.behavior === "auto")
@@ -2019,22 +2131,43 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   var Steady = {
-    /* render(i) must be side-effect-free apart from painting state i into el.
-       The caller re-renders whatever state it actually wants afterwards; this
-       runs in one synchronous turn, so nothing intermediate reaches the screen. */
-    prime: function (el, n, render) {
+    /* render(i) paints state i into el. measureAll leaves el in the LAST state
+       it rendered, so somebody has to put it back.
+
+       Passing restore() is strongly preferred over doing it after the call.
+       Measuring happens more than once - on font load, on resize, and when a
+       demo's prediction gate finally opens and gives it a real width - and only
+       the first of those is followed by the caller's own code. Without restore,
+       every later re-measure silently leaves the panel in its last state. That
+       shipped as: Class Arena opening on its empty end-of-round summary, with
+       the button that starts round one hidden.
+
+       Two hooks, not one, because measuring MUTATES the panel's own state:
+       render(i) drives the same variables the learner's clicks drive. So
+
+         save()        -> an opaque snapshot of where the learner is, taken
+                          immediately before a measurement pass
+         restore(snap) -> put that back, and repaint
+
+       Passing only restore is not enough: it would repaint from variables the
+       measurement pass has already trampled. That is how Class Arena came to
+       open on round three - the picker was visible, but ix had been left at 2
+       by the last state measured. */
+    prime: function (el, n, render, save, restore) {
       if (!el || !n) return 0;
       var rec = null;
       for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
       if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
-      rec.n = n; rec.render = render;
+      rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
 
       /* A demo inside an unopened prediction gate is display:none, so every
          state measures zero. Reserving 0px would be harmless but misleading;
          leave it unset and let the width observer take a real measurement the
          moment the gate opens. */
+      var snap = save ? save() : null;
       var max = measureAll(el, n, render);
       if (max > 0) el.style.minHeight = max + "px";
+      if (restore) restore(snap);
       rec.w = el.getBoundingClientRect().width;
 
       /* A height measured at the wrong width is the wrong height, and these
@@ -2050,8 +2183,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           if (!w || Math.abs(w - rec.w) < 1) return;
           rec.w = w;
           el.style.minHeight = "";
+          var sn = rec.save ? rec.save() : null;
           var m = measureAll(el, rec.n, rec.render);
           if (m > 0) el.style.minHeight = m + "px";
+          if (rec.restore) rec.restore(sn);
           rec.w = el.getBoundingClientRect().width;
         });
         rec.ro.observe(el);
@@ -2069,8 +2204,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     /* Drop every reservation and take them again. */
     remeasure: function () {
       primed.forEach(function (p) {
+        var sn = p.save ? p.save() : null;
         p.el.style.minHeight = "";
         p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
+        if (p.restore) p.restore(sn);
       });
     },
 
@@ -2094,7 +2231,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 </script>
 
 <script>
-var CAPOPTS=[{"id": "ledger", "name": "The Prediction Ledger", "premise": "Write down what you think will happen <em>before</em> you press enter, every time. Then run it, and mark yourself.", "steps": ["Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model's knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.", "For each one, write your prediction <strong>before</strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why</em> - the why is the part being marked.", "Run all six. Paste the actual output next to each prediction.", "Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.", "Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery."], "hand": "A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph."}, {"id": "bug", "name": "The Bug Report", "premise": "Find one reproducible misbehaviour and file it the way an engineer would - minimal case, expected versus actual, and a root cause in terms of the mechanism.", "steps": ["Find a behaviour in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.", "Reproduce it. Then <strong>minimise it</strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.", "File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.", "Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.", "Add a workaround a classmate could use tomorrow, and say what it costs them."], "hand": "A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround."}, {"id": "explainer", "name": "The 90-Second Explainer", "premise": "Explain what a language model is actually doing, to one real person who does not know, in ninety seconds - without the words that let you avoid understanding it.", "steps": ["Pick your person and name them. Your grandmother, your manager, a fourteen-year-old. The explanation changes depending, and the choice is part of the work.", "Banned words: <em>think, know, understand, learn, believe, remember, intelligent, brain, conscious, decide</em>. Every one of them lets you skip the mechanism. Working around them is the assignment.", "Record ninety seconds. Audio is fine; video is fine; a phone is fine. Production quality is not assessed and never will be.", "Include one concrete demonstration - a thing you ran, described in a sentence - not only description.", "Submit a short written note alongside: which banned word you most wanted, and what you said instead."], "hand": "A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it."}, {"id": "teardown", "name": "The Teardown", "premise": "Take one real AI claim in the wild and annotate it line by line against what you now know is actually happening.", "steps": ["Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.", "Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.", "At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.", "Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the centre of the assignment.", "One closing paragraph: what would a reader have to already know to spot what you spotted?"], "hand": "The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph."}, {"id": "change", "name": "The Change of Mind", "premise": "One belief you held in week one and no longer hold - and the specific thing that changed it.", "steps": ["Name one belief you held about AI before this module that you no longer hold. It must be <em>specific</em>. &lsquo;I understand it better now&rsquo; is not a belief, it is a feeling; &lsquo;I thought it looked answers up in a database&rsquo; is a belief.", "Say where the belief came from. Nobody invents these - it came from somewhere, and naming the source is usually more interesting than the belief.", "Name the exact moment it broke. A specific lesson, activity, or thing you ran. Quote it or paste it. &lsquo;Somewhere in Module 1&rsquo; is not a moment.", "Explain what is actually true instead, in terms of the machinery. This paragraph carries most of the marks and is the one place vagueness costs you outright.", "Then the harder half: name one thing you are <em>still</em> unsure about, and design the test you would run to settle it. You do not have to run it. You have to be able to say what would count as an answer."], "hand": "Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement."}, {"id": "clinic", "name": "The Misconception Clinic", "premise": "Find a real person with a wrong belief about AI, have an actual conversation, and document honestly whether it moved.", "steps": ["Find someone who holds a specific, wrong belief. &lsquo;It's just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it's basically conscious&rsquo;, &lsquo;it can't be wrong, it's a computer&rsquo;. Get their permission to write it up; no names needed.", "Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.", "Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.", "Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.", "Close by naming what <em>you</em> discovered you could not explain as well as you thought. There will be something."], "hand": "The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words."}];
+var CAPOPTS=[{"id": "ledger", "name": "The Prediction Ledger", "premise": "Write down what you think will happen <em>before<\/em> you press enter, every time. Then run it, and mark yourself.", "steps": ["Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model's knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.", "For each one, write your prediction <strong>before<\/strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why<\/em> - the why is the part being marked.", "Run all six. Paste the actual output next to each prediction.", "Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.", "Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery."], "hand": "A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph."}, {"id": "bug", "name": "The Bug Report", "premise": "Find one reproducible misbehaviour and file it the way an engineer would - minimal case, expected versus actual, and a root cause in terms of the mechanism.", "steps": ["Find a behavior in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.", "Reproduce it. Then <strong>minimize it<\/strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.", "File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.", "Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.", "Add a workaround a classmate could use tomorrow, and say what it costs them."], "hand": "A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround."}, {"id": "explainer", "name": "The 90-Second Explainer", "premise": "Explain what a language model is actually doing, to one real person who does not know, in ninety seconds - without the words that let you avoid understanding it.", "steps": ["Pick your person and name them. Your grandmother, your manager, a fourteen-year-old. The explanation changes depending, and the choice is part of the work.", "Banned words: <em>think, know, understand, learn, believe, remember, intelligent, brain, conscious, decide<\/em>. Every one of them lets you skip the mechanism. Working around them is the assignment.", "Record ninety seconds. Audio is fine; video is fine; a phone is fine. Production quality is not assessed and never will be.", "Include one concrete demonstration - a thing you ran, described in a sentence - not only description.", "Submit a short written note alongside: which banned word you most wanted, and what you said instead."], "hand": "A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it."}, {"id": "teardown", "name": "The Teardown", "premise": "Take one real AI claim in the wild and annotate it line by line against what you now know is actually happening.", "steps": ["Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.", "Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.", "At least one annotation must defend the source. Find something it gets <em>right<\/em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.", "Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.", "One closing paragraph: what would a reader have to already know to spot what you spotted?"], "hand": "The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph."}, {"id": "change", "name": "The Change of Mind", "premise": "One belief you held in week one and no longer hold - and the specific thing that changed it.", "steps": ["Name one belief you held about AI before this module that you no longer hold. It must be <em>specific<\/em>. &lsquo;I understand it better now&rsquo; is not a belief, it is a feeling; &lsquo;I thought it looked answers up in a database&rsquo; is a belief.", "Say where the belief came from. Nobody invents these - it came from somewhere, and naming the source is usually more interesting than the belief.", "Name the exact moment it broke. A specific lesson, activity, or thing you ran. Quote it or paste it. &lsquo;Somewhere in Module 1&rsquo; is not a moment.", "Explain what is actually true instead, in terms of the machinery. This paragraph carries most of the marks and is the one place vagueness costs you outright.", "Then the harder half: name one thing you are <em>still<\/em> unsure about, and design the test you would run to settle it. You do not have to run it. You have to be able to say what would count as an answer."], "hand": "Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement."}, {"id": "clinic", "name": "The Misconception Clinic", "premise": "Find a real person with a wrong belief about AI, have an actual conversation, and document honestly whether it moved.", "steps": ["Find someone who holds a specific, wrong belief. &lsquo;It's just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it's basically conscious&rsquo;, &lsquo;it can't be wrong, it's a computer&rsquo;. Get their permission to write it up; no names needed.", "Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.", "Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.", "Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.", "Close by naming what <em>you<\/em> discovered you could not explain as well as you thought. There will be something."], "hand": "The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words."}];
 
 /* Module 1 capstone: expand a route to read it, pick one to work from.
 

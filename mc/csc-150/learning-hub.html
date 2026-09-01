@@ -1,0 +1,2296 @@
+<meta charset="utf-8">
+<title>CSC 150 Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#f7f6f4;}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]){background:#121110;}}
+html[data-theme="dark"]{background:#121110;}
+/* ============================================================================
+   FLCC AI Specialist Microcredential - core.css
+   Shared by every page in every course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+:root {
+  /* Neutrals - very slightly warm, so they sit under orange, blue and olive
+     without any of the three reading as a clash. */
+  --ground:      #f7f6f4;
+  --surface:     #ffffff;
+  --surface-2:   #f0eeea;   /* inset wells, quiet fills */
+  --surface-3:   #e7e4df;   /* pressed / track */
+  --line:        #e3dfd9;
+  --line-strong: #cfc9c1;
+
+  --ink:   #1c1a18;
+  --ink-2: #57524c;
+  --ink-3: #8b837a;
+
+  /* Semantic - independent of the course accent */
+  --good:      #1f7a4d;
+  --good-soft: #e6f2eb;
+  --warn:      #9a5b00;
+  --warn-soft: #f8eede;
+  --bad:       #b3261e;
+  --bad-soft:  #fbe9e7;
+
+  /* Elevation */
+  --shadow-1: 0 1px 2px rgba(28,26,24,.05), 0 2px 6px rgba(28,26,24,.05);
+  --shadow-2: 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.08);
+  --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
+  --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
+
+  /* Geometry */
+  --r:    15px;
+  --r-sm: 10px;
+  --r-xs: 7px;
+  --r-pill: 999px;
+
+  /* Type */
+  --display: "Comfortaa", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --measure: 66ch;
+
+  /* Rhythm */
+  --gap-xs: .4rem;
+  --gap-s:  .75rem;
+  --gap-m:  1.25rem;
+  --gap-l:  2rem;
+  --gap-xl: 3.5rem;
+
+  /* Default accent (overridden per course below) */
+  --accent:      #f45922;
+  --accent-text: #c4400f;
+  --accent-fill: #c4400f;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+:root[data-theme="dark"] {
+  --ground:      #121110;
+  --surface:     #1d1b19;
+  --surface-2:   #262320;
+  --surface-3:   #322e2a;
+  --line:        #332f2b;
+  --line-strong: #4a443e;
+
+  --ink:   #ece8e2;
+  --ink-2: #a9a29a;
+  --ink-3: #7e766d;
+
+  --good:      #6ec294;
+  --good-soft: #1a2b22;
+  --warn:      #e0a75a;
+  --warn-soft: #2c241a;
+  --bad:       #f2938b;
+  --bad-soft:  #2e1c1a;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.42);
+  --shadow-3: 0 4px 8px rgba(0,0,0,.45), 0 24px 56px rgba(0,0,0,.55);
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.lesson {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; }
+p + p { margin-top: .9em; }
+
+a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+::selection { background: var(--accent); color: var(--accent-on); }.wrap {
+  width: min(100% - 2.5rem, 50rem);
+  margin-inline: auto;
+}
+
+.lesson__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-xl) 5rem;
+}
+
+/* A block = one beat of the lesson template. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1em; }
+
+/* Reading-width helper for anything that should not run full bleed */
+.narrow { max-width: var(--measure); }.railtrack {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: transparent;
+  z-index: 60;
+}
+.railtrack__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s linear;
+}.masthead {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-block: 1.6rem 1.9rem;
+}
+
+.masthead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-bottom: 1.1rem;
+}
+
+/* The `hidden` attribute only sets `display: none` in the UA sheet, so any
+   author `display` rule beats it - and a component with `display: grid` then
+   stays visible while its own JS believes it is hidden. This has been patched
+   three times in this codebase already (.term, .vgroup, .panel). Once, here,
+   instead. `hidden` is semantic: it should always win. */
+[hidden] { display: none !important; }
+
+.coursemark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .4rem .8rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.lessonno {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 2.9rem);
+  max-width: 18ch;
+}
+
+.standfirst {
+  margin-top: .9rem;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.metarow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+.metarow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.blockhead {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.blockhead h2 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+.blockhead p {
+  color: var(--ink-2);
+  max-width: var(--measure);
+}.i {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -.125em;
+}
+.i--lg { width: 1.35em; height: 1.35em; }
+
+.icontile {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  flex: none;
+}
+.icontile .i { width: 1.2rem; height: 1.2rem; }
+.icontile--quiet { background: var(--surface-2); color: var(--ink-2); }.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+}
+.card--flush { padding: 0; overflow: hidden; }
+.card--quiet { box-shadow: var(--shadow-1); }
+
+.well {
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.25rem;
+}.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .3rem .65rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip--accent { background: var(--accent-wash); color: var(--accent-text); }
+.chip--good   { background: var(--good-soft);  color: var(--good); }
+.chip--warn   { background: var(--warn-soft);  color: var(--warn); }
+.chip--outline{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink-3); }
+
+.chiprow { display: flex; flex-wrap: wrap; gap: .4rem; }.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.btn--ghost:hover { background: var(--accent-wash); color: var(--accent-text); }
+
+.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.field label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.field textarea {
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .8rem .9rem;
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.field textarea::placeholder { color: var(--ink-3); }
+
+.hint { font-size: .82rem; color: var(--ink-3); }.recall {
+  display: grid;
+  gap: var(--gap-s);
+}
+.recallcard {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: box-shadow .25s ease;
+}
+.recallcard.is-open { box-shadow: var(--shadow-2); }
+
+.provenance {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.provenance .i { width: .9rem; height: .9rem; }
+.provenance em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.recallcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+.answer {
+  font: inherit;
+  font-size: .92rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .55rem .95rem;
+  cursor: pointer;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+.answer:hover:not([disabled]) { background: var(--accent-wash); }
+.answer[disabled] { cursor: default; }
+.answer.is-right { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+.answer.is-wrong { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.answer.is-dim   { opacity: .45; }
+
+.feedback {
+  display: none;
+  gap: .7rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-2);
+}
+.feedback.is-shown { display: flex; }
+.feedback .i { margin-top: .25rem; color: var(--accent-text); }
+.feedback strong { color: var(--ink); }.deck { display: flex; flex-direction: column; gap: 1rem; max-width: 36rem; }
+
+.deck__stack {
+  display: grid;
+  touch-action: pan-y;
+  perspective: 1200px;
+  position: relative;
+  /* reserve room for the fanned + rotated cards behind the top one */
+  padding-bottom: 2.6rem;
+  transition: height .3s ease;
+}
+
+.fcard {
+  grid-area: 1 / 1;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  transform-origin: 50% 130%;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1),
+              opacity .3s ease,
+              box-shadow .3s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.fcard[data-pos="0"] { z-index: 4; transform: rotate(-1.1deg);                          box-shadow: var(--shadow-3); cursor: grab; }
+.fcard[data-pos="1"] { z-index: 3; transform: rotate(2.6deg)  translateY(13px) scale(.968); box-shadow: var(--shadow-2); }
+.fcard[data-pos="2"] { z-index: 2; transform: rotate(-3.4deg) translateY(24px) scale(.936); box-shadow: var(--shadow-1); }
+.fcard[data-pos="3"] { z-index: 1; transform: rotate(1.8deg)  translateY(33px) scale(.91);  opacity: 0; }
+
+.fcard:not([data-pos="0"]) { pointer-events: none; }
+.fcard[data-pos="0"].is-dragging { transition: none; cursor: grabbing; }
+/* A card that has left the deck is taken out of grid sizing, so the stack
+   collapses back to the height of the cards that remain. */
+.fcard.is-leaving { z-index: 9; }
+.fcard.is-gone {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.fcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+.fcard__grip {
+  display: flex;
+  gap: 3px;
+  opacity: .5;
+  flex: none;
+}
+.fcard__grip span {
+  width: 3px; height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.answer--pass {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--ink-3);
+}
+
+/* Bottom bar: dots, counter, advance */
+.deck__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  flex-wrap: wrap;
+}
+.deck__left { display: flex; align-items: center; gap: .7rem; }
+.deck__dots { display: flex; gap: .3rem; }
+.deck__dot {
+  width: 7px; height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  transition: background-color .25s ease, transform .25s ease;
+}
+.deck__dot.is-done   { background: var(--accent); opacity: .4; }
+.deck__dot.is-active { background: var(--accent); transform: scale(1.5); }
+.deck__count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.deck__hint {
+  font-size: .82rem;
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.deck__hint.is-nudging { color: var(--accent-text); font-weight: 700; }
+
+.deck__done {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+}
+.deck.is-finished .deck__stack,
+.deck.is-finished .deck__bar { display: none; }
+.deck.is-finished .deck__done { display: flex; }
+.deck__done strong { font-family: var(--display); font-size: 1.05rem; }
+.deck__done p { color: var(--ink-2); font-size: .93rem; max-width: 38ch; }
+
+/* The askew stack rotates up to 3.4deg, and a rotated rectangle is wider than
+   an upright one. On a wide page the deck's max-width absorbs that; on a phone
+   the corners push past the viewport and the whole page scrolls sideways, which
+   is the one thing an LMS embed must never do. Inset the stack so the rotation
+   has somewhere to go. */
+@media (max-width: 32rem) {
+  .deck__stack { margin-inline: .5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard[data-pos="0"],
+  .fcard[data-pos="1"],
+  .fcard[data-pos="2"],
+  .fcard[data-pos="3"] { transform: none; }
+  .fcard:not([data-pos="0"]) { opacity: 0; }
+}
+
+/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+.callout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.15rem 1.3rem;
+}
+.callout__body { display: flex; flex-direction: column; gap: .3rem; }
+.callout__label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.callout__body p { font-size: .97rem; color: var(--ink-2); }
+.callout__body p strong { color: var(--ink); }
+.callout--warn .icontile { background: var(--warn); color: var(--surface); }
+.callout--good .icontile { background: var(--good); color: var(--surface); }
+
+/* Interactive demo shells */
+.demo {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.demo__title .i { color: var(--accent-text); }
+.demo__body { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; }
+.demo__foot {
+  padding: .9rem 1.25rem;
+  background: var(--surface-2);
+  font-size: .88rem;
+  color: var(--ink-2);
+  min-height: 3.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.demo__foot > .i { margin-top: .35rem; flex: none; }details.disclosure {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+details.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .85rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+details.disclosure > summary::-webkit-details-marker { display: none; }
+details.disclosure > summary .i { transition: transform .2s ease; color: var(--ink-3); }
+details.disclosure[open] > summary .i { transform: rotate(180deg); }
+.disclosure__body { padding: 0 1.1rem 1.1rem; font-size: .95rem; color: var(--ink-2); }
+
+.lessonfoot {
+  border-top: 1px solid var(--line);
+  padding-block: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-s);
+  color: var(--ink-3);
+  font-size: .85rem;
+}.stepblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.stepblock__head { display: flex; gap: .9rem; align-items: flex-start; }
+.stepblock__n {
+  display: grid;
+  place-items: center;
+  width: 2rem; height: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: none;
+}
+.stepblock__head h2 { font-size: 1.35rem; }
+.stepblock__head p { color: var(--ink-2); margin-top: .35rem; max-width: var(--measure); }
+
+/* Confidence sliders ------------------------------------------------------ */
+
+.slrow {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+.slrow:last-child { border-bottom: 0; }
+.slrow__q { font-weight: 700; font-size: .97rem; }
+.slrow__q span { display: block; font-weight: 400; font-size: .82rem; color: var(--ink-3); margin-top: .15rem; }
+.slrow__val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--accent-text);
+  min-height: 1.2em;
+}
+
+input[type="range"].sl {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].sl::-webkit-slider-runnable-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-moz-range-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+input[type="range"].sl::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+.slticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+/* Multi-select chips ------------------------------------------------------ */
+
+.chipset { display: flex; flex-wrap: wrap; gap: .5rem; }
+.togchip {
+  font: inherit;
+  font-size: .9rem;
+  padding: .5rem .95rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .16s ease, color .16s ease;
+}
+.togchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.togchip[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.togchip .i { width: .85rem; height: .85rem; opacity: 0; }
+.togchip[aria-pressed="true"] .i { opacity: 1; }
+
+.copybox {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* vocabulary -------------------------------------------------------------- */
+.searchrow { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.search {
+  flex: 1 1 14rem;
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1); padding: .55rem 1rem;
+}
+.search .i { color: var(--ink-3); flex: none; }
+.search input {
+  font: inherit; font-size: .95rem; border: 0; background: transparent;
+  color: var(--ink); width: 100%; outline: none;
+}
+.search input::placeholder { color: var(--ink-3); }
+
+.termlist { display: flex; flex-direction: column; gap: .55rem; }
+.term {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.term[hidden] { display: none; }
+.term.is-locked { opacity: .55; }
+.term__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.term__name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.term__from { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.term.is-unlocked .term__from { color: var(--accent-text); }
+.term__def { font-size: .95rem; color: var(--ink-2); }
+.term__why { font-size: .88rem; color: var(--ink-3); font-style: italic; }
+
+.emptystate {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1);
+  padding: 2.25rem 1.5rem; text-align: center; color: var(--ink-2); font-size: .95rem;
+}
+
+.linkcard {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.3rem 1.5rem; text-decoration: none; color: inherit;
+  transition: transform .14s ease, box-shadow .2s ease;
+}
+.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.linkcard__t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.linkcard__d { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.linkcard__go { margin-left: auto; color: var(--accent-text); flex: none; }.statrow { display: flex; flex-wrap: wrap; gap: 1.75rem; }
+.stat { display: flex; flex-direction: column; }
+.stat b {
+  font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat--accent b { color: var(--accent-text); }.stack   { display: flex; flex-direction: column; gap: var(--gap-s); }
+.row     { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+.muted   { color: var(--ink-2); }
+.small   { font-size: .88rem; }
+.scrollx { overflow-x: auto; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 34rem) {
+  .card, .gate, .apply { padding: 1.2rem; }
+  .token { grid-template-columns: minmax(5rem, auto) 1fr 3rem; gap: .55rem; }
+}
+/* -------------------------------------------- shared with the curriculum docs
+   Small label, filter pill, and plain list - first written for the course
+   map, then wanted by learner pages too. They live here so neither side
+   has to load the other's sheet.
+   ------------------------------------------------------------------------ */
+
+.fbtn { font:inherit; font-family:var(--display); font-weight:700; font-size:.82rem; cursor:pointer;
+  border:0; background:var(--surface-2); color:var(--ink-2); padding:.45rem .85rem;
+  border-radius:var(--r-pill); transition:background-color .18s ease,color .18s ease; }
+.fbtn:hover { background:var(--accent-wash); color:var(--accent-text); }
+.fbtn[aria-pressed="true"] { background:var(--accent-fill); color:var(--accent-on); }
+.beatlabel { display:block; font-family:var(--display); font-weight:700; font-size:.7rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.3rem; }
+
+ul.plain, ul.lolist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+ul.plain li { font-size:.95rem; color:var(--ink-2); padding-left:1rem; position:relative; }
+ul.plain li::before { content:""; position:absolute; left:0; top:.65em; width:5px; height:5px;
+  border-radius:50%; background:var(--line-strong); }
+ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); align-items:flex-start; }
+.actbox__top .beatlabel { margin:0; color:var(--accent-text); }
+/* Whitespace and newline markers. Written for the Tokenizer, then wanted by
+   the Lesson 1 token demo - any page that shows text as discrete pieces
+   needs a way to make a space visible. */
+.tok__ws { color: var(--ink-3); opacity: .45; }
+.tok__nl {
+  color: var(--accent-text); font-weight: 700; opacity: .8;
+}
+
+/* -------------------------------------------------------------- 21. EMBEDS
+   Responsive 16:9 video frame. The rounded corners live on the WRAPPER with
+   overflow:hidden, not on the iframe - an iframe will not reliably clip its own
+   content to a border-radius, so styling the iframe alone leaves square corners
+   showing through in several browsers.
+   ------------------------------------------------------------------------ */
+
+.embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+}
+.embed iframe,
+.embed video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.embed--flat { box-shadow: none; }
+
+/* Optional caption underneath, matching the video block used in lessons. */
+.embed-cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  margin-top: .7rem; font-size: .85rem; color: var(--ink-3);
+}
+.embed-cap b {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+
+/* --- Two-click facade -----------------------------------------------------
+   Nothing reaches Google until the learner asks for the video. The frame you
+   see before the click is ours: our markup, our styles, and either a poster
+   image served from this site or no image at all. The iframe is created on
+   click and not a moment before.
+
+   A poster pulled from i.ytimg.com would still hand Google the visitor's IP on
+   page load, which is most of what the facade exists to prevent - so the
+   default is a self-hosted poster, and the fallback when there is none is a
+   designed placeholder rather than a third-party request.
+   ------------------------------------------------------------------------ */
+
+.embed--facade { position: relative; }
+
+.facade {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; cursor: pointer;
+  background: var(--surface-3);
+  font: inherit; color: var(--ink);
+  overflow: hidden;
+}
+.facade__poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.facade__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.55) 100%);
+}
+.facade--noposter { background: var(--surface-2); }
+.facade--noposter .facade__scrim { background: linear-gradient(150deg, var(--accent-wash), transparent 60%); }
+
+.facade__play {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill); color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.facade__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; margin-left: .18rem; }
+.facade:hover .facade__play, .facade:focus-visible .facade__play { transform: scale(1.07); }
+
+.facade__meta {
+  position: absolute; left: 1.1rem; right: 1.1rem; bottom: .95rem; z-index: 1;
+  display: flex; flex-direction: column; gap: .15rem; text-align: left;
+}
+.facade__title {
+  font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.3;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.facade--noposter .facade__title { color: var(--ink); text-shadow: none; }
+.facade__sub { font-size: .8rem; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.facade--noposter .facade__sub { color: var(--ink-3); text-shadow: none; }
+
+.embed-privacy {
+  display: flex; align-items: flex-start; gap: .45rem;
+  margin-top: .55rem; font-size: .8rem; color: var(--ink-3);
+}
+.embed-privacy .i { margin-top: .2rem; flex: none; }
+
+/* ── Inline vocabulary ──────────────────────────────────────────────────────
+   A term in the prose is bold + italic, per Dave's spec, with a dotted rule
+   under it so it reads as pressable rather than merely emphasised. The panel
+   is a child of the term so it needs no positioning library and no scroll
+   listener; the only correction it needs is a nudge off the right edge. */
+.vt {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--accent-text);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  border-radius: 2px;
+}
+.vt > i { font-style: italic; }
+.vt:hover { background: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.vt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vt[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.vt-demo { font-weight: 700; color: var(--accent-text); border-bottom: 1px dotted var(--accent); }
+
+.vpop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + .5rem);
+  left: 0;
+  width: min(23rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--ink);
+  text-align: left;
+  cursor: auto;
+  white-space: normal;
+}
+.vpop__top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.vpop__name { font-family: var(--display); font-size: .98rem; }
+.vpop__from { font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.vpop__def { font-size: .9rem; color: var(--ink-2); line-height: 1.5; }
+.vpop__why { font-size: .84rem; color: var(--ink-3); font-style: italic; line-height: 1.5; }
+.vpop__eg {
+  font-size: .84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+}
+.vpop__foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .15rem; }
+.vpop__more { font-size: .8rem; font-weight: 700; color: var(--accent-text); text-decoration: none; display: inline-flex; align-items: center; gap: .3rem; }
+.vpop__more:hover { text-decoration: underline; }
+.vpop__more .i { width: .85rem; height: .85rem; }
+.vpop__x { background: none; border: 0; padding: .2rem; color: var(--ink-3); cursor: pointer; display: inline-flex; border-radius: 6px; }
+.vpop__x:hover { color: var(--ink); background: var(--surface-2); }
+.vpop__x .i { width: 1rem; height: 1rem; }
+
+/* ── The standalone vocabulary page ─────────────────────────────────────── */
+.vsearch { display: grid; gap: .35rem; margin: 1.5rem 0 1.1rem; }
+.vsearch__lab { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.vsearch__in {
+  font: inherit;
+  padding: .7rem .9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--ink);
+}
+.vsearch__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.vsearch__count { margin: 0; }
+
+.vlist { display: flex; flex-direction: column; gap: .7rem; }
+.vgroup {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 1.4rem 0 .1rem;
+}
+.vgroup[hidden], .ventry[hidden] { display: none; }
+.ventry {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: .4rem;
+  scroll-margin-top: 1.5rem;
+}
+.ventry.is-target { box-shadow: 0 0 0 2px var(--accent), var(--shadow-2); }
+.ventry__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.ventry__name { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+.ventry__from { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ventry__def { font-size: .96rem; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.ventry__why { font-size: .88rem; color: var(--ink-3); font-style: italic; margin: 0; line-height: 1.5; }
+.ventry__eg { margin: .25rem 0 0; padding: .6rem .8rem .6rem 1.9rem; background: var(--surface-2); border-radius: 10px; display: grid; gap: .35rem; }
+.ventry__eg li { font-size: .89rem; color: var(--ink-2); line-height: 1.5; }
+.ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
+.ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
+
+/* Embedded in an LMS that already shows the page title above the frame.
+   Hide ONLY the duplicated heading. The first version hid the whole masthead,
+   which also threw away the standfirst and the metarow - how long the lesson
+   takes, whether it has a video, whether it has a deliverable. None of that is
+   duplicated by the LMS, and losing it reads to the learner as the top of the
+   page being missing. It was.
+
+   The module and lesson number stay too: Brightspace shows the topic title but
+   not where it sits in the course. */
+:root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
+:root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
+:root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
+:root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* LMS mode. Set by ?lmsembed=true, or automatically when the host identifies
+   itself in the handshake. One rule does the hiding; frame.js decides what
+   carries the attribute, so adding an element later is a one-line change there
+   or a data-lms-hide in the markup, never a change here. */
+:root[data-lms="1"] [data-lms-hide] { display: none !important; }
+
+/* With the forward link gone the footer is a single line, so it should not keep
+   the spacing of a two-column row. */
+:root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
+
+/* -- Authoring notes ------------------------------------------------------
+   Hazard stripes, so a note addressed to whoever is building the course can
+   never be mistaken for something addressed to a student. publish.py refuses
+   to build publish/ while one is still visible.
+
+   This lived in onboarding.css until Module 2's uncaptured panels needed it on
+   a lesson page. Third genre to reach for it, so it moves here - the same call
+   the step block and the callout got. */
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
+
+/* -- Preset chips ---------------------------------------------------------
+   Small pill buttons that pick one of a fixed set of inputs. Written for the
+   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
+   question buttons with className = "preset" - so on a lesson page they were
+   rendering as bare unstyled <button>s. check_sheets.py could not see it until
+   it learned to read className assignments as well as class attributes.
+   Second genre to want it, so it lives here now. */
+.preset {
+  font: inherit; font-size: .85rem;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
+  padding: .4rem .85rem; cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
+.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+/* ============================================================================
+   FLCC AI Specialist Microcredential - companion.css
+   The Learning Hub. One per course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+.hubtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--ground);
+  padding-block: .8rem;
+}
+.hubtab {
+  font: inherit;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem 1rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+}
+.hubtab:hover { color: var(--accent-text); }
+.hubtab[aria-selected="true"] {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.panel[hidden] { display: none; }
+.panel, .deck { scroll-margin-top: 5.5rem; }
+
+/* progress ---------------------------------------------------------------- */
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: .55rem;
+}
+.ptile {
+  font: inherit;
+  text-align: left;
+  border: 0;
+  cursor: pointer;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  transition: background-color .18s ease, box-shadow .18s ease, transform .12s ease;
+}
+.ptile:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.ptile__id { font-family: var(--display); font-weight: 700; font-size: .72rem; letter-spacing: .06em; color: var(--ink-3); }
+.ptile__t { font-size: .78rem; color: var(--ink-2); line-height: 1.3; }
+.ptile__check { margin-top: .25rem; width: 1.1rem; height: 1.1rem; border-radius: var(--r-xs); background: var(--surface-3); display: grid; place-items: center; color: transparent; }
+.ptile[aria-pressed="true"] { background: var(--accent-fill); }
+.ptile[aria-pressed="true"] .ptile__id,
+.ptile[aria-pressed="true"] .ptile__t { color: var(--accent-on); }
+.ptile[aria-pressed="true"] .ptile__t { opacity: .85; }
+.ptile[aria-pressed="true"] .ptile__check { background: rgba(255,255,255,.25); color: var(--accent-on); }
+.ptile__check .i { width: .8rem; height: .8rem; }
+
+/* reflection -------------------------------------------------------------- */
+.promptcard {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
+}
+.promptcard__kind {
+  font-family: var(--display); font-weight: 700; font-size: .7rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.promptcard__q { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.4; }
+.promptcard textarea { min-height: 8rem; }
+
+.jentry {
+  background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: .4rem;
+}
+.jentry__meta { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+.jentry__date { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.jentry__q { font-size: .9rem; color: var(--accent-text); font-weight: 700; }
+.jentry__a { font-size: .95rem; color: var(--ink-2); white-space: pre-wrap; }
+.linkbtn {
+  font: inherit; font-size: .78rem; background: none; border: 0; padding: 0;
+  color: var(--ink-3); cursor: pointer; text-decoration: underline;
+}
+.linkbtn:hover { color: var(--bad); }
+
+/* confidence -------------------------------------------------------------- */
+.deltarow {
+  display: grid;
+  grid-template-columns: 12rem 1fr auto;
+  gap: .9rem;
+  align-items: center;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.deltarow:last-child { border-bottom: 0; }
+.deltarow__label { font-size: .93rem; }
+.track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--surface-2); }
+.track__span { position: absolute; top: 0; bottom: 0; border-radius: var(--r-pill); background: var(--accent); opacity: .3; }
+.track__dot {
+  position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent);
+}
+.track__dot.is-now { background: var(--accent); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--accent); }
+.delta {
+  font-family: var(--display); font-weight: 700; font-size: .8rem;
+  padding: .2rem .5rem; border-radius: var(--r-xs); white-space: nowrap;
+  background: var(--surface-2); color: var(--ink-3);
+}
+.delta.is-up { background: var(--good-soft); color: var(--good); }
+.delta.is-down { background: var(--warn-soft); color: var(--warn); }
+
+@media (max-width: 40rem) {
+  .deltarow { grid-template-columns: 1fr; gap: .45rem; }
+  .hubtab { font-size: .8rem; padding: .5rem .8rem; }
+}
+/* ============================================================================
+   Course theme - CSC 150
+   Brand color: #f45922
+
+   Derived, not hand-picked. Regenerate with:
+       python3 build/course_color.py 150 "#f45922" --write
+
+   Contrast (WCAG AA needs 4.5:1 for body text):
+     brand on white ............. 3.33:1  FAILS - which is why --accent-text is darkened
+     --accent-text on white ..... 4.63:1  PASS
+     --accent on dark surface ... 4.83:1  PASS
+     --accent-on over the fill .. 5.09:1  PASS
+   ========================================================================= */
+
+[data-course="150"] {
+  --accent:      #f45922;
+  --accent-text: #d4400b;
+  --accent-fill: #d4400b;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-course="150"],
+  :root:not([data-theme="light"]) [data-course="150"] {
+    --accent:      #d7673f;
+    --accent-text: #dc7b58;
+    --accent-fill: #d7673f;
+    --accent-on:   #290e05;
+    --accent-wash: rgba(215, 103, 63, .13);
+    --accent-glow: rgba(215, 103, 63, .16);
+  }
+}
+
+:root[data-theme="dark"][data-course="150"],
+:root[data-theme="dark"] [data-course="150"] {
+  --accent:      #d7673f;
+  --accent-text: #dc7b58;
+  --accent-fill: #d7673f;
+  --accent-on:   #290e05;
+  --accent-wash: rgba(215, 103, 63, .13);
+  --accent-glow: rgba(215, 103, 63, .16);
+}
+
+</style>
+<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
+<div data-build="d0f6a6e" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+  <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><path d="M12 3v12"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+</svg>
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__row">
+      <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
+      <span class="lessonno">Companion &middot; open all term</span>
+    </div>
+    <h1>Learning Hub</h1>
+    <p class="standfirst">Your progress, the vocabulary, and a place to think out loud. Nothing here is graded and nothing here is submitted - it is yours, and it stays in this browser.</p>
+  </div>
+</header>
+
+<main class="wrap lesson__body" style="padding-block:0 5rem">
+
+  <div class="hubtabs" role="tablist">
+    <button class="hubtab" role="tab" aria-selected="true"  data-p="progress"><svg class="i"><use href="#i-grid"/></svg> Progress</button>
+    <button class="hubtab" role="tab" aria-selected="false" data-p="vocab"><svg class="i"><use href="#i-book-open"/></svg> Vocabulary</button>
+    <button class="hubtab" role="tab" aria-selected="false" data-p="reflect"><svg class="i"><use href="#i-pencil"/></svg> Reflection</button>
+    <button class="hubtab" role="tab" aria-selected="false" data-p="confidence"><svg class="i"><use href="#i-target"/></svg> Confidence</button>
+  </div>
+
+  <!-- PROGRESS ---------------------------------------------------------- -->
+  <section class="panel block" id="p-progress">
+    <div class="blockhead">
+      <h2>Where you are</h2>
+      <p id="progSummary">Tap anything you&rsquo;ve finished. This also decides which vocabulary counts as covered.</p>
+    </div>
+    <div class="pgrid" id="pgrid"><button class="ptile" type="button" aria-pressed="false" data-item="0"><span class="ptile__id">0A</span><span class="ptile__t">How This Course Works</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="1"><span class="ptile__id">0B</span><span class="ptile__t">Where You're Starting From</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="2"><span class="ptile__id">0C</span><span class="ptile__t">Getting Your Tools</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="3"><span class="ptile__id">0D</span><span class="ptile__t">Introduce Yourself</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="4"><span class="ptile__id">01</span><span class="ptile__t">What This Even Is</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="5"><span class="ptile__id">02</span><span class="ptile__t">The Next Word Machine</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="6"><span class="ptile__id">03</span><span class="ptile__t">Why It Wanders</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="7"><span class="ptile__id">04</span><span class="ptile__t">Anatomy of a Prompt</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="8"><span class="ptile__id">05</span><span class="ptile__t">The Landscape</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="9"><span class="ptile__id">06</span><span class="ptile__t">Choosing a Model, Blind</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="10"><span class="ptile__id">07</span><span class="ptile__t">Iteration and Repair</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="11"><span class="ptile__id">08</span><span class="ptile__t">Why AI Makes Things Up</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="12"><span class="ptile__id">09</span><span class="ptile__t">Models That Can Actually Look Things Up</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="13"><span class="ptile__id">10</span><span class="ptile__t">Where Bias Comes From</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="14"><span class="ptile__id">11</span><span class="ptile__t">The Verification Habit</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="15"><span class="ptile__id">12</span><span class="ptile__t">Making Images</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="16"><span class="ptile__id">13</span><span class="ptile__t">Voice and Audio</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="17"><span class="ptile__id">14</span><span class="ptile__t">Working Across Modalities</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="18"><span class="ptile__id">15</span><span class="ptile__t">Your Data, Their Servers</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="19"><span class="ptile__id">16</span><span class="ptile__t">Attribution, Copyright and Honest Work</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="20"><span class="ptile__id">17</span><span class="ptile__t">Your AI Practice</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button></div>
+    <div class="callout">
+      <div class="icontile icontile--quiet"><svg class="i"><use href="#i-zap"/></svg></div>
+      <div class="callout__body">
+        <p class="callout__label">A note on this grid</p>
+        <p>You are marking these yourself, which means it is a to-do list rather than a gradebook. When the hub is wired into the LMS it will read real completion instead - but the marking-it-yourself version is worth keeping, because deciding you are done with something is its own small act of reflection.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOCABULARY -------------------------------------------------------- -->
+  <section class="panel block" id="p-vocab" hidden>
+    <div class="blockhead">
+      <h2>Vocabulary</h2>
+      <p id="vocabSummary">-</p>
+    </div>
+
+    <div class="searchrow">
+      <label class="search">
+        <svg class="i"><use href="#i-eye"/></svg>
+        <input type="search" id="vsearch" placeholder="Search terms and definitions&hellip;" aria-label="Search vocabulary">
+      </label>
+      <button class="fbtn togchip" type="button" id="onlyCovered" aria-pressed="false">
+        <svg class="i"><use href="#i-check"/></svg> Only what I&rsquo;ve covered
+      </button>
+      <button class="btn btn--primary" type="button" id="practiceBtn"><svg class="i"><use href="#i-flask"/></svg> Practice</button>
+    </div>
+
+    <div id="practiceZone" hidden></div>
+
+    <div class="termlist" id="termlist"><div class="term" data-lesson="1" data-search="artificial intelligence (ai) the whole field: any system built to do something that would need intelligence if a person did it. seventy years old, and most of it is not what you think. the broadest word on this list and the least useful on its own - always ask which kind."><div class="term__top"><span class="term__name">Artificial intelligence (AI)</span><span class="term__from">Lesson 01</span></div><p class="term__def">The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.</p><p class="term__why">The broadest word on this list and the least useful on its own - always ask which kind.</p></div><div class="term" data-lesson="1" data-search="machine learning systems that derive their behavior from data rather than from rules a person wrote out. the shift that made most modern ai possible: nobody hand-wrote the rules for spotting spam."><div class="term__top"><span class="term__name">Machine learning</span><span class="term__from">Lesson 01</span></div><p class="term__def">Systems that derive their behavior from data rather than from rules a person wrote out.</p><p class="term__why">The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.</p></div><div class="term" data-lesson="1" data-search="deep learning machine learning built on neural networks with many layers. the inner ring where language models live. explains why these systems are hard to inspect - nobody wrote the intermediate steps."><div class="term__top"><span class="term__name">Deep learning</span><span class="term__from">Lesson 01</span></div><p class="term__def">Machine learning built on neural networks with many layers. The inner ring where language models live.</p><p class="term__why">Explains why these systems are hard to inspect - nobody wrote the intermediate steps.</p></div><div class="term" data-lesson="1" data-search="neural network a stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data. the mechanism underneath every tool in this course, and older than most people assume. for more information, watch terminator 2."><div class="term__top"><span class="term__name">Neural network</span><span class="term__from">Lesson 01</span></div><p class="term__def">A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.</p><p class="term__why">The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.</p></div><div class="term" data-lesson="1" data-search="narrow ai a system good at one bounded task and useless outside it. every tool in this course. cuts through most of the hype in one move."><div class="term__top"><span class="term__name">Narrow AI</span><span class="term__from">Lesson 01</span></div><p class="term__def">A system good at one bounded task and useless outside it. Every tool in this course.</p><p class="term__why">Cuts through most of the hype in one move.</p></div><div class="term" data-lesson="1" data-search="general ai (agi) a hypothetical system matching human flexibility across arbitrary tasks. does not exist. worth naming precisely so you can tell when a headline is describing something else."><div class="term__top"><span class="term__name">General AI (AGI)</span><span class="term__from">Lesson 01</span></div><p class="term__def">A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.</p><p class="term__why">Worth naming precisely so you can tell when a headline is describing something else.</p></div><div class="term" data-lesson="1" data-search="generative ai the branch that produces new text, images or audio rather than sorting or scoring existing things. distinguishes the chatbot from the spam filter, which is the distinction most coverage skips."><div class="term__top"><span class="term__name">Generative AI</span><span class="term__from">Lesson 01</span></div><p class="term__def">The branch that produces new text, images or audio rather than sorting or scoring existing things.</p><p class="term__why">Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.</p></div><div class="term" data-lesson="1" data-search="ai winter one of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in ai collapsed after the field promised far more than it delivered. the reason to be careful with any claim about what is about to happen next. confident, specific predictions about ai have been made before, and twice the field had to spend a decade recovering from them."><div class="term__top"><span class="term__name">AI winter</span><span class="term__from">Lesson 01</span></div><p class="term__def">One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.</p><p class="term__why">The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.</p></div><div class="term" data-lesson="3" data-search="attention the mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing. the answer to why the token machine wandered and current models do not."><div class="term__top"><span class="term__name">Attention</span><span class="term__from">Lesson 03</span></div><p class="term__def">The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.</p><p class="term__why">The answer to why the token machine wandered and current models do not.</p></div><div class="term" data-lesson="3" data-search="transformer the architecture built on attention, introduced in 2017. effectively every model in this course is one. the single piece of architecture worth knowing by name - the t in gpt."><div class="term__top"><span class="term__name">Transformer</span><span class="term__from">Lesson 03</span></div><p class="term__def">The architecture built on attention, introduced in 2017. Effectively every model in this course is one.</p><p class="term__why">The single piece of architecture worth knowing by name - the T in GPT.</p></div><div class="term" data-lesson="3" data-search="context (long-range) material far from the current word that still determines its meaning. what a two-word memory cannot hold and attention can - and why paragraphs hold together now."><div class="term__top"><span class="term__name">Context (long-range)</span><span class="term__from">Lesson 03</span></div><p class="term__def">Material far from the current word that still determines its meaning.</p><p class="term__why">What a two-word memory cannot hold and attention can - and why paragraphs hold together now.</p></div><div class="term" data-lesson="2" data-search="token the chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;unbelievable&rdquo; might be three tokens. cost, speed and context limits are all measured in tokens, never in words."><div class="term__top"><span class="term__name">Token</span><span class="term__from">Lesson 02</span></div><p class="term__def">The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.</p><p class="term__why">Cost, speed and context limits are all measured in tokens, never in words.</p></div><div class="term" data-lesson="2" data-search="large language model (llm) a system trained on an enormous amount of text to predict what comes next. everything else it appears to do follows from that one job. if you keep one definition from this course, keep this one - most of module 3 is a consequence of it."><div class="term__top"><span class="term__name">Large language model (LLM)</span><span class="term__from">Lesson 02</span></div><p class="term__def">A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.</p><p class="term__why">If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.</p></div><div class="term" data-lesson="2" data-search="training the one-time process of building the model by having it predict text over and over across a huge corpus. it finished before you ever typed anything. the model is not learning from your conversation, whatever it sounds like."><div class="term__top"><span class="term__name">Training</span><span class="term__from">Lesson 02</span></div><p class="term__def">The one-time process of building the model by having it predict text over and over across a huge corpus. It finished before you ever typed anything.</p><p class="term__why">The model is not learning from your conversation, whatever it sounds like.</p></div><div class="term" data-lesson="2" data-search="inference what happens when you press enter: the finished model generating one token at a time. explains why the identical prompt can come back different twice in a row."><div class="term__top"><span class="term__name">Inference</span><span class="term__from">Lesson 02</span></div><p class="term__def">What happens when you press enter: the finished model generating one token at a time.</p><p class="term__why">Explains why the identical prompt can come back different twice in a row.</p></div><div class="term" data-lesson="2" data-search="temperature a setting controlling how strongly the model favors the single most likely next token over a less likely one. low is repetitive and safe, high is inventive and unreliable. most chat tools hide this."><div class="term__top"><span class="term__name">Temperature</span><span class="term__from">Lesson 02</span></div><p class="term__def">A setting controlling how strongly the model favors the single most likely next token over a less likely one.</p><p class="term__why">Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.</p></div><div class="term" data-lesson="2" data-search="parameters the numbers inside the model that training adjusted. sizes are quoted in billions of them. the number marketing leans on hardest, and a poor predictor of whether a model suits your task."><div class="term__top"><span class="term__name">Parameters</span><span class="term__from">Lesson 02</span></div><p class="term__def">The numbers inside the model that training adjusted. Sizes are quoted in billions of them.</p><p class="term__why">The number marketing leans on hardest, and a poor predictor of whether a model suits your task.</p></div><div class="term" data-lesson="4" data-search="prompt everything you send in one turn - the question plus whatever context, examples and instructions come with it. most of what gets blamed on &ldquo;bad ai&rdquo; is a prompt problem."><div class="term__top"><span class="term__name">Prompt</span><span class="term__from">Lesson 04</span></div><p class="term__def">Everything you send in one turn - the question plus whatever context, examples and instructions come with it.</p><p class="term__why">Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.</p></div><div class="term" data-lesson="4" data-search="context the material you hand the model to work from: pasted text, uploaded files, earlier turns. grounding a request in real context is the single largest quality lever you control."><div class="term__top"><span class="term__name">Context</span><span class="term__from">Lesson 04</span></div><p class="term__def">The material you hand the model to work from: pasted text, uploaded files, earlier turns.</p><p class="term__why">Grounding a request in real context is the single largest quality lever you control.</p></div><div class="term" data-lesson="4" data-search="few-shot (worked example) showing the model one or more examples of the output you want rather than describing it. far more reliable than adjectives for pinning down a format."><div class="term__top"><span class="term__name">Few-shot (worked example)</span><span class="term__from">Lesson 04</span></div><p class="term__def">Showing the model one or more examples of the output you want rather than describing it.</p><p class="term__why">Far more reliable than adjectives for pinning down a format.</p></div><div class="term" data-lesson="4" data-search="system prompt standing instructions sitting behind a conversation that shape every reply in it. how custom assistants get their rules - and the foundation of csc 240."><div class="term__top"><span class="term__name">System prompt</span><span class="term__from">Lesson 04</span></div><p class="term__def">Standing instructions sitting behind a conversation that shape every reply in it.</p><p class="term__why">How custom assistants get their rules - and the foundation of CSC 240.</p></div><div class="term" data-lesson="4" data-search="constraint a hard limit written into the prompt: word count, reading level, what to leave out, what to never say. constraints do real work. &ldquo;be good&rdquo; does none."><div class="term__top"><span class="term__name">Constraint</span><span class="term__from">Lesson 04</span></div><p class="term__def">A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.</p><p class="term__why">Constraints do real work. &ldquo;Be good&rdquo; does none.</p></div><div class="term" data-lesson="5" data-search="context window the maximum amount of text a model can hold in view at once, your prompt and its reply together. go past it and the earliest material silently drops out of view - no warning."><div class="term__top"><span class="term__name">Context window</span><span class="term__from">Lesson 05</span></div><p class="term__def">The maximum amount of text a model can hold in view at once, your prompt and its reply together.</p><p class="term__why">Go past it and the earliest material silently drops out of view - no warning.</p></div><div class="term" data-lesson="5" data-search="knowledge cutoff the date after which a model&rsquo;s training data stops. it knows nothing later unless a tool fetches it. the single most common cause of a confidently wrong answer about anything current."><div class="term__top"><span class="term__name">Knowledge cutoff</span><span class="term__from">Lesson 05</span></div><p class="term__def">The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.</p><p class="term__why">The single most common cause of a confidently wrong answer about anything current.</p></div><div class="term" data-lesson="5" data-search="multimodal a model that handles more than text - images, audio, sometimes video, as input or output. decides whether you can paste a screenshot at all."><div class="term__top"><span class="term__name">Multimodal</span><span class="term__from">Lesson 05</span></div><p class="term__def">A model that handles more than text - images, audio, sometimes video, as input or output.</p><p class="term__why">Decides whether you can paste a screenshot at all.</p></div><div class="term" data-lesson="5" data-search="reasoning model a model that spends extra computation working through a problem in steps before answering. slower and costlier. worth it for multi-step problems, wasted on a rewrite."><div class="term__top"><span class="term__name">Reasoning model</span><span class="term__from">Lesson 05</span></div><p class="term__def">A model that spends extra computation working through a problem in steps before answering.</p><p class="term__why">Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.</p></div><div class="term" data-lesson="5" data-search="foundation model a large general-purpose model that other products are built on top of. several tools you use may be the same model wearing different clothes."><div class="term__top"><span class="term__name">Foundation model</span><span class="term__from">Lesson 05</span></div><p class="term__def">A large general-purpose model that other products are built on top of.</p><p class="term__why">Several tools you use may be the same model wearing different clothes.</p></div><div class="term" data-lesson="5" data-search="rate limit a cap on how much you can use a tool in a given window, usually much tighter on free tiers. find yours before an assignment is due, not during."><div class="term__top"><span class="term__name">Rate limit</span><span class="term__from">Lesson 05</span></div><p class="term__def">A cap on how much you can use a tool in a given window, usually much tighter on free tiers.</p><p class="term__why">Find yours before an assignment is due, not during.</p></div><div class="term" data-lesson="6" data-search="benchmark a standard test used to compare models on one specific skill. models can be tuned to score well on benchmarks without being better at your actual work."><div class="term__top"><span class="term__name">Benchmark</span><span class="term__from">Lesson 06</span></div><p class="term__def">A standard test used to compare models on one specific skill.</p><p class="term__why">Models can be tuned to score well on benchmarks without being better at your actual work.</p></div><div class="term" data-lesson="6" data-search="leaderboard a ranked table of models by benchmark score or human preference. genuinely useful and routinely over-read."><div class="term__top"><span class="term__name">Leaderboard</span><span class="term__from">Lesson 06</span></div><p class="term__def">A ranked table of models by benchmark score or human preference.</p><p class="term__why">Genuinely useful and routinely over-read.</p></div><div class="term" data-lesson="6" data-search="blind comparison rating two outputs without knowing which model produced either. the only way to measure the answer instead of the brand."><div class="term__top"><span class="term__name">Blind comparison</span><span class="term__from">Lesson 06</span></div><p class="term__def">Rating two outputs without knowing which model produced either.</p><p class="term__why">The only way to measure the answer instead of the brand.</p></div><div class="term" data-lesson="6" data-search="elo rating a ranking score borrowed from chess, updated every time one option beats another head to head. how lm arena turns a pile of votes into an ordered list."><div class="term__top"><span class="term__name">Elo rating</span><span class="term__from">Lesson 06</span></div><p class="term__def">A ranking score borrowed from chess, updated every time one option beats another head to head.</p><p class="term__why">How LM Arena turns a pile of votes into an ordered list.</p></div><div class="term" data-lesson="7" data-search="thread one continuous conversation. everything in it stays in context until the window fills up. a long thread can quietly poison a new question asked inside it."><div class="term__top"><span class="term__name">Thread</span><span class="term__from">Lesson 07</span></div><p class="term__def">One continuous conversation. Everything in it stays in context until the window fills up.</p><p class="term__why">A long thread can quietly poison a new question asked inside it.</p></div><div class="term" data-lesson="7" data-search="context accumulation the build-up of earlier turns, which increasingly shapes every later answer. the reason a fresh chat sometimes beats one more follow-up."><div class="term__top"><span class="term__name">Context accumulation</span><span class="term__from">Lesson 07</span></div><p class="term__def">The build-up of earlier turns, which increasingly shapes every later answer.</p><p class="term__why">The reason a fresh chat sometimes beats one more follow-up.</p></div><div class="term" data-lesson="7" data-search="regeneration asking for another attempt at the same prompt instead of editing the prompt. cheap to try, and it tells you whether the problem is your prompt or the luck of the draw."><div class="term__top"><span class="term__name">Regeneration</span><span class="term__from">Lesson 07</span></div><p class="term__def">Asking for another attempt at the same prompt instead of editing the prompt.</p><p class="term__why">Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.</p></div><div class="term" data-lesson="8" data-search="hallucination a fluent, confident, well-formatted output that is simply untrue. &ldquo;fabrication&rdquo; is the plainer word for it. not a malfunction. the same machinery that produces correct answers produces these."><div class="term__top"><span class="term__name">Hallucination</span><span class="term__from">Lesson 08</span></div><p class="term__def">A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.</p><p class="term__why">Not a malfunction. The same machinery that produces correct answers produces these.</p></div><div class="term" data-lesson="8" data-search="confabulation filling a gap with plausible invention instead of signaling uncertainty. borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;."><div class="term__top"><span class="term__name">Confabulation</span><span class="term__from">Lesson 08</span></div><p class="term__def">Filling a gap with plausible invention instead of signaling uncertainty.</p><p class="term__why">Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.</p></div><div class="term" data-lesson="8" data-search="plausibility how right something sounds. exactly what the model optimises for, and therefore useless as a truth test. the trap inside every fabricated citation you will ever see."><div class="term__top"><span class="term__name">Plausibility</span><span class="term__from">Lesson 08</span></div><p class="term__def">How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.</p><p class="term__why">The trap inside every fabricated citation you will ever see.</p></div><div class="term" data-lesson="9" data-search="grounding tying an answer to specific retrieved source material rather than to training alone. the main structural defense against fabrication."><div class="term__top"><span class="term__name">Grounding</span><span class="term__from">Lesson 09</span></div><p class="term__def">Tying an answer to specific retrieved source material rather than to training alone.</p><p class="term__why">The main structural defense against fabrication.</p></div><div class="term" data-lesson="9" data-search="retrieval fetching documents or search results and putting them into the model&rsquo;s context before it answers. what lets a tool discuss last week at all."><div class="term__top"><span class="term__name">Retrieval</span><span class="term__from">Lesson 09</span></div><p class="term__def">Fetching documents or search results and putting them into the model&rsquo;s context before it answers.</p><p class="term__why">What lets a tool discuss last week at all.</p></div><div class="term" data-lesson="9" data-search="citation a reference to a source. check two things: that it exists, and that it says what was claimed. the second check is the one almost everybody skips."><div class="term__top"><span class="term__name">Citation</span><span class="term__from">Lesson 09</span></div><p class="term__def">A reference to a source. Check two things: that it exists, and that it says what was claimed.</p><p class="term__why">The second check is the one almost everybody skips.</p></div><div class="term" data-lesson="10" data-search="bias systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself. a different problem from being wrong, and it needs a different fix."><div class="term__top"><span class="term__name">Bias</span><span class="term__from">Lesson 10</span></div><p class="term__def">Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.</p><p class="term__why">A different problem from being wrong, and it needs a different fix.</p></div><div class="term" data-lesson="10" data-search="rlhf reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred. the second place bias enters, after the training data."><div class="term__top"><span class="term__name">RLHF</span><span class="term__from">Lesson 10</span></div><p class="term__def">Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.</p><p class="term__why">The second place bias enters, after the training data.</p></div><div class="term" data-lesson="10" data-search="probe a deliberately controlled prompt pair that changes exactly one variable to surface a difference. turns &ldquo;it feels biased&rdquo; into something you can show someone."><div class="term__top"><span class="term__name">Probe</span><span class="term__from">Lesson 10</span></div><p class="term__def">A deliberately controlled prompt pair that changes exactly one variable to surface a difference.</p><p class="term__why">Turns &ldquo;it feels biased&rdquo; into something you can show someone.</p></div><div class="term" data-lesson="11" data-search="verification independently confirming a claim before you rely on it. the habit this entire course exists to install."><div class="term__top"><span class="term__name">Verification</span><span class="term__from">Lesson 11</span></div><p class="term__def">Independently confirming a claim before you rely on it.</p><p class="term__why">The habit this entire course exists to install.</p></div><div class="term" data-lesson="11" data-search="provenance where a piece of content came from and what happened to it along the way. increasingly the thing you will be asked to document."><div class="term__top"><span class="term__name">Provenance</span><span class="term__from">Lesson 11</span></div><p class="term__def">Where a piece of content came from and what happened to it along the way.</p><p class="term__why">Increasingly the thing you will be asked to document.</p></div><div class="term" data-lesson="11" data-search="stakes what happens if this is wrong, and how hard it would be to check. together these decide how much verification a task actually deserves."><div class="term__top"><span class="term__name">Stakes</span><span class="term__from">Lesson 11</span></div><p class="term__def">What happens if this is wrong, and how hard it would be to check.</p><p class="term__why">Together these decide how much verification a task actually deserves.</p></div><div class="term" data-lesson="12" data-search="diffusion model the kind of model behind most image generators. it starts from noise and repeatedly refines toward your prompt. explains why counting, hands and text-in-images are so hard for it."><div class="term__top"><span class="term__name">Diffusion model</span><span class="term__from">Lesson 12</span></div><p class="term__def">The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.</p><p class="term__why">Explains why counting, hands and text-in-images are so hard for it.</p></div><div class="term" data-lesson="12" data-search="negative prompt a separate field listing what you do not want. not the same as writing &ldquo;no x&rdquo; in the prompt itself. &ldquo;no people&rdquo; in the main prompt reliably produces people."><div class="term__top"><span class="term__name">Negative prompt</span><span class="term__from">Lesson 12</span></div><p class="term__def">A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.</p><p class="term__why">&ldquo;No people&rdquo; in the main prompt reliably produces people.</p></div><div class="term" data-lesson="12" data-search="seed the starting random number. the same seed with the same prompt reproduces the same image. how you change one thing without losing the whole picture."><div class="term__top"><span class="term__name">Seed</span><span class="term__from">Lesson 12</span></div><p class="term__def">The starting random number. The same seed with the same prompt reproduces the same image.</p><p class="term__why">How you change one thing without losing the whole picture.</p></div><div class="term" data-lesson="13" data-search="speech-to-text (asr) automatic transcription of recorded speech into written text. error rates are not evenly distributed across accents, names, or speakers."><div class="term__top"><span class="term__name">Speech-to-text (ASR)</span><span class="term__from">Lesson 13</span></div><p class="term__def">Automatic transcription of recorded speech into written text.</p><p class="term__why">Error rates are not evenly distributed across accents, names, or speakers.</p></div><div class="term" data-lesson="13" data-search="text-to-speech generating spoken audio from written text. good enough now that consent is a real question rather than a hypothetical."><div class="term__top"><span class="term__name">Text-to-speech</span><span class="term__from">Lesson 13</span></div><p class="term__def">Generating spoken audio from written text.</p><p class="term__why">Good enough now that consent is a real question rather than a hypothetical.</p></div><div class="term" data-lesson="13" data-search="voice cloning producing synthetic speech in a specific person&rsquo;s voice from a sample of it. legally and ethically the sharpest edge anywhere in this course."><div class="term__top"><span class="term__name">Voice cloning</span><span class="term__from">Lesson 13</span></div><p class="term__def">Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.</p><p class="term__why">Legally and ethically the sharpest edge anywhere in this course.</p></div><div class="term" data-lesson="13" data-search="word error rate (wer) the standard measure of transcription accuracy: errors divided by words spoken. lets you compare two tools instead of arguing about which felt better."><div class="term__top"><span class="term__name">Word error rate (WER)</span><span class="term__from">Lesson 13</span></div><p class="term__def">The standard measure of transcription accuracy: errors divided by words spoken.</p><p class="term__why">Lets you compare two tools instead of arguing about which felt better.</p></div><div class="term" data-lesson="14" data-search="vision input giving a model an image - screenshot, photo, scan - as part of the prompt. degrades badly with skew, handwriting and dense tables, and does so silently."><div class="term__top"><span class="term__name">Vision input</span><span class="term__from">Lesson 14</span></div><p class="term__def">Giving a model an image - screenshot, photo, scan - as part of the prompt.</p><p class="term__why">Degrades badly with skew, handwriting and dense tables, and does so silently.</p></div><div class="term" data-lesson="14" data-search="ocr optical character recognition: pulling text out of an image of text. frequently the better tool than a vision model when the scan is clean."><div class="term__top"><span class="term__name">OCR</span><span class="term__from">Lesson 14</span></div><p class="term__def">Optical character recognition: pulling text out of an image of text.</p><p class="term__why">Frequently the better tool than a vision model when the scan is clean.</p></div><div class="term" data-lesson="14" data-search="modality a kind of input or output: text, image, audio, video. choosing the right one is usually a bigger win than improving the prompt."><div class="term__top"><span class="term__name">Modality</span><span class="term__from">Lesson 14</span></div><p class="term__def">A kind of input or output: text, image, audio, video.</p><p class="term__why">Choosing the right one is usually a bigger win than improving the prompt.</p></div><div class="term" data-lesson="15" data-search="personally identifiable information (pii) anything that identifies a specific person, on its own or combined with other data. the category that decides what you may and may not paste."><div class="term__top"><span class="term__name">Personally identifiable information (PII)</span><span class="term__from">Lesson 15</span></div><p class="term__def">Anything that identifies a specific person, on its own or combined with other data.</p><p class="term__why">The category that decides what you may and may not paste.</p></div><div class="term" data-lesson="15" data-search="data retention how long a vendor keeps what you send, and what they are permitted to do with it. varies by tier, and lives in the settings rather than the marketing."><div class="term__top"><span class="term__name">Data retention</span><span class="term__from">Lesson 15</span></div><p class="term__def">How long a vendor keeps what you send, and what they are permitted to do with it.</p><p class="term__why">Varies by tier, and lives in the settings rather than the marketing.</p></div><div class="term" data-lesson="15" data-search="training opt-out a setting that stops your conversations being used to improve the vendor&rsquo;s models. off by default on a number of consumer tiers. lesson 15 has you go and find yours."><div class="term__top"><span class="term__name">Training opt-out</span><span class="term__from">Lesson 15</span></div><p class="term__def">A setting that stops your conversations being used to improve the vendor&rsquo;s models.</p><p class="term__why">Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.</p></div><div class="term" data-lesson="15" data-search="ferpa us federal law protecting student education records. applies to anyone at flcc handling student data - including inside a chatbot."><div class="term__top"><span class="term__name">FERPA</span><span class="term__from">Lesson 15</span></div><p class="term__def">US federal law protecting student education records.</p><p class="term__why">Applies to anyone at FLCC handling student data - including inside a chatbot.</p></div><div class="term" data-lesson="15" data-search="zero-retention an arrangement in which the vendor does not store your inputs at all. usually enterprise-only, and worth knowing exists before you need it."><div class="term__top"><span class="term__name">Zero-retention</span><span class="term__from">Lesson 15</span></div><p class="term__def">An arrangement in which the vendor does not store your inputs at all.</p><p class="term__why">Usually enterprise-only, and worth knowing exists before you need it.</p></div><div class="term" data-lesson="16" data-search="attribution crediting a source you drew on. a different obligation from disclosure, and often confused with it."><div class="term__top"><span class="term__name">Attribution</span><span class="term__from">Lesson 16</span></div><p class="term__def">Crediting a source you drew on.</p><p class="term__why">A different obligation from disclosure, and often confused with it.</p></div><div class="term" data-lesson="16" data-search="disclosure stating that you used ai, and saying how. the line moves by context - a school, an employer and a journal each draw it differently."><div class="term__top"><span class="term__name">Disclosure</span><span class="term__from">Lesson 16</span></div><p class="term__def">Stating that you used AI, and saying how.</p><p class="term__why">The line moves by context - a school, an employer and a journal each draw it differently.</p></div><div class="term" data-lesson="16" data-search="ai-use statement a short written note describing what ai did in a piece of work. increasingly required. you write your own in lesson 16."><div class="term__top"><span class="term__name">AI-use statement</span><span class="term__from">Lesson 16</span></div><p class="term__def">A short written note describing what AI did in a piece of work.</p><p class="term__why">Increasingly required. You write your own in Lesson 16.</p></div><div class="term" data-lesson="16" data-search="derivative work something based on existing copyrighted material. the genuinely open legal question sitting under image generation."><div class="term__top"><span class="term__name">Derivative work</span><span class="term__from">Lesson 16</span></div><p class="term__def">Something based on existing copyrighted material.</p><p class="term__why">The genuinely open legal question sitting under image generation.</p></div><div class="term" data-lesson="17" data-search="personal ai policy your own written rules: what you use it for, what you never paste, how you verify, how you disclose. the capstone deliverable, and the only thing here that is entirely yours."><div class="term__top"><span class="term__name">Personal AI policy</span><span class="term__from">Lesson 17</span></div><p class="term__def">Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.</p><p class="term__why">The capstone deliverable, and the only thing here that is entirely yours.</p></div></div>
+    <p class="emptystate" id="noTerms" hidden>Nothing matches that.</p>
+  </section>
+
+  <!-- REFLECTION -------------------------------------------------------- -->
+  <section class="panel block" id="p-reflect" hidden>
+    <div class="blockhead">
+      <h2>Reflection</h2>
+      <p>Guided prompts rather than a blank box, because blank boxes get blank answers. One at a time, whenever you want one.</p>
+    </div>
+
+    <div class="promptcard">
+      <span class="promptcard__kind" id="pKind">This week</span>
+      <p class="promptcard__q" id="pQ">-</p>
+      <div class="field">
+        <textarea id="pA" placeholder="Three sentences is a real answer. So is one, if it&rsquo;s the right one."></textarea>
+      </div>
+      <div class="btnrow">
+        <button class="btn btn--primary" type="button" id="saveEntry" disabled><svg class="i"><use href="#i-check"/></svg> Save this</button>
+        <button class="btn btn--ghost" type="button" id="otherPrompt"><svg class="i"><use href="#i-history"/></svg> Give me a different one</button>
+        <button class="btn btn--ghost" type="button" id="modulePrompt">Module checkpoint</button>
+      </div>
+    </div>
+
+    <div class="blockhead" style="margin-top:1rem">
+      <span class="eyebrow"><svg class="i"><use href="#i-history"/></svg> Your journal</span>
+      <h2 id="jCount">No entries yet</h2>
+    </div>
+    <div class="stack" id="journal"></div>
+    <p class="emptystate" id="noEntries">Nothing saved yet. The first one is the hardest and the least interesting; it gets better once there&rsquo;s something to compare against.</p>
+    <div class="btnrow" id="exportRow" hidden>
+      <button class="btn btn--ghost" type="button" id="exportJ"><svg class="i"><use href="#i-upload"/></svg> Copy the whole journal</button>
+    </div>
+  </section>
+
+  <!-- CONFIDENCE -------------------------------------------------------- -->
+  <section class="panel block" id="p-confidence" hidden>
+    <div class="blockhead">
+      <h2>Confidence over time</h2>
+      <p>The same four questions from the Week 1 inventory. Take it again whenever you like - every few weeks is plenty. The gap between your first answer and your last is the number worth looking at.</p>
+    </div>
+
+    <div class="card card--flush"><div class="slrow"><label class="slrow__q" for="c0">Prompting</label><input class="sl" type="range" id="c0" min="1" max="5" step="1" value="3" data-c="0"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv0">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c1">Choosing the right tool</label><input class="sl" type="range" id="c1" min="1" max="5" step="1" value="3" data-c="1"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv1">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c2">Knowing what to trust</label><input class="sl" type="range" id="c2" min="1" max="5" step="1" value="3" data-c="2"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv2">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c3">Data and disclosure</label><input class="sl" type="range" id="c3" min="1" max="5" step="1" value="3" data-c="3"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv3">3 - Okay on simple things</p></div></div>
+    <div class="btnrow">
+      <button class="btn btn--primary" type="button" id="recordConf"><svg class="i"><use href="#i-check"/></svg> Record a checkpoint</button>
+      <span class="hint" id="confHint">-</span>
+    </div>
+
+    <div class="card" id="deltaCard" hidden>
+      <div class="stack">
+        <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> First checkpoint &rarr; most recent</span>
+        <div id="deltas"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="lessonfoot">
+    <span>CSC 150 &middot; AI Foundations &middot; Learning Hub</span>
+    <span class="row" style="gap:.4rem"><button class="linkbtn" type="button" id="wipe">Erase everything stored here</button></span>
+  </footer>
+</main>
+</div>
+<script>
+/* Two-click YouTube facade.
+ *
+ * A .embed--facade renders as our own markup - no iframe, no request to Google.
+ * The iframe is built on click, with autoplay, because by then the learner has
+ * asked for it. One delegated listener handles every facade on the page, and
+ * including this file twice is harmless.
+ *
+ * Markup it expects:
+ *   <div class="embed embed--facade"
+ *        data-video="VIDEO_ID"
+ *        data-title="What the video is"
+ *        data-sub="Demo · 2:40"            (optional)
+ *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
+ *        data-start="95">                  (optional, seconds)
+ *   </div>
+ */
+(function () {
+  "use strict";
+  if (window.__facadeReady) return;
+  window.__facadeReady = true;
+
+  var PLAY = '<svg viewBox="0 0 24 24" class="i" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
+
+  function build(el) {
+    if (el.querySelector(".facade")) return;
+    var poster = el.getAttribute("data-poster");
+    var title  = el.getAttribute("data-title") || "Play video";
+    var sub    = el.getAttribute("data-sub") || "";
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "facade" + (poster ? "" : " facade--noposter");
+    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.innerHTML =
+      (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
+      '<span class="facade__scrim"></span>' +
+      '<span class="facade__play">' + PLAY + "</span>" +
+      '<span class="facade__meta"><span class="facade__title"></span>' +
+      (sub ? '<span class="facade__sub"></span>' : "") + "</span>";
+    b.querySelector(".facade__title").textContent = title;
+    if (sub) b.querySelector(".facade__sub").textContent = sub;
+    // A poster that fails to load should degrade to the designed placeholder
+    // rather than leaving a broken image over the play button.
+    var img = b.querySelector(".facade__poster");
+    if (img) img.addEventListener("error", function () {
+      img.remove(); b.classList.add("facade--noposter");
+    });
+    el.appendChild(b);
+  }
+
+  function play(el) {
+    var id = el.getAttribute("data-video");
+    if (!id) return;
+    var start = el.getAttribute("data-start");
+    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var f = document.createElement("iframe");
+    f.setAttribute("src", src);
+    f.setAttribute("title", el.getAttribute("data-title") || "Video");
+    f.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
+    f.setAttribute("allowfullscreen", "");
+    el.innerHTML = "";
+    el.appendChild(f);
+    el.classList.add("is-playing");
+    f.focus();
+    var note = el.parentNode && el.parentNode.querySelector(".embed-privacy");
+    if (note) note.remove();
+  }
+
+  function init(root) {
+    Array.prototype.slice.call((root || document).querySelectorAll(".embed--facade")).forEach(build);
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest(".facade");
+    if (btn && btn.parentNode.classList.contains("embed--facade")) play(btn.parentNode);
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { init(); });
+  } else { init(); }
+  window.initFacades = init;
+})();
+
+</script>
+<script>
+/* Talks to a host page when this lesson is embedded in one.
+
+   The point is to kill the double scrollbar: the page reports how tall it
+   actually is, the host resizes the iframe to match, and the inner scrollbar
+   never appears. Everything scrolls once, in the outer page, the way a reader
+   expects.
+
+   Loaded on every page. When the page is not in a frame, the whole thing is a
+   no-op - there is nobody to talk to. */
+/* ---- LMS mode -------------------------------------------------------------
+   Two ways in, on purpose:
+
+     ?lmsembed=true   forced. Lets Dave open any page and see exactly what a
+                      student in Brightspace sees, without an LMS.
+     the handshake    automatic. The host says it is an LMS, so nothing has to
+                      be added to a URL and there is nothing to mistype.
+
+   What it hides is a list of ids, below. Anything carrying data-lms-hide is
+   hidden too, so a new element can opt in where it is authored rather than by
+   editing this file. */
+(function () {
+  "use strict";
+
+  /* Elements that make sense on a standalone page and get in the way inside an
+     LMS. Add ids here, or put data-lms-hide on the element itself.
+
+     lessonNext - the "next lesson" link. In Brightspace the learner should use
+     the LMS's own navigation: it records progress, and it does not leave them
+     staring at blank space when the next lesson is shorter than this one and
+     the frame has not shrunk yet. */
+  var LMS_HIDE = ["lessonNext"];
+
+  function applyLmsMode() {
+    var r = document.documentElement;
+    if (r.getAttribute("data-lms") === "1") return;
+    r.setAttribute("data-lms", "1");
+    LMS_HIDE.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("data-lms-hide", "");
+    });
+  }
+  window.applyLmsMode = applyLmsMode;
+
+  if (/[?&]lmsembed=true\b/i.test(location.search)) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLmsMode);
+    } else { applyLmsMode(); }
+  }
+
+  if (window.parent === window) return;          /* not embedded; nothing more */
+
+  var TAG = "csc150";
+  var last = 0;
+  var host = null;                 /* what the embedding page told us about itself */
+
+  /* Measure the content wrapper, not the document.
+
+     Both documentElement and body stretch to fill the iframe's viewport, so
+     once the host has made the frame tall neither of them can report a smaller
+     number - the frame ratchets upward and never comes back down. Measured on
+     the vocabulary page: filter 67 terms to 1 and the content is 679px while
+     html and body both still report 13,469. scrollHeight has this problem and
+     so does getBoundingClientRect; it is not a difference between them.
+
+     The wrapper is content-sized, so it tells the truth in both directions. */
+  function contentEl() {
+    return document.querySelector(".lesson") ||
+           document.querySelector("main.wrap") ||
+           document.body;
+  }
+
+  function height() {
+    var el = contentEl();
+    var h = Math.ceil(el.getBoundingClientRect().height);
+    /* Margins on the wrapper's children can escape its box; add whatever sits
+       below it so the last line is never clipped. */
+    var cs = window.getComputedStyle(el);
+    return h + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0) + 8;
+  }
+
+  function send() {
+    var h = height();
+    if (Math.abs(h - last) < 2) return;          /* sub-pixel churn is not news */
+    last = h;
+    /* Target the host's origin once the handshake has told us what it is.
+       Before that it is unknown, so "*" is the only option - and height is not
+       sensitive, which is why sending it before the handshake is acceptable. */
+    window.parent.postMessage({ tag: TAG, type: "height", height: h },
+                              (host && host.origin) || "*");
+  }
+
+  /* ---- handshake ---------------------------------------------------------
+     The page announces itself; a host that understands the protocol answers
+     with what it knows about the surrounding context. Everything in that reply
+     is untrusted - it arrives from a window we did not write - so it is used
+     only for cosmetics and for ids that are sanitised before use. */
+  window.addEventListener("message", function (e) {
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || d.tag !== TAG || d.type !== "host") return;
+    host = {
+      name: String(d.host || "").slice(0, 32).replace(/[^a-z0-9-]/gi, ""),
+      course: String(d.course || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      topic: String(d.topic || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      chrome: !!d.chrome,
+      origin: e.origin && e.origin !== "null" ? e.origin : null
+    };
+    var r = document.documentElement;
+    r.setAttribute("data-embedded", host.name || "1");
+    /* The host already shows a title above this frame, so showing ours too
+       gives the learner the same heading twice. */
+    if (host.chrome) r.setAttribute("data-host-chrome", "1");
+    if (host.course) r.setAttribute("data-course-id", host.course);
+    applyLmsMode();
+    if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
+      var el = document.getElementById(String(d.hash).replace(/^#/, ""));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    send();
+  });
+
+  /* Announce, then a few more times, then stop. The host's listener may be a
+     separate file that has not finished loading when this runs, and a single
+     announcement that arrives before anyone is listening is simply lost. The
+     host also greets on first contact, so this is the belt to that braces. */
+  (function announce(n) {
+    if (host) return;                       /* greeted; nothing more to say */
+    window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+    if (n > 0) setTimeout(function () { announce(n - 1); }, 250);
+  })(8);
+
+  /* The interactives change height constantly - the gate unlocks, a deck card
+     leaves, a candidate list redraws - so polling on load is not enough. */
+  if (window.ResizeObserver) {
+    /* Observing documentElement is useless for the same reason measuring it is:
+       it does not change when the content shrinks inside a tall frame. */
+    new ResizeObserver(send).observe(contentEl());
+  } else {
+    setInterval(send, 400);
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  document.addEventListener("DOMContentLoaded", send);
+
+  /* A full-height iframe has nothing to scroll, so scrollIntoView inside it
+     does nothing - the element the page wanted to show is still off-screen,
+     because the *frame* is off-screen. Redirect those calls to the host, which
+     is the only window that can actually move.
+
+     Patching a DOM prototype is worth a wince. It is done here rather than at
+     the call sites because the call sites are spread across generated pages and
+     will keep being added, and because this is precisely the boundary where
+     the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  /* Only forward a scroll once the learner has actually done something. A page
+     that moves the host window while it is still loading takes the reader
+     somewhere they did not ask to go - and the LMS header and the lesson's own
+     title scroll out of view, which looks like the top of the page vanishing.
+     Anything a page does to itself on load stays inside the frame. */
+  var touched = false;
+  ["pointerdown", "keydown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, function () { touched = true; }, true);
+  });
+
+  var native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (arg) {
+    if (!touched) return native.apply(this, arguments);
+    try {
+      var r = this.getBoundingClientRect();
+      var top = r.top + (window.scrollY || 0);
+      var block = (arg && typeof arg === "object" && arg.block) || "start";
+      /* Already in view: leave the host alone. Scrolling to something the
+         reader can see is pure disruption. */
+      if (r.top >= 0 && r.bottom <= (window.innerHeight || 0)) return;
+      window.parent.postMessage({
+        tag: TAG, type: "scroll", top: top, height: r.height, block: block,
+        smooth: !(arg && arg.behavior === "auto")
+      }, "*");
+    } catch (e) {
+      native.apply(this, arguments);
+    }
+  };
+})();
+
+</script>
+<script>
+/* Steady: stop interactives changing height under the learner's cursor.
+
+   Every demo in this course has the same shape - content that swaps, and
+   controls underneath it. When the content changes height the controls move,
+   and a learner who is clicking the same button repeatedly ends up chasing it
+   down the page. Token Roulette had this, Prompt Surgery had it, and every
+   future interactive would have got it too.
+
+   Two ways to hold a container still, and the difference matters:
+
+     prime(el, n, render)  the states are enumerable, so render all of them
+                           once before the learner sees anything, take the
+                           tallest, and reserve it. No jump, ever.
+
+     hold(el)              the states are combinatorial, so the best available
+                           is a latch: never shrink below the tallest seen. It
+                           can still grow once per new maximum.
+
+   Prefer prime. hold is the fallback, not the default.
+
+   Both re-measure on resize and once the real typeface has loaded, because a
+   height measured in the fallback font is wrong by about a line. */
+(function () {
+  "use strict";
+  var primed = [];
+  /* measureAll re-renders the element to size each state, which is itself a
+     layout change that a ResizeObserver will report. Without this flag the
+     observer re-enters measureAll forever and the page hangs. */
+  var measuring = false;
+
+  function natural(el) {
+    var prev = el.style.minHeight;
+    el.style.minHeight = "";
+    var h = el.getBoundingClientRect().height;
+    el.style.minHeight = prev;
+    return h;
+  }
+
+  function measureAll(el, n, render) {
+    measuring = true;
+    var prev = el.style.minHeight;
+    el.style.minHeight = "";
+    var max = 0;
+    for (var i = 0; i < n; i++) {
+      render(i);
+      var h = el.getBoundingClientRect().height;
+      if (h > max) max = h;
+    }
+    el.style.minHeight = prev;
+    measuring = false;
+    return max;
+  }
+
+  var Steady = {
+    /* render(i) paints state i into el. measureAll leaves el in the LAST state
+       it rendered, so somebody has to put it back.
+
+       Passing restore() is strongly preferred over doing it after the call.
+       Measuring happens more than once - on font load, on resize, and when a
+       demo's prediction gate finally opens and gives it a real width - and only
+       the first of those is followed by the caller's own code. Without restore,
+       every later re-measure silently leaves the panel in its last state. That
+       shipped as: Class Arena opening on its empty end-of-round summary, with
+       the button that starts round one hidden.
+
+       Two hooks, not one, because measuring MUTATES the panel's own state:
+       render(i) drives the same variables the learner's clicks drive. So
+
+         save()        -> an opaque snapshot of where the learner is, taken
+                          immediately before a measurement pass
+         restore(snap) -> put that back, and repaint
+
+       Passing only restore is not enough: it would repaint from variables the
+       measurement pass has already trampled. That is how Class Arena came to
+       open on round three - the picker was visible, but ix had been left at 2
+       by the last state measured. */
+    prime: function (el, n, render, save, restore) {
+      if (!el || !n) return 0;
+      var rec = null;
+      for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
+      if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
+      rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
+
+      /* A demo inside an unopened prediction gate is display:none, so every
+         state measures zero. Reserving 0px would be harmless but misleading;
+         leave it unset and let the width observer take a real measurement the
+         moment the gate opens. */
+      var snap = save ? save() : null;
+      var max = measureAll(el, n, render);
+      if (max > 0) el.style.minHeight = max + "px";
+      if (restore) restore(snap);
+      rec.w = el.getBoundingClientRect().width;
+
+      /* A height measured at the wrong width is the wrong height, and these
+         demos are routinely measured at the wrong width: they sit inside the
+         prediction gate at load, which is narrower and sometimes display:none,
+         and the page may later be embedded in a resizing frame. Watch the
+         element's own width and re-measure when it actually changes. Height
+         changes are ignored, so re-measuring cannot feed itself. */
+      if (window.ResizeObserver && !rec.ro) {
+        rec.ro = new ResizeObserver(function () {
+          if (measuring) return;
+          var w = el.getBoundingClientRect().width;
+          if (!w || Math.abs(w - rec.w) < 1) return;
+          rec.w = w;
+          el.style.minHeight = "";
+          var sn = rec.save ? rec.save() : null;
+          var m = measureAll(el, rec.n, rec.render);
+          if (m > 0) el.style.minHeight = m + "px";
+          if (rec.restore) rec.restore(sn);
+          rec.w = el.getBoundingClientRect().width;
+        });
+        rec.ro.observe(el);
+      }
+      return max;
+    },
+
+    hold: function (el) {
+      if (!el) return;
+      var h = natural(el);
+      var cur = parseFloat(el.style.minHeight) || 0;
+      if (h > cur) el.style.minHeight = h + "px";
+    },
+
+    /* Drop every reservation and take them again. */
+    remeasure: function () {
+      primed.forEach(function (p) {
+        var sn = p.save ? p.save() : null;
+        p.el.style.minHeight = "";
+        p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
+        if (p.restore) p.restore(sn);
+      });
+    },
+
+    /* Containers held by latch cannot be re-measured without knowing their
+       states, so on resize they are released and allowed to re-latch. */
+    release: function (el) { if (el) el.style.minHeight = ""; }
+  };
+
+  var t;
+  window.addEventListener("resize", function () {
+    clearTimeout(t);
+    t = setTimeout(function () { Steady.remeasure(); }, 150);
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { Steady.remeasure(); });
+  }
+
+  window.Steady = Steady;
+})();
+
+</script>
+
+<script>
+var TERMS=[["Artificial intelligence (AI)", 1], ["Machine learning", 1], ["Deep learning", 1], ["Neural network", 1], ["Narrow AI", 1], ["General AI (AGI)", 1], ["Generative AI", 1], ["AI winter", 1], ["Attention", 3], ["Transformer", 3], ["Context (long-range)", 3], ["Token", 2], ["Large language model (LLM)", 2], ["Training", 2], ["Inference", 2], ["Temperature", 2], ["Parameters", 2], ["Prompt", 4], ["Context", 4], ["Few-shot (worked example)", 4], ["System prompt", 4], ["Constraint", 4], ["Context window", 5], ["Knowledge cutoff", 5], ["Multimodal", 5], ["Reasoning model", 5], ["Foundation model", 5], ["Rate limit", 5], ["Benchmark", 6], ["Leaderboard", 6], ["Blind comparison", 6], ["Elo rating", 6], ["Thread", 7], ["Context accumulation", 7], ["Regeneration", 7], ["Hallucination", 8], ["Confabulation", 8], ["Plausibility", 8], ["Grounding", 9], ["Retrieval", 9], ["Citation", 9], ["Bias", 10], ["RLHF", 10], ["Probe", 10], ["Verification", 11], ["Provenance", 11], ["Stakes", 11], ["Diffusion model", 12], ["Negative prompt", 12], ["Seed", 12], ["Speech-to-text (ASR)", 13], ["Text-to-speech", 13], ["Voice cloning", 13], ["Word error rate (WER)", 13], ["Vision input", 14], ["OCR", 14], ["Modality", 14], ["Personally identifiable information (PII)", 15], ["Data retention", 15], ["Training opt-out", 15], ["FERPA", 15], ["Zero-retention", 15], ["Attribution", 16], ["Disclosure", 16], ["AI-use statement", 16], ["Derivative work", 16], ["Personal AI policy", 17]];
+var PROMPTS=["What&rsquo;s one thing you believed about AI a month ago that you don&rsquo;t believe now?", "Where did you catch yourself trusting an output you shouldn&rsquo;t have? What tipped you off - or what didn&rsquo;t?", "What did you use AI for this week that genuinely saved you time? What did you try that wasted it?", "Describe a moment this week when you chose <em>not<\/em> to use AI. Why not?", "Which term from this course would you struggle to explain to a friend? Try explaining it here anyway.", "Whose work does your AI use affect besides your own?", "What did you get wrong in a warm-up card recently - and does the right answer still feel wrong?", "If you had to defend one tool choice you made this week to a skeptical colleague, what would you say?", "What are you still doing by hand that you suspect you shouldn&rsquo;t be? What&rsquo;s stopping you?", "What did you check this week that turned out to be fine? Was checking it still worth the time?", "Write down one thing you&rsquo;re confused about right now. Be specific - vague confusion never resolves.", "What would you tell yourself in Week 1 that you know now?"];
+var MODULE_PROMPTS=[["After Module 1", "You now have a mental model of what a language model is doing. Write it in three sentences, for someone who has never used one."], ["After Module 2", "You can prompt, choose a model, and repair a bad answer. Which of those three is weakest for you, and what would actually fix it?"], ["After Module 3", "Module 3 was largely about not trusting things. Has it changed how you read anything <em>outside<\/em> this course?"], ["After Module 4", "Images, voice, mixed input. Which modality surprised you most, and what did it cost you to find that out?"], ["After Module 5", "You&rsquo;ve written a personal AI policy. Which rule in it will be hardest to keep, and what will break it first?"]];
+var OUTCOMES=["Prompting", "Choosing the right tool", "Knowing what to trust", "Data and disclosure"];
+var ITEM_LESSON=[0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+(function () {
+  "use strict";
+  var KEY = "csc150.hub.v1";
+  var CONF_LABELS = ["", "No idea where to start", "Shaky", "Okay on simple things", "Pretty solid", "I could teach it"];
+  /* Item index -> lesson number. Emitted by hub.py from data.py rather than
+     written here, because the hand-kept version survived the 15-to-17 renumber
+     unchanged and then disagreed with the rest of the course about which
+     lesson each tile was. */
+  var LESSON_OF_ITEM = window.ITEM_LESSON || [];
+
+  var S = { done: {}, entries: [], conf: [] };
+  function load() {
+    try { var raw = window.localStorage.getItem(KEY); if (raw) S = JSON.parse(raw); } catch (e) {}
+    S.done = S.done || {}; S.entries = S.entries || []; S.conf = S.conf || [];
+  }
+  /* A save that quietly does nothing is the worst possible failure here: the
+     page keeps working from memory all semester and the loss only shows up on
+     reload. Probe once, say so plainly if it does not hold, and keep going in
+     memory rather than breaking the page. Private browsing, cleared site data
+     and a storage-partitioned third-party frame all land here. */
+  var canStore = (function () {
+    try {
+      var probe = KEY + ".probe";
+      window.localStorage.setItem(probe, "1");
+      var ok = window.localStorage.getItem(probe) === "1";
+      window.localStorage.removeItem(probe);
+      return ok;
+    } catch (e) { return false; }
+  })();
+
+  /* ── Storage warning: currently OFF ────────────────────────────────────────
+     For the POC semester the Hub is deliberately allowed to run without durable
+     storage. Progress is tracked in Brightspace's own checklists, the Week 1
+     numbers live in the PDF the student keeps, and the vocabulary tab is
+     stateless - so a browser that refuses localStorage costs the student the
+     reflection tab and nothing else. Telling them "this browser is not keeping
+     your work" would be accurate but alarming about a thing we chose.
+
+     TO RE-ENABLE, for the server deployment after the semester:
+       set WARN_ON_NO_STORAGE to true, below. That is the whole change.
+       warn() and the probe are both still live and tested; only the two call
+       sites are gated. Turn it back on once reflection entries are worth
+       something to lose - i.e. as soon as they are not backed by a server.
+
+     A flag rather than commented-out code on purpose. Commented-out code stops
+     being compiled, stops being read, and quietly rots; this repo has already
+     produced three hand-maintained copies of the lesson list that drifted
+     exactly that way. This stays on the live path and keeps working. */
+  var WARN_ON_NO_STORAGE = false;
+
+  function save() {
+    if (!canStore) return;
+    try { window.localStorage.setItem(KEY, JSON.stringify(S)); }
+    catch (e) { canStore = false; if (WARN_ON_NO_STORAGE) warn(); }
+  }
+
+  function warn() {
+    if (document.getElementById("storeWarn")) return;
+    var el = document.createElement("div");
+    el.id = "storeWarn";
+    el.className = "callout callout--warn";
+    el.innerHTML =
+      '<div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>' +
+      '<div class="callout__body"><p class="callout__label">This browser is not keeping your work</p>' +
+      '<p>Everything on this page still works, but nothing will survive a reload - ' +
+      'usually private browsing, cleared site data, or this page being shown inside ' +
+      'another site. Open it in its own tab, or copy anything you want to keep before ' +
+      'you leave.</p></div>';
+    var host = document.querySelector(".wrap") || document.body;
+    host.insertBefore(el, host.firstChild);
+  }
+
+  load();
+  if (!canStore && WARN_ON_NO_STORAGE) warn();
+
+  /* ---- tabs ---- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".hubtab"));
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () {
+      tabs.forEach(function (o) {
+        o.setAttribute("aria-selected", String(o === t));
+        document.getElementById("p-" + o.getAttribute("data-p")).hidden = (o !== t);
+      });
+    });
+  });
+
+  /* ---- progress ---- */
+  var tiles = Array.prototype.slice.call(document.querySelectorAll(".ptile"));
+  function coveredLessons() {
+    var set = {};
+    tiles.forEach(function (t, i) { if (S.done[i]) set[LESSON_OF_ITEM[i]] = true; });
+    return set;
+  }
+  function paintProgress() {
+    var n = 0;
+    tiles.forEach(function (t, i) {
+      var on = !!S.done[i];
+      t.setAttribute("aria-pressed", String(on));
+      if (on) n++;
+    });
+    document.getElementById("progSummary").innerHTML =
+      "<strong>" + n + " of " + tiles.length + "</strong> marked done. Tap anything you&rsquo;ve finished - this also decides which vocabulary counts as covered.";
+    paintVocab();
+  }
+  tiles.forEach(function (t, i) {
+    t.addEventListener("click", function () { S.done[i] = !S.done[i]; save(); paintProgress(); });
+  });
+
+  /* ---- vocabulary ---- */
+  var termEls = Array.prototype.slice.call(document.querySelectorAll(".term"));
+  var onlyCovered = document.getElementById("onlyCovered");
+  var vsearch = document.getElementById("vsearch");
+
+  function paintVocab() {
+    var cov = coveredLessons();
+    var q = (vsearch.value || "").trim().toLowerCase();
+    var only = onlyCovered.getAttribute("aria-pressed") === "true";
+    var shown = 0, unlocked = 0;
+    termEls.forEach(function (el) {
+      var lesson = parseInt(el.getAttribute("data-lesson"), 10);
+      var isCov = !!cov[lesson];
+      if (isCov) unlocked++;
+      el.classList.toggle("is-unlocked", isCov);
+      el.classList.toggle("is-locked", !isCov);
+      var match = !q || el.getAttribute("data-search").indexOf(q) > -1;
+      var vis = match && (!only || isCov);
+      el.hidden = !vis;
+      if (vis) shown++;
+    });
+    document.getElementById("noTerms").hidden = shown > 0;
+    document.getElementById("vocabSummary").innerHTML =
+      "<strong>" + termEls.length + " terms</strong> in CSC 150 - <strong>" + unlocked +
+      "</strong> from lessons you&rsquo;ve marked done. Nothing is hidden from you; the dimmed ones simply haven&rsquo;t come up yet.";
+    return unlocked;
+  }
+  vsearch.addEventListener("input", paintVocab);
+  onlyCovered.addEventListener("click", function () {
+    this.setAttribute("aria-pressed", this.getAttribute("aria-pressed") === "true" ? "false" : "true");
+    paintVocab();
+  });
+
+  /* ---- vocabulary practice (reuses the flashcard deck) ---- */
+  document.getElementById("practiceBtn").addEventListener("click", function () {
+    var zone = document.getElementById("practiceZone");
+    var cov = coveredLessons();
+    var pool = TERMS.map(function (t, i) { return { name: t[0], lesson: t[1], el: termEls[i] }; })
+                    .filter(function (t) { return cov[t.lesson]; });
+    zone.hidden = false;
+    if (pool.length < 4) {
+      zone.innerHTML = '<p class="emptystate">Mark a few lessons done on the Progress tab first - practice needs at least four covered terms to build a question from, and right now there are ' + pool.length + '.</p>';
+      zone.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+    var picked = pool.slice();
+    for (var i = picked.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = picked[i]; picked[i] = picked[j]; picked[j] = t; }
+    picked = picked.slice(0, Math.min(5, picked.length));
+
+    var cards = picked.map(function (item) {
+      var wrong = pool.filter(function (p) { return p.name !== item.name; });
+      for (var i = wrong.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = wrong[i]; wrong[i] = wrong[j]; wrong[j] = t; }
+      var opts = wrong.slice(0, 3).map(function (w) { return w.name; });
+      var right = Math.floor(Math.random() * 4);
+      opts.splice(right, 0, item.name);
+      var def = item.el.querySelector(".term__def").innerHTML;
+      var why = item.el.querySelector(".term__why").innerHTML;
+      return '<article class="fcard" data-answer="' + right + '">' +
+        '<div class="fcard__top"><p class="provenance"><svg class="i"><use href="#i-book-open"/></svg> Lesson ' +
+        (item.lesson < 10 ? "0" + item.lesson : item.lesson) + '</p>' +
+        '<span class="fcard__grip" aria-hidden="true"><span></span><span></span></span></div>' +
+        '<p class="fcard__q">' + def + '</p><div class="answers">' +
+        opts.map(function (o, k) { return '<button class="answer" type="button" data-i="' + k + '">' + o + '</button>'; }).join("") +
+        '<button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button></div>' +
+        '<div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>' + item.name + '.</strong> ' + why + '</span></div></article>';
+    }).join("");
+
+    zone.innerHTML =
+      '<div class="deck" id="vdeck"><div class="deck__stack" id="vstack">' + cards + '</div>' +
+      '<div class="deck__bar"><div class="deck__left"><span class="deck__dots" id="vdots" aria-hidden="true"></span>' +
+      '<span class="deck__count" id="vcount"></span></div>' +
+      '<div class="row" style="gap:.75rem"><span class="deck__hint" id="vhint">Answer, then swipe the card away</span>' +
+      '<button class="btn btn--ghost" type="button" id="vnext" disabled>Next card <svg class="i"><use href="#i-arrow-right"/></svg></button>' +
+      '</div></div><div class="deck__done"><div class="icontile"><svg class="i"><use href="#i-check"/></svg></div>' +
+      '<strong>Round done</strong><p>Run it again for a different five. The terms you fumbled are the ones worth rereading below.</p></div></div>';
+    initDeck(document.getElementById("vdeck"), document.getElementById("vstack"),
+             document.getElementById("vdots"), document.getElementById("vcount"),
+             document.getElementById("vnext"), document.getElementById("vhint"));
+    zone.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  /* generic deck engine - same behavior as the lesson warm-up */
+  function initDeck(deck, stack, dots, count, next, hint) {
+    var cards = Array.prototype.slice.call(stack.querySelectorAll(".fcard"));
+    var i = 0, pid = null, startX = 0, dx = 0, dragging = false, suppressClick = false;
+    cards.forEach(function () { var d = document.createElement("span"); d.className = "deck__dot"; dots.appendChild(d); });
+    function answered(c) { return c.classList.contains("is-answered"); }
+    function layout() {
+      cards.forEach(function (c, ix) {
+        var pos = ix - i;
+        if (pos < 0) {
+          c.removeAttribute("data-pos"); c.setAttribute("aria-hidden", "true");
+          if (!c.classList.contains("is-leaving")) c.classList.add("is-gone");
+        } else {
+          c.classList.remove("is-gone");
+          c.setAttribute("data-pos", String(Math.min(pos, 3)));
+          c.setAttribute("aria-hidden", pos === 0 ? "false" : "true");
+          c.style.transform = ""; c.style.opacity = ""; c.style.transition = "";
+        }
+        Array.prototype.slice.call(c.querySelectorAll("button")).forEach(function (b) {
+          if (pos === 0) b.removeAttribute("tabindex"); else b.setAttribute("tabindex", "-1");
+        });
+      });
+      Array.prototype.slice.call(dots.children).forEach(function (d, ix) {
+        d.className = "deck__dot" + (ix < i ? " is-done" : (ix === i ? " is-active" : ""));
+      });
+      if (i >= cards.length) { deck.classList.add("is-finished"); return; }
+      count.textContent = "Card " + (i + 1) + " of " + cards.length;
+      next.disabled = !answered(cards[i]);
+      hint.classList.remove("is-nudging");
+      hint.textContent = answered(cards[i]) ? "Swipe it away, or press next" : "Answer, then swipe the card away";
+    }
+    function advance(dir) {
+      var c = cards[i];
+      c.classList.add("is-leaving");
+      c.style.transition = "transform .5s cubic-bezier(.3,.9,.4,1), opacity .4s ease";
+      c.style.transform = "translateX(" + (dir * 130) + "%) rotate(" + (dir * 16) + "deg)";
+      c.style.opacity = "0";
+      i++; layout();
+      window.setTimeout(function () { c.classList.remove("is-leaving"); c.classList.add("is-gone"); }, 480);
+    }
+    cards.forEach(function (card) {
+      var right = parseInt(card.getAttribute("data-answer"), 10);
+      var answers = Array.prototype.slice.call(card.querySelectorAll(".answer"));
+      answers.forEach(function (a) {
+        a.addEventListener("click", function () {
+          if (suppressClick || answered(card)) return;
+          var chosen = parseInt(a.getAttribute("data-i"), 10);
+          answers.forEach(function (b) {
+            b.disabled = true;
+            var bi = parseInt(b.getAttribute("data-i"), 10);
+            if (bi === right) b.classList.add("is-right");
+            else if (bi === chosen && chosen >= 0) b.classList.add("is-wrong");
+            else b.classList.add("is-dim");
+          });
+          card.classList.add("is-answered");
+          card.querySelector(".feedback").classList.add("is-shown");
+          next.disabled = false;
+          hint.textContent = "Swipe it away, or press next";
+        });
+      });
+    });
+    next.addEventListener("click", function () { if (i < cards.length && answered(cards[i])) advance(1); });
+    stack.addEventListener("pointerdown", function (e) {
+      if (i >= cards.length || !cards[i].contains(e.target)) return;
+      pid = e.pointerId; startX = e.clientX; dx = 0; dragging = false;
+    });
+    stack.addEventListener("pointermove", function (e) {
+      if (pid === null || e.pointerId !== pid) return;
+      dx = e.clientX - startX;
+      if (!dragging && Math.abs(dx) > 8) {
+        dragging = true; cards[i].classList.add("is-dragging");
+        try { stack.setPointerCapture(pid); } catch (err) {}
+      }
+      if (dragging) cards[i].style.transform = "translateX(" + dx + "px) rotate(" + (dx / 24) + "deg)";
+    });
+    function endDrag() {
+      if (pid === null) return;
+      var c = cards[i];
+      if (dragging && c) {
+        c.classList.remove("is-dragging");
+        suppressClick = true; window.setTimeout(function () { suppressClick = false; }, 0);
+        if (Math.abs(dx) > 90) {
+          if (answered(c)) { var dir = dx > 0 ? 1 : -1; pid = null; dragging = false; dx = 0; advance(dir); return; }
+          hint.textContent = "Take a guess first - or tap “Not sure yet”.";
+          hint.classList.add("is-nudging");
+        }
+        c.style.transform = "";
+      }
+      pid = null; dragging = false; dx = 0;
+    }
+    stack.addEventListener("pointerup", endDrag);
+    stack.addEventListener("pointercancel", endDrag);
+    layout();
+  }
+
+  /* ---- reflection ---- */
+  var pQ = document.getElementById("pQ"), pA = document.getElementById("pA"),
+      pKind = document.getElementById("pKind"), saveBtn = document.getElementById("saveEntry");
+  var current = { kind: "This week", q: "" }, pi = 0, mi = 0;
+
+  function setPrompt(kind, q) { current = { kind: kind, q: q }; pKind.textContent = kind; pQ.innerHTML = q; }
+  function nextWeekly() { setPrompt("This week", PROMPTS[pi % PROMPTS.length]); pi++; }
+  function nextModule() { var m = MODULE_PROMPTS[mi % MODULE_PROMPTS.length]; setPrompt(m[0], m[1]); mi++; }
+  pi = Math.floor(Math.random() * PROMPTS.length); nextWeekly();
+
+  document.getElementById("otherPrompt").addEventListener("click", nextWeekly);
+  document.getElementById("modulePrompt").addEventListener("click", nextModule);
+  pA.addEventListener("input", function () { saveBtn.disabled = pA.value.trim().length < 3; });
+
+  saveBtn.addEventListener("click", function () {
+    S.entries.unshift({ d: new Date().toISOString().slice(0, 10), kind: current.kind, q: pQ.textContent, a: pA.value.trim() });
+    save(); pA.value = ""; saveBtn.disabled = true; nextWeekly(); paintJournal();
+  });
+
+  function paintJournal() {
+    var wrap = document.getElementById("journal");
+    wrap.innerHTML = "";
+    S.entries.forEach(function (e, ix) {
+      var d = document.createElement("div");
+      d.className = "jentry";
+      d.innerHTML = '<div class="jentry__meta"><span class="jentry__date">' + e.d + ' &middot; ' + e.kind +
+                    '</span><button class="linkbtn" type="button" data-del="' + ix + '">delete</button></div>' +
+                    '<p class="jentry__q"></p><p class="jentry__a"></p>';
+      d.querySelector(".jentry__q").textContent = e.q;
+      d.querySelector(".jentry__a").textContent = e.a;
+      wrap.appendChild(d);
+    });
+    Array.prototype.slice.call(wrap.querySelectorAll("[data-del]")).forEach(function (b) {
+      b.addEventListener("click", function () {
+        S.entries.splice(parseInt(b.getAttribute("data-del"), 10), 1); save(); paintJournal();
+      });
+    });
+    document.getElementById("noEntries").hidden = S.entries.length > 0;
+    document.getElementById("exportRow").hidden = S.entries.length === 0;
+    document.getElementById("jCount").textContent =
+      S.entries.length === 0 ? "No entries yet" : S.entries.length + (S.entries.length === 1 ? " entry" : " entries");
+  }
+
+  document.getElementById("exportJ").addEventListener("click", function () {
+    var b = this;
+    var text = "CSC 150 - Reflection journal\n\n" + S.entries.map(function (e) {
+      return e.d + "  [" + e.kind + "]\n" + e.q + "\n\n" + e.a + "\n";
+    }).join("\n---\n\n");
+    var o = b.innerHTML;
+    function done() { b.innerHTML = "Copied"; window.setTimeout(function () { b.innerHTML = o; }, 1600); }
+    try { navigator.clipboard.writeText(text).then(done, function () { b.innerHTML = "Couldn’t copy - select and copy manually"; }); }
+    catch (e) { b.innerHTML = "Couldn’t copy - select and copy manually"; }
+  });
+
+  /* ---- confidence ---- */
+  var confVals = [3, 3, 3, 3];
+  Array.prototype.slice.call(document.querySelectorAll("[data-c]")).forEach(function (sl) {
+    var k = parseInt(sl.getAttribute("data-c"), 10);
+    var out = document.getElementById("cv" + k);
+    function upd() { confVals[k] = parseInt(sl.value, 10); out.textContent = confVals[k] + " - " + CONF_LABELS[confVals[k]]; }
+    ["input", "pointerdown", "keydown"].forEach(function (e) { sl.addEventListener(e, upd); });
+    upd();
+  });
+
+  document.getElementById("recordConf").addEventListener("click", function () {
+    S.conf.push({ d: new Date().toISOString().slice(0, 10), v: confVals.slice() });
+    save(); paintConf();
+  });
+
+  function paintConf() {
+    var hint = document.getElementById("confHint");
+    var card = document.getElementById("deltaCard");
+    if (!S.conf.length) { hint.textContent = "No checkpoints yet. Start with the numbers you gave in Week 1."; card.hidden = true; return; }
+    hint.textContent = S.conf.length + (S.conf.length === 1 ? " checkpoint recorded - take it again in a few weeks." : " checkpoints recorded.");
+    if (S.conf.length < 2) { card.hidden = true; return; }
+    card.hidden = false;
+    var first = S.conf[0], last = S.conf[S.conf.length - 1];
+    var wrap = document.getElementById("deltas");
+    wrap.innerHTML = "";
+    OUTCOMES.forEach(function (o, k) {
+      var a = first.v[k], b = last.v[k], d = b - a;
+      var lo = Math.min(a, b), hi = Math.max(a, b);
+      var pct = function (v) { return ((v - 1) / 4) * 100; };
+      var row = document.createElement("div");
+      row.className = "deltarow";
+      row.innerHTML = '<span class="deltarow__label">' + o + '</span>' +
+        '<span class="track"><span class="track__span" style="left:' + pct(lo) + '%;right:' + (100 - pct(hi)) + '%"></span>' +
+        '<span class="track__dot" style="left:' + pct(a) + '%"></span>' +
+        '<span class="track__dot is-now" style="left:' + pct(b) + '%"></span></span>' +
+        '<span class="delta ' + (d > 0 ? "is-up" : (d < 0 ? "is-down" : "")) + '">' +
+        a + ' → ' + b + (d === 0 ? " · no change" : (d > 0 ? " · +" + d : " · " + d)) + '</span>';
+      wrap.appendChild(row);
+    });
+  }
+
+  /* ---- wipe ---- */
+  document.getElementById("wipe").addEventListener("click", function () {
+    var b = this;
+    if (b.getAttribute("data-armed") !== "1") {
+      b.setAttribute("data-armed", "1");
+      b.textContent = "Really erase it? Click again - this cannot be undone";
+      window.setTimeout(function () { b.removeAttribute("data-armed"); b.textContent = "Erase everything stored here"; }, 6000);
+      return;
+    }
+    S = { done: {}, entries: [], conf: [] };
+    try { window.localStorage.removeItem(KEY); } catch (e) {}
+    b.removeAttribute("data-armed"); b.textContent = "Erased";
+    paintProgress(); paintJournal(); paintConf();
+    window.setTimeout(function () { b.textContent = "Erase everything stored here"; }, 2500);
+  });
+
+  paintProgress(); paintJournal(); paintConf();
+})();
+
+</script>

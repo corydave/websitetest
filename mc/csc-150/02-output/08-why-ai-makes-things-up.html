@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Why It Wanders</title>
+<title>Why AI Makes Things Up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -1960,13 +1960,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <div class="wrap">
     <div class="masthead__row">
       <span class="coursemark"><svg class="i"><use href="#i-sparkles"/></svg> CSC 150</span>
-      <span class="lessonno">Module 1 &middot; Lesson 3</span>
+      <span class="lessonno">Module 2 &middot; Lesson 8</span>
     </div>
-    <h1>Why It Wanders</h1>
-    <p class="standfirst">Your sentence fell apart after about a line. Here is exactly why, and what fixed it.</p>
+    <h1>Why AI Makes Things Up</h1>
+    <p class="standfirst">Fabrication is not a bug in the system. It is the system, working exactly as designed, on a question it has no way to answer.</p>
     <div class="metarow">
-      <span><svg class="i"><use href="#i-clock"/></svg> 30&ndash;40 min</span>
-      <span><svg class="i"><use href="#i-video"/></svg> 1 video (3:00)</span>
+      <span><svg class="i"><use href="#i-clock"/></svg> 35&ndash;45 min</span>
+      <span><svg class="i"><use href="#i-video"/></svg> 1 video (2:40)</span>
       <span><svg class="i"><use href="#i-upload"/></svg> 1 deliverable</span>
       <span><svg class="i"><use href="#i-target"/></svg> Course outcomes 2 &amp; 3</span>
     </div>
@@ -1981,7 +1981,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="icontile icontile--quiet"><svg class="i"><use href="#i-book-open"/></svg></div>
       <div class="lede__body">
         <span class="eyebrow">What this lesson is</span>
-        <p>Last lesson your token machine produced a sentence that started confidently and drifted into nonsense by the end of the line. That was not a flaw in the demonstration. It is the honest behavior of something with a two-word memory, and repairing it is the single change that separates the models you use now from everything that came before them. This lesson is about attention - letting the machine look at every word at once and work out for itself which ones matter. It is the one piece of architecture worth knowing by name, and you already have the question it answers.</p>
+        <p>Fabrication is not a bug in these systems. It is the same process that produces correct answers, running on a question the model has no way to answer - and it comes out fluent, formatted and confident, because fluency is what the process optimizes for. This lesson shows you where that happens, names the three conditions that make it likely, and gives you a checking routine short enough that you will actually use it.</p>
       </div>
     </div>
   </section>
@@ -1990,29 +1990,29 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <span class="beat__label"><svg class="i"><use href="#i-help"/></svg> Beat 2 &middot; Prediction gate</span>
     <div class="gate" id="gate">
       <p class="gate__stakes"><svg class="i"><use href="#i-help"/></svg> No stakes, no grade. You are not expected to know this yet - guessing is the point.</p>
-      <h2 class="gate__q">Read this: <em>The trophy would not fit in the suitcase because it was too big.</em> What does <em>it</em> refer to?</h2>
+      <h2 class="gate__q">In 2023 a lawyer filed a brief citing six court cases his AI assistant found for him. All six had names, dates and quoted passages. None of them existed. What best explains it?</h2>
       <div class="options" id="gateOptions" role="group" aria-label="Prediction choices">
-        <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="71" data-best="true">
+        <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="18">
           <span class="option__key">A</span>
-          <span class="option__text">The trophy.
+          <span class="option__text">Someone had planted fake cases in the model&rsquo;s training data.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="B" data-pct="12">
+        <button class="option" type="button" aria-pressed="false" data-key="B" data-pct="31">
           <span class="option__key">B</span>
-          <span class="option__text">The suitcase.
+          <span class="option__text">It searched the web and landed on an unreliable legal site.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="C" data-pct="14">
+        <button class="option" type="button" aria-pressed="false" data-key="C" data-pct="34" data-best="true">
           <span class="option__key">C</span>
-          <span class="option__text">Genuinely ambiguous - the sentence does not say.
+          <span class="option__text">It was doing the only thing it ever does - producing text that looks like the right answer.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="D" data-pct="3">
+        <button class="option" type="button" aria-pressed="false" data-key="D" data-pct="17">
           <span class="option__key">D</span>
-          <span class="option__text">Depends who is speaking.
+          <span class="option__text">The model hit a processing error and produced corrupted output.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
@@ -2057,18 +2057,23 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <div class="objectives">
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Explain</strong> why a model that looks back only a word or two loses coherence over distance.
-              <span class="objective__clo">Course outcome 3 &middot; Understanding failure modes</span></span>
+            <span class="objective__text"><strong>Explain</strong> why fabricated answers come from the same process as correct ones.
+              <span class="objective__clo">Course outcome 3 &middot; Critically assess AI-generated content</span></span>
           </div>
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Describe</strong> attention as weighing every position at once rather than the nearest few.
-              <span class="objective__clo">Course outcome 2 &middot; Capabilities and limitations</span></span>
+            <span class="objective__text"><strong>Identify</strong> the three conditions that make fabrication most likely in a given prompt.
+              <span class="objective__clo">Course outcome 3 &middot; Common failure modes</span></span>
           </div>
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Place</strong> the 2017 transformer paper as the hinge between older language models and current ones.
-              <span class="objective__clo">Course outcome 2 &middot; Situating the tools</span></span>
+            <span class="objective__text"><strong>Apply</strong> a three-step verification routine to any AI claim before you use it.
+              <span class="objective__clo">Course outcome 3 &middot; Accuracy and reliability</span></span>
+          </div>
+          <div class="objective">
+            <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
+            <span class="objective__text"><strong>Decide</strong> when a task needs a model with live retrieval instead of a bare chat model.
+              <span class="objective__clo">Course outcome 2 &middot; Selecting appropriate tools</span></span>
           </div>
         </div>
       </div>
@@ -2078,46 +2083,61 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <span class="beat__label"><svg class="i"><use href="#i-history"/></svg> Beat 4 &middot; Spaced retrieval</span>
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-history"/></svg> Warm-up</span>
-        <h2>Two from earlier</h2>
-        <p>Cards from the course item bank, not written for today. Answer from memory, then swipe the card away. Nothing here is graded.</p>
+        <h2>Three from earlier</h2>
+        <p>Three cards from the course item bank, not written for today. Answer from memory, then swipe the card away. Looking it up defeats the purpose, and nothing here is graded.</p>
       </div>
       <div class="deck" id="recallDeck">
         <div class="deck__stack" id="recallStack">
         <article class="fcard" data-answer="1">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; earlier this week</p>
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 4</em> &middot; 3 weeks ago</p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
-          <p class="fcard__q">A language model is trained, at bottom, to do what?</p>
+          <p class="fcard__q">Which change to a prompt most reliably improves the quality of what comes back?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">Store facts and retrieve them</button>
-            <button class="answer" type="button" data-i="1">Predict what comes next in a sequence of text</button>
-            <button class="answer" type="button" data-i="2">Follow hand-written rules</button>
-            <button class="answer" type="button" data-i="3">Search the internet</button>
+            <button class="answer" type="button" data-i="0">Adding &ldquo;please&rdquo; and &ldquo;thank you&rdquo;</button>
+            <button class="answer" type="button" data-i="1">Naming the audience and the format you want</button>
+            <button class="answer" type="button" data-i="2">Telling the model to be accurate</button>
+            <button class="answer" type="button" data-i="3">Making the prompt longer</button>
             <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Prediction.</strong> Today is about what a predictor needs to <em>see</em> in order to predict well.</span></div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Audience and format.</strong> Both narrow the space of plausible continuations. &ldquo;Be accurate&rdquo; does not - the model has no separate accuracy dial to turn up, which is most of today&rsquo;s lesson.</span></div>
         </article>
         <article class="fcard" data-answer="2">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 1</em> &middot; earlier this week</p>
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 6</em> &middot; 2 weeks ago</p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
-          <p class="fcard__q">Which nesting order is correct?</p>
+          <p class="fcard__q">In a public model arena, why are the model names hidden while you vote?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">Machine learning contains AI, which contains deep learning</button>
-            <button class="answer" type="button" data-i="1">Deep learning contains AI, which contains language models</button>
-            <button class="answer" type="button" data-i="2">AI contains machine learning, contains deep learning, contains language models</button>
-            <button class="answer" type="button" data-i="3">They are four names for the same thing</button>
+            <button class="answer" type="button" data-i="0">To fit two responses on screen</button>
+            <button class="answer" type="button" data-i="1">The companies require anonymity</button>
+            <button class="answer" type="button" data-i="2">So brand reputation doesn&rsquo;t shape the rating</button>
+            <button class="answer" type="button" data-i="3">To speed up voting</button>
             <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Widest to narrowest.</strong> Today lives in the innermost ring - and explains why that ring got so much better so suddenly.</span></div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Blind comparison.</strong> People rate a familiar brand higher for identical output. Hiding the label is the only way the score measures the answer instead of the logo.</span></div>
+        </article>
+        <article class="fcard" data-answer="1">
+          <div class="fcard__top">
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; 5 weeks ago</p>
+            <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
+          </div>
+          <p class="fcard__q">A large language model is trained, at bottom, to do what?</p>
+          <div class="answers">
+            <button class="answer" type="button" data-i="0">Look facts up in a database</button>
+            <button class="answer" type="button" data-i="1">Predict what comes next in a sequence of text</button>
+            <button class="answer" type="button" data-i="2">Follow a large set of hand-written rules</button>
+            <button class="answer" type="button" data-i="3">Search the internet and summarize it</button>
+            <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
+          </div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Prediction.</strong> Hold onto this one - the whole lesson is a consequence of it.</span></div>
         </article>
         </div>
         <div class="deck__bar">
           <div class="deck__left">
             <span class="deck__dots" id="recallDots" aria-hidden="true"></span>
-            <span class="deck__count" id="recallCount">Card 1 of 2</span>
+            <span class="deck__count" id="recallCount">Card 1 of 3</span>
           </div>
           <div class="row" style="gap:.75rem">
             <span class="deck__hint" id="recallHint">Answer, then swipe the card away</span>
@@ -2137,47 +2157,71 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 5 &middot; Content</span>
       <div class="segment">
-        <h3><span class="segno">01</span> A two-word memory, and what it cannot hold on to</h3>
+        <h3><span class="segno">01</span> There is no &ldquo;I don&rsquo;t know&rdquo; in the machinery</h3>
         <div class="prose">
-          <p>Token Roulette told you how it was choosing: it looked at <em>the last two words</em>. That is a real design, and for a long time it was roughly how language models worked - count which words tend to follow which other words, and pick from that.</p>
-          <p>It produces sentences that are locally fine and globally hopeless. Each pair of words is plausible. Two lines in, the sentence is about something else, because nothing in the machinery remembers what it was about. This is what <b class='vt' data-v='context-long-range'><i>long-range context</i></b> means, and a two-word window has none of it.</p>
-          <p>Now try the sentence from the prediction question. <em>The trophy would not fit in the suitcase because it was too big.</em> You resolved <em>it</em> instantly. To do that you had to connect a pronoun to a noun eight words back, and the thing that told you which noun was the very last word in the sentence. Change <em>big</em> to <em>small</em> and your answer flips. A two-word memory cannot do this. Not slowly, not imperfectly - not at all.</p>
+          <p>When you ask a model a question, it is not consulting a store of facts and reporting what it finds. It is producing one token at a time, and each token is whatever is most likely to come next given everything before it.</p>
+          <p>That process runs identically whether the answer is common knowledge or something nobody has ever written down. The model does not detect the difference, because from the inside there is no difference. There is only the next word.</p>
         </div>
         
-        <div class="demo" id="spotlight">
+        <div class="demo" id="tokenDemo">
           <div class="demo__head">
-            <span class="demo__title"><svg class="i"><use href="#i-eye"/></svg> Attention Spotlight</span>
-            <span class="scorepill" id="sPair">Pair 1 of 3</span>
+            <span class="demo__title"><svg class="i"><use href="#i-flask"/></svg> Watch it choose</span>
+            <div class="btnrow">
+              <button class="btn btn--ghost small" type="button" data-prompt="0" aria-pressed="true">Known fact</button>
+              <button class="btn btn--ghost small" type="button" data-prompt="1" aria-pressed="false">Invented fact</button>
+            </div>
           </div>
           <div class="demo__body">
-            <p class="small muted">Two versions of one sentence, one word apart. Decide what the pronoun refers to in each, then light up what the model would have to look at to get it right.</p>
-            <div class="sent" id="sSent"></div>
-            <div class="sswap" id="sSwap"></div>
-            <div class="btnrow">
-              <button class="btn btn--primary" type="button" id="sShow">Light up the connection <svg class="i"><use href="#i-zap"/></svg></button>
-              <button class="btn btn--ghost" type="button" id="sNext">Next pair</button>
-            </div>
-            <p class="sdis small muted">The weightings are a stylised illustration, not a live model read-out - a course that spends Module&nbsp;3 on verification does not get to fudge its own diagrams. The <em>behavior</em> is real: swap the word, and a real model&rsquo;s answer flips too. Try it in a chatbot afterwards.</p>
+            <p class="sentence" id="sentence"></p>
+            <div class="tokens" id="tokens"></div>
           </div>
-          <div class="demo__foot" id="sNote"></div>
+          <div class="demo__foot" id="tokenNote"><svg class="i"><use href="#i-arrow-right"/></svg> Click a continuation to extend the sentence.</div>
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">The part people miss</p>
+            <p>Both sentences were built the same way. The second one is <strong>fluent, formatted and completely invented</strong> - and the model&rsquo;s confidence in its tone is generated by the same process that generated the content. Confidence carries no information about truth.</p>
+          </div>
         </div>
       </div>
     </section>
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 6 &middot; Content</span>
       <div class="segment">
-        <h3><span class="segno">02</span> Attention: every word gets to look at every other word</h3>
+        <h3><span class="segno">02</span> Three conditions that make it likely</h3>
         <div class="prose">
-          <p>The fix is less exotic than the name suggests. Instead of looking at a fixed window of recent words, the model looks at <em>all</em> of them at once and learns how much weight to give each one. That weighting is called <b class='vt' data-v='attention'><i>attention</i></b>, and it is learned from data rather than written down by anyone.</p>
-          <p>So when the model is working on <em>it</em>, it is not restricted to the two words before. It can put most of its weight on <em>trophy</em>, some on <em>suitcase</em>, and a little on <em>big</em> - and when <em>big</em> becomes <em>small</em>, that weighting shifts. Nothing about the sentence's grammar changed. What changed is which earlier word the model leaned on.</p>
-          <p>This is also why these models handle a long document at all. Coherence over paragraphs is not a separate feature bolted on; it falls out of every position being able to see every other position.</p>
+          <p>Fabrication is not evenly distributed. It concentrates where the question is <strong>narrow and obscure</strong>, where the answer has a <strong>rigid format</strong> the model can imitate - case numbers, DOIs, statute sections, ISBNs - and where you have <strong>asked for a specific quantity</strong>. &ldquo;Give me five sources&rdquo; will get you five, whether or not five exist.</p>
         </div>
         
+        <div class="demo">
+          <div class="demo__head">
+            <span class="demo__title"><svg class="i"><use href="#i-eye"/></svg> Spot the risky claims</span>
+            <span class="scorepill" id="spotScore">0 / 3 found</span>
+          </div>
+          <div class="demo__body">
+            <p class="small muted">Sample output from a chat model, unedited. Click the three claims you would refuse to publish without checking.</p>
+            <p class="passage" id="passage">
+              <button class="claim" type="button" data-risk="low">Finger Lakes Community College was founded in 1965</button> and enrolls <button class="claim" type="button" data-risk="low">roughly 6,000 students</button> across its Canandaigua campus and <button class="claim" type="button" data-risk="low">three satellite centers</button>. Its Viticulture and Wine Technology program, <button class="claim" type="button" data-risk="high">established in 1998, is the oldest of its kind in New York State</button>, and <button class="claim" type="button" data-risk="high">a 2019 study in the Journal of Regional Education Policy</button> found that graduates <button class="claim" type="button" data-risk="high">earn 23% more within five years</button>.
+            </p>
+          </div>
+          <div class="demo__foot" id="spotNote"><svg class="i"><use href="#i-arrow-right"/></svg> Three of these are far riskier than the others.</div>
+        </div>
+
         <div class="callout">
-          <div class="icontile icontile--quiet"><svg class="i"><use href="#i-history"/></svg></div>
+          <div class="icontile"><svg class="i"><use href="#i-list-checks"/></svg></div>
           <div class="callout__body">
-            <p class="callout__label">Where this came from</p>
-            <p>The <b class='vt' data-v='transformer'><i>transformer</i></b> was introduced in a 2017 paper from a team at Google, with one of the better titles in the field: <em>Attention Is All You Need</em>. The claim in that title was that you could throw out the older sequence machinery entirely and keep only the attention part. It turned out to be right, and it is the T in GPT. Effectively every model you will touch this term is a transformer.</p>
+            <p class="callout__label">The routine</p>
+            <p><strong>1.</strong> Does the source exist? Search the title, not the claim. <strong>2.</strong> Does it say what the model said it says? <strong>3.</strong> Would you stake your name on it? If any answer is no, the claim does not ship.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="icontile"><svg class="i"><use href="#i-help"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">Two ways in</p>
+            <p>Suspicion is one trigger for that routine. <strong>Not recognizing something is the other</strong> - and it is the one that will serve you more often, because you cannot spot an error inside a thing you do not yet understand. When a name, a term or a tool goes past that you have never heard of, that is enough. Curiosity and suspicion arrive at the same three questions; curiosity just gets there earlier, and without needing you to already know the answer.</p>
           </div>
         </div>
       </div>
@@ -2186,12 +2230,12 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-video"/></svg> Beat 7 &middot; Video</span>
       <div class="video">
-        <div class="video__frame" role="button" tabindex="0" aria-label="Play: One sentence, one word changed, and the reason a two-word memory cannot cope.">
+        <div class="video__frame" role="button" tabindex="0" aria-label="Play: Making a model fabricate a citation on purpose - then watching it fold under one follow-up question.">
           <span class="video__play"><svg class="i"><use href="#i-play"/></svg></span>
         </div>
         <div class="video__meta">
-          <span class="video__job">Concept &middot; 3:00</span>
-          <span>One sentence, one word changed, and the reason a two-word memory cannot cope.</span>
+          <span class="video__job">Demo &middot; 2:40</span>
+          <span>Making a model fabricate a citation on purpose - then watching it fold under one follow-up question.</span>
         </div>
         <details class="disclosure">
           <summary>Transcript <svg class="i"><use href="#i-chevron-down"/></svg></summary>
@@ -2210,7 +2254,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           <div class="stack">
             <span class="eyebrow">Back to your prediction</span>
             <p id="callbackText" class="muted">-</p>
-            <p><strong>The trophy.</strong> About seven in ten people say so immediately, and they are right - a trophy too big for a suitcase is the only reading that makes sense.</p><p>What is worth noticing is what you did to get there. You connected <em>it</em> to a noun eight words earlier, and you used the last word of the sentence to decide which noun. You did not experience that as work.</p><p>If you answered &lsquo;genuinely ambiguous&rsquo;, you were being careful about something real - the sentence <em>is</em> ambiguous in its grammar. Resolving it takes knowledge about trophies and suitcases that no amount of grammar supplies. That is precisely the kind of thing attention learns from data.</p>
+            <p><strong>C was the one.</strong> No sabotage, no bad website, no glitch. The model produced six citation-shaped strings because a brief asking for six citations is followed, in every document it has ever seen, by six citations. It had no mechanism for noticing that these particular six were never written.</p><p><span class="small muted">If you picked B, you were reasoning about a tool that <em>does</em> exist - models with live retrieval. Knowing which one you are holding is Lesson 9.</span></p>
           </div>
         </div>
       </div>
@@ -2220,18 +2264,18 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <span class="beat__label"><svg class="i"><use href="#i-pencil"/></svg> Beat 9 &middot; Apply</span>
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-pencil"/></svg> Do this before the next lesson</span>
-        <h2>Break the distance</h2>
+        <h2>Break one on purpose</h2>
       </div>
       <div class="apply">
         <div class="steps">
-          <div class="step"><span>Write a sentence where a pronoun's meaning is decided by a word at least eight words away from it.</span></div>
-          <div class="step"><span>Write the twin: the same sentence with that one distant word changed so the pronoun now refers to something else.</span></div>
-          <div class="step"><span>Run both past a chatbot. Ask what the pronoun refers to, in a fresh conversation each time.</span></div>
-          <div class="step"><span>Report whether it got both right, and paste what it said. If it failed, that is a more interesting result - say what you think tripped it.</span></div>
+          <div class="step"><span>Pick a topic you already know well - your job, your major, a hobby with a real literature.</span></div>
+          <div class="step"><span>Ask a chat model with no web access for <strong>five sources</strong> on a narrow question inside it. Ask for author, title, year and where it appeared.</span></div>
+          <div class="step"><span>Check all five. Sort each into <em>real</em>, <em>real but misdescribed</em>, or <em>invented</em>.</span></div>
+          <div class="step"><span>Post your tally to the class knowledge base with one sentence on the pattern you noticed.</span></div>
         </div>
         <div class="deliverable">
           <svg class="i i--lg" style="color:var(--accent-text)"><use href="#i-upload"/></svg>
-          <span><strong>Deliverable:</strong> two sentences, two answers, one verdict.</span>
+          <span><strong>Deliverable:</strong> a five-row table plus one sentence.</span>
         </div>
       </div>
     </section>
@@ -2244,34 +2288,34 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <p>These enter the course item bank tonight and come back at you unannounced, weeks from now. Don&rsquo;t worry! This is the design, not a threat!</p>
       </div>
       <div class="recall" id="exit">
-        <div class="recallcard" data-answer="1">
-          <p class="recallcard__q">Attention lets a model&hellip;</p>
+        <div class="recallcard" data-answer="2">
+          <p class="recallcard__q">You need peer-reviewed sources on a narrow topic for a real assignment. What is the safest move?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">Look up facts in a database while generating</button>
-            <button class="answer" type="button" data-i="1">Weigh every word in the input at once when choosing the next one</button>
-            <button class="answer" type="button" data-i="2">Remember your previous conversations</button>
-            <button class="answer" type="button" data-i="3">Check its own answer before showing it to you</button>
+            <button class="answer" type="button" data-i="0">Ask a chat model and cite what it gives you</button>
+            <button class="answer" type="button" data-i="1">Ask a chat model, then ask it whether it is sure</button>
+            <button class="answer" type="button" data-i="2">Use a tool with live retrieval, then open every link yourself</button>
+            <button class="answer" type="button" data-i="3">Ask three different models and use what they agree on</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Weigh every word at once.</strong> Note the three wrong answers - each describes something people reasonably assume is happening and is not. None of them is part of the architecture.</span></div>
-          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 8 and 9</p>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Retrieval, then verify.</strong> Asking a model whether it is sure just generates more confident-sounding text. Three models agreeing means they share training data, not that the source exists.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 11 and 16</p>
         </div>
         <div class="recallcard" data-answer="1">
-          <p class="recallcard__q">The 2017 paper <em>Attention Is All You Need</em> introduced&hellip;</p>
+          <p class="recallcard__q">Which prompt is most likely to produce a fabricated answer?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">The first neural network</button>
-            <button class="answer" type="button" data-i="1">The transformer architecture</button>
-            <button class="answer" type="button" data-i="2">The first chatbot</button>
-            <button class="answer" type="button" data-i="3">The idea of training on internet text</button>
+            <button class="answer" type="button" data-i="0">&ldquo;Explain photosynthesis to a ninth grader.&rdquo;</button>
+            <button class="answer" type="button" data-i="1">&ldquo;List four 2021 studies on soil pH in the Finger Lakes, with DOIs.&rdquo;</button>
+            <button class="answer" type="button" data-i="2">&ldquo;Rewrite this paragraph in plain language.&rdquo;</button>
+            <button class="answer" type="button" data-i="3">&ldquo;What are some arguments against this position?&rdquo;</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>The transformer.</strong> Neural networks are decades older; chatbots are older too, and much worse. What 2017 changed was the architecture underneath - and everything you use runs on it.</span></div>
-          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 9 and 17</p>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>All three conditions at once:</strong> narrow and obscure, rigidly formatted, and a demanded quantity. This is the shape of a prompt that gets people in trouble.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 10 and 14</p>
         </div>
       </div>
     </section>
 
     <footer class="lessonfoot">
-      <span>CSC 150 &middot; AI Foundations &middot; Lesson 3 of 17</span>
-      <span class="row" style="gap:.4rem" id="lessonNext">Next: <a href="04-anatomy-of-a-prompt.html">Lesson 4 - Anatomy of a Prompt</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
+      <span>CSC 150 &middot; AI Foundations &middot; Lesson 8 of 17</span>
+      <span class="row" style="gap:.4rem" id="lessonNext"><span class="muted">Next: Lesson 9 - Models That Can Actually Look Things Up, coming soon</span></span>
     </footer>
 
   </div>
@@ -2707,10 +2751,14 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 </script>
 
 <script>
-var SURGERY=[{"add": null, "label": "The bare prompt", "prompt": "Write something about climate change.", "score": 8, "out": "Climate change refers to long-term shifts in temperatures and weather patterns. While some of these shifts are natural, since the 1800s human activities have been the main driver&hellip; <em>(continues for 600 generic words you have read a hundred times)<\/em>"}, {"add": "task", "label": "A real task", "prompt": "Explain why our town's solar project raised property taxes this year.", "score": 30, "out": "The increase is likely tied to the capital financing structure of the installation. Municipalities typically fund such projects through bonds, which are serviced by&hellip; <em>Better, but it is guessing at your town and hedging every sentence.<\/em>"}, {"add": "audience", "label": "+ audience", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.", "score": 52, "out": "You will have noticed a bigger number on your tax bill this year, and the solar array on the old landfill is part of the reason. Here is what happened, without the jargon&hellip; <em>The register changed completely.<\/em>"}, {"add": "format", "label": "+ format and length", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.", "score": 71, "out": "<strong>Why your tax bill went up<\/strong><br>You will have noticed a bigger number this year&hellip; <em>Now it stops at 150 words and has a headline, because you asked for a newsletter rather than an essay.<\/em>"}, {"add": "constraint", "label": "+ a hard constraint", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.", "score": 86, "out": "&hellip;the bond covering construction is repaid over twelve years, and this is the first year of that repayment. <em>The sales pitch is gone. Constraints remove things, which is often what you actually needed.<\/em>"}, {"add": "example", "label": "+ a worked example", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.\nMatch the tone of this paragraph from last issue: \"The water main on Chapel Street is being replaced. It is loud, it is inconvenient, and it will take until October.\"", "score": 100, "out": "The solar array is being paid for. It is on your bill, it starts this year, and it runs for twelve. <em>One example did more for the voice than four instructions did.<\/em>"}];
-var CUTOFF=[{"q": "What is photosynthesis?", "pos": 18, "kind": "ok", "t": "Answered, and reliably.", "d": "Settled knowledge that was written down long before the cutoff and has not changed since. This is the model at its best."}, {"q": "Who wrote <em>Middlemarch<\/em>?", "pos": 8, "kind": "ok", "t": "Answered, and reliably.", "d": "Same category. Old, stable, written about endlessly. Nothing about the cutoff threatens it."}, {"q": "What is 17 &times; 24?", "pos": 45, "kind": "warn", "t": "Nothing to do with the cutoff - and still a coin flip.", "d": "Arithmetic is not a knowledge problem, so the wall is irrelevant here. It fails for a different reason: the model is predicting the shape of an answer rather than calculating one. Lesson 2 explains why."}, {"q": "What is in the news today?", "pos": 88, "kind": "bad", "t": "Past the wall. Usually refuses - which is the good outcome.", "d": "Obviously post-cutoff, and models are generally trained to say so. A refusal here is the system working."}, {"q": "What is the current version of this software?", "pos": 79, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "This is the dangerous shape: a question that <em>sounds<\/em> like stable knowledge but has a moving answer. The model gives you the version that was current when it was trained, with no hedging at all, and you have no way to tell from the reply."}, {"q": "Who holds this office right now?", "pos": 84, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "Same trap. Roles feel permanent and are not. The reply will be confident and it will be whoever held the post during training."}];
-var NESTING=[{"n": "Spam filter", "r": 1, "why": "Nobody wrote a rule about wire transfers. It worked out what spam looks like from millions of labeled examples - and has been doing that since the late 1990s."}, {"n": "Chess engine", "r": 0, "why": "Searches millions of positions and scores them against rules a person wrote down. It beat the world champion in 1997 using almost nothing from the inner rings."}, {"n": "Spell-check", "r": 0, "why": "A dictionary and a set of edit rules. Genuinely AI by the original definition, and genuinely not learning anything. The oldest thing on this list."}, {"n": "Netflix &lsquo;because you watched&rsquo;", "r": 1, "why": "Predicts how likely you are to finish something, from what people like you finished. It predicts a number, not a paragraph - AI, and not generative."}, {"n": "Face unlock", "r": 2, "why": "A deep network built its own internal representation of your face. Nobody described your face to it in words, which is also why it cannot tell you what it is looking at."}, {"n": "A chatbot", "r": 3, "why": "The innermost ring: a language model predicting one token at a time. The newest thing here by a wide margin, and the reason you signed up."}, {"n": "Smart thermostat", "r": -1, "why": "If it switches on below a temperature you set, that is a rule somebody wrote into a thermostat. Automation, not AI. If it learns your schedule from your behavior, it moves into machine learning - and most of the ones sold as &lsquo;smart&rsquo; do not."}, {"n": "Handwriting recognition", "r": 2, "why": "Deep networks reading shapes, and one of the first places deep learning beat everything else. Your bank was using it before you had an account."}, {"n": "Self-driving car", "r": 2, "why": "Deep learning for perception, wrapped in a great deal of hand-written safety logic. Two rings at once - a useful reminder that real systems are rarely just one."}, {"n": "Machine translation", "r": 3, "why": "Modern translation runs on the same architecture as the chatbot. In fact that architecture was invented <em>for<\/em> translation, which is a clue about the lesson after next."}, {"n": "Loan approval model", "r": 1, "why": "Learns from historical lending decisions - including, if nobody checks, whose applications were historically refused. Lesson 10 is about exactly this."}, {"n": "Phone autocomplete", "r": 3, "why": "The same job as the chatbot, running very small and very fast: predict the next word. You have been using a language model for years without calling it one."}];
-var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "would", "not", "fit", "in", "the", "suitcase", "because", "it", "was", "too", "big", "."], "pro": 9, "ans": 1, "alt": 7, "why": "Too big for the suitcase - so <em>it<\/em> is the trophy. The pronoun sits eight words after the noun it points at, and the word that settles <em>which<\/em> noun comes three words later still."}, "b": {"swap": "small", "words": ["The", "trophy", "would", "not", "fit", "in", "the", "suitcase", "because", "it", "was", "too", "small", "."], "pro": 9, "ans": 7, "alt": 1, "why": "Too small to hold the trophy - so now <em>it<\/em> is the suitcase. One word changed. The pronoun did not move, the grammar did not move, and the meaning went somewhere else entirely."}}, {"id": "council", "a": {"swap": "feared", "words": ["The", "council", "refused", "the", "marchers", "a", "permit", "because", "they", "feared", "violence", "."], "pro": 8, "ans": 1, "alt": 4, "why": "The council did the fearing - <em>they<\/em> is the council."}, "b": {"swap": "advocated", "words": ["The", "council", "refused", "the", "marchers", "a", "permit", "because", "they", "advocated", "violence", "."], "pro": 8, "ans": 4, "alt": 1, "why": "Now the marchers are doing the advocating, so <em>they<\/em> flips to the marchers. Same eleven words, one verb different."}}, {"id": "delivery", "a": {"swap": "damaged", "words": ["I", "left", "the", "vase", "on", "the", "crate", "because", "it", "was", "damaged", "."], "pro": 8, "ans": 3, "alt": 6, "why": "A damaged vase gets left behind - <em>it<\/em> is the vase."}, "b": {"swap": "sturdy", "words": ["I", "left", "the", "vase", "on", "the", "crate", "because", "it", "was", "sturdy", "."], "pro": 8, "ans": 6, "alt": 3, "why": "A sturdy crate is a good place to put something - <em>it<\/em> is the crate. The last word of the sentence decides a word in the middle of it."}}];
+var CAPTURED=true;
+var AUTH="\n        <div class=\"authoring\">\n          <p><strong>Not captured yet.<\/strong> %s<\/p>\n          <p class=\"small\">This note is why <code>publish.py<\/code> will refuse to build\n          <code>publish/<\/code>. Set <code>CAPTURED = True<\/code> in\n          <code>build/module2.py<\/code> once the real output is pasted in.<\/p>\n        <\/div>";
+var DEFAULTS=[{"id": "openai", "n": "ChatGPT / OpenAI"}, {"id": "claude", "n": "Claude / Anthropic"}, {"id": "gemini", "n": "Gemini / Google"}, {"id": "copilot", "n": "Copilot / Microsoft"}, {"id": "other", "n": "Something else"}, {"id": "none", "n": "I don&rsquo;t have a default"}];
+var ARENA=[{"id": "creative", "kind": "A creative brief", "prompt": "Write a two-sentence tagline for a community college course that teaches people to use AI honestly. No exclamation marks.", "why": "There is no correct answer here, which is exactly why it is first. When nothing is checkable, you are rating tone - and tone is where brand expectation does most of its work.", "a": {"model": "mimo-v2.5-pro", "cheap": false, "text": "Learn to harness AI tools with integrity and transparency for your personal and professional projects. Build the skills to use technology responsibly and confidently in today's digital world."}, "b": {"model": "claude-opus-5-low", "cheap": false, "text": "Learn what AI can actually do — and say so out loud. This course teaches you to use the tools well, cite them plainly, and stand behind every word you turn in."}, "note": "The response from mimo-v2.5-pro did not sound as if it was AI generated whereas Claude's definitely was."}, {"id": "factual", "kind": "A factual lookup", "prompt": "How many federal holidays does the United States observe, and which one was added most recently?", "why": "This one has a right answer, and you can check it in about fifteen seconds. Notice whether that changes how you read the two responses - most people get stricter the moment a claim is checkable.", "a": {"model": "claude-opus-4-8-search", "cheap": false, "text": "The United States observes **11 federal holidays**. These are:\n\n1. New Year's Day (January 1)\n2. Birthday of Martin Luther King Jr. (third Monday in January)\n3. Washington's Birthday / Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\n**The most recently added** is **Juneteenth National Independence Day**, which commemorates the emancipation of enslaved African Americans. It was signed into law on June 17, 2021, becoming the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "b": {"model": "claude-sonnet-5-search", "cheap": false, "text": "The United States currently observes **11 federal holidays** per year, as designated by the U.S. Code (5 U.S.C. § 6103):\n\n1. New Year's Day (January 1)\n2. Martin Luther King Jr. Day (third Monday in January)\n3. Washington's Birthday/Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\nThe most recently added federal holiday is **Juneteenth National Independence Day**, which commemorates the end of slavery in the United States. President Biden signed it into law on June 17, 2021, making it the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "note": "They were almost identical. Sonnet offered just a bit more."}, {"id": "code", "kind": "A short code fix", "prompt": "What is wrong with this Python function, and how would you fix it?\n\ndef average(nums):\n    total = 0\n    for n in nums:\n        total += n\n    return total / len(nums)", "why": "A narrow technical task with one obvious fault and several reasonable fixes. This is the round where preferences most often split from the other two.", "a": {"model": "mistral-large-3", "cheap": false, "text": "The provided Python function `average(nums)` has a few potential issues that could lead to errors or unexpected behavior. Here are the problems and how to fix them:\n\n### 1. **No Handling of Empty Input List**\n   - If `nums` is an empty list (`[]`), the function will raise a `ZeroDivisionError` when it tries to divide by `len(nums)` (which is `0`).\n   - **Fix:** Add a check for an empty list and handle it appropriately (e.g., return `0`, `None`, or raise a custom exception).\n\n### 2. **No Type Checking**\n   - The function assumes `nums` is an iterable containing numbers (e.g., `int` or `float`). If `nums` contains non-numeric values (e.g., strings), it will raise a `TypeError`.\n   - **Fix:** Add type checking or error handling if needed (though Python is dynamically typed, so this is optional unless you want strict behavior).\n\n### 3. **No Handling of Non-Iterable Input**\n   - If `nums` is not an iterable (e.g., `nums = 5`), the function will raise a `TypeError` when it tries to iterate over it.\n   - **Fix:** Add a check to ensure `nums` is iterable (e.g., using `hasattr(nums, '__iter__')`).\n\n### Fixed Version\nHere’s an improved version of the function with these fixes:\n\n```python\ndef average(nums):\n    if not hasattr(nums, '__iter__'):\n        raise TypeError(\"Input must be an iterable (e.g., list, tuple)\")\n\n    if len(nums) == 0:\n        raise ValueError(\"Cannot compute average of an empty iterable\")\n\n    total = 0\n    for n in nums:\n        if not isinstance(n, (int, float)):\n            raise TypeError(\"All elements in the iterable must be numbers\")\n        total += n\n\n    return total / len(nums)\n```\n\n### Alternative (Simpler) Fix\nIf you don’t want to add strict type checking, you can just handle the empty list case:\n\n```python\ndef average(nums):\n    if not nums:  # Checks for empty list or None\n        return 0  # or raise ValueError(\"Empty list\")\n    return sum(nums) / len(nums)\n```\n\n### Key Improvements:\n1. Handles empty lists gracefully.\n2. Uses `sum(nums)` for cleaner code (though the original loop is fine).\n3. Optionally adds type checking for robustness.\n\n### Example Usage:\n```python\nprint(average([1, 2, 3, 4]))  # 2.5\nprint(average([]))            # Raises ValueError (or returns 0 in the simpler fix)\nprint(average(\"hello\"))       # Raises TypeError (in the strict version)\n```"}, "b": {"model": "minimax-m3", "cheap": false, "text": "The function has a few issues:\n\n1. **No handling for an empty list** — `len(nums)` would be 0, causing a `ZeroDivisionError`.\n2. **No type checking** — if a non-numeric value is passed, you'll get a `TypeError` at runtime rather than a clear error.\n3. **No documentation** — there's no docstring explaining what the function does, its parameters, or return value.\n\n## Fixed Version\n\n```python\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\n\n    Args:\n        nums (list[int | float]): A non-empty list of numbers.\n\n    Returns:\n        float: The average of the numbers.\n\n    Raises:\n        TypeError: If nums is not a list or contains non-numeric values.\n        ValueError: If nums is empty.\n    \"\"\"\n    if not isinstance(nums, list):\n        raise TypeError(\"Input must be a list.\")\n    if len(nums) == 0:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    if not all(isinstance(n, (int, float)) for n in nums):\n        raise TypeError(\"All elements must be numbers.\")\n\n    total = 0\n    for n in nums:\n        total += n\n    return total / len(nums)\n```\n\n## More Pythonic Alternative\n\nPython has a built-in `sum()` function, so the loop is unnecessary:\n\n```python\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\"\"\"\n    if not nums:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    return sum(nums) / len(nums)\n```\n\nOr even simpler, using `statistics.mean` (from the standard library):\n\n```python\nimport statistics\n\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\"\"\"\n    if not nums:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    return statistics.mean(nums)\n```\n\nThe simplest fix is to just add the empty-list check — the rest are quality-of-life improvements."}, "note": "mistrial-large-3 identified each problem and then immediately provided the solution. minimax-m3 stated all three problems at once and then, one-by-one, presented solutions."}];
+var FAULTS=[{"id": "long", "n": "Paragraphs, not one-liners", "why": "No length was ever specified, so it picked one."}, {"id": "preamble", "n": "Chatty preamble on every item", "why": "Nothing told it who was reading, so it wrote for a person who needed easing into it."}, {"id": "scores", "n": "Invented sentiment readings", "why": "You asked how the customer felt. It has no way to know that, so it produced a confident-sounding verdict - <em>frustrated, ignored<\/em>, <em>angry, distrustful<\/em> - from the wording of a complaint. It reads like a measurement and is not one."}];
+var TASK="Summarize each of these five customer complaints in a way my operations manager can scan, and tell me how the customer felt about it.";
+var MOVES=[{"id": "vague", "label": "&ldquo;Shorter, please.&rdquo;", "family": "Vague nudge", "resolves": [], "noise": true, "verdict": "Shorter than what, by how much? It guessed, and it guessed differently from you. Nothing was specified, so nothing was fixed - and there is now a second output in the thread that is still wrong."}, {"id": "constraint", "label": "&ldquo;One line each, twelve words maximum. No preamble.&rdquo;", "family": "Constraint", "resolves": ["long", "preamble"], "noise": false, "verdict": "Two faults gone in one move, because you named the format instead of asking for less of the wrong one. The sentiment readings are still there."}, {"id": "example", "label": "Paste one line written exactly the way you want it.", "family": "Worked example", "resolves": ["long", "preamble"], "noise": false, "verdict": "Same two faults gone, and it matched the register as well as the length - which no amount of describing would have done as reliably. The sentiment readings are still there."}, {"id": "negative", "label": "&ldquo;That&rsquo;s not what I asked for. Try again.&rdquo;", "family": "Pure negative", "resolves": [], "noise": true, "verdict": "You told it what you did not want and nothing about what you did. It rerolled. Worse: the thread now holds two outputs in the wrong format, and examples are the strongest signal you can put in a context window - you have just given it two of the wrong thing."}, {"id": "restart", "label": "Go back and fix the prompt, then start a fresh conversation.", "family": "Restart", "resolves": ["long", "preamble", "scores"], "noise": false, "verdict": "The only move that clears them, because the readings were never a fault in the answer - they were a fault in the question. &ldquo;Tell me how the customer felt&rdquo; asked for something the model has no way to know, so it produced something shaped like a finding. No follow-up removes an instruction that is still sitting in the thread."}];
+var BENCH_OUT={"start": {"text": "| # | Operations summary                                                                                                                   | Customer sentiment                  |\n| - | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |\n| 1 | **Late delivery + unreachable support:** Order arrived 3 days late; customer could not reach anyone by phone.                        | **Frustrated, ignored**             |\n| 2 | **Incorrect replacement part — repeat issue:** Wrong size sent for the second time.                                                  | **Annoyed, losing confidence**      |\n| 3 | **Duplicate website charge:** Customer was charged twice and had to resolve it through their bank.                                   | **Angry, distrustful**              |\n| 4 | **No repair timeline:** Staff were courteous but could not provide an estimated completion date.                                     | **Uncertain, frustrated**           |\n| 5 | **Last-minute appointment cancellation:** Appointment cancelled by text only 1 hour beforehand after customer had taken the day off. | **Very frustrated, inconvenienced** |\n"}, "long+preamble+scores|vague": {"text": "1. **Late order / no phone support** — Frustrated\n2. **Wrong part, twice** — Annoyed, losing trust\n3. **Charged twice** — Angry, distrustful\n4. **No repair ETA** — Frustrated, uncertain\n5. **Last-minute cancellation** — Very frustrated\n"}, "long+preamble+scores|constraint": {"text": "Late delivery, unreachable support — frustrated and ignored.\n\nWrong replacement twice — annoyed and losing confidence.\n\nDouble charge required bank dispute — angry and distrustful.\n\nPolite staff, unclear repair timeline — appreciative but frustrated.\n\nLast-minute cancellation wasted day off — angry and inconvenienced.\n"}, "long+preamble+scores|example": {"text": "1. Late delivery, no phone response; customer frustrated, wants a callback.\n2. Wrong replacement size again; customer annoyed, wants the correct part.\n3. Double charge required bank dispute; customer angry, wants billing corrected.\n4. No repair timeline provided; customer uncertain, wants a clear update.\n5. Last-minute appointment cancellation; customer angry, wants better notice.\n"}, "long+preamble+scores|negative": {"text": "1. Late delivery and unreachable support — frustrated.\n2. Repeated wrong-size replacement — angry.\n3. Duplicate charge requiring bank dispute — upset.\n4. No repair completion estimate — frustrated.\n5. Last-minute appointment cancellation — angry.\n"}, "long+preamble+scores|restart": {"text": "Late delivery; customer support unreachable by phone.\n\nWrong-size replacement part; repeat fulfillment error.\n\nDuplicate website charge forced customer to dispute with bank.\n\nPolite staff unable to provide repair completion timeline.\n\nLast-minute appointment cancellation after customer took day off.\n"}, "scores|vague": {"text": "Late order — frustrated.\n\nWrong part twice — annoyed.\n\nDouble charged — angry.\n\nNo repair timeline — uncertain.\n\nLate cancellation — furious.\n"}, "scores|constraint": {"text": "Late delivery; unreachable support; frustrated.\n\nWrong replacement again; annoyed.\n\nDouble charged; bank dispute; angry.\n\nNo repair timeline; uncertain.\n\nLast-minute cancellation; day wasted; furious.\n"}, "scores|example": {"text": "2. Wrong replacement again; customer annoyed, wants the correct part.\n3. Charged twice online; customer angry, wants the duplicate charge refunded.\n4. No repair timeline; customer frustrated, wants a clear completion date.\n5. Last-minute cancellation; customer upset, wants better notice and rescheduling.\n"}, "scores|negative": {"text": "Late delivery and unanswered calls; customer felt frustrated and ignored.\nWrong replacement twice; customer felt irritated and disappointed.\nDouble charge required bank dispute; customer felt angry and inconvenienced.\nNo repair timeline; customer felt uncertain and frustrated.\nLast-minute cancellation wasted day off; customer felt angry and disrespected.\n"}, "scores|restart": {"text": "Late delivery; customer couldn’t reach support by phone.\n\nWrong-size replacement part sent for the second time.\n\nWebsite double-charged customer, requiring a bank dispute.\n\nPolite staff couldn’t provide a repair completion date.\n\nAppointment cancelled one hour before after customer took day off.\n"}};
 
 (function () {
   "use strict";
@@ -2955,505 +3003,455 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
 })();
 
 
-/* Module 1 interactives. Loaded after lesson_core.js; each guards on its own
-   root element so one file can serve all three lessons. */
+/* Module 2 interactives. Loaded after lesson_core.js; each guards on its own
+   root element so one file can serve all three lessons.
+
+   Lesson 8's two panels were previously in build/lesson06_js.js alongside a
+   second copy of the gate, deck and exit-check logic. Only the panels moved
+   here; everything else is lesson_core.js's job and always was. */
 (function () {
   "use strict";
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function icon(n) { return '<svg class="i"><use href="#i-' + n + '"/></svg>'; }
-  function ws(s) { return esc(s).replace(/ /g, '<span class="tok__ws">·</span>'); }
-  /* .demo__foot lays its children out as a flex row, so note text has to arrive
-     as one element - otherwise every <strong> starts its own column. */
+  /* .demo__foot is a flex row, so note text has to arrive as one element -
+     otherwise every <strong> starts its own column. */
   function setNote(el, name, html) { el.innerHTML = icon(name) + "<span>" + html + "</span>"; }
 
-  /* -- L1 . Token Roulette --------------------------------------------------
-     A real (very small) next-word model built from the course's own prose by
-     build/corpus.py. Trigram where it offers a genuine choice, bigram otherwise,
-     so the chain runs as long as the learner keeps clicking. Temperature is
-     p^(1/T) renormalised - the same maths a real sampler uses. */
+  /* -- L6 . Class Arena -----------------------------------------------------
+     Three blind rounds over deliberately different task types. The learner
+     names a default before seeing anything, so the closing card can compare
+     what they said against how they actually voted.
+
+     That comparison replaces the class tally this panel was originally
+     specified with. The tally is gone course-wide, and it was the weaker
+     device anyway: it needed a populated section to mean anything, it was
+     sample data until one existed, and "you voted against your own favorite"
+     is a sharper finding than "44% of your classmates did". */
   (function () {
-    if (!document.getElementById("roulette")) return;
-    var START = "\u0002", END = "\u0003", SEP = "\u0001";
-    var elS = document.getElementById("rSentence"), elT = document.getElementById("rTokens"),
-        elN = document.getElementById("rNote"), elR = document.getElementById("rRolls"),
-        elO = document.getElementById("rOrder"),
-        temp = document.getElementById("temp"), tempOut = document.getElementById("rTemp");
-    var hist, built, done, T = 0.8, order = "", greedy = 0;
-    /* Real generators take a min_length parameter so a sample cannot stop after
-       four words. Same idea: end-of-sentence is held back until the sentence has
-       something to it, and the panel says so rather than hiding it. */
-    var MINLEN = 8;
-    /* Every table is capped at this many candidates, so the list has a known
-       tallest state to reserve room for. */
-    var MAXROWS = 8;
+    var root = document.getElementById("arena");
+    if (!root) return;
+    var elPre = document.getElementById("aPre"), elDef = document.getElementById("aDefault"),
+        elRound = document.getElementById("aRound"), elKind = document.getElementById("aKind"),
+        elPrompt = document.getElementById("aPrompt"), elPair = document.getElementById("aPair"),
+        elVote = document.getElementById("aVote"), elNextRow = document.getElementById("aNextRow"),
+        elNext = document.getElementById("aNext"), elSum = document.getElementById("aSum"),
+        elProg = document.getElementById("aProg"), elNote = document.getElementById("aNote");
+    var pick = null, ix = 0, votes = [];
 
-    /* Two things above the buttons can change height between steps: the
-       candidate list (fewer candidates = shorter row count, and none at all
-       once the walk ends) and the caption above the slider (which wraps to a
-       different number of lines depending on which table is in play). Both are
-       held at their tallest so "Let it pick" never moves out from under the
-       pointer.
-
-       pad() fills the candidate list out to MAXROWS with invisible rows.
-
-       primeOrder() hands the caption to Steady, which measures the longest
-       string it can produce and reserves that height. Steady re-measures when
-       the element's width actually changes and once the real typeface loads,
-       which is what makes an up-front measurement safe here: at load the panel
-       sits inside the gated region at the wrong width, and the fallback font
-       wraps a line short of the real one. */
-    function pad(el, from) {
-      for (var g = from; g < MAXROWS; g++) {
-        var ghost = document.createElement("span");
-        ghost.className = "token token--ghost";
-        ghost.setAttribute("aria-hidden", "true");
-        ghost.innerHTML = '<span class="token__word">&nbsp;</span>' +
-          '<span class="token__meter"></span><span class="token__pct">&nbsp;</span>';
-        el.appendChild(ghost);
-      }
-    }
-    var WORST = 'Looking at overall word frequency - nothing recorded follows ' +
-      'that word - <strong>8</strong> candidates, ranked by how often each ' +
-      'one followed in the training text. <span class="muted">End-of-sentence is ' +
-      'held back until ' + MINLEN + ' words - the same <em>min length</em> ' +
-      'setting real generators use.</span>';
-    /* The caption's longest possible state, primed once by Steady rather than
-       re-measured on every render. WORST is a real string it can produce. */
-    function primeOrder() {
-      Steady.prime(elO, 1, function () { elO.innerHTML = WORST; });
+    /* The "not captured yet" note is static markup emitted by module2.py,
+       because publish.py's guard greps the built file for the authoring class
+       and cannot see anything JavaScript injects at runtime. Do not name that
+       class in a comment either - comments are inlined into the page, and the
+       guard would then fire on every build forever. All this branch has to do
+       is stop the panel pretending to work. */
+    if (!CAPTURED) {
+      root.hidden = true;
+      return;
     }
 
-    function reset() { hist = [START, START]; built = []; done = false; greedy = 0; elR.innerHTML = ""; }
-
-    /* Drop end-of-sentence until MINLEN words are down. If that leaves nothing --
-       the corpus is small, so a word's only recorded continuation is sometimes
-       the end -- back off one more level to overall word frequency rather than
-       killing the walk. Trigram, then bigram, then unigram. */
-    function allowed(list, n) {
-      if (n >= MINLEN) return list;
-      var f = list.filter(function (o) { return o[0] !== END; });
-      if (f.length) return f;
-      order = "overall word frequency - nothing recorded follows that word";
-      return RMODEL.uni;
-    }
-
-    function raw(h) {
-      var k = h[h.length - 2] + SEP + h[h.length - 1];
-      if (RMODEL.tri[k]) { order = "the last two words"; return RMODEL.tri[k]; }
-      var b = RMODEL.bi[h[h.length - 1]];
-      if (b) { order = "the last word only"; return b; }
-      order = ""; return null;
-    }
-    function temper(list) {
-      var tot = list.reduce(function (a, o) { return a + o[1]; }, 0);
-      var w = list.map(function (o) { return Math.pow(o[1] / tot, 1 / T); });
-      var s = w.reduce(function (a, b) { return a + b; }, 0);
-      return list.map(function (o, i) { return [o[0], (w[i] / s) * 100]; });
-    }
-    function sample(list) {
-      var r = Math.random() * 100, acc = 0;
-      for (var i = 0; i < list.length; i++) { acc += list[i][1]; if (r <= acc) return list[i][0]; }
-      return list[list.length - 1][0];
-    }
-    function completeFrom(h) {
-      var loc = h.slice(), out = [], n = built.length;
-      for (var i = 0; i < 30; i++) {
-        var o = raw(loc); if (!o) break;
-        var pick = sample(temper(allowed(o, n + out.length)));
-        if (pick === END) break;
-        out.push(pick); loc.push(pick);
-      }
-      return out;
-    }
-    function step() {
-      var o = raw(hist); if (!o) { done = true; return; }
-      var pick = sample(temper(allowed(o, built.length)));
-      if (pick === END) { done = true; return; }
-      built.push(pick); hist.push(pick);
-    }
-
-    function render() {
-      elS.innerHTML = (built.length ? esc(built.join(" ")) : '<span class="muted">the sentence starts here</span>') +
-                      (done ? "" : ' <span class="cursor"></span>');
-      elT.innerHTML = "";
-      elT.className = "tokens";
-      elT.style.minHeight = "";
-      if (done) {
-        /* Measure the tallest the list ever gets, then hold that height with a
-           note in it, so the end of a walk neither yanks the buttons up the
-           page nor leaves an unexplained void. */
-        pad(elT, 0);
-        var tall = elT.getBoundingClientRect().height;
-        elT.className = "tokens tokens--end";
-        elT.innerHTML = '<div class="tokens__end">' + icon("check") +
-          "<b>End of sentence</b><span>End-of-sentence was the likeliest next token, so it stopped. That is <strong>" +
-          built.length + " word" + (built.length === 1 ? "" : "s") +
-          "</strong>, every one of them chosen exactly the same way.</span></div>";
-        elT.style.minHeight = tall + "px";
-        elO.textContent = "";
-        setNote(elN, "history", "Run it again. The sentence comes out different every time and nothing about the " +
-          "model has changed - only the roll. Move the temperature first and the difference gets larger.");
-        return;
-      }
-      var o = allowed(raw(hist), built.length);
-      if (!o) { done = true; render(); return; }
-      elO.innerHTML = "Looking at " + order + " - <strong>" + o.length +
-        "</strong> candidate" + (o.length === 1 ? "" : "s") +
-        ", ranked by how often each one followed in the training text." +
-        (built.length < MINLEN
-          ? ' <span class="muted">End-of-sentence is held back until ' + MINLEN +
-            " words - the same <em>min length</em> setting real generators use.</span>"
-          : "");
-      var ranked = temper(o);
-      ranked.forEach(function (t, ix) {
-        var b = document.createElement("button");
-        b.className = "token"; b.type = "button";
-        var label = t[0] === END ? '<em class="muted">end of sentence</em>' : ws(t[0]);
-        b.innerHTML = '<span class="token__word">' + label + "</span>" +
-          '<span class="token__meter"><i style="width:' + t[1].toFixed(1) + '%"></i></span>' +
-          '<span class="token__pct">' + t[1].toFixed(0) + "%</span>";
-        b.addEventListener("click", function () {
-          elR.innerHTML = "";
-          greedy = ix === 0 ? greedy + 1 : 0;
-          if (t[0] === END) { done = true; } else { built.push(t[0]); hist.push(t[0]); }
-          render();
-        });
-        elT.appendChild(b);
-      });
-      pad(elT, ranked.length);
-      if (greedy >= 4) {
-        setNote(elN, "lightbulb", "You have taken the top option " + greedy + " times running. That is " +
-          "<strong>greedy decoding</strong> - always the leader, never a gamble - and it is a real " +
-          "strategy with a real cost: it is repetitive, and it is what a temperature near zero gives you. " +
-          "Take a lower-ranked word and see where the sentence goes instead.");
-      } else {
-        setNote(elN, "arrow-right", built.length === 0
-          ? "Pick a word to begin, or let it pick for you. Keep going as long as you like - there is no fixed number of steps."
-          : "Keep going. Move the temperature slider and watch the same candidates redistribute - the words never change, only how strongly the leader is favored.");
-      }
-    }
-
-    ["input", "pointerdown", "keydown"].forEach(function (e) {
-      temp.addEventListener(e, function () {
-        T = parseInt(temp.value, 10) / 100;
-        tempOut.textContent = "Temperature " + T.toFixed(2);
+    DEFAULTS.forEach(function (d) {
+      var b = document.createElement("button");
+      b.className = "aopt"; b.type = "button"; b.innerHTML = d.n;
+      b.addEventListener("click", function () {
+        pick = d;
+        elPre.hidden = true; elRound.hidden = false;
         render();
       });
+      elDef.appendChild(b);
     });
-    document.getElementById("rStep").addEventListener("click", function () { elR.innerHTML = ""; step(); render(); });
-    document.getElementById("rFinish").addEventListener("click", function () {
-      elR.innerHTML = "";
-      var guard = 0;
-      while (!done && guard++ < 40) step();
-      done = true; render();
-    });
-    document.getElementById("rFive").addEventListener("click", function () {
-      var outs = [], seen = {};
-      for (var i = 0; i < 5; i++) outs.push(built.concat(completeFrom(hist)).join(" "));
-      outs.forEach(function (s) { seen[s] = 1; });
-      elR.innerHTML = outs.map(function (s, i) {
-        return '<div class="roll"><span class="roll__n">' + (i + 1) +
-               '</span><span class="roll__t">' + esc(s) + "</span></div>";
-      }).join("");
-      var distinct = Object.keys(seen).length;
-      setNote(elN, "lightbulb", "Five continuations from exactly the same starting point, at temperature " +
-        T.toFixed(2) + " - <strong>" + distinct + " of them different</strong>. " +
-        (distinct === 1
-          ? "At this setting it takes the safe option every time and repeats itself."
-          : "Nothing changed between the runs except which way the dice fell. That is the question at the top of this page, answered."));
-    });
-    document.getElementById("rReset").addEventListener("click", function () { reset(); render(); });
 
-    primeOrder();
-    reset(); render();
-    var st = RMODEL.stats;
-    var prov = document.createElement("p");
-    prov.className = "small muted";
-    prov.style.marginTop = ".6rem";
-    prov.innerHTML = "Built from <strong>" + st.sentences + " sentences</strong> (" +
-      st.words.toLocaleString() + " words, " + st.vocab.toLocaleString() +
-      " distinct) of this course's own writing. A real model has read a large fraction of everything ever published. " +
-      "That difference is why its sentences hold together over paragraphs and this one starts wandering after about a line " +
-      "- the mechanism is identical, the scale is not.";
-    document.querySelector("#roulette .demo__body").appendChild(prov);
-  })();
-
-  /* ── L2 · Prompt Surgery ───────────────────────────────────────────────── */
-  (function () {
-    if (!document.getElementById("surgery")) return;
-    var i = 0, polite = false;
-    var POLITE = "\nPlease do a really good job on this, thank you so much!";
-    var elPrompt = document.getElementById("sPrompt"), elOut = document.getElementById("sOut"),
-        elLabel  = document.getElementById("sLabel"),  elStep = document.getElementById("sStep"),
-        elBar    = document.getElementById("sBar"),    elScore = document.getElementById("sScore"),
-        elNote   = document.getElementById("sNote"),
-        bNext = document.getElementById("sNext"), bBack = document.getElementById("sBack"),
-        bPolite = document.getElementById("sPolite");
-
-    function render(changed) {
-      var s = SURGERY[i], prev = i > 0 ? SURGERY[i - 1].prompt : "";
-      var html = (i > 0 && s.prompt.indexOf(prev) === 0)
-        ? esc(prev) + '<span class="pbadd">' + esc(s.prompt.slice(prev.length)) + "</span>"
-        : esc(s.prompt);
-      if (polite) html += '<span class="pbadd">' + esc(POLITE) + "</span>";
-      elPrompt.innerHTML = html;
-      elOut.innerHTML = s.out;
-      elLabel.textContent = s.label;
-      elStep.textContent = "Step " + (i + 1) + " of " + SURGERY.length;
-      elBar.style.width = s.score + "%";
-      elScore.textContent = s.score + " / 100 specified";
-      bNext.disabled = i >= SURGERY.length - 1;
-      bBack.disabled = i === 0;
-      bNext.innerHTML = i >= SURGERY.length - 1
-        ? "That is all five components"
-        : 'Add the next piece <svg class="i"><use href="#i-arrow-right"/></svg>';
-
-      if (changed === "polite" && polite) {
-        setNote(elNote, "alert", "<strong>Nothing moved.</strong> Not the output, not the meter. Politeness adds " +
-          "words without adding information about what you want, and there are no feelings here to appeal to. " +
-          "It is not harmful. It is just not prompt engineering.");
-      } else if (i === SURGERY.length - 1) {
-        setNote(elNote, "check", "Every line in that prompt is doing a job. Note which step changed the output " +
-          "most: it was the worked example, and it was not close.");
-      } else {
-        setNote(elNote, "arrow-right", "Six clicks from useless to usable. Watch the output, not the meter.");
-      }
+    function side(r, k) {
+      var s = r[k];
+      return '<div class="acard" data-side="' + k + '">' +
+        '<p class="acard__lab">' + k.toUpperCase() + '</p>' +
+        '<div class="acard__body">' + esc(s.text).replace(/\n/g, "<br>") + "</div>" +
+        '<p class="acard__model" hidden></p></div>';
     }
-    bNext.addEventListener("click", function () { if (i < SURGERY.length - 1) { i++; render(); } });
-    bBack.addEventListener("click", function () { if (i > 0) { i--; render(); } });
-    bPolite.addEventListener("click", function () {
-      polite = !polite; bPolite.setAttribute("aria-pressed", String(polite)); render("polite");
-    });
-    /* .pbuild holds the prompt and the sample output, both of which change
-       length at every step; the buttons sit under it. Six states, all known,
-       so measure them all rather than growing into the tallest. */
-    Steady.prime(document.querySelector("#surgery .pbuild"), SURGERY.length, function (n) {
-      i = n; render();
-    });
-    i = 0;
-    render();
-  })();
 
-  /* ── L3 · The Cutoff Wall ──────────────────────────────────────────────── */
-  (function () {
-    if (!document.getElementById("wall")) return;
-    var axis = document.getElementById("wAxis"), qs = document.getElementById("wQs"),
-        verdict = document.getElementById("wVerdict"), count = document.getElementById("wCount"),
-        note = document.getElementById("wNote");
-    var placed = 0;
-
-    CUTOFF.forEach(function (item) {
-      var b = document.createElement("button");
-      b.className = "preset"; b.type = "button";
-      b.innerHTML = item.q;
-      b.addEventListener("click", function () {
-        if (b.disabled) return;
-        b.disabled = true; b.setAttribute("aria-pressed", "true");
-        var dot = document.createElement("span");
-        dot.className = "tl__dot" + (item.kind === "bad" ? " is-blind" : item.kind === "warn" ? " is-warn" : "");
-        dot.style.left = "50%";
-        dot.title = item.q.replace(/<[^>]+>/g, "");
-        axis.appendChild(dot);
-        window.setTimeout(function () { dot.style.left = item.pos + "%"; }, 20);
-        placed++;
-        count.textContent = placed + " of " + CUTOFF.length + " placed";
-        verdict.className = "verdict is-shown verdict--" +
-          (item.kind === "ok" ? "ok" : item.kind === "warn" ? "warn" : "bad");
-        verdict.innerHTML = '<div class="icontile">' +
-          icon(item.kind === "ok" ? "check" : item.kind === "warn" ? "help" : "alert") + "</div>" +
-          '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
-        if (placed === CUTOFF.length) {
-          setNote(note, "lightbulb", "All six placed. The two worth remembering are the ones sitting just past " +
-            "the wall that get answered anyway - the version number and the officeholder. Both <em>look</em> " +
-            "like stable facts, so nothing in the reply warns you. &ldquo;What is in the news today?&rdquo; is " +
-            "safer precisely because it sounds recent enough to trigger a refusal.");
-        } else {
-          setNote(note, "arrow-right", (CUTOFF.length - placed) + " to go.");
-        }
-      });
-      qs.appendChild(b);
-    });
-
-    /* The verdict panel is empty until the first placement and then a different
-       height for each of the six. Reserve the tallest so nothing below it moves. */
-    Steady.prime(verdict, CUTOFF.length, function (n) {
-      var item = CUTOFF[n];
-      verdict.className = "verdict is-shown";
-      verdict.innerHTML = '<div class="icontile">' + icon("check") + "</div>" +
-        '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
-    });
-    verdict.className = "verdict";
-    verdict.innerHTML = "";
-  })();
-
-  /* -- L1 . The Nesting Dolls ------------------------------------------------
-     One system at a time, five flat choices, and a static ring diagram beside
-     them that lights up as you go. Deliberately not drag-and-drop: nesting
-     rings are the wrong shape for a drop target on a phone, and the point is
-     the classification, not the dexterity. */
-  (function () {
-    if (!document.getElementById("nesting")) return;
-    var LABELS = [
-      {r: -1, t: "Not AI at all"},
-      {r: 0,  t: "Rules somebody wrote"},
-      {r: 1,  t: "Machine learning"},
-      {r: 2,  t: "Deep learning"},
-      {r: 3,  t: "Language models"}];
-    var elChip = document.getElementById("nChip"),
-        elOpts = document.getElementById("nOpts"),
-        elNote = document.getElementById("nNote"),
-        elProg = document.getElementById("nProg"),
-        elDone = document.getElementById("nPlaced"),
-        rings  = document.querySelectorAll(".nrings__r");
-    var i, answered, order;
-
-    function shuffle(a) {
-      for (var k = a.length - 1; k > 0; k--) {
-        var j = Math.floor(Math.random() * (k + 1)), t = a[k]; a[k] = a[j]; a[j] = t;
-      }
-      return a;
-    }
-    function reset() {
-      i = 0; answered = [];
-      order = shuffle(NESTING.map(function (_, ix) { return ix; }));
-      elDone.innerHTML = ""; render();
-    }
-    function lightRing(r) {
-      for (var k = 0; k < rings.length; k++)
-        rings[k].classList.toggle("is-lit", r >= 0 && k <= r);
-    }
     function render() {
-      var done = i >= order.length;
-      elProg.textContent = done ? "12 of 12" : (i + 1) + " of " + order.length;
-      if (done) {
-        elChip.innerHTML = '<span class="muted">That is all twelve.</span>';
-        elOpts.innerHTML = ""; lightRing(-1);
-        var right = answered.filter(function (a) { return a.ok; }).length;
-        setNote(elNote, "check", "<strong>" + right + " of 12.</strong> The count matters less than the spread: " +
-          "eight of these twelve are AI by any working definition, most are older than the chatbot, and " +
-          "only three live in the ring everyone means when they say the word.");
+      var r = ARENA[ix];
+      elProg.textContent = "Round " + (ix + 1) + " of " + ARENA.length;
+      elKind.innerHTML = r.kind;
+      elPrompt.textContent = r.prompt;
+      elPair.innerHTML = side(r, "a") + side(r, "b");
+      elVote.hidden = false; elNextRow.hidden = true;
+      setNote(elNote, "eye", r.why);
+    }
+
+    function reveal(v) {
+      var r = ARENA[ix];
+      votes.push({ round: r.id, vote: v, winner: v === "tie" ? null : r[v].model });
+      ["a", "b"].forEach(function (k) {
+        var card = elPair.querySelector('[data-side="' + k + '"]');
+        var lab = card.querySelector(".acard__model");
+        lab.hidden = false;
+        lab.innerHTML = esc(r[k].model) + (r[k].cheap ? " " + icon("zap") + " the cheaper of the two" : "");
+        if (v === k) card.classList.add("is-picked");
+      });
+      elVote.hidden = true; elNextRow.hidden = false;
+      setNote(elNote, "lightbulb", r.note);
+      elNext.textContent = ix === ARENA.length - 1 ? "See what you did" : "Next round";
+    }
+
+    elVote.addEventListener("click", function (e) {
+      /* data-vote, not data-v: the vocabulary popover owns data-v, and two
+         systems reading the same attribute on one page is a bug waiting for
+         somebody to add a class name. */
+      var b = e.target.closest("[data-vote]");
+      if (b) reveal(b.getAttribute("data-vote"));
+    });
+
+    elNext.addEventListener("click", function () {
+      if (ix < ARENA.length - 1) { ix++; render(); return; }
+      elRound.hidden = true; elSum.hidden = false; summary();
+    });
+
+    function summary() {
+      var picked = votes.filter(function (v) { return v.winner; })
+                        .map(function (v) { return v.winner; });
+      var uniq = picked.filter(function (m, i) { return picked.indexOf(m) === i; });
+      var swept = uniq.length === 1 && picked.length === ARENA.length;
+      var rows = votes.map(function (v, i) {
+        return '<tr><td>' + ARENA[i].kind + "</td><td>" +
+               (v.winner ? esc(v.winner) : "you called it a tie") + "</td></tr>";
+      }).join("");
+      var verdict = swept
+        ? "<strong>One model took all three.</strong> That happens, and it is worth "
+        + "noticing what it does <em>not</em> mean: three rounds is three rounds, and "
+        + "you rated fluency on at least one of them. Run the same three on your own "
+        + "work before you conclude anything."
+        : "<strong>No single model won all three.</strong> You have just produced the "
+        + "finding this lesson exists for, with your own hands: <em>best</em> is not "
+        + "something a model has. It is something a model has for a task.";
+      var mine = pick.id === "none"
+        ? "You said you had no default, which makes you an unusually clean test case."
+        : (picked.indexOf(pick.n.split(" / ")[0]) === -1 && picked.length
+            ? "You named <strong>" + pick.n + "</strong> as your default, and it did not "
+            + "win a single round with the label off. This is the ordinary result, and it "
+            + "is not an argument for switching - it is an argument for testing."
+            : "You named <strong>" + pick.n + "</strong> as your default. Check the table: "
+            + "how many of the three did it actually take?");
+      elSum.innerHTML = '<div class="callout"><div class="icontile">' + icon("check") +
+        '</div><div class="callout__body"><p class="callout__label">Three rounds, blind</p>' +
+        '<table class="atable"><tbody>' + rows + "</tbody></table><p>" + verdict +
+        "</p><p>" + mine + "</p></div></div>";
+      setNote(elNote, "history", "Your prediction is waiting for you a few beats down.");
+    }
+
+    /* Reachable states: the picker, then unvoted and revealed for each round,
+       then the summary. Measured rather than reasoned about - the two response
+       cards are the tallest thing on the page and they differ per round. */
+    Steady.prime(root.querySelector(".demo__body"), 2 + ARENA.length * 2, function (n) {
+      if (n === 0) { elPre.hidden = false; elRound.hidden = true; elSum.hidden = true; return; }
+      if (n === 1 + ARENA.length * 2) {
+        elPre.hidden = true; elRound.hidden = true; elSum.hidden = false;
+        elSum.innerHTML = '<div class="callout"><div class="icontile">' + icon("check") +
+          '</div><div class="callout__body"><p class="callout__label">Three rounds, blind</p>' +
+          '<table class="atable"><tbody><tr><td>A creative brief</td><td>&nbsp;</td></tr>' +
+          '<tr><td>A factual lookup</td><td>&nbsp;</td></tr><tr><td>A short code fix</td>' +
+          '<td>&nbsp;</td></tr></tbody></table><p>&nbsp;</p><p>&nbsp;</p></div></div>';
         return;
       }
-      var item = NESTING[order[i]];
-      elChip.innerHTML = item.n;
-      elOpts.innerHTML = "";
-      LABELS.forEach(function (L) {
-        var b = document.createElement("button");
-        b.className = "nopt"; b.type = "button"; b.textContent = L.t;
-        b.addEventListener("click", function () { choose(item, L.r, b); });
-        elOpts.appendChild(b);
-      });
-      lightRing(-1);
-      setNote(elNote, "arrow-right", i === 0
-        ? "Pick the narrowest ring that still contains it. A wrong answer here is worth more than a right one."
-        : "Keep going. Some of these are older than you would guess.");
-    }
-    function choose(item, r, btn) {
-      var ok = r === item.r;
-      lightRing(item.r);
-      [].forEach.call(elOpts.children, function (c) { c.disabled = true; });
-      btn.classList.add(ok ? "is-right" : "is-wrong");
-      if (!ok) {
-        var want = LABELS.filter(function (L) { return L.r === item.r; })[0];
-        [].forEach.call(elOpts.children, function (c) {
-          if (c.textContent === want.t) c.classList.add("is-right");
-        });
+      elPre.hidden = true; elSum.hidden = true; elRound.hidden = false;
+      ix = Math.floor((n - 1) / 2); render();
+      if ((n - 1) % 2) { elVote.hidden = true; elNextRow.hidden = false; }
+    }, function saveArena() {
+      return { pick: pick, ix: ix, votes: votes.slice() };
+    }, function restoreArena(snap) {
+      /* Runs after every measurement pass, including the one the prediction
+         gate triggers when it finally gives this panel a real width. Measuring
+         drives the same variables clicking does, so the snapshot is what puts
+         the learner back where they were. */
+      pick = snap.pick; ix = snap.ix; votes = snap.votes.slice();
+      if (!pick) {
+        elPre.hidden = false; elRound.hidden = true; elSum.hidden = true;
+        elVote.hidden = false; elNextRow.hidden = true;
+        return;
       }
-      answered.push({n: item.n, ok: ok});
-      var row = document.createElement("span");
-      row.className = "nplaced__i " + (ok ? "is-right" : "is-wrong");
-      row.innerHTML = icon(ok ? "check" : "x") + "<span>" + item.n + "</span>";
-      elDone.appendChild(row);
-      setNote(elNote, ok ? "check" : "lightbulb", item.why);
-      setTimeout(function () { i++; render(); }, ok ? 1500 : 3200);
-    }
-    document.getElementById("nSkip").addEventListener("click", function () {
-      var item = NESTING[order[i]];
-      if (!item) return;
-      lightRing(item.r);
-      setNote(elNote, "lightbulb", item.why);
-      answered.push({n: item.n, ok: false});
-      setTimeout(function () { i++; render(); }, 2600);
+      elPre.hidden = true;
+      if (votes.length >= ARENA.length) {
+        elRound.hidden = true; elSum.hidden = false; summary();
+        return;
+      }
+      elSum.hidden = true; elRound.hidden = false;
+      render();
+      /* A vote already cast for this round means the reveal is showing. Replay
+         it rather than re-pushing, so votes does not grow on every resize. */
+      if (votes.length > ix) {
+        var v = votes[ix].vote; votes.pop(); reveal(v);
+      }
     });
-    document.getElementById("nReset").addEventListener("click", reset);
-    reset();
-    /* The system name wraps to two lines for the longer ones, which moved the
-       options and the buttons under them. Twelve known states. */
-    Steady.prime(document.querySelector("#nesting .nrow"), NESTING.length, function (n) {
-      elChip.innerHTML = NESTING[n].n;
-    });
-    render();
+    ix = 0; votes = []; elPre.hidden = false; elRound.hidden = true; elSum.hidden = true;
   })();
 
-  /* -- L3 . Attention Spotlight ----------------------------------------------
-     Two versions of one sentence, one word apart, and the referent flips. The
-     arc weights are authored rather than measured and the panel says so; the
-     behavior they illustrate is real and the Apply task has the learner check
-     it against an actual model. */
+  /* -- L7 . Repair Bench ----------------------------------------------------
+     A state machine over faults, not a tree over turns. Each move either clears
+     faults, fails to, or adds noise, so the reachable states stay few enough
+     that every output on screen can be a real captured one.
+
+     The design turns on `scores` being unreachable from inside the thread: the
+     original prompt asked for something the model cannot measure, that
+     instruction is re-read on every turn, and no follow-up deletes it. Restart
+     is therefore the correct move rather than the consolation prize.
+
+     Scored against the best possible path, not a class median - which is both
+     better teaching and one less piece of sample data pretending to be real. */
   (function () {
-    if (!document.getElementById("spotlight")) return;
-    var elS = document.getElementById("sSent"),
-        elW = document.getElementById("sSwap"),
-        elN = document.getElementById("sNote"),
-        elP = document.getElementById("sPair");
-    var pair = 0, side = "a", lit = false;
+    var root = document.getElementById("bench");
+    if (!root) return;
+    var elPrompt = document.getElementById("bPrompt"), elOut = document.getElementById("bOut"),
+        elMoves = document.getElementById("bMoves"), elWhen = document.getElementById("bWhen"),
+        elTurn = document.getElementById("bTurn"), elsTurn = document.getElementById("bsTurn"),
+        elCtx = document.getElementById("bsCtx"), elBad = document.getElementById("bsBad"),
+        elFaults = document.getElementById("bFaults"), elFlag = document.getElementById("bFlag"),
+        elDone = document.getElementById("bDone"), elReset = document.getElementById("bReset"),
+        elNote = document.getElementById("bNote");
+    var open, turn, bad, ctx, history, prompt;
+    var BEST = 2; /* clean the format, then diagnose the prompt and restart. */
+
+    if (!CAPTURED) { root.hidden = true; return; }
+
+    /* Captures are keyed by the state the thread was in AND the move made from
+       it, because those two together are what produced the output. Keying on
+       the resulting fault set alone would replay one text for two different
+       moves, which is the sort of shortcut this panel exists not to take. */
+    function state() { return open.slice().sort().join("+") || "clean"; }
+    var lastKey = "start";
+
+    function reset() {
+      open = FAULTS.map(function (f) { return f.id; });
+      turn = 1; bad = 1; ctx = 180; history = []; prompt = TASK;
+      lastKey = "start";
+      elDone.hidden = true;
+      render();
+      setNote(elNote, "arrow-right", "Three faults, four follow-ups and a restart. One of the three will not move.");
+    }
 
     function render() {
-      var P = SPOT[pair], V = P[side];
-      elP.textContent = "Pair " + (pair + 1) + " of " + SPOT.length;
-      elS.innerHTML = "";
-      V.words.forEach(function (w, ix) {
-        var sp = document.createElement("span");
-        sp.className = "sw";
-        if (ix === V.pro) sp.className += " sw--pro";
-        if (lit && ix === V.ans) sp.className += " sw--ans";
-        if (lit && ix === V.alt) sp.className += " sw--alt";
-        if (w === V.swap) sp.className += " sw--swap";
-        sp.textContent = (/^[.,;]$/.test(w) ? "" : " ") + w;
-        elS.appendChild(sp);
-      });
-      elW.innerHTML = "";
-      ["a", "b"].forEach(function (k) {
-        var b = document.createElement("button");
-        b.className = "sswap__b" + (k === side ? " is-on" : "");
-        b.type = "button";
-        b.innerHTML = "&hellip;too <b>" + P[k].swap + "</b>";
-        if (P.id === "council") b.innerHTML = "&hellip;they <b>" + P[k].swap + "</b>&hellip;";
-        if (P.id === "delivery") b.innerHTML = "&hellip;it was <b>" + P[k].swap + "</b>";
-        b.addEventListener("click", function () { side = k; render(); });
-        elW.appendChild(b);
-      });
-      if (lit) {
-        setNote(elN, "zap", V.why + " <em>The highlighted word is the link the model has to make; " +
-          "the grayed one is the reading it has to rule out.</em>");
-      } else {
-        setNote(elN, "arrow-right", "Flip between the two versions and watch the meaning move. " +
-          "Then light up the connection.");
+      elPrompt.textContent = prompt;
+      elTurn.textContent = "Turn " + turn;
+      elsTurn.textContent = turn;
+      elCtx.textContent = "~" + ctx + " tokens";
+      elBad.textContent = bad;
+      elWhen.innerHTML = turn === 1 ? "" : "&middot; after " + (turn - 1) + (turn === 2 ? " move" : " moves");
+      elOut.innerHTML = (BENCH_OUT[lastKey] || {}).text || "";
+      elFaults.innerHTML = FAULTS.map(function (f) {
+        var live = open.indexOf(f.id) > -1;
+        return '<li class="' + (live ? "is-live" : "is-fixed") + '">' +
+          icon(live ? "x" : "check") + "<span><strong>" + f.n + "</strong>" +
+          (live ? "<br><span class='small muted'>" + f.why + "</span>" : "") + "</span></li>";
+      }).join("");
+      elFlag.hidden = bad < 2;
+      if (bad >= 2) {
+        elFlag.innerHTML = icon("alert") + " The thread now holds <strong>" + bad +
+          " outputs in the format you do not want</strong>. Last lesson you learned an " +
+          "example is the strongest thing you can put in a prompt. You have just put in two.";
       }
+      elMoves.innerHTML = "";
+      MOVES.forEach(function (m) {
+        var b = document.createElement("button");
+        b.className = "bmove"; b.type = "button";
+        b.innerHTML = '<span class="bmove__fam">' + m.family + "</span>" +
+                      '<span class="bmove__lab">' + m.label + "</span>";
+        b.addEventListener("click", function () { apply(m); });
+        elMoves.appendChild(b);
+      });
     }
-    document.getElementById("sShow").addEventListener("click", function () {
-      lit = !lit;
-      this.innerHTML = lit
-        ? 'Hide the connection <svg class="i"><use href="#i-eye"/></svg>'
-        : 'Light up the connection <svg class="i"><use href="#i-zap"/></svg>';
+
+    function apply(m) {
+      history.push(m);
+      lastKey = state() + "|" + m.id;
+      if (m.id === "restart") {
+        prompt = TASK.replace(", and tell me how the customer felt about it",
+                              ". One line each, twelve words maximum, no preamble");
+        open = []; bad = 0; ctx = 180;
+      } else {
+        m.resolves.forEach(function (f) {
+          var i = open.indexOf(f); if (i > -1) open.splice(i, 1);
+        });
+        if (m.noise) bad++;
+        ctx += 140;
+      }
+      turn++;
+      render();
+      setNote(elNote, m.resolves.length ? "check" : "alert", m.verdict);
+      if (!open.length) finish();
+    }
+
+    function finish() {
+      var used = history.length;
+      var missed = history.some(function (m) { return m.noise; });
+      elDone.hidden = false;
+      elDone.innerHTML = '<div class="callout"><div class="icontile">' + icon("check") +
+        '</div><div class="callout__body"><p class="callout__label">Fixed in ' + used +
+        (used === 1 ? " move" : " moves") + "</p>" +
+        "<p>The shortest honest path is <strong>" + BEST + "</strong>: one move that names the " +
+        "format, then the recognition that the scores were never going to come out of a " +
+        "thread that keeps asking for them." +
+        (used <= BEST ? " You found it." : "") + "</p>" +
+        (missed ? "<p>You spent at least one turn on a move that specified nothing - a " +
+          "vague nudge or a flat rejection. Both leave a wrong answer in the thread and " +
+          "add no information about the right one. That is the expensive kind of turn.</p>" : "") +
+        "<p>And notice what actually cleared the scores. Not a firmer instruction. Editing " +
+        "the question.</p></div></div>";
+    }
+
+    elReset.addEventListener("click", reset);
+
+    /* Every reachable fault set, times every move, is the state space. Prime
+       over the fault sets - the output block and the fault list are what change
+       height, and the tallest output is the one that still has all three. */
+    /* Every capture is a reachable state, so measuring all of them measures
+       the panel. The fault list and the output block are what change height. */
+    var KEYS = Object.keys(BENCH_OUT);
+    /* reset() before prime, not after. prime takes its snapshot on the way in,
+       and these state variables are declared without values - snapshotting them
+       first threw on .slice() and took the rest of this panel's setup with it,
+       leaving the chrome on screen with every section empty. */
+    reset();
+    Steady.prime(root.querySelector(".brow"), KEYS.length || 1, function (n) {
+      var k = KEYS[n];
+      if (!k) return;
+      lastKey = k;
+      var st = k.split("|")[0];
+      open = (st === "clean" || st === "start") ? [] : st.split("+");
+      turn = 1 + (3 - open.length); bad = 2; ctx = 600;
+      render();
+    }, function saveBench() {
+      return { open: (open || []).slice(), turn: turn, bad: bad, ctx: ctx,
+               history: (history || []).slice(), prompt: prompt, lastKey: lastKey };
+    }, function restoreBench(snap) {
+      open = (snap.open || []).slice(); turn = snap.turn; bad = snap.bad;
+      ctx = snap.ctx; history = (snap.history || []).slice();
+      prompt = snap.prompt; lastKey = snap.lastKey;
       render();
     });
-    document.getElementById("sNext").addEventListener("click", function () {
-      pair = (pair + 1) % SPOT.length; side = "a"; render();
-    });
-    /* Three pairs, two sides each, and the sentences differ in length enough to
-       wrap differently. Six states, all reachable, so measure all six. */
-    Steady.prime(elS, SPOT.length * 2, function (n) {
-      pair = Math.floor(n / 2); side = n % 2 ? "b" : "a"; render();
-    });
-    /* The two swap buttons carry the pair's own wording - "...too big" against
-       "...they advocated..." - so the row wraps to two lines on some pairs and
-       one on others, which moved the buttons underneath it. */
-    Steady.prime(elW, SPOT.length, function (n) { pair = n; render(); });
-    pair = 0; side = "a"; lit = false;
-    render();
   })();
 
+  /* -- L8 . Watch it choose -------------------------------------------------
+     Moved verbatim from build/lesson06_js.js. Same two prompts, same numbers,
+     same priming argument - only its neighbours changed. */
+  (function () {
+    if (!document.getElementById("tokenDemo")) return;
+    var PROMPTS = [
+      {
+        stem: "The capital of Australia is",
+        steps: [
+          [["Canberra", 71], ["Sydney", 19], ["Melbourne", 7], ["Perth", 3]],
+          [[", a", 44], [".", 38], [", which", 12], [", not", 6]]
+        ],
+        note: "Common knowledge. The distribution is sharp - one continuation dominates because the pattern is everywhere in the training text."
+      },
+      {
+        stem: "In Hargrove v. Delacroix (2019), the Nebraska Supreme Court held that",
+        steps: [
+          [["the", 41], ["a", 27], ["state", 19], ["municipal", 13]],
+          [["statute", 36], ["defendant", 31], ["district", 20], ["plaintiff", 13]]
+        ],
+        note: "There is no such case. The distribution is flatter, but the machinery is identical - and it will still hand you a fluent, well-formatted holding."
+      }
+    ];
+    var promptIx = 0, stepIx = 0, built = "";
+    var sentenceEl = document.getElementById("sentence");
+    var tokensEl = document.getElementById("tokens");
+    var noteEl = document.getElementById("tokenNote");
+
+    function renderTokens() {
+      var p = PROMPTS[promptIx];
+      sentenceEl.innerHTML = esc(p.stem + built) + (stepIx < p.steps.length ? ' <span class="cursor"></span>' : "");
+      tokensEl.innerHTML = "";
+      if (stepIx >= p.steps.length) {
+        setNote(noteEl, "lightbulb", p.note);
+        var again = document.createElement("button");
+        again.className = "btn btn--ghost";
+        again.type = "button";
+        again.textContent = "Run it again";
+        again.addEventListener("click", function () { stepIx = 0; built = ""; renderTokens(); });
+        tokensEl.appendChild(again);
+        return;
+      }
+      p.steps[stepIx].forEach(function (t) {
+        var b = document.createElement("button");
+        b.className = "token";
+        b.type = "button";
+        b.innerHTML = '<span class="token__word">' + esc(t[0]) + "</span>" +
+                      '<span class="token__meter"><i style="width:' + t[1] + '%"></i></span>' +
+                      '<span class="token__pct">' + t[1] + "%</span>";
+        b.addEventListener("click", function () {
+          built += (t[0].charAt(0) === "," || t[0].charAt(0) === "." ? "" : " ") + t[0];
+          stepIx++;
+          renderTokens();
+        });
+        tokensEl.appendChild(b);
+      });
+      setNote(noteEl, "arrow-right", "Click a continuation to extend the sentence.");
+    }
+
+    Array.prototype.slice.call(document.querySelectorAll("#tokenDemo [data-prompt]")).forEach(function (b) {
+      b.addEventListener("click", function () {
+        Array.prototype.slice.call(document.querySelectorAll("#tokenDemo [data-prompt]")).forEach(function (o) {
+          o.setAttribute("aria-pressed", "false");
+        });
+        b.setAttribute("aria-pressed", "true");
+        promptIx = parseInt(b.getAttribute("data-prompt"), 10);
+        stepIx = 0; built = "";
+        renderTokens();
+      });
+    });
+
+    /* Sentence and candidate list both grow as the walk proceeds, and the
+       closing note appears at the end of each prompt. Every reachable state is
+       a (prompt, step) pair, so measure them all rather than growing into the
+       tallest under the reader. A step is a list of [word, percent] candidates,
+       not a chosen word, so the worst case for height is the longest candidate
+       at every step - that is the sentence that wraps furthest. */
+    (function primeTokens() {
+      var states = [];
+      PROMPTS.forEach(function (pr, pi) {
+        for (var k = 0; k <= pr.steps.length; k++) states.push([pi, k]);
+      });
+      var keepP = promptIx, keepS = stepIx, keepB = built;
+      Steady.prime(document.querySelector("#tokenDemo .demo__body"), states.length,
+        function (n) {
+          var pi = states[n][0], k = states[n][1], pr = PROMPTS[pi];
+          var longest = "";
+          for (var q = 0; q < k; q++) {
+            var best = "";
+            pr.steps[q].forEach(function (c) { if (c[0].length > best.length) best = c[0]; });
+            longest += best;
+          }
+          promptIx = pi; stepIx = k; built = longest;
+          renderTokens();
+        });
+      promptIx = keepP; stepIx = keepS; built = keepB;
+      renderTokens();
+    })();
+  })();
+
+  /* -- L8 . Spot the risky claims ------------------------------------------- */
+  (function () {
+    var scoreEl = document.getElementById("spotScore");
+    if (!scoreEl) return;
+    var found = 0;
+    var spotNote = document.getElementById("spotNote");
+    Array.prototype.slice.call(document.querySelectorAll(".claim")).forEach(function (c) {
+      c.addEventListener("click", function () {
+        if (c.classList.contains("is-hit") || c.classList.contains("is-miss")) return;
+        if (c.getAttribute("data-risk") === "high") { c.classList.add("is-hit"); found++; }
+        else { c.classList.add("is-miss"); }
+        scoreEl.textContent = found + " / 3 found";
+        if (found === 3) {
+          setNote(spotNote, "check", "A named journal, a superlative with a date, and a precise " +
+            "statistic hanging off that journal. The journal does not exist - and once it does " +
+            "not, the 23% goes with it.");
+        } else {
+          setNote(spotNote, "eye", c.getAttribute("data-risk") === "high"
+            ? "Yes - specific, formatted, and hard to check at a glance."
+            : "Verifiable in one search, and hedged. Lower risk, though still worth confirming.");
+        }
+      });
+    });
+  })();
 })();
 
 var VOCAB={"artificial-intelligence-ai":{"t":"Artificial intelligence (AI)","l":1,"d":"The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.","w":"The broadest word on this list and the least useful on its own - always ask which kind.","s":"artificial-intelligence-ai","e":["A 1997 chess computer, a spam filter, and a chatbot are all AI. Only one of them writes you a paragraph."]},"machine-learning":{"t":"Machine learning","l":1,"d":"Systems that derive their behavior from data rather than from rules a person wrote out.","w":"The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.","s":"machine-learning","e":["Nobody wrote a rule saying <em>emails containing &lsquo;wire transfer urgently&rsquo; are spam<\/em>. The filter derived that from a few million examples."]},"deep-learning":{"t":"Deep learning","l":1,"d":"Machine learning built on neural networks with many layers. The inner ring where language models live.","w":"Explains why these systems are hard to inspect - nobody wrote the intermediate steps.","s":"deep-learning","e":["Face unlock on your phone. Nobody described your face to it in words - it built its own internal representation and cannot explain it back to you."]},"neural-network":{"t":"Neural network","l":1,"d":"A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.","w":"The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.","s":"neural-network","e":["The idea dates to the 1950s. What changed was not the concept but the amount of data and computing power available to train one."]},"narrow-ai":{"t":"Narrow AI","l":1,"d":"A system good at one bounded task and useless outside it. Every tool in this course.","w":"Cuts through most of the hype in one move.","s":"narrow-ai","e":["A model that writes a decent cover letter cannot book you a dentist appointment, and is not almost able to."]},"general-ai-agi":{"t":"General AI (AGI)","l":1,"d":"A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.","w":"Worth naming precisely so you can tell when a headline is describing something else.","s":"general-ai-agi","e":["Not a product you can buy, a milestone anyone has demonstrated, or a thing this course teaches you to use."]},"generative-ai":{"t":"Generative AI","l":1,"d":"The branch that produces new text, images or audio rather than sorting or scoring existing things.","w":"Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.","s":"generative-ai","e":["Generative: a chatbot writing a paragraph, an image model drawing a poster."]},"ai-winter":{"t":"AI winter","l":1,"d":"One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.","w":"The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.","s":"ai-winter","e":["<strong>The first, roughly 1974 to 1980.<\/strong> A decade of confident promises about machine translation and general problem solving had not arrived. Britain&rsquo;s Lighthill report in 1973 concluded the field had not delivered on any of it, and funding was cut sharply on both sides of the Atlantic."]},"attention":{"t":"Attention","l":3,"d":"The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.","w":"The answer to why the token machine wandered and current models do not.","s":"attention","e":["In <em>the trophy would not fit in the suitcase because it was too big<\/em>, attention is what lets the model connect <em>it<\/em> back to <em>trophy<\/em> rather than to the nearer word."]},"transformer":{"t":"Transformer","l":3,"d":"The architecture built on attention, introduced in 2017. Effectively every model in this course is one.","w":"The single piece of architecture worth knowing by name - the T in GPT.","s":"transformer","e":["Introduced in <em>Attention Is All You Need<\/em>, a 2017 paper from a team at Google."]},"context-long-range":{"t":"Context (long-range)","l":3,"d":"Material far from the current word that still determines its meaning.","w":"What a two-word memory cannot hold and attention can - and why paragraphs hold together now.","s":"context-long-range","e":["A pronoun in the last line of a paragraph whose meaning was fixed in the first line."]},"token":{"t":"Token","l":2,"d":"The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.","w":"Cost, speed and context limits are all measured in tokens, never in words.","s":"token","e":["&ldquo;Unbelievable&rdquo; is three tokens. &ldquo;Cat&rdquo; is one. A rare surname might be five."]},"large-language-model-llm":{"t":"Large language model (LLM)","l":2,"d":"A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.","w":"If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.","s":"large-language-model-llm","e":["ChatGPT, Claude and Gemini are products; the LLM is the thing underneath doing the predicting."]},"training":{"t":"Training","l":2,"d":"The one-time process of building the model by having it predict text over and over across a huge corpus. It finished before you ever typed anything.","w":"The model is not learning from your conversation, whatever it sounds like.","s":"training","e":["It finished before you opened the tab. Nothing you type today changes the model - though it may be stored and used in a <em>later<\/em> training run, which is what Lesson 15 is about."]},"inference":{"t":"Inference","l":2,"d":"What happens when you press enter: the finished model generating one token at a time.","w":"Explains why the identical prompt can come back different twice in a row.","s":"inference","e":["The pause after you press enter is inference: the finished model producing one token, then the next, then the next."]},"temperature":{"t":"Temperature","l":2,"d":"A setting controlling how strongly the model favors the single most likely next token over a less likely one.","w":"Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.","s":"temperature","e":["Token Roulette&rsquo;s slider is this setting, exposed. Most chat tools hide it and pick a middling value for you."]},"parameters":{"t":"Parameters","l":2,"d":"The numbers inside the model that training adjusted. Sizes are quoted in billions of them.","w":"The number marketing leans on hardest, and a poor predictor of whether a model suits your task.","s":"parameters","e":["&ldquo;70 billion parameters&rdquo; tells you roughly how big a model is and almost nothing about whether it suits your task."]},"prompt":{"t":"Prompt","l":4,"d":"Everything you send in one turn - the question plus whatever context, examples and instructions come with it.","w":"Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.","s":"prompt","e":["Everything in the box when you press enter: your question, whatever you pasted above it, and any instructions you added."]},"context":{"t":"Context","l":4,"d":"The material you hand the model to work from: pasted text, uploaded files, earlier turns.","w":"Grounding a request in real context is the single largest quality lever you control.","s":"context","e":["Pasting the actual assignment brief beats describing it. &lsquo;Write a lab report&rsquo; and &lsquo;here is the rubric, write to it&rsquo; are different requests."]},"few-shot-worked-example":{"t":"Few-shot (worked example)","l":4,"d":"Showing the model one or more examples of the output you want rather than describing it.","w":"Far more reliable than adjectives for pinning down a format.","s":"few-shot-worked-example","e":["Instead of &lsquo;make it punchy&rsquo;, paste two headlines you like and say &lsquo;this style&rsquo;."]},"system-prompt":{"t":"System prompt","l":4,"d":"Standing instructions sitting behind a conversation that shape every reply in it.","w":"How custom assistants get their rules - and the foundation of CSC 240.","s":"system-prompt","e":["&lsquo;You are a tutor for an introductory statistics course. Never give the final answer; ask a question that gets the student one step closer.&rsquo;"]},"constraint":{"t":"Constraint","l":4,"d":"A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.","w":"Constraints do real work. &ldquo;Be good&rdquo; does none.","s":"constraint","e":["Works: <em>under 150 words, no bullet points, eighth-grade reading level, do not mention pricing<\/em>."]},"context-window":{"t":"Context window","l":5,"d":"The maximum amount of text a model can hold in view at once, your prompt and its reply together.","w":"Go past it and the earliest material silently drops out of view - no warning.","s":"context-window","e":["In a long conversation the earliest turns fall out of view. Nothing warns you; the model simply stops being able to see them."]},"knowledge-cutoff":{"t":"Knowledge cutoff","l":5,"d":"The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.","w":"The single most common cause of a confidently wrong answer about anything current.","s":"knowledge-cutoff","e":["Ask a bare chat model who won an election held after its cutoff and you will often get a fluent, specific, wrong answer rather than a refusal."]},"multimodal":{"t":"Multimodal","l":5,"d":"A model that handles more than text - images, audio, sometimes video, as input or output.","w":"Decides whether you can paste a screenshot at all.","s":"multimodal","e":["Photographing a handwritten page and asking for a transcript. If a tool is text-only, that is not a prompting problem - it simply cannot see."]},"reasoning-model":{"t":"Reasoning model","l":5,"d":"A model that spends extra computation working through a problem in steps before answering.","w":"Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.","s":"reasoning-model","e":["Worth the wait for a multi-step word problem. Wasted on &lsquo;make this email shorter&rsquo;."]},"foundation-model":{"t":"Foundation model","l":5,"d":"A large general-purpose model that other products are built on top of.","w":"Several tools you use may be the same model wearing different clothes.","s":"foundation-model","e":["Several products you think of as different tools may be the same foundation model with different instructions wrapped around it."]},"rate-limit":{"t":"Rate limit","l":5,"d":"A cap on how much you can use a tool in a given window, usually much tighter on free tiers.","w":"Find yours before an assignment is due, not during.","s":"rate-limit","e":["Find yours on a Tuesday, not at 11pm the night an assignment is due."]},"benchmark":{"t":"Benchmark","l":6,"d":"A standard test used to compare models on one specific skill.","w":"Models can be tuned to score well on benchmarks without being better at your actual work.","s":"benchmark"},"leaderboard":{"t":"Leaderboard","l":6,"d":"A ranked table of models by benchmark score or human preference.","w":"Genuinely useful and routinely over-read.","s":"leaderboard"},"blind-comparison":{"t":"Blind comparison","l":6,"d":"Rating two outputs without knowing which model produced either.","w":"The only way to measure the answer instead of the brand.","s":"blind-comparison"},"elo-rating":{"t":"Elo rating","l":6,"d":"A ranking score borrowed from chess, updated every time one option beats another head to head.","w":"How LM Arena turns a pile of votes into an ordered list.","s":"elo-rating"},"thread":{"t":"Thread","l":7,"d":"One continuous conversation. Everything in it stays in context until the window fills up.","w":"A long thread can quietly poison a new question asked inside it.","s":"thread"},"context-accumulation":{"t":"Context accumulation","l":7,"d":"The build-up of earlier turns, which increasingly shapes every later answer.","w":"The reason a fresh chat sometimes beats one more follow-up.","s":"context-accumulation"},"regeneration":{"t":"Regeneration","l":7,"d":"Asking for another attempt at the same prompt instead of editing the prompt.","w":"Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.","s":"regeneration"},"hallucination":{"t":"Hallucination","l":8,"d":"A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.","w":"Not a malfunction. The same machinery that produces correct answers produces these.","s":"hallucination"},"confabulation":{"t":"Confabulation","l":8,"d":"Filling a gap with plausible invention instead of signaling uncertainty.","w":"Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.","s":"confabulation"},"plausibility":{"t":"Plausibility","l":8,"d":"How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.","w":"The trap inside every fabricated citation you will ever see.","s":"plausibility"},"grounding":{"t":"Grounding","l":9,"d":"Tying an answer to specific retrieved source material rather than to training alone.","w":"The main structural defense against fabrication.","s":"grounding"},"retrieval":{"t":"Retrieval","l":9,"d":"Fetching documents or search results and putting them into the model&rsquo;s context before it answers.","w":"What lets a tool discuss last week at all.","s":"retrieval"},"citation":{"t":"Citation","l":9,"d":"A reference to a source. Check two things: that it exists, and that it says what was claimed.","w":"The second check is the one almost everybody skips.","s":"citation"},"bias":{"t":"Bias","l":10,"d":"Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.","w":"A different problem from being wrong, and it needs a different fix.","s":"bias"},"rlhf":{"t":"RLHF","l":10,"d":"Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.","w":"The second place bias enters, after the training data.","s":"rlhf"},"probe":{"t":"Probe","l":10,"d":"A deliberately controlled prompt pair that changes exactly one variable to surface a difference.","w":"Turns &ldquo;it feels biased&rdquo; into something you can show someone.","s":"probe"},"verification":{"t":"Verification","l":11,"d":"Independently confirming a claim before you rely on it.","w":"The habit this entire course exists to install.","s":"verification"},"provenance":{"t":"Provenance","l":11,"d":"Where a piece of content came from and what happened to it along the way.","w":"Increasingly the thing you will be asked to document.","s":"provenance"},"stakes":{"t":"Stakes","l":11,"d":"What happens if this is wrong, and how hard it would be to check.","w":"Together these decide how much verification a task actually deserves.","s":"stakes"},"diffusion-model":{"t":"Diffusion model","l":12,"d":"The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.","w":"Explains why counting, hands and text-in-images are so hard for it.","s":"diffusion-model"},"negative-prompt":{"t":"Negative prompt","l":12,"d":"A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.","w":"&ldquo;No people&rdquo; in the main prompt reliably produces people.","s":"negative-prompt"},"seed":{"t":"Seed","l":12,"d":"The starting random number. The same seed with the same prompt reproduces the same image.","w":"How you change one thing without losing the whole picture.","s":"seed"},"speech-to-text-asr":{"t":"Speech-to-text (ASR)","l":13,"d":"Automatic transcription of recorded speech into written text.","w":"Error rates are not evenly distributed across accents, names, or speakers.","s":"speech-to-text-asr"},"text-to-speech":{"t":"Text-to-speech","l":13,"d":"Generating spoken audio from written text.","w":"Good enough now that consent is a real question rather than a hypothetical.","s":"text-to-speech"},"voice-cloning":{"t":"Voice cloning","l":13,"d":"Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.","w":"Legally and ethically the sharpest edge anywhere in this course.","s":"voice-cloning"},"word-error-rate-wer":{"t":"Word error rate (WER)","l":13,"d":"The standard measure of transcription accuracy: errors divided by words spoken.","w":"Lets you compare two tools instead of arguing about which felt better.","s":"word-error-rate-wer"},"vision-input":{"t":"Vision input","l":14,"d":"Giving a model an image - screenshot, photo, scan - as part of the prompt.","w":"Degrades badly with skew, handwriting and dense tables, and does so silently.","s":"vision-input"},"ocr":{"t":"OCR","l":14,"d":"Optical character recognition: pulling text out of an image of text.","w":"Frequently the better tool than a vision model when the scan is clean.","s":"ocr"},"modality":{"t":"Modality","l":14,"d":"A kind of input or output: text, image, audio, video.","w":"Choosing the right one is usually a bigger win than improving the prompt.","s":"modality"},"personally-identifiable-information-pii":{"t":"Personally identifiable information (PII)","l":15,"d":"Anything that identifies a specific person, on its own or combined with other data.","w":"The category that decides what you may and may not paste.","s":"personally-identifiable-information-pii"},"data-retention":{"t":"Data retention","l":15,"d":"How long a vendor keeps what you send, and what they are permitted to do with it.","w":"Varies by tier, and lives in the settings rather than the marketing.","s":"data-retention"},"training-opt-out":{"t":"Training opt-out","l":15,"d":"A setting that stops your conversations being used to improve the vendor&rsquo;s models.","w":"Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.","s":"training-opt-out"},"ferpa":{"t":"FERPA","l":15,"d":"US federal law protecting student education records.","w":"Applies to anyone at FLCC handling student data - including inside a chatbot.","s":"ferpa"},"zero-retention":{"t":"Zero-retention","l":15,"d":"An arrangement in which the vendor does not store your inputs at all.","w":"Usually enterprise-only, and worth knowing exists before you need it.","s":"zero-retention"},"attribution":{"t":"Attribution","l":16,"d":"Crediting a source you drew on.","w":"A different obligation from disclosure, and often confused with it.","s":"attribution"},"disclosure":{"t":"Disclosure","l":16,"d":"Stating that you used AI, and saying how.","w":"The line moves by context - a school, an employer and a journal each draw it differently.","s":"disclosure"},"ai-use-statement":{"t":"AI-use statement","l":16,"d":"A short written note describing what AI did in a piece of work.","w":"Increasingly required. You write your own in Lesson 16.","s":"ai-use-statement"},"derivative-work":{"t":"Derivative work","l":16,"d":"Something based on existing copyrighted material.","w":"The genuinely open legal question sitting under image generation.","s":"derivative-work"},"personal-ai-policy":{"t":"Personal AI policy","l":17,"d":"Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.","w":"The capstone deliverable, and the only thing here that is entirely yours.","s":"personal-ai-policy"}};
