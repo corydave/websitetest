@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Iteration and Repair</title>
+<title>Why AI Makes Things Up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -1925,8 +1925,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150">
+<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
+<div data-build="d0f6a6e" class="lesson" data-course="150">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
@@ -1960,15 +1960,15 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <div class="wrap">
     <div class="masthead__row">
       <span class="coursemark"><svg class="i"><use href="#i-sparkles"/></svg> CSC 150</span>
-      <span class="lessonno">Module 2 &middot; Lesson 7</span>
+      <span class="lessonno">Module 2 &middot; Lesson 8</span>
     </div>
-    <h1>Iteration and Repair</h1>
-    <p class="standfirst">Every wrong output you leave in the thread becomes an example of what you want.</p>
+    <h1>Why AI Makes Things Up</h1>
+    <p class="standfirst">Fabrication is not a bug in the system. It is the system, working exactly as designed, on a question it has no way to answer.</p>
     <div class="metarow">
-      <span><svg class="i"><use href="#i-clock"/></svg> 40&ndash;50 min</span>
-      <span><svg class="i"><use href="#i-video"/></svg> 1 video (2:50)</span>
+      <span><svg class="i"><use href="#i-clock"/></svg> 35&ndash;45 min</span>
+      <span><svg class="i"><use href="#i-video"/></svg> 1 video (2:40)</span>
       <span><svg class="i"><use href="#i-upload"/></svg> 1 deliverable</span>
-      <span><svg class="i"><use href="#i-target"/></svg> Course outcomes 1 &amp; 3</span>
+      <span><svg class="i"><use href="#i-target"/></svg> Course outcomes 2 &amp; 3</span>
     </div>
   </div>
 </header>
@@ -1981,7 +1981,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="icontile icontile--quiet"><svg class="i"><use href="#i-book-open"/></svg></div>
       <div class="lede__body">
         <span class="eyebrow">What this lesson is</span>
-        <p>Your first answer comes back seventy per cent right. What you do next is a skill, and it is not obvious: sometimes the fix is one more sentence, and sometimes the conversation has drifted so far that the only sane move is to start over. This lesson gives you a broken output and four ways to repair it, and lets you find out which moves help.</p>
+        <p>Fabrication is not a bug in these systems. It is the same process that produces correct answers, running on a question the model has no way to answer - and it comes out fluent, formatted and confident, because fluency is what the process optimizes for. This lesson shows you where that happens, names the three conditions that make it likely, and gives you a checking routine short enough that you will actually use it.</p>
       </div>
     </div>
   </section>
@@ -1990,29 +1990,29 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <span class="beat__label"><svg class="i"><use href="#i-help"/></svg> Beat 2 &middot; Prediction gate</span>
     <div class="gate" id="gate">
       <p class="gate__stakes"><svg class="i"><use href="#i-help"/></svg> No stakes, no grade. You are not expected to know this yet - guessing is the point.</p>
-      <h2 class="gate__q">Your first answer comes back about 70% right. Do you fix it with a follow-up, or throw it out and start a fresh prompt?</h2>
+      <h2 class="gate__q">In 2023 a lawyer filed a brief citing six court cases his AI assistant found for him. All six had names, dates and quoted passages. None of them existed. What best explains it?</h2>
       <div class="options" id="gateOptions" role="group" aria-label="Prediction choices">
-        <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="44">
+        <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="18">
           <span class="option__key">A</span>
-          <span class="option__text">Follow up. Starting over throws away the seventy per cent that worked.
+          <span class="option__text">Someone had planted fake cases in the model&rsquo;s training data.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="B" data-pct="17">
+        <button class="option" type="button" aria-pressed="false" data-key="B" data-pct="31">
           <span class="option__key">B</span>
-          <span class="option__text">Start fresh. Negotiating with it takes longer than rewriting the prompt.
+          <span class="option__text">It searched the web and landed on an unreliable legal site.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="C" data-pct="28" data-best="true">
+        <button class="option" type="button" aria-pressed="false" data-key="C" data-pct="34" data-best="true">
           <span class="option__key">C</span>
-          <span class="option__text">It depends on whether the bad part is <em>missing</em> or <em>wrong</em>.
+          <span class="option__text">It was doing the only thing it ever does - producing text that looks like the right answer.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
-        <button class="option" type="button" aria-pressed="false" data-key="D" data-pct="11">
+        <button class="option" type="button" aria-pressed="false" data-key="D" data-pct="17">
           <span class="option__key">D</span>
-          <span class="option__text">Follow up twice, and start fresh if it has not landed by then.
+          <span class="option__text">The model hit a processing error and produced corrupted output.
             <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
           </span>
         </button>
@@ -2057,18 +2057,23 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <div class="objectives">
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Choose</strong> between steering a thread and restarting it, and name what decides it.
-              <span class="objective__clo">Course outcome 1 &middot; Crafting effective prompts</span></span>
+            <span class="objective__text"><strong>Explain</strong> why fabricated answers come from the same process as correct ones.
+              <span class="objective__clo">Course outcome 3 &middot; Critically assess AI-generated content</span></span>
           </div>
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Use</strong> a worked example to lock the format of an output.
-              <span class="objective__clo">Course outcome 1 &middot; Crafting effective prompts</span></span>
+            <span class="objective__text"><strong>Identify</strong> the three conditions that make fabrication most likely in a given prompt.
+              <span class="objective__clo">Course outcome 3 &middot; Common failure modes</span></span>
           </div>
           <div class="objective">
             <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
-            <span class="objective__text"><strong>Diagnose</strong> which component of a prompt caused a bad output, by reading the output backwards.
-              <span class="objective__clo">Course outcomes 1 &amp; 3 &middot; Prompting and limitations</span></span>
+            <span class="objective__text"><strong>Apply</strong> a three-step verification routine to any AI claim before you use it.
+              <span class="objective__clo">Course outcome 3 &middot; Accuracy and reliability</span></span>
+          </div>
+          <div class="objective">
+            <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
+            <span class="objective__text"><strong>Decide</strong> when a task needs a model with live retrieval instead of a bare chat model.
+              <span class="objective__clo">Course outcome 2 &middot; Selecting appropriate tools</span></span>
           </div>
         </div>
       </div>
@@ -2079,46 +2084,16 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-history"/></svg> Warm-up</span>
         <h2>Three from earlier</h2>
-        <p>One from last week, two from further back. Answer from memory, then swipe. The card will not go anywhere until you have committed to something.</p>
+        <p>Three cards from the course item bank, not written for today. Answer from memory, then swipe the card away. Looking it up defeats the purpose, and nothing here is graded.</p>
       </div>
       <div class="deck" id="recallDeck">
         <div class="deck__stack" id="recallStack">
         <article class="fcard" data-answer="1">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 6</em> &middot; last week</p>
-            <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
-          </div>
-          <p class="fcard__q">Hiding the model names in a comparison mainly controls for&hellip;</p>
-          <div class="answers">
-            <button class="answer" type="button" data-i="0">Differences in response length</button>
-            <button class="answer" type="button" data-i="1">What you already expect from that brand</button>
-            <button class="answer" type="button" data-i="2">The temperature setting</button>
-            <button class="answer" type="button" data-i="3">Which model is cheaper to run</button>
-            <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
-          </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Brand expectation.</strong> Today has a cousin of this problem: an output that reads well is not the same as an output that is right, and a repair thread makes it easy to confuse the two.</span></div>
-        </article>
-        <article class="fcard" data-answer="1">
-          <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 5</em> &middot; 2 weeks ago</p>
-            <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
-          </div>
-          <p class="fcard__q">A model&rsquo;s context window fills up mid-conversation. What happens?</p>
-          <div class="answers">
-            <button class="answer" type="button" data-i="0">It warns you and stops</button>
-            <button class="answer" type="button" data-i="1">The earliest part of the conversation drops out of view</button>
-            <button class="answer" type="button" data-i="2">It summarizes the conversation automatically</button>
-            <button class="answer" type="button" data-i="3">It starts responding more slowly</button>
-            <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
-          </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>The beginning quietly falls away.</strong> Today is the practical consequence: a long repair thread is a context window slowly filling with your own failed attempts.</span></div>
-        </article>
-        <article class="fcard" data-answer="1">
-          <div class="fcard__top">
             <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 4</em> &middot; 3 weeks ago</p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
-          <p class="fcard__q">Which change to a prompt most reliably improves what comes back?</p>
+          <p class="fcard__q">Which change to a prompt most reliably improves the quality of what comes back?</p>
           <div class="answers">
             <button class="answer" type="button" data-i="0">Adding &ldquo;please&rdquo; and &ldquo;thank you&rdquo;</button>
             <button class="answer" type="button" data-i="1">Naming the audience and the format you want</button>
@@ -2126,7 +2101,37 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             <button class="answer" type="button" data-i="3">Making the prompt longer</button>
             <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Audience and format.</strong> Both narrow what can plausibly come next. Notice that neither is a thing you can add by complaining about the output you got.</span></div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Audience and format.</strong> Both narrow the space of plausible continuations. &ldquo;Be accurate&rdquo; does not - the model has no separate accuracy dial to turn up, which is most of today&rsquo;s lesson.</span></div>
+        </article>
+        <article class="fcard" data-answer="2">
+          <div class="fcard__top">
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 6</em> &middot; 2 weeks ago</p>
+            <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
+          </div>
+          <p class="fcard__q">In a public model arena, why are the model names hidden while you vote?</p>
+          <div class="answers">
+            <button class="answer" type="button" data-i="0">To fit two responses on screen</button>
+            <button class="answer" type="button" data-i="1">The companies require anonymity</button>
+            <button class="answer" type="button" data-i="2">So brand reputation doesn&rsquo;t shape the rating</button>
+            <button class="answer" type="button" data-i="3">To speed up voting</button>
+            <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
+          </div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Blind comparison.</strong> People rate a familiar brand higher for identical output. Hiding the label is the only way the score measures the answer instead of the logo.</span></div>
+        </article>
+        <article class="fcard" data-answer="1">
+          <div class="fcard__top">
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; 5 weeks ago</p>
+            <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
+          </div>
+          <p class="fcard__q">A large language model is trained, at bottom, to do what?</p>
+          <div class="answers">
+            <button class="answer" type="button" data-i="0">Look facts up in a database</button>
+            <button class="answer" type="button" data-i="1">Predict what comes next in a sequence of text</button>
+            <button class="answer" type="button" data-i="2">Follow a large set of hand-written rules</button>
+            <button class="answer" type="button" data-i="3">Search the internet and summarize it</button>
+            <button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button>
+          </div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Prediction.</strong> Hold onto this one - the whole lesson is a consequence of it.</span></div>
         </article>
         </div>
         <div class="deck__bar">
@@ -2152,80 +2157,71 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 5 &middot; Content</span>
       <div class="segment">
-        <h3><span class="segno">01</span> Steer or restart</h3>
+        <h3><span class="segno">01</span> There is no &ldquo;I don&rsquo;t know&rdquo; in the machinery</h3>
         <div class="prose">
-          <p>The instinct when an answer comes back wrong is to reply to it, and most of the time that instinct is right. But a <b class='vt' data-v='thread'><i>thread</i></b> is not a conversation with someone who is listening. Every turn - your prompt, its answer, your complaint, its next attempt - stays in the context window and is read again, in full, every single time it responds.</p>
-          <p>Which means a repair thread has a property nobody expects. Last lesson you were reminded that a worked example is the strongest thing you can put in a prompt. That is still true here, and it is now working against you: <strong>every wrong output you leave in the thread is a worked example of the thing you do not want.</strong> Leave three of them there and you have shown it the wrong format three times while telling it once, in words, to stop.</p>
-          <p>That is <b class='vt' data-v='context-accumulation'><i>context accumulation</i></b>, and it is why threads that start well sometimes get worse the harder you push. The bench below has a genuinely broken output and four moves you can make on it. One of the three faults cannot be repaired from inside the thread at all. See if you can work out which, and why.</p>
+          <p>When you ask a model a question, it is not consulting a store of facts and reporting what it finds. It is producing one token at a time, and each token is whatever is most likely to come next given everything before it.</p>
+          <p>That process runs identically whether the answer is common knowledge or something nobody has ever written down. The model does not detect the difference, because from the inside there is no difference. There is only the next word.</p>
         </div>
         
-        <div class="demo" id="bench">
+        <div class="demo" id="tokenDemo">
           <div class="demo__head">
-            <span class="demo__title"><svg class="i"><use href="#i-flask"/></svg> Repair Bench</span>
-            <span class="scorepill" id="bTurn">Turn 1</span>
+            <span class="demo__title"><svg class="i"><use href="#i-flask"/></svg> Watch it choose</span>
+            <div class="btnrow">
+              <button class="btn btn--ghost small" type="button" data-prompt="0" aria-pressed="true">Known fact</button>
+              <button class="btn btn--ghost small" type="button" data-prompt="1" aria-pressed="false">Invented fact</button>
+            </div>
           </div>
           <div class="demo__body">
-            <p class="small muted">Here is the prompt that was sent, and what came back. Three things are wrong with it. Repair it in as few turns as you can - and notice which faults move and which will not.</p>
-            <div class="brow">
-              <div class="bmain">
-                <p class="blab">The prompt</p>
-                <pre class="bprompt" id="bPrompt"></pre>
-                <p class="blab">What came back <span class="muted" id="bWhen"></span></p>
-                <div class="bout" id="bOut"></div>
-                <p class="blab">Your next move</p>
-                <div class="bmoves" id="bMoves"></div>
-              </div>
-              <aside class="bside">
-                <p class="blab">The thread</p>
-                <dl class="bstat">
-                  <dt>Turn</dt><dd id="bsTurn">1</dd>
-                  <dt>Context</dt><dd id="bsCtx">~180 tokens</dd>
-                  <dt>Wrong outputs still in view</dt><dd id="bsBad">1</dd>
-                </dl>
-                <p class="blab">Faults</p>
-                <ul class="bfaults" id="bFaults"></ul>
-                <p class="bflag" id="bFlag" hidden></p>
-              </aside>
-            </div>
-            <div class="btnrow">
-              <button class="btn btn--ghost" type="button" id="bReset">Start the bench over</button>
-            </div>
-            <div class="bdone" id="bDone" hidden></div>
+            <p class="sentence" id="sentence"></p>
+            <div class="tokens" id="tokens"></div>
           </div>
-          <div class="demo__foot" id="bNote"></div>
+          <div class="demo__foot" id="tokenNote"><svg class="i"><use href="#i-arrow-right"/></svg> Click a continuation to extend the sentence.</div>
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">The part people miss</p>
+            <p>Both sentences were built the same way. The second one is <strong>fluent, formatted and completely invented</strong> - and the model&rsquo;s confidence in its tone is generated by the same process that generated the content. Confidence carries no information about truth.</p>
+          </div>
         </div>
       </div>
     </section>
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 6 &middot; Content</span>
       <div class="segment">
-        <h3><span class="segno">02</span> Show it what you meant - then read the output backwards</h3>
+        <h3><span class="segno">02</span> Three conditions that make it likely</h3>
         <div class="prose">
-          <p>The single most reliable repair is not a description of what went wrong. It is one example of the right answer.</p>
-          <p>This is the same finding from Lesson 4 - an example beats an adjective - applied to the second turn rather than the first. &ldquo;More concise&rdquo; is a word whose meaning the model has to guess at, and it will guess at a different point on the scale than you did. One line written the way you want it removes the guessing entirely: length, register, punctuation, whether it starts with a verb, all of it at once, none of it described. You usually only need one, and you can often make it by editing the model&rsquo;s own worst line into the shape you wanted.</p>
-          <p>But when a repair will not take at all, the fault is usually not in your follow-up. It is in the prompt you have stopped looking at.</p>
-          <p>The bench above is built on exactly this. The invented sentiment was never a fault in the answer - it was a fault in the question. <em>Tell me how the customer felt</em> asks for something the model has no way to know, so it produces something shaped like a finding. And because that instruction is still sitting in the thread, being read again on every turn, no follow-up removes it. You are arguing with your own prompt.</p>
-          <p>So when something will not shift, run it backwards. Which of the five components would have to have been wrong to produce this? Missing format explains a wall of prose. Missing audience explains the wrong register. Missing constraints explain the thing you keep having to delete. And an instruction asking for something the model cannot do explains an answer that is confident, well-formatted and made up - which is next week&rsquo;s whole lesson. When the answer is <em>the prompt</em>, editing it and starting fresh is not giving up. It is the cheapest move on the board, and the only one that works.</p>
+          <p>Fabrication is not evenly distributed. It concentrates where the question is <strong>narrow and obscure</strong>, where the answer has a <strong>rigid format</strong> the model can imitate - case numbers, DOIs, statute sections, ISBNs - and where you have <strong>asked for a specific quantity</strong>. &ldquo;Give me five sources&rdquo; will get you five, whether or not five exist.</p>
         </div>
         
+        <div class="demo">
+          <div class="demo__head">
+            <span class="demo__title"><svg class="i"><use href="#i-eye"/></svg> Spot the risky claims</span>
+            <span class="scorepill" id="spotScore">0 / 3 found</span>
+          </div>
+          <div class="demo__body">
+            <p class="small muted">Sample output from a chat model, unedited. Click the three claims you would refuse to publish without checking.</p>
+            <p class="passage" id="passage">
+              <button class="claim" type="button" data-risk="low">Finger Lakes Community College was founded in 1965</button> and enrolls <button class="claim" type="button" data-risk="low">roughly 6,000 students</button> across its Canandaigua campus and <button class="claim" type="button" data-risk="low">three satellite centers</button>. Its Viticulture and Wine Technology program, <button class="claim" type="button" data-risk="high">established in 1998, is the oldest of its kind in New York State</button>, and <button class="claim" type="button" data-risk="high">a 2019 study in the Journal of Regional Education Policy</button> found that graduates <button class="claim" type="button" data-risk="high">earn 23% more within five years</button>.
+            </p>
+          </div>
+          <div class="demo__foot" id="spotNote"><svg class="i"><use href="#i-arrow-right"/></svg> Three of these are far riskier than the others.</div>
+        </div>
+
         <div class="callout">
-          <div class="icontile"><svg class="i"><use href="#i-pencil"/></svg></div>
+          <div class="icontile"><svg class="i"><use href="#i-list-checks"/></svg></div>
           <div class="callout__body">
-            <p class="callout__label">Describing it, and showing it</p>
-            <p><strong>Describing:</strong> &ldquo;Make these shorter and more professional, and get rid of the fluffy opening.&rdquo;</p>
-            <p><strong>Showing:</strong> &ldquo;Rewrite all five to match this exactly: <em>Delivery arrived four days late; customer wants the shipping refunded.</em>&rdquo;</p>
-            <p>The second one specifies length, tone, structure, punctuation and what to leave out, in fourteen words, without naming any of them.</p>
+            <p class="callout__label">The routine</p>
+            <p><strong>1.</strong> Does the source exist? Search the title, not the claim. <strong>2.</strong> Does it say what the model said it says? <strong>3.</strong> Would you stake your name on it? If any answer is no, the claim does not ship.</p>
           </div>
         </div>
 
         <div class="callout">
-          <div class="icontile"><svg class="i"><use href="#i-history"/></svg></div>
+          <div class="icontile"><svg class="i"><use href="#i-help"/></svg></div>
           <div class="callout__body">
-            <p class="callout__label">Four questions, in this order</p>
-            <p><strong>1. Is the bad part missing, or wrong?</strong> Missing is cheap - add it in a follow-up. Wrong usually means something in the prompt asked for it.</p>
-            <p><strong>2. How many wrong outputs are in the thread?</strong> Two or more and you are outnumbered by your own examples.</p>
-            <p><strong>3. Which component would explain this?</strong> Task, audience, format, constraints, examples. One of them is missing or is asking for the wrong thing.</p>
-            <p><strong>4. Could I just fix the prompt?</strong> If yes, do that. <b class='vt' data-v='regeneration'><i>Regeneration</i></b> from a corrected prompt is nearly always faster than the fourth follow-up.</p>
+            <p class="callout__label">Two ways in</p>
+            <p>Suspicion is one trigger for that routine. <strong>Not recognizing something is the other</strong> - and it is the one that will serve you more often, because you cannot spot an error inside a thing you do not yet understand. When a name, a term or a tool goes past that you have never heard of, that is enough. Curiosity and suspicion arrive at the same three questions; curiosity just gets there earlier, and without needing you to already know the answer.</p>
           </div>
         </div>
       </div>
@@ -2234,12 +2230,12 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-video"/></svg> Beat 7 &middot; Video</span>
       <div class="video">
-        <div class="video__frame" role="button" tabindex="0" aria-label="Play: Three follow-ups that work, and one that makes it measurably worse.">
+        <div class="video__frame" role="button" tabindex="0" aria-label="Play: Making a model fabricate a citation on purpose - then watching it fold under one follow-up question.">
           <span class="video__play"><svg class="i"><use href="#i-play"/></svg></span>
         </div>
         <div class="video__meta">
-          <span class="video__job">Demo &middot; 2:50</span>
-          <span>Three follow-ups that work, and one that makes it measurably worse.</span>
+          <span class="video__job">Demo &middot; 2:40</span>
+          <span>Making a model fabricate a citation on purpose - then watching it fold under one follow-up question.</span>
         </div>
         <details class="disclosure">
           <summary>Transcript <svg class="i"><use href="#i-chevron-down"/></svg></summary>
@@ -2258,7 +2254,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           <div class="stack">
             <span class="eyebrow">Back to your prediction</span>
             <p id="callbackText" class="muted">-</p>
-            <p><strong>C.</strong> Missing or wrong. It is the only one of the four that names a rule you can apply to a case you have not seen, which is what makes it the answer rather than a preference.</p><p><strong>Missing is cheap.</strong> If the answer is right as far as it goes and simply stops short, a follow-up adds the rest and costs you one turn. <strong>Wrong is expensive</strong>, because something in the original prompt produced it and that something is still in the thread, being read on every turn, quietly outvoting you. If you found the bench frustrating around turn three, that frustration was the lesson - you were negotiating with an instruction instead of deleting it.</p>
+            <p><strong>C was the one.</strong> No sabotage, no bad website, no glitch. The model produced six citation-shaped strings because a brief asking for six citations is followed, in every document it has ever seen, by six citations. It had no mechanism for noticing that these particular six were never written.</p><p><span class="small muted">If you picked B, you were reasoning about a tool that <em>does</em> exist - models with live retrieval. Knowing which one you are holding is Lesson 9.</span></p>
           </div>
         </div>
       </div>
@@ -2268,18 +2264,18 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <span class="beat__label"><svg class="i"><use href="#i-pencil"/></svg> Beat 9 &middot; Apply</span>
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-pencil"/></svg> Do this before the next lesson</span>
-        <h2>Annotate a real repair</h2>
+        <h2>Break one on purpose</h2>
       </div>
       <div class="apply">
         <div class="steps">
-          <div class="step"><span>Find or run a real repair sequence of your own: a first output that was wrong, and the follow-ups you used to fix it.</span></div>
-          <div class="step"><span>Screenshot or paste the whole thread, including the attempts that did not work.</span></div>
-          <div class="step"><span>Label each of your moves with which family it belongs to: vague nudge, constraint, worked example, pure negative, or restart.</span></div>
-          <div class="step"><span>Name the single move that actually fixed it - and if nothing did, say which prompt component you now think was the real fault.</span></div>
+          <div class="step"><span>Pick a topic you already know well - your job, your major, a hobby with a real literature.</span></div>
+          <div class="step"><span>Ask a chat model with no web access for <strong>five sources</strong> on a narrow question inside it. Ask for author, title, year and where it appeared.</span></div>
+          <div class="step"><span>Check all five. Sort each into <em>real</em>, <em>real but misdescribed</em>, or <em>invented</em>.</span></div>
+          <div class="step"><span>Post your tally to the class knowledge base with one sentence on the pattern you noticed.</span></div>
         </div>
         <div class="deliverable">
           <svg class="i i--lg" style="color:var(--accent-text)"><use href="#i-upload"/></svg>
-          <span><strong>Deliverable:</strong> an annotated thread, with every move labeled and one sentence naming the move that did the work.</span>
+          <span><strong>Deliverable:</strong> a five-row table plus one sentence.</span>
         </div>
       </div>
     </section>
@@ -2292,34 +2288,34 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <p>These enter the course item bank tonight and come back at you unannounced, weeks from now. Don&rsquo;t worry! This is the design, not a threat!</p>
       </div>
       <div class="recall" id="exit">
-        <div class="recallcard" data-answer="1">
-          <p class="recallcard__q">Why does leaving several wrong outputs in a thread make repair harder?</p>
+        <div class="recallcard" data-answer="2">
+          <p class="recallcard__q">You need peer-reviewed sources on a narrow topic for a real assignment. What is the safest move?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">The model gets slower with more text</button>
-            <button class="answer" type="button" data-i="1">Each wrong output is another worked example of the format you do not want</button>
-            <button class="answer" type="button" data-i="2">The model starts ignoring your instructions after three turns</button>
-            <button class="answer" type="button" data-i="3">It uses up your rate limit faster</button>
+            <button class="answer" type="button" data-i="0">Ask a chat model and cite what it gives you</button>
+            <button class="answer" type="button" data-i="1">Ask a chat model, then ask it whether it is sure</button>
+            <button class="answer" type="button" data-i="2">Use a tool with live retrieval, then open every link yourself</button>
+            <button class="answer" type="button" data-i="3">Ask three different models and use what they agree on</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>They are examples.</strong> The same mechanism that makes one good example so powerful in a prompt makes three bad ones expensive in a thread. It is not stubbornness; it is pattern-matching on what is in front of it.</span></div>
-          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 10 and 14</p>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Retrieval, then verify.</strong> Asking a model whether it is sure just generates more confident-sounding text. Three models agreeing means they share training data, not that the source exists.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 11 and 16</p>
         </div>
         <div class="recallcard" data-answer="1">
-          <p class="recallcard__q">A follow-up keeps failing to remove something from the output. What is the most likely cause?</p>
+          <p class="recallcard__q">Which prompt is most likely to produce a fabricated answer?</p>
           <div class="answers">
-            <button class="answer" type="button" data-i="0">The model is not capable of that task</button>
-            <button class="answer" type="button" data-i="1">Something in the original prompt is still asking for it</button>
-            <button class="answer" type="button" data-i="2">The temperature is set too high</button>
-            <button class="answer" type="button" data-i="3">You need to phrase the follow-up more firmly</button>
+            <button class="answer" type="button" data-i="0">&ldquo;Explain photosynthesis to a ninth grader.&rdquo;</button>
+            <button class="answer" type="button" data-i="1">&ldquo;List four 2021 studies on soil pH in the Finger Lakes, with DOIs.&rdquo;</button>
+            <button class="answer" type="button" data-i="2">&ldquo;Rewrite this paragraph in plain language.&rdquo;</button>
+            <button class="answer" type="button" data-i="3">&ldquo;What are some arguments against this position?&rdquo;</button>
           </div>
-          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>The original prompt.</strong> It is still in the context, read in full on every turn. Phrasing the follow-up more firmly adds emphasis, not information - and there is no firmness dial, the same way there was no accuracy dial in Lesson 5.</span></div>
-          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 8 and 12</p>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>All three conditions at once:</strong> narrow and obscure, rigidly formatted, and a demanded quantity. This is the shape of a prompt that gets people in trouble.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 10 and 14</p>
         </div>
       </div>
     </section>
 
     <footer class="lessonfoot">
-      <span>CSC 150 &middot; AI Foundations &middot; Lesson 7 of 17</span>
-      <span class="row" style="gap:.4rem" id="lessonNext">Next: <a href="08-why-ai-makes-things-up.html">Lesson 8 - Why AI Makes Things Up</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
+      <span>CSC 150 &middot; AI Foundations &middot; Lesson 8 of 17</span>
+      <span class="row" style="gap:.4rem" id="lessonNext"><span class="muted">Next: Lesson 9 - Models That Can Actually Look Things Up, coming soon</span></span>
     </footer>
 
   </div>
@@ -2446,12 +2442,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
      the LMS's own navigation: it records progress, and it does not leave them
      staring at blank space when the next lesson is shorter than this one and
      the frame has not shrunk yet. */
-  /* scaffoldBtn is the Template view toggle: an authoring aid, meaningless to a
-     student, and doubly wrong in a frame - it is position:fixed, which inside an
-     iframe sized to its full content anchors it to the bottom of the whole
-     document rather than the visible area, so it floats in the middle of the
-     page. Hidden in the LMS, kept when a page is opened directly. */
-  var LMS_HIDE = ["lessonNext", "scaffoldBtn"];
+  var LMS_HIDE = ["lessonNext"];
 
   function applyLmsMode() {
     var r = document.documentElement;

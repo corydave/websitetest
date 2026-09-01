@@ -1319,8 +1319,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150 build d0f6a6e · 2026-09-01 00:45 -->
+<div data-build="d0f6a6e" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1580,12 +1580,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
      the LMS's own navigation: it records progress, and it does not leave them
      staring at blank space when the next lesson is shorter than this one and
      the frame has not shrunk yet. */
-  /* scaffoldBtn is the Template view toggle: an authoring aid, meaningless to a
-     student, and doubly wrong in a frame - it is position:fixed, which inside an
-     iframe sized to its full content anchors it to the bottom of the whole
-     document rather than the visible area, so it floats in the middle of the
-     page. Hidden in the LMS, kept when a page is opened directly. */
-  var LMS_HIDE = ["lessonNext", "scaffoldBtn"];
+  var LMS_HIDE = ["lessonNext"];
 
   function applyLmsMode() {
     var r = document.documentElement;
