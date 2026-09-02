@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CSC 150 Vocabulary</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -404,7 +405,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -414,6 +421,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1324,8 +1332,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150  page vocabulary.html  vb7b02df  ·  build 7564836  ·  2026-09-02 01:09 -->
-<div data-build="7564836" data-page="vocabulary.html" data-version="b7b02df" class="lesson" data-course="150">
+<!-- CSC 150  page vocabulary.html  v71dc424  ·  build 65e6d0a  ·  2026-09-02 01:45 -->
+<div data-build="65e6d0a" data-page="vocabulary.html" data-version="71dc424" class="lesson" data-course="150">
 <header class="masthead">
   <div class="wrap">
     <div class="masthead__row">
