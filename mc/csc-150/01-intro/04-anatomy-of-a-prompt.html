@@ -1,5 +1,7 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anatomy of a Prompt</title>
+<link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -403,7 +405,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -413,6 +421,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1094,6 +1103,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    The module and lesson number stay too: Brightspace shows the topic title but
    not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
 :root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
 :root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
 :root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
@@ -1142,6 +1155,292 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 .preset:hover { color: var(--accent-text); background: var(--accent-wash); }
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
 
 /* ============================================================================
    FLCC AI Specialist Microcredential - lesson.css
@@ -1879,6 +2178,383 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .apre, .around, .asum { display: flex; flex-direction: column; gap: 1rem; }
 .bdone { margin-top: .5rem; }
 
+/* ── Module 3 ─────────────────────────────────────────────────────────────
+   Three panels, none of which replay captured output: the audit records the
+   learner's own verdicts, the probe kit diffs two answers they paste in, and
+   the stakes dial is a sort over authored scenarios. */
+
+/* L9 . The Citation Audit */
+.udstep { display: flex; flex-direction: column; gap: 1rem; }
+.udqs   { display: flex; flex-direction: column; gap: .6rem; }
+.udqbtn {
+  display: flex; flex-direction: column; gap: .25rem; text-align: left;
+  font: inherit; cursor: pointer; padding: .8rem 1rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.udqbtn:hover { border-color: var(--accent); background: var(--accent-wash); }
+.udqbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.udqbtn__q { font-size: .95rem; line-height: 1.45; font-weight: 700; }
+.udqbtn__w { font-size: .85rem; line-height: 1.5; color: var(--ink-2); }
+.udq { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+.udform { display: flex; flex-direction: column; gap: .6rem; }
+.udsel  { display: flex; flex-wrap: wrap; gap: .5rem; }
+.udin {
+  font: inherit; font-size: .92rem; width: 100%; box-sizing: border-box;
+  padding: .6rem .8rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.udin:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.udtable { display: flex; flex-direction: column; gap: .4rem; }
+.udrow {
+  display: grid; grid-template-columns: 8.5rem 1fr auto auto; gap: .6rem;
+  align-items: center; padding: .55rem .7rem; font-size: .88rem;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+.udrow__side { font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.udrow__txt  { line-height: 1.45; overflow-wrap: anywhere; }
+.udv {
+  font-size: .74rem; font-weight: 700; padding: .2rem .55rem;
+  border-radius: var(--r-pill); white-space: nowrap;
+}
+.udv--bad  { background: var(--bad-soft);  color: var(--bad); }
+.udv--warn { background: var(--warn-soft); color: var(--ink); }
+.udv--ok   { background: var(--good-soft); color: var(--good); }
+.udx {
+  border: 0; background: none; cursor: pointer; color: var(--ink-3);
+  padding: .2rem; line-height: 0; border-radius: var(--r-xs);
+}
+.udx:hover { color: var(--bad); }
+.udsum  { display: flex; flex-direction: column; gap: .5rem; }
+.udcols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.udcol  { display: flex; flex-direction: column; gap: .35rem; }
+.udbar  { display: grid; grid-template-columns: 1fr 4rem 1.4rem; gap: .5rem; align-items: center; font-size: .82rem; }
+.udbar__n { color: var(--ink-2); }
+.udbar__t { height: .45rem; background: var(--surface-3); border-radius: var(--r-pill); overflow: hidden; }
+.udbar__i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--ink-3); }
+.udbar__i--bad  { background: var(--bad); }
+.udbar__i--warn { background: var(--warn); }
+.udbar__i--ok   { background: var(--good); }
+.udbar__v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.udverdict { margin: .3rem 0 0; font-size: .92rem; line-height: 1.55; }
+
+/* L10 . The Probe Kit */
+.pkpairs { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pkbody  { display: flex; flex-direction: column; gap: .8rem; }
+.pkcols  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pkcol   { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.pkta {
+  font: inherit; font-size: .88rem; line-height: 1.55; min-height: 8rem;
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: .7rem .85rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.pkta:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pkout  { display: flex; flex-direction: column; gap: .7rem; }
+.pkstat { display: flex; flex-wrap: wrap; gap: 1.6rem; }
+.pkdiff {
+  padding: .8rem .95rem; font-size: .88rem; line-height: 1.7;
+  background: var(--surface-2); border-radius: var(--r-sm);
+  overflow-wrap: anywhere;
+}
+.pkw { border-radius: var(--r-xs); padding: .05em .18em; color: var(--ink); }
+.pkw--a { background: var(--warn-soft); }
+.pkw--b { background: var(--accent-wash); }
+.pkwatch {
+  margin: 0; display: flex; gap: .55rem; font-size: .88rem; line-height: 1.55;
+  padding: .7rem .8rem; background: var(--surface-2); border-radius: var(--r-xs);
+}
+.pkwatch .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; color: var(--accent-text); }
+
+/* L11 . Stakes Dial */
+.sdpool { display: flex; flex-wrap: wrap; gap: .45rem; min-height: 2rem; }
+.sdchip {
+  font: inherit; font-size: .85rem; cursor: pointer;
+  padding: .4rem .8rem; border-radius: var(--r-pill);
+  background: var(--surface-2); color: var(--ink-2); border: 1px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.sdchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.sdchip.is-sel { background: var(--accent-fill); color: var(--accent-on); }
+.sdchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sdgridwrap {
+  display: grid; grid-template-columns: 1.2rem 1fr; grid-template-rows: 1fr 1.2rem;
+  gap: .4rem; align-items: center;
+}
+.sdaxis {
+  font-family: var(--display); font-weight: 600; font-size: .72rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  text-align: center;
+}
+.sdaxis--y { writing-mode: vertical-rl; transform: rotate(180deg); grid-row: 1; grid-column: 1; }
+.sdaxis--x { grid-row: 2; grid-column: 2; }
+.sdgrid {
+  grid-row: 1; grid-column: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+}
+.sdcell {
+  font: inherit; text-align: left; cursor: default;
+  display: flex; flex-direction: column; gap: .5rem;
+  min-height: 8rem; padding: .75rem .85rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px dashed var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.sdcell.is-armed { cursor: pointer; border-color: var(--accent); }
+.sdcell.is-armed:hover { background: var(--accent-wash); }
+.sdcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sdcell__t {
+  font-family: var(--display); font-weight: 700; font-size: .74rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); line-height: 1.5;
+}
+.sdcell__in { display: flex; flex-wrap: wrap; gap: .35rem; align-content: flex-start; }
+.sdplaced {
+  font-size: .78rem; line-height: 1.35; cursor: pointer;
+  padding: .28rem .6rem; border-radius: var(--r-pill);
+  background: var(--surface); box-shadow: var(--shadow-1); color: var(--ink);
+}
+.sdcell.is-armed .sdplaced { cursor: inherit; }
+.sdcell:not(.is-armed) .sdplaced:hover { color: var(--bad); }
+.sddone  { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+.sdprotos { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.sdproto {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: .85rem .95rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-sm);
+}
+.sdproto p { margin: 0; }
+.sdproto__n {
+  font-family: var(--display); font-weight: 700; font-size: .74rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text);
+}
+.sdproto__r { font-size: .9rem; }
+.sdnotes { display: flex; flex-direction: column; gap: .5rem; }
+.sdnote {
+  padding: .7rem .85rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+.sdnote p { margin: 0; }
+.sdnote__n { font-weight: 700; }
+
+@media (max-width: 720px) {
+  .udcols, .pkcols, .sdprotos, .sdgrid { grid-template-columns: 1fr; }
+  .udrow { grid-template-columns: 1fr auto auto; }
+  .udrow__side { grid-column: 1 / -1; }
+}
+
+/* ── Module 4 ─────────────────────────────────────────────────────────────
+   Authored panels: a predict-then-reveal over four broken image prompts, a
+   constructed transcript to classify, and a format triage sort. */
+
+/* L12 . The Negation Trap */
+.tpcase  { display: flex; flex-direction: column; gap: .6rem; }
+.tplever {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text);
+}
+.tpwhy {
+  display: flex; gap: .6rem; padding: .8rem .95rem; font-size: .9rem; line-height: 1.6;
+  background: var(--surface-2); border-radius: var(--r-sm);
+}
+.tpwhy .i { flex: none; margin-top: .25rem; width: 1em; height: 1em; color: var(--accent-text); }
+.tpfix { display: flex; flex-direction: column; gap: .4rem; }
+.tpfix ul { margin: 0; padding-left: 1.1rem; font-size: .88rem; line-height: 1.6; color: var(--ink-2); }
+.tpfix li { margin-bottom: .25rem; }
+.tpbench { display: flex; flex-direction: column; gap: .5rem; margin-top: .8rem; }
+.tplevers { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.tplev {
+  display: flex; gap: .5rem; align-items: flex-start;
+  padding: .5rem .7rem; font-size: .84rem; line-height: 1.45;
+  background: var(--surface-2); border-radius: var(--r-xs); color: var(--ink-3);
+}
+.tplev .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; }
+.tplev.is-on { color: var(--ink); }
+.tplev.is-on .i { color: var(--good); }
+.tpwarn {
+  margin: 0; display: flex; gap: .55rem; font-size: .86rem; line-height: 1.5;
+  padding: .65rem .8rem; background: var(--warn-soft); border-radius: var(--r-xs);
+}
+.tpwarn .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; color: var(--warn); }
+.answer.is-right { border-color: var(--good); background: var(--good-soft); }
+.answer.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+
+/* L13 . Transcript Autopsy */
+.aplist { display: flex; flex-direction: column; gap: .6rem; }
+.aperr {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .8rem .95rem; background: var(--surface-2); border-radius: var(--r-sm);
+  border-left: 3px solid var(--line-strong);
+}
+.aperr--done { border-left-color: var(--accent); }
+.aperr__who {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3);
+}
+.aperr__pair { display: grid; grid-template-columns: 6rem 1fr; gap: .25rem .7rem; align-items: baseline; }
+.aperr__lab { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.aperr__t { font-size: .95rem; font-weight: 700; }
+.aperr__h { font-size: .95rem; font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; color: var(--bad); }
+.aperr__why { margin: 0; font-size: .85rem; line-height: 1.55; color: var(--ink-2); }
+.apdone { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+
+/* L14 . Format Triage */
+.ftpool { display: flex; flex-wrap: wrap; gap: .45rem; min-height: 2rem; }
+.ftbins { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .8rem; }
+.ftbin {
+  font: inherit; text-align: left; cursor: default;
+  display: flex; flex-direction: column; gap: .4rem;
+  min-height: 7.5rem; padding: .75rem .85rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px dashed var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.ftbin.is-armed { cursor: pointer; border-color: var(--accent); }
+.ftbin.is-armed:hover { background: var(--accent-wash); }
+.ftbin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ftbin__n {
+  font-family: var(--display); font-weight: 700; font-size: .8rem;
+  letter-spacing: .03em; text-transform: uppercase; color: var(--accent-text);
+}
+.ftbin__r { font-size: .82rem; line-height: 1.5; color: var(--ink-2); }
+.ftbin__in { display: flex; flex-wrap: wrap; gap: .35rem; align-content: flex-start; }
+.ftbin.is-armed .sdplaced { cursor: inherit; }
+.ftdone { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+.ftrows { display: flex; flex-direction: column; gap: .5rem; }
+.ftrow {
+  padding: .7rem .85rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-xs);
+  border-left: 3px solid var(--warn);
+}
+.ftrow.is-same { border-left-color: var(--good); }
+.ftrow p { margin: 0 0 .2rem; }
+.ftrow p:last-child { margin-bottom: 0; color: var(--ink-2); }
+.ftrow__n { font-weight: 700; }
+.ftrow__v { font-size: .84rem; color: var(--ink-3); }
+.ftrow__c {
+  font-size: .68rem; letter-spacing: .05em; text-transform: uppercase;
+  padding: .1rem .45rem; border-radius: var(--r-pill);
+  background: var(--warn-soft); color: var(--ink-2);
+}
+
+@media (max-width: 720px) {
+  .tplevers, .ftbins { grid-template-columns: 1fr; }
+  .aperr__pair { grid-template-columns: 1fr; }
+}
+
+/* ── Module 5 ─────────────────────────────────────────────────────────────
+   A sort, a spectrum with three readers, and a composer. Nothing on any of
+   these panels is stored or sent, which is a constraint the module argues for
+   rather than an omission. */
+
+/* L15 . The Paste Test reuses .ftbin / .ftrow from Module 4. */
+.ptbins { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .8rem; }
+.ptbins .ftbin { min-height: 7rem; }
+
+/* L16 . Disclose or Not */
+.dccase { display: flex; flex-direction: column; gap: .7rem; }
+.dcn { margin: 0; font-size: 1.02rem; font-weight: 700; line-height: 1.45; }
+.dcreveal { display: flex; flex-direction: column; gap: .5rem; }
+.dccols { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.dccol {
+  display: flex; flex-direction: column; gap: .3rem;
+  padding: .7rem .8rem; background: var(--surface-2); border-radius: var(--r-sm);
+  border-top: 3px solid var(--line-strong);
+}
+.dccol.is-same { border-top-color: var(--good); }
+.dccol__n {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3);
+}
+.dccol__v { margin: 0; font-size: .92rem; font-weight: 700; line-height: 1.35; }
+.dccol__s { margin: 0; font-size: .82rem; line-height: 1.5; color: var(--ink-2); }
+.dcnote {
+  margin: 0; padding: .7rem .85rem; font-size: .88rem; line-height: 1.6;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+
+/* L17 . Policy Builder */
+.pbsecs { display: flex; flex-direction: column; gap: .8rem; }
+.pbsec {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .85rem .95rem; background: var(--surface-2); border-radius: var(--r-sm);
+}
+.pbsec__n {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .78rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--accent-text);
+}
+.pbsec__l { margin: 0; font-size: .87rem; line-height: 1.55; color: var(--ink-2); }
+.pbout {
+  font: inherit; font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .82rem; line-height: 1.7; min-height: 16rem;
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: .9rem 1rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.pbout:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* L17 . Then and now */
+.cfrows { display: flex; flex-direction: column; gap: .5rem; }
+.cfrow {
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center;
+  justify-content: space-between;
+  padding: .7rem .85rem; background: var(--surface-2); border-radius: var(--r-sm);
+}
+.cfrow__q { margin: 0; font-size: .93rem; line-height: 1.45; font-weight: 700; flex: 1 1 16rem; }
+.cfrow__q span {
+  display: block; font-weight: 400; font-size: .74rem; letter-spacing: .03em;
+  text-transform: uppercase; color: var(--ink-3); margin-top: .15rem;
+}
+.cfin { display: flex; align-items: center; gap: .4rem; }
+.cflab { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.cfsel {
+  font: inherit; font-size: .9rem; padding: .3rem .4rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-xs);
+}
+.cfdelta {
+  min-width: 2rem; text-align: center; font-weight: 700; font-size: .9rem;
+  font-variant-numeric: tabular-nums; color: var(--ink-3);
+}
+.cfdelta--up   { color: var(--good); }
+.cfdelta--down { color: var(--accent-text); }
+.cfdelta--flat { color: var(--ink-3); }
+.cfdone { margin-top: .6rem; }
+
+@media (max-width: 720px) {
+  .ptbins, .dccols { grid-template-columns: 1fr; }
+}
+
+/* The editing switch's notice, standing in for the prediction gate. Warm rather
+   than alarming - it is a note to whoever is editing the page, not an error -
+   but unmistakably not a beat of the lesson. */
+.gate__stakes--edit {
+  align-items: flex-start; line-height: 1.55;
+  padding: .7rem .85rem; border-radius: var(--r-xs);
+  background: var(--warn-soft); color: var(--ink-2);
+}
+.gate__stakes--edit .i { flex: none; margin-top: .2rem; color: var(--warn); }
+.gate__stakes--edit code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .88em; background: var(--surface); padding: .05em .3em;
+  border-radius: var(--r-xs); white-space: nowrap;
+}
+
+/* An unlinked video beat. Deliberately not styled to look like a player: a
+   placeholder that looks playable and is not reads as a bug, and this one has
+   to survive until seventeen videos are actually recorded. */
+
+/* An unlinked video. No frame and no play button - see lesson_shell._video for
+   why a control that cannot do anything is worse than no control. */
+.video__soon {
+  display: flex; align-items: flex-start; gap: .55rem;
+  margin: 0; padding: .85rem 1rem;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: .9rem; line-height: 1.55; color: var(--ink-2);
+}
+.video__soon .i { flex: none; margin-top: .2rem; color: var(--ink-3); }
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -1925,8 +2601,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150">
+<!-- CSC 150  page 04-anatomy-of-a-prompt.html  vf6b128c  ·  build c54ad0e  ·  2026-09-02 15:04 -->
+<div data-build="c54ad0e" data-page="04-anatomy-of-a-prompt.html" data-version="f6b128c" class="lesson" data-course="150">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
@@ -1952,6 +2628,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
   <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
   <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
 </svg>
 
 <div class="railtrack"><div class="railtrack__fill" id="rail"></div></div>
@@ -1964,12 +2647,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     </div>
     <h1>Anatomy of a Prompt</h1>
     <p class="standfirst">Five components, and one very popular addition that does nothing at all.</p>
-    <div class="metarow">
-      <span><svg class="i"><use href="#i-clock"/></svg> 40&ndash;50 min</span>
-      <span><svg class="i"><use href="#i-video"/></svg> 1 video (3:00)</span>
-      <span><svg class="i"><use href="#i-upload"/></svg> 1 deliverable</span>
-      <span><svg class="i"><use href="#i-target"/></svg> Course outcome 1</span>
-    </div>
+    <div class="metarow"><span><svg class="i"><use href="#i-target"/></svg> Course outcome 1</span></div>
   </div>
 </header>
 
@@ -1980,8 +2658,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <div class="lede">
       <div class="icontile icontile--quiet"><svg class="i"><use href="#i-book-open"/></svg></div>
       <div class="lede__body">
-        <span class="eyebrow">What this lesson is</span>
-        <p>Most of what gets blamed on bad AI is a prompt problem. This lesson takes the worst possible prompt apart and rebuilds it one piece at a time - audience, format, constraint, worked example - so you can see precisely which additions move the output and which do nothing whatsoever. One of them does nothing whatsoever, and it is the one most people reach for first.</p>
+        <span class="eyebrow">Overview</span>
+        <p>Most of what gets blamed on bad AI is a prompt problem. We are going to take the worst possible prompt apart and rebuild it one piece at a time - audience, format, constraint - so you can see precisely which components move the output and which do nothing whatsoever. One of them does nothing, and it is the one most people reach for first (including me!).</p>
       </div>
     </div>
   </section>
@@ -1989,7 +2667,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <section class="block beat" id="beat-predict">
     <span class="beat__label"><svg class="i"><use href="#i-help"/></svg> Beat 2 &middot; Prediction gate</span>
     <div class="gate" id="gate">
-      <p class="gate__stakes"><svg class="i"><use href="#i-help"/></svg> No stakes, no grade. You are not expected to know this yet - guessing is the point.</p>
+      <p class="gate__stakes"><svg class="i"><use href="#i-help"/></svg> No stakes here - just guessing helps the learning!</p>
       <h2 class="gate__q">Two prompts ask for the same thing. One is eight words long, the other is sixty. Which gets the better answer?</h2>
       <div class="options" id="gateOptions" role="group" aria-label="Prediction choices">
         <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="18">
@@ -2050,7 +2728,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-target"/></svg> Beat 3 &middot; Objectives</span>
       <div class="blockhead">
-        <span class="eyebrow"><svg class="i"><use href="#i-target"/></svg> What you'll walk out with</span>
+        <span class="eyebrow"><svg class="i"><use href="#i-target"/></svg> What you&rsquo;ll walk out with</span>
         <h2>By the end of this lesson you can&hellip;</h2>
       </div>
       <div class="card card--quiet">
@@ -2079,13 +2757,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-history"/></svg> Warm-up</span>
         <h2>Three from earlier</h2>
-        <p>Cards from the course item bank, not written for today. Answer from memory, then swipe the card away. Nothing here is graded.</p>
+        <p>Cards from the content covered in the course. Answer from memory, then swipe the card away. Nothing here is graded.</p>
       </div>
       <div class="deck" id="recallDeck">
         <div class="deck__stack" id="recallStack">
         <article class="fcard" data-answer="1">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; last week</p>
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; 2 lessons back</p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
           <p class="fcard__q">A language model is trained, at bottom, to do what?</p>
@@ -2100,7 +2778,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         </article>
         <article class="fcard" data-answer="0">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; last week</p>
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Lesson 2</em> &middot; 2 lessons back</p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
           <p class="fcard__q">You ask the same question twice and get two different answers. What happened?</p>
@@ -2115,10 +2793,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         </article>
         <article class="fcard" data-answer="2">
           <div class="fcard__top">
-            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Week 1 setup</em> &middot; 3 weeks ago</p>
+            <p class="provenance"><svg class="i"><use href="#i-history"/></svg> First seen <em>Week 1 setup</em></p>
             <span class="fcard__grip" aria-hidden="true"><span></span><span></span></span>
           </div>
-          <p class="fcard__q">In Week 1 you were told to change one setting before typing anything. Which?</p>
+          <p class="fcard__q">In a previous lesson, you were told to change one setting before typing anything. Which?</p>
           <div class="answers">
             <button class="answer" type="button" data-i="0">Response length</button>
             <button class="answer" type="button" data-i="1">Theme and appearance</button>
@@ -2154,7 +2832,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="segment">
         <h3><span class="segno">01</span> The five components</h3>
         <div class="prose">
-          <p>A working prompt does five jobs. <strong>Task</strong>: what you actually want done, stated as a verb. <strong>Audience</strong>: who is going to read it. <strong>Format</strong>: what shape the output should take, including how long. <strong>Constraints</strong>: what to leave out, avoid, or never say. <strong>Examples</strong>: a sample of the thing you want, which is worth more than any adjective describing it.</p>
+          <p>A working prompt does five jobs: <strong>Task</strong>: what you actually want done, stated as a verb. <strong>Audience</strong>: who is going to read it. <strong>Format</strong>: what shape the output should take, including how long. <b class='vt' data-v='constraint'><i>Constraints</i></b>: what to leave out, avoid, or never say. <strong>Examples</strong>: a sample of the thing you want, which is worth more than any adjective describing it.</p>
           <p>Most people write only the first one, and only vaguely. The panel below starts from the worst possible version and adds one component at a time. Watch the output, not the meter.</p>
         </div>
         
@@ -2193,7 +2871,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="segment">
         <h3><span class="segno">02</span> The one that does nothing</h3>
         <div class="prose">
-          <p>You will have noticed the politeness button. Adding <em>please</em> and <em>thank you</em> does not change the output in any way you could measure, and it does not move the specificity meter, because it adds no information about what you want.</p>
+          <p>You may have noticed the politeness button. Adding <em>please</em> and <em>thank you</em> does not change the output in any way you could measure, and it does not move the specificity meter, because it adds no information about what you want.</p>
+          <p>You may have seen it claimed that being polite gets you better answers. Be careful with that one - it is mostly anecdote, and the explanation people give for it is really about something else. The model matches your register: write warmly and it writes back warmly, and the exchange feels better for it. That is a real effect, and it is not the same thing as a better answer. Basically, it&rsquo;s looking in a mirror and seeing what you like.</p>
           <p>The same is true of a whole family of instructions people reach for: <em>be accurate</em>, <em>be creative</em>, <em>do a good job</em>, <em>this is important</em>. They feel like they are steering something. They are not, because there is no accuracy dial for them to turn - which is Lesson 8's whole subject.</p>
           <p>Be polite to it if you like. Plenty of people do, and it costs you a couple of tokens. Just do not mistake it for prompt engineering.</p>
         </div>
@@ -2201,23 +2880,37 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
         <div class="callout">
           <div class="icontile"><svg class="i"><use href="#i-lightbulb"/></svg></div>
           <div class="callout__body">
-            <p class="callout__label">The highest-leverage component</p>
+            <p class="callout__label">A high-leverage component</p>
             <p>If you only ever add one thing, add <strong>an example</strong>. A paragraph you like, a table laid out the way you want it, an email in the right register. Describing a tone takes four sentences and lands unreliably; showing one takes ten seconds and lands almost every time.</p>
+            <p>I oftentimes use two or three examples (we call this <b class='vt' data-v='few-shot-worked-example'><i>few-shot</i></b> prompting because it includes, well, a few examples).</p>
           </div>
         </div>
+        <aside class="sidetrip">
+          <div class="sidetrip__tile"><svg class="i"><use href="#i-compass"/></svg></div>
+          <div class="sidetrip__body">
+            <p class="sidetrip__tags"><span class="sidetrip__chip">Side trip</span><span class="sidetrip__chip sidetrip__chip--open">Nothing to hand in</span></p>
+            <h4 class="sidetrip__name">The Prompt Library</h4>
+            <p class="sidetrip__blurb">Prompts you can copy, filed by what you are trying to get done. Each one comes with a blank template, a filled-in example, and a variation to try next. Go and take some of them apart - that is what it is for.</p>
+            <p class="sidetrip__go">
+              <a class="sidetrip__btn" href="https://www.flcc.ai/tools/general-prompt-library.html" target="_blank" rel="noopener">Open the Prompt Library <svg class="i"><use href="#i-external-link"/></svg></a>
+              <span class="sidetrip__host">opens flcc.ai in a new tab</span>
+            </p>
+          </div>
+        </aside>
       </div>
     </section>
 
     <section class="block beat">
       <span class="beat__label"><svg class="i"><use href="#i-video"/></svg> Beat 7 &middot; Video</span>
       <div class="video">
-        <div class="video__frame" role="button" tabindex="0" aria-label="Play: One question, five prompts, five outputs side by side.">
-          <span class="video__play"><svg class="i"><use href="#i-play"/></svg></span>
-        </div>
-        <div class="video__meta">
-          <span class="video__job">Demo &middot; 3:00</span>
-          <span>One question, five prompts, five outputs side by side.</span>
-        </div>
+        <!-- VIDEO: to drop an embed straight into this page, replace everything
+             between this comment and /VIDEO with the <iframe> your video host
+             gives you. Keep the wrapping <div class="embed"> and it will size
+             itself to 16:9 with the course&rsquo;s corner radius. -->
+        <div class="embed"><iframe src="https://inlineteaching.com/tools/vids-iframer.html?id=1mQy5TwbiQvK8okufAWhh07yenbtoorcVZzXkoEU3wyM&amp;title=Anatomy+of+a+Prompt&amp;bg=d4400b&amp;titleColor=ffffff&amp;clickColor=ffffff" title="Google Vids Content" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share" allowfullscreen aria-label="Play: One question, five prompts, five outputs side by side."></iframe></div>
+        <!-- /VIDEO -->
+        
+        <div class="video__meta"><span>One question, five prompts, five outputs side by side.</span></div>
         <details class="disclosure">
           <summary>Transcript <svg class="i"><use href="#i-chevron-down"/></svg></summary>
           <div class="disclosure__body">
@@ -2255,8 +2948,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           <div class="step"><span>Run both. Submit the before, the after, and both outputs.</span></div>
         </div>
         <div class="deliverable">
-          <svg class="i i--lg" style="color:var(--accent-text)"><use href="#i-upload"/></svg>
-          <span><strong>Deliverable:</strong> two prompts, two outputs, and one sentence on which addition did the most work.</span>
+          <svg class="i i--lg" style="color:var(--accent-text)"><use href="#i-notebook-pen"/></svg>
+          <span><strong>Reflection:</strong> Be sure to log this in your workbook (if you are using it).</span>
         </div>
       </div>
     </section>
@@ -2266,7 +2959,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <div class="blockhead">
         <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Before you go</span>
         <h2>Two questions</h2>
-        <p>These enter the course item bank tonight and come back at you unannounced, weeks from now. Don&rsquo;t worry! This is the design, not a threat!</p>
+        <p>These enter the course item bank right now and come back at you unannounced, in later lessons. Don&rsquo;t worry! This is the design, not a threat! Seriously. No threat.</p>
       </div>
       <div class="recall" id="exit">
         <div class="recallcard" data-answer="1">
@@ -2295,7 +2988,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     </section>
 
     <footer class="lessonfoot">
-      <span>CSC 150 &middot; AI Foundations &middot; Lesson 4 of 17</span>
+      <span>CSC 150 &middot; AI Foundations &middot; Lesson 4 of 17 &middot; <span class="ver" title="page version f6b128c, build c54ad0e, 2026-09-02 15:04">vf6b128c</span></span>
       <span class="row" style="gap:.4rem" id="lessonNext">Next: <a href="05-the-landscape.html">Lesson 5 - The Landscape</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
     </footer>
 
@@ -2317,7 +3010,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
  *
  * Markup it expects:
  *   <div class="embed embed--facade"
- *        data-video="VIDEO_ID"
+ *        data-video="VIDEO_ID"              (YouTube) OR
+ *        data-embed="https://..."           (any other player's embed URL)
  *        data-title="What the video is"
  *        data-sub="Demo · 2:40"            (optional)
  *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
@@ -2339,7 +3033,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     var b = document.createElement("button");
     b.type = "button";
     b.className = "facade" + (poster ? "" : " facade--noposter");
-    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.setAttribute("aria-label", "Play: " + title +
+      (el.getAttribute("data-video")
+        ? ". The video loads from YouTube only after this."
+        : ". The video loads only after this."));
     b.innerHTML =
       (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
       '<span class="facade__scrim"></span>' +
@@ -2358,11 +3055,25 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   function play(el) {
+    /* Two sources, one behavior. data-video is a YouTube id and gets the
+       nocookie host built for it; data-embed is any other player's own embed
+       URL and is used exactly as given, because Kaltura, YuJa, Panopto and
+       Brightspace all sign their URLs differently and none of that is ours to
+       reconstruct.
+
+       The click-to-load part is the point either way: no request leaves the
+       page for anybody's server until the learner asks for the video. */
     var id = el.getAttribute("data-video");
-    if (!id) return;
+    var url = el.getAttribute("data-embed");
+    if (!id && !url) return;
     var start = el.getAttribute("data-start");
-    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var src;
+    if (url) {
+      src = url + (url.indexOf("?") === -1 ? "?" : "&") + "autoplay=1";
+    } else {
+      src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+            "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    }
     var f = document.createElement("iframe");
     f.setAttribute("src", src);
     f.setAttribute("title", el.getAttribute("data-title") || "Video");
@@ -2737,6 +3448,16 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 </script>
 
 <script>
+/* ---- editing switch ------------------------------------------------------
+   true opens this lesson without the prediction gate, so refreshing while you
+   edit does not send you back to the question. Set it back to false before
+   this page goes anywhere: publish.py refuses a page carrying it, and
+   build/all.py fails if it is on in source or output.
+
+   Adding ?gate=off to the address does the same thing without editing the
+   file, which is the version you cannot forget to undo.                     */
+var GATE_OFF = false;
+
 var SURGERY=[{"add": null, "label": "The bare prompt", "prompt": "Write something about climate change.", "score": 8, "out": "Climate change refers to long-term shifts in temperatures and weather patterns. While some of these shifts are natural, since the 1800s human activities have been the main driver&hellip; <em>(continues for 600 generic words you have read a hundred times)<\/em>"}, {"add": "task", "label": "A real task", "prompt": "Explain why our town's solar project raised property taxes this year.", "score": 30, "out": "The increase is likely tied to the capital financing structure of the installation. Municipalities typically fund such projects through bonds, which are serviced by&hellip; <em>Better, but it is guessing at your town and hedging every sentence.<\/em>"}, {"add": "audience", "label": "+ audience", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.", "score": 52, "out": "You will have noticed a bigger number on your tax bill this year, and the solar array on the old landfill is part of the reason. Here is what happened, without the jargon&hellip; <em>The register changed completely.<\/em>"}, {"add": "format", "label": "+ format and length", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.", "score": 71, "out": "<strong>Why your tax bill went up<\/strong><br>You will have noticed a bigger number this year&hellip; <em>Now it stops at 150 words and has a headline, because you asked for a newsletter rather than an essay.<\/em>"}, {"add": "constraint", "label": "+ a hard constraint", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.", "score": 86, "out": "&hellip;the bond covering construction is repaid over twelve years, and this is the first year of that repayment. <em>The sales pitch is gone. Constraints remove things, which is often what you actually needed.<\/em>"}, {"add": "example", "label": "+ a worked example", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.\nMatch the tone of this paragraph from last issue: \"The water main on Chapel Street is being replaced. It is loud, it is inconvenient, and it will take until October.\"", "score": 100, "out": "The solar array is being paid for. It is on your bill, it starts this year, and it runs for twelve. <em>One example did more for the voice than four instructions did.<\/em>"}];
 var CUTOFF=[{"q": "What is photosynthesis?", "pos": 18, "kind": "ok", "t": "Answered, and reliably.", "d": "Settled knowledge that was written down long before the cutoff and has not changed since. This is the model at its best."}, {"q": "Who wrote <em>Middlemarch<\/em>?", "pos": 8, "kind": "ok", "t": "Answered, and reliably.", "d": "Same category. Old, stable, written about endlessly. Nothing about the cutoff threatens it."}, {"q": "What is 17 &times; 24?", "pos": 45, "kind": "warn", "t": "Nothing to do with the cutoff - and still a coin flip.", "d": "Arithmetic is not a knowledge problem, so the wall is irrelevant here. It fails for a different reason: the model is predicting the shape of an answer rather than calculating one. Lesson 2 explains why."}, {"q": "What is in the news today?", "pos": 88, "kind": "bad", "t": "Past the wall. Usually refuses - which is the good outcome.", "d": "Obviously post-cutoff, and models are generally trained to say so. A refusal here is the system working."}, {"q": "What is the current version of this software?", "pos": 79, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "This is the dangerous shape: a question that <em>sounds<\/em> like stable knowledge but has a moving answer. The model gives you the version that was current when it was trained, with no hedging at all, and you have no way to tell from the reply."}, {"q": "Who holds this office right now?", "pos": 84, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "Same trap. Roles feel permanent and are not. The reply will be confident and it will be whoever held the post during training."}];
 var NESTING=[{"n": "Spam filter", "r": 1, "why": "Nobody wrote a rule about wire transfers. It worked out what spam looks like from millions of labeled examples - and has been doing that since the late 1990s."}, {"n": "Chess engine", "r": 0, "why": "Searches millions of positions and scores them against rules a person wrote down. It beat the world champion in 1997 using almost nothing from the inner rings."}, {"n": "Spell-check", "r": 0, "why": "A dictionary and a set of edit rules. Genuinely AI by the original definition, and genuinely not learning anything. The oldest thing on this list."}, {"n": "Netflix &lsquo;because you watched&rsquo;", "r": 1, "why": "Predicts how likely you are to finish something, from what people like you finished. It predicts a number, not a paragraph - AI, and not generative."}, {"n": "Face unlock", "r": 2, "why": "A deep network built its own internal representation of your face. Nobody described your face to it in words, which is also why it cannot tell you what it is looking at."}, {"n": "A chatbot", "r": 3, "why": "The innermost ring: a language model predicting one token at a time. The newest thing here by a wide margin, and the reason you signed up."}, {"n": "Smart thermostat", "r": -1, "why": "If it switches on below a temperature you set, that is a rule somebody wrote into a thermostat. Automation, not AI. If it learns your schedule from your behavior, it moves into machine learning - and most of the ones sold as &lsquo;smart&rsquo; do not."}, {"n": "Handwriting recognition", "r": 2, "why": "Deep networks reading shapes, and one of the first places deep learning beat everything else. Your bank was using it before you had an account."}, {"n": "Self-driving car", "r": 2, "why": "Deep learning for perception, wrapped in a great deal of hand-written safety logic. Two rings at once - a useful reminder that real systems are rarely just one."}, {"n": "Machine translation", "r": 3, "why": "Modern translation runs on the same architecture as the chatbot. In fact that architecture was invented <em>for<\/em> translation, which is a clue about the lesson after next."}, {"n": "Loan approval model", "r": 1, "why": "Learns from historical lending decisions - including, if nobody checks, whose applications were historically refused. Lesson 10 is about exactly this."}, {"n": "Phone autocomplete", "r": 3, "why": "The same job as the chatbot, running very small and very fast: predict the next word. You have been using a language model for years without calling it one."}];
@@ -2745,8 +3466,44 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
 (function () {
   "use strict";
   /* ---------------------------------------------------- prediction gate --- */
+
+  /* Editing switch. Two ways in, and they do the same thing:
+
+       GATE_OFF = true      declared at the top of each lesson page's script
+                            block by pack.py, and false in everything the
+                            build produces. Flip it in a copy you are editing.
+
+       ?gate=off            in the address bar. Same effect, touches no file,
+                            and therefore cannot be forgotten and shipped.
+                            Prefer this one.
+
+     Either way the lesson opens on load, so a refresh mid-edit does not put
+     you back at the prediction question. The gate is replaced by a visible
+     notice rather than silently vanishing, because a page that quietly skips
+     a beat is indistinguishable from a page whose beat is broken.
+
+     Ways this cannot reach a student: publish.py refuses any page carrying
+     the flag on, and _verify.py fails the build if it is on anywhere in
+     build/, csc-150/, dist/ or publish/. A copy under edits/ is reported
+     rather than refused, since turning it on there is the entire point. */
+  var GATE_EDIT = (typeof GATE_OFF !== "undefined" && GATE_OFF === true) ||
+                  /[?&]gate=off(&|$)/.test(location.search);
+
   var gate = document.getElementById("gate");
-  if (gate) {
+  if (gate && GATE_EDIT) {
+    /* .gate__stakes is a flex row, so the message has to arrive as one
+       element - otherwise every <code> in it starts its own column. */
+    gate.innerHTML =
+      '<p class="gate__stakes gate__stakes--edit">' +
+      '<svg class="i"><use href="#i-alert"/></svg>' +
+      '<span>Prediction gate off for editing. This is not how the page ships: set ' +
+      '<code>GATE_OFF</code> back to <code>false</code>, or drop ' +
+      '<code>?gate=off</code> from the address, to see it as a learner does.</span></p>';
+    document.getElementById("callbackText").textContent =
+      "The prediction gate was switched off for editing, so there is nothing to compare against here.";
+    document.getElementById("lock").remove();
+    document.getElementById("gated").hidden = false;
+  } else if (gate) {
   var opts = Array.prototype.slice.call(document.querySelectorAll("#gateOptions .option"));
   var why = document.getElementById("why");
   var commit = document.getElementById("commit");
@@ -3050,7 +3807,9 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
     /* The caption's longest possible state, primed once by Steady rather than
        re-measured on every render. WORST is a real string it can produce. */
     function primeOrder() {
-      Steady.prime(elO, 1, function () { elO.innerHTML = WORST; });
+      Steady.prime(elO, 1, function () { elO.innerHTML = WORST; },
+        function () { return elO.innerHTML; },
+        function (snap) { elO.innerHTML = snap; });
     }
 
     function reset() { hist = [START, START]; built = []; done = false; greedy = 0; elR.innerHTML = ""; }
@@ -3257,9 +4016,10 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
     /* .pbuild holds the prompt and the sample output, both of which change
        length at every step; the buttons sit under it. Six states, all known,
        so measure them all rather than growing into the tallest. */
-    Steady.prime(document.querySelector("#surgery .pbuild"), SURGERY.length, function (n) {
-      i = n; render();
-    });
+    Steady.prime(document.querySelector("#surgery .pbuild"), SURGERY.length,
+      function (n) { i = n; render(); },
+      function () { return i; },
+      function (snap) { i = snap; render(); });
     i = 0;
     render();
   })();
@@ -3306,15 +4066,37 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
 
     /* The verdict panel is empty until the first placement and then a different
        height for each of the six. Reserve the tallest so nothing below it moves. */
-    Steady.prime(verdict, CUTOFF.length, function (n) {
-      var item = CUTOFF[n];
-      verdict.className = "verdict is-shown";
-      verdict.innerHTML = '<div class="icontile">' + icon("check") + "</div>" +
-        '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
-    });
+    Steady.prime(verdict, CUTOFF.length,
+      function (n) {
+        var item = CUTOFF[n];
+        verdict.className = "verdict is-shown";
+        verdict.innerHTML = '<div class="icontile">' + icon("check") + "</div>" +
+          '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
+      },
+      function () { return [verdict.className, verdict.innerHTML]; },
+      function (snap) { verdict.className = snap[0]; verdict.innerHTML = snap[1]; });
     verdict.className = "verdict";
     verdict.innerHTML = "";
   })();
+
+  /* ── Steady.prime and state: read this before adding another panel ───────
+     prime() renders every state of a panel to find the tallest, and it does
+     that by driving the SAME variables the learner's clicks drive. It also
+     re-runs on font load, on width change, and when the prediction gate opens
+     and finally gives the panel a real width - so "it looked fine at load" is
+     not evidence of anything.
+
+     Without a save/restore pair, each of those re-measures leaves the panel in
+     the LAST state measured. That is not cosmetic. In The Nesting Dolls the
+     question chip was left reading NESTING[11], "Phone autocomplete", while
+     the actual question was still whichever item the shuffle had reached - so
+     the learner answered the visible word, was marked wrong, and the placed
+     row recorded a system they had never been shown. Reported from a phone,
+     where rotation and the LMS frame make a re-measure far more likely.
+
+     Module 2 hit this first and grew the hooks; Module 1 was never updated.
+     All five call sites below now pass them. If you add a panel: snapshot
+     whatever render() reads, and put it back. */
 
   /* -- L1 . The Nesting Dolls ------------------------------------------------
      One system at a time, five flat choices, and a static ring diagram beside
@@ -3375,7 +4157,7 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
       });
       lightRing(-1);
       setNote(elNote, "arrow-right", i === 0
-        ? "Pick the narrowest ring that still contains it. A wrong answer here is worth more than a right one."
+        ? "Pick the narrowest ring that still contains it. "
         : "Keep going. Some of these are older than you would guess.");
     }
     function choose(item, r, btn) {
@@ -3409,10 +4191,10 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
     reset();
     /* The system name wraps to two lines for the longer ones, which moved the
        options and the buttons under them. Twelve known states. */
-    Steady.prime(document.querySelector("#nesting .nrow"), NESTING.length, function (n) {
-      elChip.innerHTML = NESTING[n].n;
-    });
-    render();
+    Steady.prime(document.querySelector("#nesting .nrow"), NESTING.length,
+      function (n) { elChip.innerHTML = NESTING[n].n; },
+      function () { return elChip.innerHTML; },
+      function (snap) { elChip.innerHTML = snap; });
   })();
 
   /* -- L3 . Attention Spotlight ----------------------------------------------
@@ -3473,20 +4255,23 @@ var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "woul
     });
     /* Three pairs, two sides each, and the sentences differ in length enough to
        wrap differently. Six states, all reachable, so measure all six. */
-    Steady.prime(elS, SPOT.length * 2, function (n) {
-      pair = Math.floor(n / 2); side = n % 2 ? "b" : "a"; render();
-    });
+    function spotSave() { return {pair: pair, side: side, lit: lit}; }
+    function spotBack(s) { pair = s.pair; side = s.side; lit = s.lit; render(); }
+    Steady.prime(elS, SPOT.length * 2,
+      function (n) { pair = Math.floor(n / 2); side = n % 2 ? "b" : "a"; render(); },
+      spotSave, spotBack);
     /* The two swap buttons carry the pair's own wording - "...too big" against
        "...they advocated..." - so the row wraps to two lines on some pairs and
        one on others, which moved the buttons underneath it. */
-    Steady.prime(elW, SPOT.length, function (n) { pair = n; render(); });
+    Steady.prime(elW, SPOT.length,
+      function (n) { pair = n; render(); }, spotSave, spotBack);
     pair = 0; side = "a"; lit = false;
     render();
   })();
 
 })();
 
-var VOCAB={"artificial-intelligence-ai":{"t":"Artificial intelligence (AI)","l":1,"d":"The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.","w":"The broadest word on this list and the least useful on its own - always ask which kind.","s":"artificial-intelligence-ai","e":["A 1997 chess computer, a spam filter, and a chatbot are all AI. Only one of them writes you a paragraph."]},"machine-learning":{"t":"Machine learning","l":1,"d":"Systems that derive their behavior from data rather than from rules a person wrote out.","w":"The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.","s":"machine-learning","e":["Nobody wrote a rule saying <em>emails containing &lsquo;wire transfer urgently&rsquo; are spam<\/em>. The filter derived that from a few million examples."]},"deep-learning":{"t":"Deep learning","l":1,"d":"Machine learning built on neural networks with many layers. The inner ring where language models live.","w":"Explains why these systems are hard to inspect - nobody wrote the intermediate steps.","s":"deep-learning","e":["Face unlock on your phone. Nobody described your face to it in words - it built its own internal representation and cannot explain it back to you."]},"neural-network":{"t":"Neural network","l":1,"d":"A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.","w":"The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.","s":"neural-network","e":["The idea dates to the 1950s. What changed was not the concept but the amount of data and computing power available to train one."]},"narrow-ai":{"t":"Narrow AI","l":1,"d":"A system good at one bounded task and useless outside it. Every tool in this course.","w":"Cuts through most of the hype in one move.","s":"narrow-ai","e":["A model that writes a decent cover letter cannot book you a dentist appointment, and is not almost able to."]},"general-ai-agi":{"t":"General AI (AGI)","l":1,"d":"A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.","w":"Worth naming precisely so you can tell when a headline is describing something else.","s":"general-ai-agi","e":["Not a product you can buy, a milestone anyone has demonstrated, or a thing this course teaches you to use."]},"generative-ai":{"t":"Generative AI","l":1,"d":"The branch that produces new text, images or audio rather than sorting or scoring existing things.","w":"Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.","s":"generative-ai","e":["Generative: a chatbot writing a paragraph, an image model drawing a poster."]},"ai-winter":{"t":"AI winter","l":1,"d":"One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.","w":"The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.","s":"ai-winter","e":["<strong>The first, roughly 1974 to 1980.<\/strong> A decade of confident promises about machine translation and general problem solving had not arrived. Britain&rsquo;s Lighthill report in 1973 concluded the field had not delivered on any of it, and funding was cut sharply on both sides of the Atlantic."]},"attention":{"t":"Attention","l":3,"d":"The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.","w":"The answer to why the token machine wandered and current models do not.","s":"attention","e":["In <em>the trophy would not fit in the suitcase because it was too big<\/em>, attention is what lets the model connect <em>it<\/em> back to <em>trophy<\/em> rather than to the nearer word."]},"transformer":{"t":"Transformer","l":3,"d":"The architecture built on attention, introduced in 2017. Effectively every model in this course is one.","w":"The single piece of architecture worth knowing by name - the T in GPT.","s":"transformer","e":["Introduced in <em>Attention Is All You Need<\/em>, a 2017 paper from a team at Google."]},"context-long-range":{"t":"Context (long-range)","l":3,"d":"Material far from the current word that still determines its meaning.","w":"What a two-word memory cannot hold and attention can - and why paragraphs hold together now.","s":"context-long-range","e":["A pronoun in the last line of a paragraph whose meaning was fixed in the first line."]},"token":{"t":"Token","l":2,"d":"The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.","w":"Cost, speed and context limits are all measured in tokens, never in words.","s":"token","e":["&ldquo;Unbelievable&rdquo; is three tokens. &ldquo;Cat&rdquo; is one. A rare surname might be five."]},"large-language-model-llm":{"t":"Large language model (LLM)","l":2,"d":"A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.","w":"If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.","s":"large-language-model-llm","e":["ChatGPT, Claude and Gemini are products; the LLM is the thing underneath doing the predicting."]},"training":{"t":"Training","l":2,"d":"The one-time process of building the model by having it predict text over and over across a huge corpus. It finished before you ever typed anything.","w":"The model is not learning from your conversation, whatever it sounds like.","s":"training","e":["It finished before you opened the tab. Nothing you type today changes the model - though it may be stored and used in a <em>later<\/em> training run, which is what Lesson 15 is about."]},"inference":{"t":"Inference","l":2,"d":"What happens when you press enter: the finished model generating one token at a time.","w":"Explains why the identical prompt can come back different twice in a row.","s":"inference","e":["The pause after you press enter is inference: the finished model producing one token, then the next, then the next."]},"temperature":{"t":"Temperature","l":2,"d":"A setting controlling how strongly the model favors the single most likely next token over a less likely one.","w":"Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.","s":"temperature","e":["Token Roulette&rsquo;s slider is this setting, exposed. Most chat tools hide it and pick a middling value for you."]},"parameters":{"t":"Parameters","l":2,"d":"The numbers inside the model that training adjusted. Sizes are quoted in billions of them.","w":"The number marketing leans on hardest, and a poor predictor of whether a model suits your task.","s":"parameters","e":["&ldquo;70 billion parameters&rdquo; tells you roughly how big a model is and almost nothing about whether it suits your task."]},"prompt":{"t":"Prompt","l":4,"d":"Everything you send in one turn - the question plus whatever context, examples and instructions come with it.","w":"Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.","s":"prompt","e":["Everything in the box when you press enter: your question, whatever you pasted above it, and any instructions you added."]},"context":{"t":"Context","l":4,"d":"The material you hand the model to work from: pasted text, uploaded files, earlier turns.","w":"Grounding a request in real context is the single largest quality lever you control.","s":"context","e":["Pasting the actual assignment brief beats describing it. &lsquo;Write a lab report&rsquo; and &lsquo;here is the rubric, write to it&rsquo; are different requests."]},"few-shot-worked-example":{"t":"Few-shot (worked example)","l":4,"d":"Showing the model one or more examples of the output you want rather than describing it.","w":"Far more reliable than adjectives for pinning down a format.","s":"few-shot-worked-example","e":["Instead of &lsquo;make it punchy&rsquo;, paste two headlines you like and say &lsquo;this style&rsquo;."]},"system-prompt":{"t":"System prompt","l":4,"d":"Standing instructions sitting behind a conversation that shape every reply in it.","w":"How custom assistants get their rules - and the foundation of CSC 240.","s":"system-prompt","e":["&lsquo;You are a tutor for an introductory statistics course. Never give the final answer; ask a question that gets the student one step closer.&rsquo;"]},"constraint":{"t":"Constraint","l":4,"d":"A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.","w":"Constraints do real work. &ldquo;Be good&rdquo; does none.","s":"constraint","e":["Works: <em>under 150 words, no bullet points, eighth-grade reading level, do not mention pricing<\/em>."]},"context-window":{"t":"Context window","l":5,"d":"The maximum amount of text a model can hold in view at once, your prompt and its reply together.","w":"Go past it and the earliest material silently drops out of view - no warning.","s":"context-window","e":["In a long conversation the earliest turns fall out of view. Nothing warns you; the model simply stops being able to see them."]},"knowledge-cutoff":{"t":"Knowledge cutoff","l":5,"d":"The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.","w":"The single most common cause of a confidently wrong answer about anything current.","s":"knowledge-cutoff","e":["Ask a bare chat model who won an election held after its cutoff and you will often get a fluent, specific, wrong answer rather than a refusal."]},"multimodal":{"t":"Multimodal","l":5,"d":"A model that handles more than text - images, audio, sometimes video, as input or output.","w":"Decides whether you can paste a screenshot at all.","s":"multimodal","e":["Photographing a handwritten page and asking for a transcript. If a tool is text-only, that is not a prompting problem - it simply cannot see."]},"reasoning-model":{"t":"Reasoning model","l":5,"d":"A model that spends extra computation working through a problem in steps before answering.","w":"Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.","s":"reasoning-model","e":["Worth the wait for a multi-step word problem. Wasted on &lsquo;make this email shorter&rsquo;."]},"foundation-model":{"t":"Foundation model","l":5,"d":"A large general-purpose model that other products are built on top of.","w":"Several tools you use may be the same model wearing different clothes.","s":"foundation-model","e":["Several products you think of as different tools may be the same foundation model with different instructions wrapped around it."]},"rate-limit":{"t":"Rate limit","l":5,"d":"A cap on how much you can use a tool in a given window, usually much tighter on free tiers.","w":"Find yours before an assignment is due, not during.","s":"rate-limit","e":["Find yours on a Tuesday, not at 11pm the night an assignment is due."]},"benchmark":{"t":"Benchmark","l":6,"d":"A standard test used to compare models on one specific skill.","w":"Models can be tuned to score well on benchmarks without being better at your actual work.","s":"benchmark"},"leaderboard":{"t":"Leaderboard","l":6,"d":"A ranked table of models by benchmark score or human preference.","w":"Genuinely useful and routinely over-read.","s":"leaderboard"},"blind-comparison":{"t":"Blind comparison","l":6,"d":"Rating two outputs without knowing which model produced either.","w":"The only way to measure the answer instead of the brand.","s":"blind-comparison"},"elo-rating":{"t":"Elo rating","l":6,"d":"A ranking score borrowed from chess, updated every time one option beats another head to head.","w":"How LM Arena turns a pile of votes into an ordered list.","s":"elo-rating"},"thread":{"t":"Thread","l":7,"d":"One continuous conversation. Everything in it stays in context until the window fills up.","w":"A long thread can quietly poison a new question asked inside it.","s":"thread"},"context-accumulation":{"t":"Context accumulation","l":7,"d":"The build-up of earlier turns, which increasingly shapes every later answer.","w":"The reason a fresh chat sometimes beats one more follow-up.","s":"context-accumulation"},"regeneration":{"t":"Regeneration","l":7,"d":"Asking for another attempt at the same prompt instead of editing the prompt.","w":"Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.","s":"regeneration"},"hallucination":{"t":"Hallucination","l":8,"d":"A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.","w":"Not a malfunction. The same machinery that produces correct answers produces these.","s":"hallucination"},"confabulation":{"t":"Confabulation","l":8,"d":"Filling a gap with plausible invention instead of signaling uncertainty.","w":"Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.","s":"confabulation"},"plausibility":{"t":"Plausibility","l":8,"d":"How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.","w":"The trap inside every fabricated citation you will ever see.","s":"plausibility"},"grounding":{"t":"Grounding","l":9,"d":"Tying an answer to specific retrieved source material rather than to training alone.","w":"The main structural defense against fabrication.","s":"grounding"},"retrieval":{"t":"Retrieval","l":9,"d":"Fetching documents or search results and putting them into the model&rsquo;s context before it answers.","w":"What lets a tool discuss last week at all.","s":"retrieval"},"citation":{"t":"Citation","l":9,"d":"A reference to a source. Check two things: that it exists, and that it says what was claimed.","w":"The second check is the one almost everybody skips.","s":"citation"},"bias":{"t":"Bias","l":10,"d":"Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.","w":"A different problem from being wrong, and it needs a different fix.","s":"bias"},"rlhf":{"t":"RLHF","l":10,"d":"Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.","w":"The second place bias enters, after the training data.","s":"rlhf"},"probe":{"t":"Probe","l":10,"d":"A deliberately controlled prompt pair that changes exactly one variable to surface a difference.","w":"Turns &ldquo;it feels biased&rdquo; into something you can show someone.","s":"probe"},"verification":{"t":"Verification","l":11,"d":"Independently confirming a claim before you rely on it.","w":"The habit this entire course exists to install.","s":"verification"},"provenance":{"t":"Provenance","l":11,"d":"Where a piece of content came from and what happened to it along the way.","w":"Increasingly the thing you will be asked to document.","s":"provenance"},"stakes":{"t":"Stakes","l":11,"d":"What happens if this is wrong, and how hard it would be to check.","w":"Together these decide how much verification a task actually deserves.","s":"stakes"},"diffusion-model":{"t":"Diffusion model","l":12,"d":"The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.","w":"Explains why counting, hands and text-in-images are so hard for it.","s":"diffusion-model"},"negative-prompt":{"t":"Negative prompt","l":12,"d":"A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.","w":"&ldquo;No people&rdquo; in the main prompt reliably produces people.","s":"negative-prompt"},"seed":{"t":"Seed","l":12,"d":"The starting random number. The same seed with the same prompt reproduces the same image.","w":"How you change one thing without losing the whole picture.","s":"seed"},"speech-to-text-asr":{"t":"Speech-to-text (ASR)","l":13,"d":"Automatic transcription of recorded speech into written text.","w":"Error rates are not evenly distributed across accents, names, or speakers.","s":"speech-to-text-asr"},"text-to-speech":{"t":"Text-to-speech","l":13,"d":"Generating spoken audio from written text.","w":"Good enough now that consent is a real question rather than a hypothetical.","s":"text-to-speech"},"voice-cloning":{"t":"Voice cloning","l":13,"d":"Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.","w":"Legally and ethically the sharpest edge anywhere in this course.","s":"voice-cloning"},"word-error-rate-wer":{"t":"Word error rate (WER)","l":13,"d":"The standard measure of transcription accuracy: errors divided by words spoken.","w":"Lets you compare two tools instead of arguing about which felt better.","s":"word-error-rate-wer"},"vision-input":{"t":"Vision input","l":14,"d":"Giving a model an image - screenshot, photo, scan - as part of the prompt.","w":"Degrades badly with skew, handwriting and dense tables, and does so silently.","s":"vision-input"},"ocr":{"t":"OCR","l":14,"d":"Optical character recognition: pulling text out of an image of text.","w":"Frequently the better tool than a vision model when the scan is clean.","s":"ocr"},"modality":{"t":"Modality","l":14,"d":"A kind of input or output: text, image, audio, video.","w":"Choosing the right one is usually a bigger win than improving the prompt.","s":"modality"},"personally-identifiable-information-pii":{"t":"Personally identifiable information (PII)","l":15,"d":"Anything that identifies a specific person, on its own or combined with other data.","w":"The category that decides what you may and may not paste.","s":"personally-identifiable-information-pii"},"data-retention":{"t":"Data retention","l":15,"d":"How long a vendor keeps what you send, and what they are permitted to do with it.","w":"Varies by tier, and lives in the settings rather than the marketing.","s":"data-retention"},"training-opt-out":{"t":"Training opt-out","l":15,"d":"A setting that stops your conversations being used to improve the vendor&rsquo;s models.","w":"Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.","s":"training-opt-out"},"ferpa":{"t":"FERPA","l":15,"d":"US federal law protecting student education records.","w":"Applies to anyone at FLCC handling student data - including inside a chatbot.","s":"ferpa"},"zero-retention":{"t":"Zero-retention","l":15,"d":"An arrangement in which the vendor does not store your inputs at all.","w":"Usually enterprise-only, and worth knowing exists before you need it.","s":"zero-retention"},"attribution":{"t":"Attribution","l":16,"d":"Crediting a source you drew on.","w":"A different obligation from disclosure, and often confused with it.","s":"attribution"},"disclosure":{"t":"Disclosure","l":16,"d":"Stating that you used AI, and saying how.","w":"The line moves by context - a school, an employer and a journal each draw it differently.","s":"disclosure"},"ai-use-statement":{"t":"AI-use statement","l":16,"d":"A short written note describing what AI did in a piece of work.","w":"Increasingly required. You write your own in Lesson 16.","s":"ai-use-statement"},"derivative-work":{"t":"Derivative work","l":16,"d":"Something based on existing copyrighted material.","w":"The genuinely open legal question sitting under image generation.","s":"derivative-work"},"personal-ai-policy":{"t":"Personal AI policy","l":17,"d":"Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.","w":"The capstone deliverable, and the only thing here that is entirely yours.","s":"personal-ai-policy"}};
+var VOCAB={"artificial-intelligence-ai":{"t":"Artificial intelligence (AI)","l":1,"d":"The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.","w":"The broadest word on this list and the least useful on its own - always ask which kind.","s":"artificial-intelligence-ai","e":["A 1997 chess computer, a spam filter, and a chatbot are all AI. Only one of them writes you a paragraph."]},"machine-learning":{"t":"Machine learning","l":1,"d":"Systems that derive their behavior from data rather than from rules a person wrote out.","w":"The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.","s":"machine-learning","e":["Nobody wrote a rule saying <em>emails containing &lsquo;wire transfer urgently&rsquo; are spam<\/em>. The filter derived that from a few million examples."]},"deep-learning":{"t":"Deep learning","l":1,"d":"Machine learning built on neural networks with many layers. The inner ring where language models live.","w":"Explains why these systems are hard to inspect - nobody wrote the intermediate steps.","s":"deep-learning","e":["Face unlock on your phone. Nobody described your face to it in words - it built its own internal representation and cannot explain it back to you."]},"neural-network":{"t":"Neural network","l":1,"d":"A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.","w":"The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.","s":"neural-network","e":["The idea dates to the 1950s. What changed was not the concept but the amount of data and computing power available to train one."]},"narrow-ai":{"t":"Narrow AI","l":1,"d":"A system good at one bounded task and useless outside it. Every tool in this course.","w":"Cuts through most of the hype in one move.","s":"narrow-ai","e":["A model that writes a decent cover letter cannot book you a dentist appointment, and is not almost able to."]},"general-ai-agi":{"t":"General AI (AGI)","l":1,"d":"A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.","w":"Worth naming precisely so you can tell when a headline is describing something else.","s":"general-ai-agi","e":["Not a product you can buy, a milestone anyone has demonstrated, or a thing this course teaches you to use."]},"generative-ai":{"t":"Generative AI","l":1,"d":"The branch that produces new text, images or audio rather than sorting or scoring existing things.","w":"Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.","s":"generative-ai","e":["Generative: a chatbot writing a paragraph, an image model drawing a poster."]},"ai-winter":{"t":"AI winter","l":1,"d":"One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.","w":"The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.","s":"ai-winter","e":["<strong>The first, roughly 1974 to 1980.<\/strong> A decade of confident promises about machine translation and general problem solving had not arrived. Britain&rsquo;s Lighthill report in 1973 concluded the field had not delivered on any of it, and funding was cut sharply on both sides of the Atlantic."]},"attention":{"t":"Attention","l":3,"d":"The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.","w":"The answer to why the token machine wandered and current models do not.","s":"attention","e":["In <em>the trophy would not fit in the suitcase because it was too big<\/em>, attention is what lets the model connect <em>it<\/em> back to <em>trophy<\/em> rather than to the nearer word."]},"transformer":{"t":"Transformer","l":3,"d":"The architecture built on attention, introduced in 2017. Effectively every model in this course is one.","w":"The single piece of architecture worth knowing by name - the T in GPT.","s":"transformer","e":["Introduced in <em>Attention Is All You Need<\/em>, a 2017 paper from a team at Google."]},"context-long-range":{"t":"Context (long-range)","l":3,"d":"Material far from the current word that still determines its meaning.","w":"What a two-word memory cannot hold and attention can - and why paragraphs hold together now.","s":"context-long-range","e":["A pronoun in the last line of a paragraph whose meaning was fixed in the first line."]},"token":{"t":"Token","l":2,"d":"The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.","w":"Cost, speed and context limits are all measured in tokens, never in words.","s":"token","e":["&ldquo;Unbelievable&rdquo; is three tokens. &ldquo;Cat&rdquo; is one. A rare surname might be five."]},"large-language-model-llm":{"t":"Large language model (LLM)","l":2,"d":"A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.","w":"If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.","s":"large-language-model-llm","e":["ChatGPT, Claude and Gemini are products; the LLM is the thing underneath doing the predicting."]},"training":{"t":"Training","l":2,"d":"Building the model, in stages, before anyone could use it - first predicting text across a huge corpus, then being tuned by people toward answering usefully.","w":"All of it finished before you ever typed anything. The model is not learning from your conversation, whatever it sounds like.","s":"training","e":["It finished before you opened the tab. Nothing you type today changes the model - though it may be stored and used in a <em>later<\/em> training run, which is what Lesson 15 is about."]},"inference":{"t":"Inference","l":2,"d":"What happens when you press enter: the finished model generating one token at a time.","w":"Explains why the identical prompt can come back different twice in a row.","s":"inference","e":["The pause after you press enter is inference: the finished model producing one token, then the next, then the next."]},"temperature":{"t":"Temperature","l":2,"d":"A setting controlling how strongly the model favors the single most likely next token over a less likely one.","w":"Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.","s":"temperature","e":["Token Roulette&rsquo;s slider is this setting, exposed. Most chat tools hide it and pick a middling value for you."]},"parameters":{"t":"Parameters","l":2,"d":"The numbers inside the model that training adjusted. Sizes are quoted in billions of them.","w":"The number marketing leans on hardest, and a poor predictor of whether a model suits your task.","s":"parameters","e":["&ldquo;70 billion parameters&rdquo; tells you roughly how big a model is and almost nothing about whether it suits your task."]},"prompt":{"t":"Prompt","l":4,"d":"Everything you send in one turn - the question plus whatever context, examples and instructions come with it.","w":"Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.","s":"prompt","e":["Everything in the box when you press enter: your question, whatever you pasted above it, and any instructions you added."]},"context":{"t":"Context","l":4,"d":"The material you hand the model to work from: pasted text, uploaded files, earlier turns.","w":"Grounding a request in real context is the single largest quality lever you control.","s":"context","e":["Pasting the actual assignment brief beats describing it. &lsquo;Write a lab report&rsquo; and &lsquo;here is the rubric, write to it&rsquo; are different requests."]},"few-shot-worked-example":{"t":"Few-shot (worked example)","l":4,"d":"Showing the model one or more examples of the output you want rather than describing it.","w":"Far more reliable than adjectives for pinning down a format.","s":"few-shot-worked-example","e":["Instead of &lsquo;make it punchy&rsquo;, paste two headlines you like and say &lsquo;this style&rsquo;."]},"system-prompt":{"t":"System prompt","l":4,"d":"Standing instructions sitting behind a conversation that shape every reply in it.","w":"How custom assistants get their rules - and the foundation of CSC 240.","s":"system-prompt","e":["&lsquo;You are a tutor for an introductory statistics course. Never give the final answer; ask a question that gets the student one step closer.&rsquo;"]},"constraint":{"t":"Constraint","l":4,"d":"A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.","w":"Constraints do real work. &ldquo;Be good&rdquo; does none.","s":"constraint","e":["Works: <em>under 150 words, no bullet points, eighth-grade reading level, do not mention pricing<\/em>."]},"context-window":{"t":"Context window","l":5,"d":"The maximum amount of text a model can hold in view at once, your prompt and its reply together.","w":"Go past it and the earliest material silently drops out of view - no warning.","s":"context-window","e":["In a long conversation the earliest turns fall out of view. Nothing warns you; the model simply stops being able to see them."]},"knowledge-cutoff":{"t":"Knowledge cutoff","l":5,"d":"The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.","w":"The single most common cause of a confidently wrong answer about anything current.","s":"knowledge-cutoff","e":["Ask a bare chat model who won an election held after its cutoff and you will often get a fluent, specific, wrong answer rather than a refusal."]},"multimodal":{"t":"Multimodal","l":5,"d":"A model that handles more than text - images, audio, sometimes video, as input or output.","w":"Decides whether you can paste a screenshot at all.","s":"multimodal","e":["Photographing a handwritten page and asking for a transcript. If a tool is text-only, that is not a prompting problem - it simply cannot see."]},"chat-model":{"t":"Chat model","l":5,"d":"The default kind: it answers in one pass, immediately, and is the right tool for most things.","w":"The one you are already using. It is the baseline the other two are being compared against, which is why it needs a name.","s":"chat-model"},"reasoning-model":{"t":"Reasoning model","l":5,"d":"A model that spends extra computation working through a problem in steps before answering.","w":"Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.","s":"reasoning-model","e":["Worth the wait for a multi-step word problem. Wasted on &lsquo;make this email shorter&rsquo;."]},"foundation-model":{"t":"Foundation model","l":5,"d":"A large general-purpose model that other products are built on top of.","w":"Several tools you use may be the same model wearing different clothes.","s":"foundation-model","e":["Several products you think of as different tools may be the same foundation model with different instructions wrapped around it."]},"rate-limit":{"t":"Rate limit","l":5,"d":"A cap on how much you can use a tool in a given window, usually much tighter on free tiers.","w":"Find yours before an assignment is due, not during.","s":"rate-limit","e":["Find yours on a Tuesday, not at 11pm the night an assignment is due."]},"benchmark":{"t":"Benchmark","l":6,"d":"A standard test used to compare models on one specific skill.","w":"Models can be tuned to score well on benchmarks without being better at your actual work.","s":"benchmark"},"leaderboard":{"t":"Leaderboard","l":6,"d":"A ranked table of models by benchmark score or human preference.","w":"Genuinely useful and routinely over-read.","s":"leaderboard"},"blind-comparison":{"t":"Blind comparison","l":6,"d":"Rating two outputs without knowing which model produced either.","w":"The only way to measure the answer instead of the brand.","s":"blind-comparison"},"elo-rating":{"t":"Elo rating","l":6,"d":"A ranking score borrowed from chess, updated every time one option beats another head to head.","w":"How LM Arena turns a pile of votes into an ordered list.","s":"elo-rating"},"thread":{"t":"Thread","l":7,"d":"One continuous conversation. Everything in it stays in context until the window fills up.","w":"A long thread can quietly poison a new question asked inside it.","s":"thread"},"context-accumulation":{"t":"Context accumulation","l":7,"d":"The build-up of earlier turns, which increasingly shapes every later answer.","w":"The reason a fresh chat sometimes beats one more follow-up.","s":"context-accumulation"},"regeneration":{"t":"Regeneration","l":7,"d":"Asking for another attempt at the same prompt instead of editing the prompt.","w":"Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.","s":"regeneration"},"hallucination":{"t":"Hallucination","l":8,"d":"A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.","w":"Not a malfunction. The same machinery that produces correct answers produces these.","s":"hallucination"},"confabulation":{"t":"Confabulation","l":8,"d":"Filling a gap with plausible invention instead of signaling uncertainty.","w":"Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.","s":"confabulation"},"plausibility":{"t":"Plausibility","l":8,"d":"How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.","w":"The trap inside every fabricated citation you will ever see.","s":"plausibility"},"grounding":{"t":"Grounding","l":9,"d":"Tying an answer to specific retrieved source material rather than to training alone.","w":"The main structural defense against fabrication.","s":"grounding"},"retrieval":{"t":"Retrieval","l":9,"d":"Fetching documents or search results and putting them into the model&rsquo;s context before it answers.","w":"What lets a tool discuss last week at all.","s":"retrieval"},"citation":{"t":"Citation","l":9,"d":"A reference to a source. Check two things: that it exists, and that it says what was claimed.","w":"The second check is the one almost everybody skips.","s":"citation"},"bias":{"t":"Bias","l":10,"d":"Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.","w":"A different problem from being wrong, and it needs a different fix.","s":"bias"},"rlhf":{"t":"RLHF","l":10,"d":"Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.","w":"The second place bias enters, after the training data.","s":"rlhf"},"probe":{"t":"Probe","l":10,"d":"A deliberately controlled prompt pair that changes exactly one variable to surface a difference.","w":"Turns &ldquo;it feels biased&rdquo; into something you can show someone.","s":"probe"},"verification":{"t":"Verification","l":11,"d":"Independently confirming a claim before you rely on it.","w":"The habit this entire course exists to install.","s":"verification"},"provenance":{"t":"Provenance","l":11,"d":"Where a piece of content came from and what happened to it along the way.","w":"Increasingly the thing you will be asked to document.","s":"provenance"},"stakes":{"t":"Stakes","l":11,"d":"What happens if this is wrong, and how hard it would be to check.","w":"Together these decide how much verification a task actually deserves.","s":"stakes"},"diffusion-model":{"t":"Diffusion model","l":12,"d":"The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.","w":"Explains why counting, hands and text-in-images are so hard for it.","s":"diffusion-model"},"negative-prompt":{"t":"Negative prompt","l":12,"d":"A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.","w":"&ldquo;No people&rdquo; in the main prompt reliably produces people.","s":"negative-prompt"},"seed":{"t":"Seed","l":12,"d":"The starting random number. The same seed with the same prompt reproduces the same image.","w":"How you change one thing without losing the whole picture.","s":"seed"},"speech-to-text-asr":{"t":"Speech-to-text (ASR)","l":13,"d":"Automatic transcription of recorded speech into written text.","w":"Error rates are not evenly distributed across accents, names, or speakers.","s":"speech-to-text-asr"},"text-to-speech":{"t":"Text-to-speech","l":13,"d":"Generating spoken audio from written text.","w":"Good enough now that consent is a real question rather than a hypothetical.","s":"text-to-speech"},"voice-cloning":{"t":"Voice cloning","l":13,"d":"Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.","w":"Legally and ethically the sharpest edge anywhere in this course.","s":"voice-cloning"},"word-error-rate-wer":{"t":"Word error rate (WER)","l":13,"d":"The standard measure of transcription accuracy: errors divided by words spoken.","w":"Lets you compare two tools instead of arguing about which felt better.","s":"word-error-rate-wer"},"vision-input":{"t":"Vision input","l":14,"d":"Giving a model an image - screenshot, photo, scan - as part of the prompt.","w":"Degrades badly with skew, handwriting and dense tables, and does so silently.","s":"vision-input"},"ocr":{"t":"OCR","l":14,"d":"Optical character recognition: pulling text out of an image of text.","w":"Frequently the better tool than a vision model when the scan is clean.","s":"ocr"},"modality":{"t":"Modality","l":14,"d":"A kind of input or output: text, image, audio, video.","w":"Choosing the right one is usually a bigger win than improving the prompt.","s":"modality"},"personally-identifiable-information-pii":{"t":"Personally identifiable information (PII)","l":15,"d":"Anything that identifies a specific person, on its own or combined with other data.","w":"The category that decides what you may and may not paste.","s":"personally-identifiable-information-pii"},"data-retention":{"t":"Data retention","l":15,"d":"How long a vendor keeps what you send, and what they are permitted to do with it.","w":"Varies by tier, and lives in the settings rather than the marketing.","s":"data-retention"},"training-opt-out":{"t":"Training opt-out","l":15,"d":"A setting that stops your conversations being used to improve the vendor&rsquo;s models.","w":"Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.","s":"training-opt-out"},"ferpa":{"t":"FERPA","l":15,"d":"US federal law protecting student education records.","w":"Applies to anyone at FLCC handling student data - including inside a chatbot.","s":"ferpa"},"zero-retention":{"t":"Zero-retention","l":15,"d":"An arrangement in which the vendor does not store your inputs at all.","w":"Usually enterprise-only, and worth knowing exists before you need it.","s":"zero-retention"},"attribution":{"t":"Attribution","l":16,"d":"Crediting a source you drew on.","w":"A different obligation from disclosure, and often confused with it.","s":"attribution"},"disclosure":{"t":"Disclosure","l":16,"d":"Stating that you used AI, and saying how.","w":"The line moves by context - a school, an employer and a journal each draw it differently.","s":"disclosure"},"ai-use-statement":{"t":"AI-use statement","l":16,"d":"A short written note describing what AI did in a piece of work.","w":"Increasingly required. You write your own in Lesson 16.","s":"ai-use-statement"},"derivative-work":{"t":"Derivative work","l":16,"d":"Something based on existing copyrighted material.","w":"The genuinely open legal question sitting under image generation.","s":"derivative-work"},"personal-ai-policy":{"t":"Personal AI policy","l":17,"d":"Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.","w":"The capstone deliverable, and the only thing here that is entirely yours.","s":"personal-ai-policy"}};
 
 /* Inline vocabulary. A term in the prose is written as
      <b class="vt" data-v="token"><i>token</i></b>
@@ -3519,8 +4304,16 @@ var VOCAB={"artificial-intelligence-ai":{"t":"Artificial intelligence (AI)","l":
       '<span class="vpop__from">Lesson ' + (rec.l < 10 ? "0" : "") + rec.l + "</span></span>" +
       '<span class="vpop__def">' + rec.d + "</span>" +
       '<span class="vpop__why">' + rec.w + "</span>" + eg +
-      '<span class="vpop__foot"><a class="vpop__more" href="../vocabulary.html#' +
-      rec.s + '">Full entry, with examples <svg class="i"><use href="#i-arrow-right"/></svg></a>' +
+      /* New tab, always. Inside an LMS frame this link would otherwise
+         navigate the frame away from the lesson, and coming back re-loads the
+         page - which throws away the prediction the learner committed to and
+         everything they have done since. A vocabulary lookup is a side trip,
+         not a destination. rel=noopener because target=_blank without it hands
+         the new tab a reference back to this window. */
+      '<span class="vpop__foot"><a class="vpop__more" target="_blank" ' +
+      'rel="noopener" href="../vocabulary.html#' +
+      rec.s + '">Full entry, with examples <svg class="i"><use href="#i-arrow-right"/></svg>' +
+      '<span class="visually-hidden">(opens in a new tab)</span></a>' +
       '<button class="vpop__x" type="button" aria-label="Close">' +
       '<svg class="i"><use href="#i-x"/></svg></button></span>';
 

@@ -1,5 +1,7 @@
 <meta charset="utf-8">
-<title>Module 1 Capstone</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 Checkpoint</title>
+<link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -403,7 +405,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -413,6 +421,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1094,6 +1103,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    The module and lesson number stay too: Brightspace shows the topic title but
    not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
 :root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
 :root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
 :root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
@@ -1142,6 +1155,292 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 .preset:hover { color: var(--accent-text); background: var(--accent-wash); }
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
 
 /* ============================================================================
    FLCC AI Specialist Microcredential - instrument.css
@@ -1427,6 +1726,19 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .capsteps { margin: 0; padding-left: 1.3rem; display: grid; gap: .55rem; }
 .capsteps li { font-size: .95rem; line-height: 1.55; color: var(--ink-2); }
 .caphand, .caphow { background: var(--surface-2); border-radius: 10px; padding: .8rem .9rem; }
+/* Provenance: which Apply task this route is a longer version of. Tinted
+   rather than plain so it reads as a pointer backwards, not as another
+   instruction. */
+.capfrom {
+  background: var(--accent-wash); border-radius: 10px; padding: .8rem .9rem;
+}
+.capfrom__lab {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--accent-text); margin-bottom: .35rem;
+}
+.capfrom__lab .i { width: .9rem; height: .9rem; }
+.capfrom p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
 .caphand__lab, .caphow__lab {
   display: flex; align-items: center; gap: .35rem;
   font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
@@ -1520,8 +1832,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page 01-module-1-checkpoint.html  v30fbc6a  ·  build c54ad0e  ·  2026-09-02 15:04 -->
+<div data-build="c54ad0e" data-page="01-module-1-checkpoint.html" data-version="30fbc6a" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1551,7 +1863,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <div class="wrap">
     <div class="masthead__row">
       <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
-      <span class="lessonno">Module 1 &middot; Capstone</span>
+      <span class="lessonno">Module 1 &middot; Checkpoint</span>
     </div>
     <h1>Show Me You Have The Model</h1>
     <p class="standfirst">One piece of work at the end of Module&nbsp;1, in whichever of six
@@ -1580,7 +1892,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     </div>
     <div class="crits"><article class="crit">
             <div class="crit__top"><h3 class="crit__n">Mechanism</h3>
-              <p class="crit__q">Do you explain what happened using the machinery, rather than the machine's personality?</p></div>
+              <p class="crit__q">Do you explain what happened using the machinery, rather than the machine&rsquo;s personality?</p></div>
             <div class="crit__levels">
               <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behavior with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
               <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behavior.</p></div>
@@ -1616,7 +1928,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             <div class="crit__levels">
               <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Re-uses a lesson example or an activity output with minor changes.</p></div>
               <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Applies the idea to a case of your own choosing that the lessons did not cover.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>The case is one where the lesson's account needed adjusting, and you say how.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>The case is one where the lesson&rsquo;s account needed adjusting, and you say how.</p></div>
             </div>
           </article></div>
     <p class="small muted capnote">Five criteria, four points each, twenty total. Length is not a criterion and nothing here rewards it - a tight two pages beats a loose six every time. Disclosure is both a gate and a criterion: without a statement the work is not marked at all, and with one, how well you did it counts like everything else.</p>
@@ -1624,7 +1936,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
   <section class="block" id="choose">
     <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Five routes</span>
+      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Six routes</span>
       <h2>Pick one</h2>
       <p>Open each one and read what it actually involves before deciding. The
       <em>pick this if</em> line is the most useful part - these differ in what
@@ -1641,7 +1953,11 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <svg class="i"><use href="#i-chevron-down"/></svg></span>
             </button>
             <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model's knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.</li><li>For each one, write your prediction <strong>before</strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why</em> - the why is the part being marked.</li><li>Run all six. Paste the actual output next to each prediction.</li><li>Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.</li><li>Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery.</li></ol>
+              <ol class="capsteps"><li>Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model&rsquo;s knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.</li><li>For each one, write your prediction <strong>before</strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why</em> - the why is the part being marked.</li><li>Run all six. Paste the actual output next to each prediction.</li><li>Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.</li><li>Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 2's Apply - run one prompt three times and say what held steady. This is that, six times, with the prediction written down first.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph.</p>
@@ -1652,7 +1968,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article><article class="capopt" id="opt-bug" data-opt="bug">
@@ -1667,6 +1983,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             </button>
             <div class="capopt__body" hidden>
               <ol class="capsteps"><li>Find a behavior in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.</li><li>Reproduce it. Then <strong>minimize it</strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.</li><li>File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.</li><li>Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.</li><li>Add a workaround a classmate could use tomorrow, and say what it costs them.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 3's Apply - write a sentence whose meaning turns on a distant word, run it, and give a verdict. Minimizing a repro is the same move done properly.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround.</p>
@@ -1677,7 +1997,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article><article class="capopt" id="opt-explainer" data-opt="explainer">
@@ -1692,6 +2012,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             </button>
             <div class="capopt__body" hidden>
               <ol class="capsteps"><li>Pick your person and name them. Your grandmother, your manager, a fourteen-year-old. The explanation changes depending, and the choice is part of the work.</li><li>Banned words: <em>think, know, understand, learn, believe, remember, intelligent, brain, conscious, decide</em>. Every one of them lets you skip the mechanism. Working around them is the assignment.</li><li>Record ninety seconds. Audio is fine; video is fine; a phone is fine. Production quality is not assessed and never will be.</li><li>Include one concrete demonstration - a thing you ran, described in a sentence - not only description.</li><li>Submit a short written note alongside: which banned word you most wanted, and what you said instead.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 1's Apply - name three AI systems and say what each is bad at. Explaining one of them out loud to a person is the harder version.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it.</p>
@@ -1702,7 +2026,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article><article class="capopt" id="opt-teardown" data-opt="teardown">
@@ -1716,7 +2040,11 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <svg class="i"><use href="#i-chevron-down"/></svg></span>
             </button>
             <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.</li><li>At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.</li><li>Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.</li><li>One closing paragraph: what would a reader have to already know to spot what you spotted?</li></ol>
+              <ol class="capsteps"><li>Find a real artefact making claims about AI: a news article, a vendor&rsquo;s product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.</li><li>At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.</li><li>Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.</li><li>One closing paragraph: what would a reader have to already know to spot what you spotted?</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 5's Apply - a one-page comparison of three tools including what each refuses to do. Annotating somebody else&rsquo;s claims uses the same reading.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph.</p>
@@ -1727,7 +2055,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article><article class="capopt" id="opt-change" data-opt="change">
@@ -1742,6 +2070,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
             </button>
             <div class="capopt__body" hidden>
               <ol class="capsteps"><li>Name one belief you held about AI before this module that you no longer hold. It must be <em>specific</em>. &lsquo;I understand it better now&rsquo; is not a belief, it is a feeling; &lsquo;I thought it looked answers up in a database&rsquo; is a belief.</li><li>Say where the belief came from. Nobody invents these - it came from somewhere, and naming the source is usually more interesting than the belief.</li><li>Name the exact moment it broke. A specific lesson, activity, or thing you ran. Quote it or paste it. &lsquo;Somewhere in Module 1&rsquo; is not a moment.</li><li>Explain what is actually true instead, in terms of the machinery. This paragraph carries most of the marks and is the one place vagueness costs you outright.</li><li>Then the harder half: name one thing you are <em>still</em> unsure about, and design the test you would run to settle it. You do not have to run it. You have to be able to say what would count as an answer.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>The opening predictions you locked in across Lessons 1 to 5. This route is those, read back.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement.</p>
@@ -1752,7 +2084,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article><article class="capopt" id="opt-clinic" data-opt="clinic">
@@ -1766,18 +2098,22 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
                 <svg class="i"><use href="#i-chevron-down"/></svg></span>
             </button>
             <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find someone who holds a specific, wrong belief. &lsquo;It's just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it's basically conscious&rsquo;, &lsquo;it can't be wrong, it's a computer&rsquo;. Get their permission to write it up; no names needed.</li><li>Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.</li><li>Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.</li><li>Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.</li><li>Close by naming what <em>you</em> discovered you could not explain as well as you thought. There will be something.</li></ol>
+              <ol class="capsteps"><li>Find someone who holds a specific, wrong belief. &lsquo;It&rsquo;s just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it&rsquo;s basically conscious&rsquo;, &lsquo;it can&rsquo;t be wrong, it&rsquo;s a computer&rsquo;. Get their permission to write it up; no names needed.</li><li>Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.</li><li>Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.</li><li>Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.</li><li>Close by naming what <em>you</em> discovered you could not explain as well as you thought. There will be something.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 1's Apply again, pointed outward: the ring you placed a system in is what you will be arguing about.</p>
+              </div>
               <div class="caphand">
                 <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
                 <p>The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words.</p>
               </div>
               <div class="caphow">
                 <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is what you actually said to them, reported accurately. <strong>Evidence</strong> is what you showed them and how they responded. <strong>Calibration</strong> is the honest account of what did not land. <strong>Transfer</strong> is that a real person's actual confusion never matches a lesson example.</p>
+                <p><strong>Mechanism</strong> is what you actually said to them, reported accurately. <strong>Evidence</strong> is what you showed them and how they responded. <strong>Calibration</strong> is the honest account of what did not land. <strong>Transfer</strong> is that a real person&rsquo;s actual confusion never matches a lesson example.</p>
               </div>
               <div class="btnrow">
                 <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
               </div>
             </div>
           </article></div>
@@ -1801,7 +2137,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   </section>
 
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Module 1 capstone</span>
+    <span>CSC 150 &middot; AI Foundations &middot; Module 1 checkpoint &middot; <span class="ver" title="page version 30fbc6a, build c54ad0e, 2026-09-02 15:04">v30fbc6a</span></span>
     <span class="row" style="gap:.4rem">Marked out of 20 &middot; five criteria, four points each</span>
   </footer>
 </main>
@@ -1816,7 +2152,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
  *
  * Markup it expects:
  *   <div class="embed embed--facade"
- *        data-video="VIDEO_ID"
+ *        data-video="VIDEO_ID"              (YouTube) OR
+ *        data-embed="https://..."           (any other player's embed URL)
  *        data-title="What the video is"
  *        data-sub="Demo · 2:40"            (optional)
  *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
@@ -1838,7 +2175,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     var b = document.createElement("button");
     b.type = "button";
     b.className = "facade" + (poster ? "" : " facade--noposter");
-    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.setAttribute("aria-label", "Play: " + title +
+      (el.getAttribute("data-video")
+        ? ". The video loads from YouTube only after this."
+        : ". The video loads only after this."));
     b.innerHTML =
       (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
       '<span class="facade__scrim"></span>' +
@@ -1857,11 +2197,25 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   function play(el) {
+    /* Two sources, one behavior. data-video is a YouTube id and gets the
+       nocookie host built for it; data-embed is any other player's own embed
+       URL and is used exactly as given, because Kaltura, YuJa, Panopto and
+       Brightspace all sign their URLs differently and none of that is ours to
+       reconstruct.
+
+       The click-to-load part is the point either way: no request leaves the
+       page for anybody's server until the learner asks for the video. */
     var id = el.getAttribute("data-video");
-    if (!id) return;
+    var url = el.getAttribute("data-embed");
+    if (!id && !url) return;
     var start = el.getAttribute("data-start");
-    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var src;
+    if (url) {
+      src = url + (url.indexOf("?") === -1 ? "?" : "&") + "autoplay=1";
+    } else {
+      src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+            "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    }
     var f = document.createElement("iframe");
     f.setAttribute("src", src);
     f.setAttribute("title", el.getAttribute("data-title") || "Video");
