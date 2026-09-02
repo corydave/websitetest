@@ -11,20 +11,9 @@ html,body{margin:0;padding:0;background:#ffffff;}
 .ovwrap{max-width:640px;margin:0 auto;padding:10px 12px;}
 .ovwrap > div{max-width:none;}
 
-/* The pop-out button lives in here, not in the wrapper snippet, and that is
-   forced rather than chosen: the Description field strips style attributes,
-   so anything styled has to be on OUR side of the iframe. Hidden unless the
-   page is actually framed - standalone, "open this in a new tab" is a button
-   that does nothing. */
-.ovout{display:none;text-align:right;margin:8px 12px 0;}
-.ovout a{display:inline-block;padding:.45rem 1rem;border-radius:999px;
-  background:#d4400b;color:#fff;text-decoration:none;
-  font:600 .85rem/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;}
-.ovout a:hover{background:#b8380a;}
-.ovout a:focus-visible{outline:2px solid #d4400b;outline-offset:2px;}
 </style>
-<!-- CSC 150  page module-1-overview.html  v0eaba86  ·  build 6450e69  ·  2026-09-02 02:26 -->
-<div data-build="6450e69" data-page="module-1-overview.html" data-version="0eaba86" class="lesson" data-course="150">
+<!-- CSC 150  page module-1-overview.html  v1c68696  ·  build eb67b00  ·  2026-09-02 02:32 -->
+<div data-build="eb67b00" data-page="module-1-overview.html" data-version="1c68696" class="lesson" data-course="150">
 <div class="ovwrap">
 <div style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;color:#1c1a18;line-height:1.5;font-size:15px;background:#ffffff;border:1px solid #e3dfd9;border-radius:15px;padding:18px 22px;max-width:640px">
 <div style="font-family:ui-rounded, 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;font-weight:700;font-size:18px;color:#1c1a18;margin:0 0 12px">Module 1 &middot; What You're Actually Talking To <span style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;font-weight:400;font-size:13px;color:#8b837a;white-space:nowrap">5 lessons, about 170&ndash;220 min</span></div>
@@ -52,18 +41,8 @@ html,body{margin:0;padding:0;background:#ffffff;}
 <div style="background:#fdefe9;border-radius:8px;padding:5px 10px;margin:4px 0 6px 30px"><span style="float:right;font-weight:700;font-size:12px;color:#d4400b">Mon 7 Sep</span><span style="display:inline-block;padding:1px 8px;border-radius:999px;background:#ffffff;color:#d4400b;font-family:ui-rounded, 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;margin-right:8px">Lab</span><span style="font-size:14px;color:#1c1a18">Compare the three tools you can reach</span></div>
 <div style="background:#fdefe9;border-radius:8px;padding:5px 10px;margin:4px 0 6px 30px"><span style="float:right;font-weight:700;font-size:12px;color:#d4400b">Mon 7 Sep</span><span style="display:inline-block;padding:1px 8px;border-radius:999px;background:#ffffff;color:#d4400b;font-family:ui-rounded, 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;margin-right:8px">Checkpoint</span><span style="font-size:14px;color:#1c1a18">Show Me You Have The Model</span></div>
 </div>
-<p class="ovout" id="ovout"><a href="" target="_blank" rel="noopener">Open this in a new tab</a></p>
 </div>
 </div>
-<script>
-(function () {
-  /* Only worth offering from inside a frame. self !== top is the whole test. */
-  if (window.self === window.top) return;
-  var p = document.getElementById("ovout");
-  p.querySelector("a").href = location.href;
-  p.style.display = "block";
-})();
-</script>
 <script>
 /* Talks to a host page when this lesson is embedded in one.
 
