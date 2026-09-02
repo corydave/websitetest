@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Module 1 Checkpoint</title>
+<title>What This Even Is</title>
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1149,348 +1149,1116 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
 
 /* ============================================================================
-   FLCC AI Specialist Microcredential - instrument.css
-   Instruments only - inventories, surveys, anything that collects.
+   FLCC AI Specialist Microcredential - lesson.css
+   Lesson pages only - the nine-beat components.
 
    Load order matters: core.css first, then the genre sheet, then the course
    theme. Nothing here sets a color except through a token.
    ========================================================================= */
-
-
-/* Segmented exposure scale ------------------------------------------------ */
-
-.scalelegend {
-  display: none;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--surface);
-  padding-block: .9rem .5rem;
-  box-shadow: 0 1px 0 var(--line);
-  grid-template-columns: 12rem 1fr;
-  gap: 1rem;
-  align-items: end;
-  padding: 0 1.35rem;
-}
-.scalelegend > div {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: .3rem;
-}
-.scalelegend span {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: .62rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  text-align: center;
-  line-height: 1.25;
-}
-
-.scale {
-  display: grid;
-  grid-template-columns: 12rem 1fr;
-  gap: 1rem;
-  align-items: center;
-  padding: .75rem 1.35rem;
-  border-bottom: 1px solid var(--line);
-}
-.scale:last-child { border-bottom: 0; }
-.scale__name { font-weight: 700; font-size: .95rem; }
-.scale__name small { display: block; font-weight: 400; font-size: .8rem; color: var(--ink-3); }
-.scale__opts { display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; }
-
-.segbtn {
-  font: inherit;
-  font-size: .74rem;
-  line-height: 1.2;
-  text-align: center;
-  padding: .5rem .3rem;
-  border: 0;
-  border-radius: var(--r-xs);
-  background: var(--surface-2);
-  color: var(--ink-2);
-  cursor: pointer;
-  transition: background-color .16s ease, color .16s ease, box-shadow .16s ease;
-}
-.segbtn:hover { background: var(--accent-wash); color: var(--accent-text); }
-.segbtn[aria-checked="true"] {
-  background: var(--accent-fill);
-  color: var(--accent-on);
-  box-shadow: var(--shadow-1);
-}
-
-@media (min-width: 46rem) {
-  .scalelegend { display: grid; }
-  .segbtn { font-size: 0; padding: .7rem .3rem; }
-  .segbtn::after {
-    content: "";
-    display: block;
-    width: 10px; height: 10px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: .35;
-  }
-  .segbtn[aria-checked="true"]::after { opacity: 1; }
-}
-@media (max-width: 46rem) {
-  .scale { grid-template-columns: 1fr; gap: .5rem; padding: 1rem 1.1rem; }
-}
-
-/* Calibration questions --------------------------------------------------- */
-
-.calq {
-  padding: 1.2rem 1.35rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: .75rem;
-}
-.calq:last-child { border-bottom: 0; }
-.calq__q { font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.4; }
-.calq .answers { flex-direction: column; align-items: stretch; }
-.calq .answer { text-align: left; }
-
-/* Result profile ---------------------------------------------------------- */
-
-.profile {
+.gate {
   background: var(--surface);
   border-radius: var(--r);
   box-shadow: var(--shadow-3);
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--gap-m);
 }
-.profile__badge {
-  display: inline-flex;
+.gate__stakes {
+  display: flex;
   align-items: center;
-  gap: .6rem;
-  align-self: flex-start;
-  background: var(--accent-fill);
-  color: var(--accent-on);
+  gap: .5rem;
+  color: var(--ink-3);
+  font-size: .85rem;
+}
+.gate__q {
   font-family: var(--display);
   font-weight: 700;
-  font-size: 1rem;
-  padding: .55rem 1rem;
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-accent);
+  font-size: 1.3rem;
+  line-height: 1.35;
+  max-width: 40ch;
 }
-.profile h3 { font-size: 1.3rem; }
-.profile__lede { color: var(--ink-2); }
 
-.readout { display: grid; gap: .8rem; }
-.readout__row {
-  display: grid;
-  grid-template-columns: 11rem 1fr 3.5rem;
-  gap: .8rem;
-  align-items: center;
-  font-size: .92rem;
-}
-.readout__label { color: var(--ink-2); }
-.readout__bar { height: 9px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
-.readout__bar > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: var(--r-pill); transition: width .7s cubic-bezier(.2,.8,.3,1); }
-.readout__num { font-family: var(--display); font-weight: 700; font-size: .82rem; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.options { display: flex; flex-direction: column; gap: .6rem; }
 
-.watchlist { display: flex; flex-direction: column; gap: .7rem; }
-.watchitem {
+.option {
   display: flex;
-  gap: .85rem;
   align-items: flex-start;
+  gap: .8rem;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
   background: var(--surface-2);
+  border: 0;
   border-radius: var(--r-sm);
   padding: .9rem 1rem;
+  cursor: pointer;
+  transition: background-color .18s ease, box-shadow .18s ease, transform .12s ease;
 }
-.watchitem__n {
-  font-family: var(--display); font-weight: 700; font-size: .78rem;
-  display: grid; place-items: center;
-  width: 1.5rem; height: 1.5rem; flex: none; margin-top: .1rem;
+.option:hover { background: var(--accent-wash); }
+.option[aria-pressed="true"] {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-1);
+}
+.option__key {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  display: grid;
+  place-items: center;
+  width: 1.6rem; height: 1.6rem;
   border-radius: var(--r-xs);
-  background: var(--accent-fill); color: var(--accent-on);
+  background: var(--surface-3);
+  color: var(--ink-2);
+  flex: none;
+  margin-top: .1rem;
 }
-.watchitem strong { display: block; font-family: var(--display); font-size: .95rem; }
-.watchitem p { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.option[aria-pressed="true"] .option__key { background: var(--accent-fill); color: var(--accent-on); }
 
-@media (max-width: 40rem) {
-  .readout__row { grid-template-columns: 1fr; gap: .3rem; }
-  .readout__num { text-align: left; }
+/* Holds the option's words and the (hidden) distribution bar. Without flex:1
+   it shrink-wraps, so the pressed background stops short of the card edge. The
+   rule was missing entirely until check_sheets.py learned to report classes
+   that live in no stylesheet at all. */
+.option__text { flex: 1; min-width: 0; line-height: 1.5; }
+
+/* Distribution bars shown after the learner commits */
+/* The class distribution is deliberately not shown - see lesson_core.js. */
+.option__stats { display: none; }
+
+.option__bar {
+  position: relative;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  margin-top: .55rem;
+  overflow: hidden;
 }
-/* ── Name field on the result panel ─────────────────────────────────────── */
-.whorow { display: grid; gap: .3rem; margin: .9rem 0 1rem; max-width: 26rem; }
-.whorow__lab { font-size: .82rem; font-weight: 700; color: var(--ink-2); }
-.whorow__lab span { display: block; font-weight: 400; font-size: .76rem; color: var(--ink-3); }
-.whorow__in {
+.option__bar > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--accent);
+  border-radius: var(--r-pill);
+  transition: width .8s cubic-bezier(.2,.7,.3,1);
+}
+.option__pct {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink-3);
+  margin-top: .3rem;
+  font-variant-numeric: tabular-nums;
+}
+.option__stats { display: none; }
+/* This used to be `.gate.is-revealed .option__stats { display: block; }`, which
+   is more specific than the rule above and therefore beat it. The percentages
+   never appeared, because lesson_core.js no longer writes them - but the empty
+   4px track and the empty percentage line did, on every option of every lesson,
+   from the moment the learner committed. Restoring the distribution means
+   putting this rule back AND uncommenting the block in lesson_core.js. */
+.gate.is-revealed .option { cursor: default; }
+
+/* The locked region ------------------------------------------------------- */
+
+.locked {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  padding: 2.5rem 1.75rem;
+  display: grid;
+  place-items: center;
+  gap: .6rem;
+  text-align: center;
+  min-height: 13rem;
+}
+.locked__ghost {
+  position: absolute;
+  inset: 0;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  filter: blur(7px);
+  opacity: .5;
+  pointer-events: none;
+}
+.locked__ghost span {
+  display: block;
+  height: .7rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+}
+.locked__front {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .6rem;
+}
+.locked__front strong {
+  font-family: var(--display);
+  font-size: 1.05rem;
+}
+.locked__front p { color: var(--ink-2); font-size: .92rem; max-width: 34ch; }.objectives {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+}
+.objective {
+  display: flex;
+  gap: .9rem;
+  align-items: flex-start;
+  padding: .85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.objective:last-child { border-bottom: 0; }
+.objective__mark {
+  display: grid;
+  place-items: center;
+  width: 1.5rem; height: 1.5rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .18rem;
+}
+.objective__mark .i { width: .95rem; height: .95rem; }
+.objective__text { flex: 1; }
+.objective__text strong { font-weight: 700; }
+.objective__clo {
+  display: block;
+  margin-top: .25rem;
+  font-size: .78rem;
+  color: var(--ink-3);
+}.segment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.segment h3 {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+}
+.segment h3 .segno {
+  font-size: .78rem;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  flex: none;
+}
+
+/* Token-prediction demo */
+.sentence {
+  font-size: 1.15rem;
+  line-height: 2.1;
+  font-weight: 700;
+}
+.sentence .cursor {
+  display: inline-block;
+  width: .6ch;
+  border-bottom: 3px solid var(--accent);
+  animation: blink 1.1s steps(2, start) infinite;
+}
+@keyframes blink { to { visibility: hidden; } }
+
+.tokens { display: flex; flex-direction: column; gap: .4rem; }
+
+/* The candidate list shrinks and grows as the context changes, which moves the
+   buttons underneath it out from under the cursor. Inert spacer rows hold the
+   list at its tallest so nothing below it ever shifts. Structural rather than a
+   magic pixel height, so it survives a font or zoom change. */
+.token--ghost { visibility: hidden; pointer-events: none; }
+
+/* End of a walk. The list has no candidates left to show, but letting it
+   collapse would pull the buttons 300-odd pixels up the page. It keeps the
+   height the tallest list had and fills it with the closing note, so the space
+   reads as the end of something rather than as a hole. */
+.tokens--end { justify-content: center; align-items: center; }
+.tokens__end {
+  width: 100%;
+  max-width: 42ch;
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.6rem 1.5rem;
+  text-align: center;
+  display: grid;
+  gap: .5rem;
+  justify-items: center;
+}
+.tokens__end .i { width: 1.4rem; height: 1.4rem; color: var(--accent); }
+.tokens__end b {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.tokens__end span { color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
+.token {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, auto) 1fr 3.4rem;
+  align-items: center;
+  gap: .8rem;
   font: inherit;
-  padding: .6rem .8rem;
+  font-size: .95rem;
+  text-align: left;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .45rem .6rem;
+  cursor: pointer;
+  transition: background-color .16s ease;
+}
+.token:hover { background: var(--accent-wash); }
+.token__word { font-weight: 700; }
+.token__meter { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
+.token__meter > i { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); }
+.token__pct { font-size: .82rem; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Fabrication-spotting demo */
+.passage {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1.1rem 1.2rem;
+}
+.claim {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: .1em .18em;
+  margin: 0 -.18em;
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  box-shadow: inset 0 -2px 0 var(--line-strong);
+  transition: background-color .16s ease, box-shadow .16s ease;
+}
+.claim:hover { background: var(--accent-wash); }
+.claim.is-hit  { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.claim.is-miss { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+
+.scorepill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}.video { display: flex; flex-direction: column; gap: .85rem; }
+.video__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.video__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, var(--accent-wash), transparent 60%);
+  pointer-events: none;
+}
+.video__play {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.video__frame:hover .video__play { transform: scale(1.06); }
+.video__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; }
+.video__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .6rem;
+  font-size: .85rem;
+  color: var(--ink-3);
+}
+.video__job {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}.apply {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+.deliverable {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+}
+.deliverable strong { font-family: var(--display); }.pooltag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .76rem;
+  color: var(--ink-3);
+}.scaffoldtoggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 70;
+  box-shadow: var(--shadow-3);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.scaffoldtoggle:hover { background: var(--surface); color: var(--accent-text); }
+
+.beat { position: relative; }
+.beat__label { display: none; }
+
+.lesson.show-scaffold .beat {
+  outline: 1.5px dashed var(--line-strong);
+  outline-offset: 1.1rem;
+  border-radius: 4px;
+}
+.lesson.show-scaffold .beat__label {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  position: absolute;
+  top: -2.35rem;
+  left: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--ground);
+  padding: .28rem .6rem;
+  border-radius: var(--r-xs);
+  z-index: 2;
+}
+/* The summary - a paragraph above everything, including the gate. It states the
+   territory, never the verdict: a summary that answers the prediction question
+   below it would break the beat that follows. */
+.lede {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.lede__body { display: flex; flex-direction: column; gap: .35rem; }
+.lede__body p { font-size: 1.02rem; color: var(--ink-2); max-width: var(--measure); }
+.lede__body p strong, .lede__body p em { color: var(--ink); }
+
+/* --- Module 1 interactives ------------------------------------------------
+   Token Roulette (L1), Prompt Surgery (L2), The Cutoff Wall (L3).
+   ------------------------------------------------------------------------ */
+
+/* L1 - sampled runs */
+.rolls { display: flex; flex-direction: column; gap: .4rem; }
+.roll {
+  display: grid; grid-template-columns: 1.6rem 1fr; gap: .7rem; align-items: baseline;
+  background: var(--surface-2); border-radius: var(--r-sm); padding: .55rem .8rem;
+  font-size: .95rem;
+}
+.roll__n { font-family: var(--display); font-weight: 700; font-size: .74rem; color: var(--ink-3); }
+.roll__t { color: var(--ink); }
+
+/* L2 - prompt surgery */
+.pbuild { display: flex; flex-direction: column; gap: .9rem; }
+.pbprompt {
+  background: var(--surface-2); border-radius: var(--r-sm); padding: 1rem 1.15rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .9rem;
+  line-height: 1.7; white-space: pre-wrap;
+}
+.pbadd { background: var(--accent-wash); color: var(--accent-text); border-radius: var(--r-xs); padding: .05em .25em; }
+.pbout {
+  background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem; font-size: .95rem; color: var(--ink-2);
+}
+.pbout strong { color: var(--ink); }
+.meter { display: flex; align-items: center; gap: .8rem; }
+.meter__track { flex: 1; height: 10px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
+.meter__track > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: var(--r-pill);
+  transition: width .45s cubic-bezier(.2,.8,.3,1); }
+.meter__n { font-family: var(--display); font-weight: 700; font-size: .82rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums; min-width: 8.5rem; text-align: right; }
+
+/* L3 - the cutoff wall */
+.tl { position: relative; padding: 3.2rem 0 1.2rem; }
+.tl__axis { position: relative; height: 4px; border-radius: var(--r-pill); background: var(--surface-3); }
+.tl__wall { position: absolute; top: -2.6rem; bottom: -1rem; width: 3px; background: var(--accent);
+  border-radius: var(--r-pill); }
+.tl__wall span {
+  position: absolute; top: -1.5rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--display); font-weight: 700; font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent-text); white-space: nowrap;
+}
+.tl__end { position: absolute; top: -1.4rem; font-size: .7rem; color: var(--ink-3); white-space: nowrap; }
+.tl__zone { position: absolute; top: -.4rem; height: 12px; border-radius: var(--r-pill); opacity: .12; }
+.tl__zone--known { background: var(--good); }
+.tl__zone--blind { background: var(--warn); }
+.tl__dot {
+  position: absolute; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent);
+  transition: left .5s cubic-bezier(.2,.8,.3,1);
+}
+.tl__dot.is-blind { box-shadow: 0 0 0 3px var(--bad); }
+.tl__dot.is-warn  { box-shadow: 0 0 0 3px var(--warn); }
+.tlq { display: flex; flex-wrap: wrap; gap: .45rem; }
+.verdict { display: none; gap: .9rem; align-items: flex-start; background: var(--surface-2);
+  border-radius: var(--r-sm); padding: 1rem 1.15rem; }
+.verdict.is-shown { display: flex; }
+.verdict__t { font-family: var(--display); font-weight: 700; font-size: .95rem; }
+.verdict p { font-size: .93rem; color: var(--ink-2); margin-top: .2rem; }
+.verdict .icontile { flex: none; }
+.verdict--ok .icontile   { background: var(--good); color: #fff; }
+.verdict--warn .icontile { background: var(--warn); color: #fff; }
+.verdict--bad .icontile  { background: var(--bad);  color: #fff; }
+
+/* ── L1 · The Nesting Dolls ────────────────────────────────────────────────
+   The rings are decorative and static; the buttons beside them do the work.
+   Concentric boxes rather than circles, because the labels have to fit. */
+.nrow { display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+.ncol { flex: 1 1 18rem; display: grid; gap: .7rem; }
+
+.nrings {
+  position: relative;
+  width: 12.5rem;
+  height: 9rem;
+  flex: none;
+  margin: .2rem auto;
+}
+.nrings__r {
+  position: absolute;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--r);
+  transition: border-color .18s, background .18s;
+}
+.nrings__r--0 { inset: 0; }
+.nrings__r--1 { inset: 1.05rem; }
+.nrings__r--2 { inset: 2.1rem; }
+.nrings__r--3 { inset: 3.15rem; }
+.nrings__r.is-lit { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); }
+.nrings__lab {
+  position: absolute;
+  top: -.05rem; left: .45rem;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface);
+  padding: 0 .25rem;
+  transform: translateY(-50%);
+}
+.nrings__r.is-lit .nrings__lab { color: var(--accent-text); }
+
+.nchip {
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  min-height: 1.6em;
+}
+.nopts { display: grid; gap: .4rem; }
+.nopt {
+  font: inherit;
+  font-size: .92rem;
+  text-align: left;
+  padding: .55rem .8rem;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: var(--surface);
   color: var(--ink);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
 }
-.whorow__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.nopt:hover:not(:disabled) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.nopt:disabled { cursor: default; opacity: .75; }
+.nopt.is-right { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent-text); font-weight: 700; opacity: 1; }
+.nopt.is-wrong { border-color: var(--line-strong); background: var(--surface-3); text-decoration: line-through; }
 
-/* ── Print: the fallback route to a PDF ─────────────────────────────────────
-   The PDF button is the primary path; print exists for anyone whose browser
-   or device refuses it, and it is the only route that keeps Comfortaa and
-   Atkinson Hyperlegible. Everything except the result panel is scaffolding
-   for filling the thing in, so none of it belongs on paper. */
-@media print {
-  body { background: #fff; }
-  .masthead, .standfirst,
-  .invsection, .btnrow, .copybox, .whorow,
-  .deck, .demo, .progressbar, .sitefoot, #pdfNote { display: none !important; }
-
-  #result { display: block !important; }
-  #result, #result * { box-shadow: none !important; }
-
-  .band, .readout, .watchlist, .calib {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-  .watchitem { break-inside: avoid; page-break-inside: avoid; }
-
-  /* A printed page has no accent bar at the top of the viewport, so the
-     document needs its own heading - supplied here rather than in the markup
-     so it never shows on screen. */
-  #result::before {
-    content: "CSC 150 · AI Foundations - Where You're Starting From";
-    display: block;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 15pt;
-    color: #000;
-    margin-bottom: 1.2rem;
-    padding-bottom: .6rem;
-    border-bottom: 2px solid #d64214;
-  }
-  a[href]::after { content: ""; }
+.nplaced { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; min-height: 1.9rem; }
+.nplaced__i {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .78rem; padding: .25rem .55rem;
+  border-radius: 999px; background: var(--surface-2); color: var(--ink-2);
 }
+.nplaced__i .i { width: .8rem; height: .8rem; }
+.nplaced__i.is-right { color: var(--accent-text); }
 
-/* ── Module capstone ────────────────────────────────────────────────────────
-   Five routes to one rubric. The rubric is shown first and at full size,
-   because a student choosing before reading it is choosing on vibes. */
-.crits { display: grid; gap: .7rem; }
-.crit {
+/* ── L3 · Attention Spotlight ──────────────────────────────────────────── */
+.sent {
+  font-size: 1.22rem;
+  line-height: 2.1;
+  color: var(--ink);
+  margin: .3rem 0 .1rem;
+  min-height: 4.4rem;
+}
+.sw { transition: color .18s, background .18s; border-radius: 6px; padding: .1rem 0; }
+.sw--pro { font-weight: 700; color: var(--accent-text); box-shadow: 0 2px 0 var(--accent); }
+.sw--swap { font-weight: 700; }
+.sw--ans {
+  font-weight: 700;
+  color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  padding: .1rem .3rem;
+}
+.sw--alt {
+  color: var(--ink-3);
+  background: var(--surface-2);
+  padding: .1rem .3rem;
+}
+.sswap { display: flex; gap: .45rem; flex-wrap: wrap; margin: .4rem 0 .2rem; }
+.sswap__b {
+  font: inherit; font-size: .88rem;
+  padding: .4rem .75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
   background: var(--surface);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-1);
-  padding: 1.1rem 1.2rem;
-}
-.crit__top { margin-bottom: .8rem; }
-.crit__n { font-family: var(--display); font-size: 1.05rem; margin: 0 0 .15rem; }
-.crit__q { margin: 0; color: var(--ink-2); font-size: .95rem; }
-.crit__levels { display: grid; gap: .5rem; grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 44rem) { .crit__levels { grid-template-columns: 1fr; } }
-.crit__lvl { background: var(--surface-2); border-radius: 10px; padding: .65rem .75rem; }
-.crit__lvl--top { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
-.crit__lab {
-  display: block;
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em;
-  text-transform: uppercase; color: var(--ink-3); margin-bottom: .25rem;
-}
-.crit__lvl--top .crit__lab { color: var(--accent-text); }
-.crit__lvl p { margin: 0; font-size: .86rem; line-height: 1.45; color: var(--ink-2); }
-.capnote { margin-top: .9rem; }
-
-.capopts { display: grid; gap: .7rem; }
-.capopt { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1); overflow: hidden; }
-.capopt.is-open { box-shadow: var(--shadow-2); }
-.capopt__head {
-  display: grid; gap: .3rem;
-  width: 100%; text-align: left;
-  font: inherit; color: inherit;
-  background: none; border: 0;
-  padding: 1.1rem 1.2rem;
+  color: var(--ink-2);
   cursor: pointer;
 }
-.capopt__head:hover { background: var(--surface-2); }
-.capopt__head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.capopt__meta { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
-.capopt__kind {
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--accent-text);
-}
-.capopt__time { font-size: .72rem; color: var(--ink-3); }
-.capopt__name { font-family: var(--display); font-size: 1.2rem; font-weight: 700; }
-.capopt__premise { color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
-.capopt__fit {
-  display: flex; gap: .4rem; align-items: flex-start;
-  font-size: .88rem; color: var(--ink-3); margin-top: .25rem;
-}
-.capopt__fit .i { width: .95rem; height: .95rem; flex: none; margin-top: .2rem; color: var(--accent); }
-.capopt__more {
-  display: inline-flex; align-items: center; gap: .3rem;
-  font-size: .8rem; font-weight: 700; color: var(--accent-text); margin-top: .45rem;
-}
-.capopt__more .i { width: .9rem; height: .9rem; transition: transform .2s; }
-.capopt.is-open .capopt__more .i { transform: rotate(180deg); }
-.capopt.is-open .capopt__more span::after { content: " (open)"; font-weight: 400; color: var(--ink-3); }
-.capopt__body { padding: 0 1.2rem 1.2rem; display: grid; gap: .9rem; }
+.sswap__b:hover { border-color: var(--accent); }
+.sswap__b.is-on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent-text); font-weight: 700; }
+.sdis { margin-top: .6rem; }
 
-.capsteps { margin: 0; padding-left: 1.3rem; display: grid; gap: .55rem; }
-.capsteps li { font-size: .95rem; line-height: 1.55; color: var(--ink-2); }
-.caphand, .caphow { background: var(--surface-2); border-radius: 10px; padding: .8rem .9rem; }
-/* Provenance: which Apply task this route is a longer version of. Tinted
-   rather than plain so it reads as a pointer backwards, not as another
-   instruction. */
-.capfrom {
-  background: var(--accent-wash); border-radius: 10px; padding: .8rem .9rem;
-}
-.capfrom__lab {
-  display: flex; align-items: center; gap: .35rem;
-  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--accent-text); margin-bottom: .35rem;
-}
-.capfrom__lab .i { width: .9rem; height: .9rem; }
-.capfrom p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
-.caphand__lab, .caphow__lab {
-  display: flex; align-items: center; gap: .35rem;
-  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: .35rem;
-}
-.caphand__lab .i { width: .9rem; height: .9rem; }
-.caphand p, .caphow p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
+/* ==========================================================================
+   §20  Module 2 - Class Arena (L6) and Repair Bench (L7)
+   ========================================================================== */
 
-.capcheck { display: grid; gap: .5rem; margin-bottom: 1rem; }
-.capcheck__row {
-  display: grid; grid-template-columns: auto auto 1fr; gap: .6rem; align-items: start;
-  padding: .7rem .8rem; background: var(--surface-2); border-radius: 10px; cursor: pointer;
+/* -- Class Arena ---------------------------------------------------------- */
+.aopts { display: flex; flex-wrap: wrap; gap: var(--gap-s); }
+.aopt {
+  font: inherit; cursor: pointer; padding: .55rem .95rem;
+  border: 1px solid var(--line-strong); border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink);
+  transition: border-color .15s, background .15s, color .15s;
 }
-.capcheck__row input { margin-top: .25rem; accent-color: var(--accent); }
-.capcheck__n {
-  font-size: .72rem; font-weight: 700; color: var(--accent-text);
-  min-width: 1rem; margin-top: .15rem;
-}
-.capcheck__t { font-size: .92rem; line-height: 1.5; color: var(--ink-2); }
-.capcheck__row:has(input:checked) .capcheck__t { color: var(--ink-3); text-decoration: line-through; }
+.aopt:hover { border-color: var(--accent); background: var(--accent-wash); }
+.aopt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* The disclosure gate. Sits above the rubric because it is a precondition for
-   being marked at all, not one criterion among five. */
-.capgate {
-  background: var(--surface);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-2);
-  padding: 1.2rem 1.3rem;
-  margin: 0 0 1.1rem;
-  display: grid;
-  gap: .7rem;
+.akind {
+  margin: 0; font-family: var(--display); font-weight: 600;
+  color: var(--accent-text); font-size: .95rem;
 }
-.capgate__head { display: flex; align-items: center; gap: .7rem; }
-.capgate__head h3 { font-family: var(--display); font-size: 1.1rem; margin: 0; }
-.capgate > p { margin: 0; color: var(--ink-2); font-size: .96rem; line-height: 1.6; }
-.capgate__eg { display: grid; gap: .5rem; grid-template-columns: 1fr 1fr; }
-@media (max-width: 40rem) { .capgate__eg { grid-template-columns: 1fr; } }
-.capgate__ex { background: var(--surface-2); border-radius: 10px; padding: .7rem .8rem; }
-.capgate__ex:last-child { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
-.capgate__lab {
-  display: block;
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: .3rem;
+.aprompt {
+  margin: 0; padding: .9rem 1.05rem; white-space: pre-wrap; overflow-x: auto;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-sm); font-size: .9rem; line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.capgate__ex:last-child .capgate__lab { color: var(--accent-text); }
-.capgate__ex p { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink-2); }
+
+/* Two responses, side by side on anything with room and stacked below it.
+   Equal columns matter here: a wider box reads as the favored one, and the
+   entire point of the panel is that nothing on screen hints at an answer. */
+.apair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-s); }
+@media (max-width: 720px) { .apair { grid-template-columns: 1fr; } }
+.acard {
+  display: flex; flex-direction: column; gap: .6rem; padding: 1rem;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+.acard.is-picked { border-color: var(--accent); box-shadow: var(--shadow-accent); }
+.acard__lab {
+  margin: 0; font-family: var(--display); font-weight: 700;
+  color: var(--ink-3); letter-spacing: .06em;
+}
+.acard__body { font-size: .95rem; line-height: 1.6; }
+.acard__model {
+  margin: 0; padding-top: .6rem; border-top: 1px solid var(--line);
+  font-weight: 700; color: var(--accent-text); font-size: .9rem;
+}
+.acard__model .i { width: .95em; height: .95em; vertical-align: -.1em; }
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+
+/* -- Repair Bench --------------------------------------------------------- */
+.brow { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: var(--gap-m); }
+@media (max-width: 820px) { .brow { grid-template-columns: 1fr; } }
+.bmain { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+.blab {
+  margin: .5rem 0 0; font-family: var(--display); font-weight: 600;
+  font-size: .8rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.bprompt {
+  margin: 0; padding: .8rem .95rem; white-space: pre-wrap;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-sm); font-size: .88rem; line-height: 1.55;
+}
+.bout {
+  padding: .9rem 1.05rem; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-sm); font-size: .92rem; line-height: 1.6;
+}
+.bmoves { display: flex; flex-direction: column; gap: .5rem; }
+.bmove {
+  display: flex; flex-direction: column; gap: .2rem; text-align: left;
+  font: inherit; cursor: pointer; padding: .7rem .95rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.bmove:hover { border-color: var(--accent); background: var(--accent-wash); }
+.bmove:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bmove__fam {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text);
+}
+.bmove__lab { font-size: .93rem; line-height: 1.45; }
+
+.bside {
+  display: flex; flex-direction: column; gap: .3rem; padding: 1rem;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-sm); align-self: start;
+}
+.bside .blab:first-child { margin-top: 0; }
+.bstat { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: .3rem .6rem; }
+.bstat dt { font-size: .85rem; color: var(--ink-2); }
+.bstat dd { margin: 0; font-weight: 700; font-size: .85rem; text-align: right; }
+
+.bfaults { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.bfaults li { display: flex; gap: .5rem; font-size: .85rem; line-height: 1.45; }
+.bfaults li > .i { flex: none; margin-top: .15rem; width: 1em; height: 1em; }
+.bfaults .is-live > .i { color: var(--bad); }
+.bfaults .is-fixed { color: var(--ink-3); }
+.bfaults .is-fixed > .i { color: var(--good); }
+.bfaults .is-fixed strong { text-decoration: line-through; }
+
+.bflag {
+  margin: .4rem 0 0; padding: .7rem .8rem; font-size: .85rem; line-height: 1.5;
+  background: var(--warn-soft); color: var(--ink);
+  border-radius: var(--r-xs);
+}
+.bflag .i { color: var(--warn); width: 1em; height: 1em; vertical-align: -.12em; }
+
+/* Class Arena and Repair Bench step containers. Only one is visible at a time
+   and Steady measures all of them, so they need a declared box rather than
+   inheriting whatever .demo__body's flex gives them. */
+.apre, .around, .asum { display: flex; flex-direction: column; gap: 1rem; }
+.bdone { margin-top: .5rem; }
+
+/* ── Module 3 ─────────────────────────────────────────────────────────────
+   Three panels, none of which replay captured output: the audit records the
+   learner's own verdicts, the probe kit diffs two answers they paste in, and
+   the stakes dial is a sort over authored scenarios. */
+
+/* L9 . The Citation Audit */
+.udstep { display: flex; flex-direction: column; gap: 1rem; }
+.udqs   { display: flex; flex-direction: column; gap: .6rem; }
+.udqbtn {
+  display: flex; flex-direction: column; gap: .25rem; text-align: left;
+  font: inherit; cursor: pointer; padding: .8rem 1rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.udqbtn:hover { border-color: var(--accent); background: var(--accent-wash); }
+.udqbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.udqbtn__q { font-size: .95rem; line-height: 1.45; font-weight: 700; }
+.udqbtn__w { font-size: .85rem; line-height: 1.5; color: var(--ink-2); }
+.udq { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+.udform { display: flex; flex-direction: column; gap: .6rem; }
+.udsel  { display: flex; flex-wrap: wrap; gap: .5rem; }
+.udin {
+  font: inherit; font-size: .92rem; width: 100%; box-sizing: border-box;
+  padding: .6rem .8rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.udin:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.udtable { display: flex; flex-direction: column; gap: .4rem; }
+.udrow {
+  display: grid; grid-template-columns: 8.5rem 1fr auto auto; gap: .6rem;
+  align-items: center; padding: .55rem .7rem; font-size: .88rem;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+.udrow__side { font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.udrow__txt  { line-height: 1.45; overflow-wrap: anywhere; }
+.udv {
+  font-size: .74rem; font-weight: 700; padding: .2rem .55rem;
+  border-radius: var(--r-pill); white-space: nowrap;
+}
+.udv--bad  { background: var(--bad-soft);  color: var(--bad); }
+.udv--warn { background: var(--warn-soft); color: var(--ink); }
+.udv--ok   { background: var(--good-soft); color: var(--good); }
+.udx {
+  border: 0; background: none; cursor: pointer; color: var(--ink-3);
+  padding: .2rem; line-height: 0; border-radius: var(--r-xs);
+}
+.udx:hover { color: var(--bad); }
+.udsum  { display: flex; flex-direction: column; gap: .5rem; }
+.udcols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.udcol  { display: flex; flex-direction: column; gap: .35rem; }
+.udbar  { display: grid; grid-template-columns: 1fr 4rem 1.4rem; gap: .5rem; align-items: center; font-size: .82rem; }
+.udbar__n { color: var(--ink-2); }
+.udbar__t { height: .45rem; background: var(--surface-3); border-radius: var(--r-pill); overflow: hidden; }
+.udbar__i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--ink-3); }
+.udbar__i--bad  { background: var(--bad); }
+.udbar__i--warn { background: var(--warn); }
+.udbar__i--ok   { background: var(--good); }
+.udbar__v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.udverdict { margin: .3rem 0 0; font-size: .92rem; line-height: 1.55; }
+
+/* L10 . The Probe Kit */
+.pkpairs { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pkbody  { display: flex; flex-direction: column; gap: .8rem; }
+.pkcols  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pkcol   { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.pkta {
+  font: inherit; font-size: .88rem; line-height: 1.55; min-height: 8rem;
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: .7rem .85rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.pkta:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pkout  { display: flex; flex-direction: column; gap: .7rem; }
+.pkstat { display: flex; flex-wrap: wrap; gap: 1.6rem; }
+.pkdiff {
+  padding: .8rem .95rem; font-size: .88rem; line-height: 1.7;
+  background: var(--surface-2); border-radius: var(--r-sm);
+  overflow-wrap: anywhere;
+}
+.pkw { border-radius: var(--r-xs); padding: .05em .18em; color: var(--ink); }
+.pkw--a { background: var(--warn-soft); }
+.pkw--b { background: var(--accent-wash); }
+.pkwatch {
+  margin: 0; display: flex; gap: .55rem; font-size: .88rem; line-height: 1.55;
+  padding: .7rem .8rem; background: var(--surface-2); border-radius: var(--r-xs);
+}
+.pkwatch .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; color: var(--accent-text); }
+
+/* L11 . Stakes Dial */
+.sdpool { display: flex; flex-wrap: wrap; gap: .45rem; min-height: 2rem; }
+.sdchip {
+  font: inherit; font-size: .85rem; cursor: pointer;
+  padding: .4rem .8rem; border-radius: var(--r-pill);
+  background: var(--surface-2); color: var(--ink-2); border: 1px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.sdchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.sdchip.is-sel { background: var(--accent-fill); color: var(--accent-on); }
+.sdchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sdgridwrap {
+  display: grid; grid-template-columns: 1.2rem 1fr; grid-template-rows: 1fr 1.2rem;
+  gap: .4rem; align-items: center;
+}
+.sdaxis {
+  font-family: var(--display); font-weight: 600; font-size: .72rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  text-align: center;
+}
+.sdaxis--y { writing-mode: vertical-rl; transform: rotate(180deg); grid-row: 1; grid-column: 1; }
+.sdaxis--x { grid-row: 2; grid-column: 2; }
+.sdgrid {
+  grid-row: 1; grid-column: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+}
+.sdcell {
+  font: inherit; text-align: left; cursor: default;
+  display: flex; flex-direction: column; gap: .5rem;
+  min-height: 8rem; padding: .75rem .85rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px dashed var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.sdcell.is-armed { cursor: pointer; border-color: var(--accent); }
+.sdcell.is-armed:hover { background: var(--accent-wash); }
+.sdcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sdcell__t {
+  font-family: var(--display); font-weight: 700; font-size: .74rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); line-height: 1.5;
+}
+.sdcell__in { display: flex; flex-wrap: wrap; gap: .35rem; align-content: flex-start; }
+.sdplaced {
+  font-size: .78rem; line-height: 1.35; cursor: pointer;
+  padding: .28rem .6rem; border-radius: var(--r-pill);
+  background: var(--surface); box-shadow: var(--shadow-1); color: var(--ink);
+}
+.sdcell.is-armed .sdplaced { cursor: inherit; }
+.sdcell:not(.is-armed) .sdplaced:hover { color: var(--bad); }
+.sddone  { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+.sdprotos { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.sdproto {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: .85rem .95rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-sm);
+}
+.sdproto p { margin: 0; }
+.sdproto__n {
+  font-family: var(--display); font-weight: 700; font-size: .74rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text);
+}
+.sdproto__r { font-size: .9rem; }
+.sdnotes { display: flex; flex-direction: column; gap: .5rem; }
+.sdnote {
+  padding: .7rem .85rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+.sdnote p { margin: 0; }
+.sdnote__n { font-weight: 700; }
+
+@media (max-width: 720px) {
+  .udcols, .pkcols, .sdprotos, .sdgrid { grid-template-columns: 1fr; }
+  .udrow { grid-template-columns: 1fr auto auto; }
+  .udrow__side { grid-column: 1 / -1; }
+}
+
+/* ── Module 4 ─────────────────────────────────────────────────────────────
+   Authored panels: a predict-then-reveal over four broken image prompts, a
+   constructed transcript to classify, and a format triage sort. */
+
+/* L12 . The Negation Trap */
+.tpcase  { display: flex; flex-direction: column; gap: .6rem; }
+.tplever {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text);
+}
+.tpwhy {
+  display: flex; gap: .6rem; padding: .8rem .95rem; font-size: .9rem; line-height: 1.6;
+  background: var(--surface-2); border-radius: var(--r-sm);
+}
+.tpwhy .i { flex: none; margin-top: .25rem; width: 1em; height: 1em; color: var(--accent-text); }
+.tpfix { display: flex; flex-direction: column; gap: .4rem; }
+.tpfix ul { margin: 0; padding-left: 1.1rem; font-size: .88rem; line-height: 1.6; color: var(--ink-2); }
+.tpfix li { margin-bottom: .25rem; }
+.tpbench { display: flex; flex-direction: column; gap: .5rem; margin-top: .8rem; }
+.tplevers { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.tplev {
+  display: flex; gap: .5rem; align-items: flex-start;
+  padding: .5rem .7rem; font-size: .84rem; line-height: 1.45;
+  background: var(--surface-2); border-radius: var(--r-xs); color: var(--ink-3);
+}
+.tplev .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; }
+.tplev.is-on { color: var(--ink); }
+.tplev.is-on .i { color: var(--good); }
+.tpwarn {
+  margin: 0; display: flex; gap: .55rem; font-size: .86rem; line-height: 1.5;
+  padding: .65rem .8rem; background: var(--warn-soft); border-radius: var(--r-xs);
+}
+.tpwarn .i { flex: none; margin-top: .2rem; width: 1em; height: 1em; color: var(--warn); }
+.answer.is-right { border-color: var(--good); background: var(--good-soft); }
+.answer.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+
+/* L13 . Transcript Autopsy */
+.aplist { display: flex; flex-direction: column; gap: .6rem; }
+.aperr {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .8rem .95rem; background: var(--surface-2); border-radius: var(--r-sm);
+  border-left: 3px solid var(--line-strong);
+}
+.aperr--done { border-left-color: var(--accent); }
+.aperr__who {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3);
+}
+.aperr__pair { display: grid; grid-template-columns: 6rem 1fr; gap: .25rem .7rem; align-items: baseline; }
+.aperr__lab { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.aperr__t { font-size: .95rem; font-weight: 700; }
+.aperr__h { font-size: .95rem; font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; color: var(--bad); }
+.aperr__why { margin: 0; font-size: .85rem; line-height: 1.55; color: var(--ink-2); }
+.apdone { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+
+/* L14 . Format Triage */
+.ftpool { display: flex; flex-wrap: wrap; gap: .45rem; min-height: 2rem; }
+.ftbins { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .8rem; }
+.ftbin {
+  font: inherit; text-align: left; cursor: default;
+  display: flex; flex-direction: column; gap: .4rem;
+  min-height: 7.5rem; padding: .75rem .85rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px dashed var(--line-strong); border-radius: var(--r-sm);
+  transition: border-color .15s, background .15s;
+}
+.ftbin.is-armed { cursor: pointer; border-color: var(--accent); }
+.ftbin.is-armed:hover { background: var(--accent-wash); }
+.ftbin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ftbin__n {
+  font-family: var(--display); font-weight: 700; font-size: .8rem;
+  letter-spacing: .03em; text-transform: uppercase; color: var(--accent-text);
+}
+.ftbin__r { font-size: .82rem; line-height: 1.5; color: var(--ink-2); }
+.ftbin__in { display: flex; flex-wrap: wrap; gap: .35rem; align-content: flex-start; }
+.ftbin.is-armed .sdplaced { cursor: inherit; }
+.ftdone { display: flex; flex-direction: column; gap: .7rem; margin-top: .5rem; }
+.ftrows { display: flex; flex-direction: column; gap: .5rem; }
+.ftrow {
+  padding: .7rem .85rem; font-size: .88rem; line-height: 1.55;
+  background: var(--surface-2); border-radius: var(--r-xs);
+  border-left: 3px solid var(--warn);
+}
+.ftrow.is-same { border-left-color: var(--good); }
+.ftrow p { margin: 0 0 .2rem; }
+.ftrow p:last-child { margin-bottom: 0; color: var(--ink-2); }
+.ftrow__n { font-weight: 700; }
+.ftrow__v { font-size: .84rem; color: var(--ink-3); }
+.ftrow__c {
+  font-size: .68rem; letter-spacing: .05em; text-transform: uppercase;
+  padding: .1rem .45rem; border-radius: var(--r-pill);
+  background: var(--warn-soft); color: var(--ink-2);
+}
+
+@media (max-width: 720px) {
+  .tplevers, .ftbins { grid-template-columns: 1fr; }
+  .aperr__pair { grid-template-columns: 1fr; }
+}
+
+/* ── Module 5 ─────────────────────────────────────────────────────────────
+   A sort, a spectrum with three readers, and a composer. Nothing on any of
+   these panels is stored or sent, which is a constraint the module argues for
+   rather than an omission. */
+
+/* L15 . The Paste Test reuses .ftbin / .ftrow from Module 4. */
+.ptbins { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .8rem; }
+.ptbins .ftbin { min-height: 7rem; }
+
+/* L16 . Disclose or Not */
+.dccase { display: flex; flex-direction: column; gap: .7rem; }
+.dcn { margin: 0; font-size: 1.02rem; font-weight: 700; line-height: 1.45; }
+.dcreveal { display: flex; flex-direction: column; gap: .5rem; }
+.dccols { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.dccol {
+  display: flex; flex-direction: column; gap: .3rem;
+  padding: .7rem .8rem; background: var(--surface-2); border-radius: var(--r-sm);
+  border-top: 3px solid var(--line-strong);
+}
+.dccol.is-same { border-top-color: var(--good); }
+.dccol__n {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3);
+}
+.dccol__v { margin: 0; font-size: .92rem; font-weight: 700; line-height: 1.35; }
+.dccol__s { margin: 0; font-size: .82rem; line-height: 1.5; color: var(--ink-2); }
+.dcnote {
+  margin: 0; padding: .7rem .85rem; font-size: .88rem; line-height: 1.6;
+  background: var(--surface-2); border-radius: var(--r-xs);
+}
+
+/* L17 . Policy Builder */
+.pbsecs { display: flex; flex-direction: column; gap: .8rem; }
+.pbsec {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .85rem .95rem; background: var(--surface-2); border-radius: var(--r-sm);
+}
+.pbsec__n {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: .78rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--accent-text);
+}
+.pbsec__l { margin: 0; font-size: .87rem; line-height: 1.55; color: var(--ink-2); }
+.pbout {
+  font: inherit; font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .82rem; line-height: 1.7; min-height: 16rem;
+  width: 100%; box-sizing: border-box; resize: vertical;
+  padding: .9rem 1rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+}
+.pbout:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* L17 . Then and now */
+.cfrows { display: flex; flex-direction: column; gap: .5rem; }
+.cfrow {
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center;
+  justify-content: space-between;
+  padding: .7rem .85rem; background: var(--surface-2); border-radius: var(--r-sm);
+}
+.cfrow__q { margin: 0; font-size: .93rem; line-height: 1.45; font-weight: 700; flex: 1 1 16rem; }
+.cfrow__q span {
+  display: block; font-weight: 400; font-size: .74rem; letter-spacing: .03em;
+  text-transform: uppercase; color: var(--ink-3); margin-top: .15rem;
+}
+.cfin { display: flex; align-items: center; gap: .4rem; }
+.cflab { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.cfsel {
+  font: inherit; font-size: .9rem; padding: .3rem .4rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line-strong); border-radius: var(--r-xs);
+}
+.cfdelta {
+  min-width: 2rem; text-align: center; font-weight: 700; font-size: .9rem;
+  font-variant-numeric: tabular-nums; color: var(--ink-3);
+}
+.cfdelta--up   { color: var(--good); }
+.cfdelta--down { color: var(--accent-text); }
+.cfdelta--flat { color: var(--ink-3); }
+.cfdone { margin-top: .6rem; }
+
+@media (max-width: 720px) {
+  .ptbins, .dccols { grid-template-columns: 1fr; }
+}
+
+/* The editing switch's notice, standing in for the prediction gate. Warm rather
+   than alarming - it is a note to whoever is editing the page, not an error -
+   but unmistakably not a beat of the lesson. */
+.gate__stakes--edit {
+  align-items: flex-start; line-height: 1.55;
+  padding: .7rem .85rem; border-radius: var(--r-xs);
+  background: var(--warn-soft); color: var(--ink-2);
+}
+.gate__stakes--edit .i { flex: none; margin-top: .2rem; color: var(--warn); }
+.gate__stakes--edit code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .88em; background: var(--surface); padding: .05em .3em;
+  border-radius: var(--r-xs); white-space: nowrap;
+}
+
+/* An unlinked video beat. Deliberately not styled to look like a player: a
+   placeholder that looks playable and is not reads as a bug, and this one has
+   to survive until seventeen videos are actually recorded. */
+.video__frame--empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .5rem; cursor: default;
+  border: 1px dashed var(--line-strong); background: var(--surface-2);
+}
+.video__frame--empty .video__play { opacity: .35; }
+.video__todo {
+  font-family: var(--display); font-weight: 700; font-size: .74rem;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
 
 /* ============================================================================
    Course theme - CSC 150
@@ -1538,8 +2306,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150  page 01-module-1-checkpoint.html  ve8b2493  ·  build 4e484f8  ·  2026-09-02 01:00 -->
-<div data-build="4e484f8" data-page="01-module-1-checkpoint.html" data-version="e8b2493" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page 01-what-this-even-is.html  ve1b97a5  ·  build 7564836  ·  2026-09-02 01:09 -->
+<div data-build="7564836" data-page="01-what-this-even-is.html" data-version="e1b97a5" class="lesson" data-course="150">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1564,289 +2333,299 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
   <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
   <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
 </svg>
+
+<div class="railtrack"><div class="railtrack__fill" id="rail"></div></div>
+
 <header class="masthead">
   <div class="wrap">
     <div class="masthead__row">
-      <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
-      <span class="lessonno">Module 1 &middot; Checkpoint</span>
+      <span class="coursemark"><svg class="i"><use href="#i-sparkles"/></svg> CSC 150</span>
+      <span class="lessonno">Module 1 &middot; Lesson 1</span>
     </div>
-    <h1>Show Me You Have The Model</h1>
-    <p class="standfirst">One piece of work at the end of Module&nbsp;1, in whichever of six
-    forms suits how you think. They are marked identically - the choice is about
-    temperament, not difficulty, and picking the one that looks easiest will not help you.</p>
+    <h1>What This Even Is</h1>
+    <p class="standfirst">Four rings. Seventy years. It will make sense in a bit.</p>
+    <div class="metarow"><span><svg class="i"><use href="#i-target"/></svg> Course outcomes 2 &amp; 3</span></div>
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap lesson__body">
 
-  <section class="block">
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Read this first</span>
-      <h2>The rubric, before you choose</h2>
-      <p>Every route is marked against these four, and only these four. They are written to be format-blind on purpose: a recording, a bug report and an annotated transcript can all satisfy them, and none of them can be satisfied by length.</p>
-    </div>
-    <div class="capgate">
-      <div class="capgate__head">
-        <div class="icontile"><svg class="i"><use href="#i-lock"/></svg></div>
-        <h3>Every route needs an AI-use statement</h3>
-      </div>
-      <p>Whichever route you take, the work must arrive with a short statement of what AI did in making it. <strong>Work submitted without one is returned unmarked</strong> - not penalised, returned, and you resubmit. This is not an integrity trap and it is not there to catch you out: using AI on this work is expected, and on several of these routes it is the point. What is being assessed is whether you can say plainly what it did. That is the skill, and it is the same one Lesson&nbsp;16 calls an <em>AI-use statement</em> and asks you to write for real.</p>
-      <div class="capgate__eg">
-        <div class="capgate__ex"><span class="capgate__lab">Not a statement</span><p>&ldquo;I used AI to help with this assignment.&rdquo;</p></div><div class="capgate__ex"><span class="capgate__lab">A statement</span><p>&ldquo;All six prompts and the ledger rows are mine. I used Claude to check my grammar in the closing paragraph and it rewrote two sentences, which I kept. The diagnosis in row 4 is mine and I checked it against Lesson&nbsp;3 rather than asking a model.&rdquo;</p></div>
+  <section class="block beat">
+    <span class="beat__label"><svg class="i"><use href="#i-book-open"/></svg> Beat 1 &middot; Summary</span>
+    <div class="lede">
+      <div class="icontile icontile--quiet"><svg class="i"><use href="#i-book-open"/></svg></div>
+      <div class="lede__body">
+        <span class="eyebrow">Overview</span>
+        <p>Most people think AI means the &quot;chatbot&quot;. I get it - that&rsquo;s the AI everyone has met. But AI is much more than a chatbot. In fact, the chatbot is one of the more recent developments of Artificial Intelligence - a field that has been around for decades.<br><br>This lesson is about sorting that out. What actually counts as AI. Where machine learning fits into the picture. Where the chatbot sits inside all of it - spoiler, it&rsquo;s a small, small corner.<br><br>You&rsquo;re not supposed to know any of this yet. That&rsquo;s exactly why it&rsquo;s lesson one!</p>
       </div>
     </div>
-    <div class="crits"><article class="crit">
-            <div class="crit__top"><h3 class="crit__n">Mechanism</h3>
-              <p class="crit__q">Do you explain what happened using the machinery, rather than the machine's personality?</p></div>
-            <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behavior with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behavior.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Reaches for the right level of mechanism without prompting, including where attention or the context window is the actual explanation, and does not over-claim beyond what the mechanism supports.</p></div>
-            </div>
-          </article><article class="crit">
-            <div class="crit__top"><h3 class="crit__n">Evidence</h3>
-              <p class="crit__q">Is every claim anchored to something you actually ran or found?</p></div>
-            <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Claims are general and unsourced - describes what models &ldquo;tend to&rdquo; do with nothing attached.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Each substantive claim is tied to a specific quoted output, screenshot or link that a reader could check.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Evidence is chosen deliberately, including at least one case that complicates the story rather than confirming it.</p></div>
-            </div>
-          </article><article class="crit">
-            <div class="crit__top"><h3 class="crit__n">Calibration</h3>
-              <p class="crit__q">Can you tell what you observed from what you are inferring?</p></div>
-            <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>States inferences as observations, or hedges everything equally so nothing is claimed at all.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Marks clearly which parts are observed, which are inferred, and where you are unsure.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Names something you cannot determine from what you have, and says what evidence would settle it.</p></div>
-            </div>
-          </article><article class="crit">
-            <div class="crit__top"><h3 class="crit__n">Disclosure</h3>
-              <p class="crit__q">Can a reader tell exactly what part AI played in making this?</p></div>
-            <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>No statement, or one so vague it says nothing - <em>I used AI to help</em>. Work arriving with no statement at all is returned unmarked; see the gate above.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>A short statement naming which tools were used, for what, and which parts of the submission are your own words.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Specific enough to be checked - names the tool and roughly what was asked of it, distinguishes drafting from editing from analysis, and discloses use that nobody would have caught. Reads as a professional note rather than a confession.</p></div>
-            </div>
-          </article><article class="crit">
-            <div class="crit__top"><h3 class="crit__n">Transfer</h3>
-              <p class="crit__q">Does it reach past the examples the lessons handed you?</p></div>
-            <div class="crit__levels">
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Re-uses a lesson example or an activity output with minor changes.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Applies the idea to a case of your own choosing that the lessons did not cover.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>The case is one where the lesson's account needed adjusting, and you say how.</p></div>
-            </div>
-          </article></div>
-    <p class="small muted capnote">Five criteria, four points each, twenty total. Length is not a criterion and nothing here rewards it - a tight two pages beats a loose six every time. Disclosure is both a gate and a criterion: without a statement the work is not marked at all, and with one, how well you did it counts like everything else.</p>
   </section>
 
-  <section class="block" id="choose">
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Six routes</span>
-      <h2>Pick one</h2>
-      <p>Open each one and read what it actually involves before deciding. The
-      <em>pick this if</em> line is the most useful part - these differ in what
-      they ask of you, not in how hard they are.</p>
-    </div>
-    <div class="capopts" id="capopts"><article class="capopt" id="opt-ledger" data-opt="ledger">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Annotated transcript</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Prediction Ledger</span>
-              <span class="capopt__premise">Write down what you think will happen <em>before</em> you press enter, every time. Then run it, and mark yourself.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You want to know whether your mental model is actually any good, and you would rather find out on paper than in an exam.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model's knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.</li><li>For each one, write your prediction <strong>before</strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why</em> - the why is the part being marked.</li><li>Run all six. Paste the actual output next to each prediction.</li><li>Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.</li><li>Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 2's Apply - run one prompt three times and say what held steady. This is that, six times, with the prediction written down first.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> lives in your <em>why</em> column and your annotations. <strong>Evidence</strong> is the pasted output. <strong>Calibration</strong> is the confidence column doing honest work - a ledger where every row says 5/5 scores badly even if every prediction was right. <strong>Transfer</strong> is in your choice of prompts.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-bug" data-opt="bug">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Technical write-up</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Bug Report</span>
-              <span class="capopt__premise">Find one reproducible misbehaviour and file it the way an engineer would - minimal case, expected versus actual, and a root cause in terms of the mechanism.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You like taking things apart, and &lsquo;it does something weird sometimes&rsquo; annoys you as a description.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a behavior in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.</li><li>Reproduce it. Then <strong>minimize it</strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.</li><li>File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.</li><li>Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.</li><li>Add a workaround a classmate could use tomorrow, and say what it costs them.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 3's Apply - write a sentence whose meaning turns on a distant word, run it, and give a verdict. Minimizing a repro is the same move done properly.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is the root-cause section, and it carries the report. <strong>Evidence</strong> is the repro steps - a reader must be able to follow them and see it happen. <strong>Calibration</strong> is the reproduction rate and your honesty about what you could not pin down. <strong>Transfer</strong> is finding this yourself rather than reproducing Lesson 8.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-explainer" data-opt="explainer">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Audio or video</span>
-                <span class="capopt__time">45&ndash;75 min</span></span>
-              <span class="capopt__name">The 90-Second Explainer</span>
-              <span class="capopt__premise">Explain what a language model is actually doing, to one real person who does not know, in ninety seconds - without the words that let you avoid understanding it.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You think out loud, you can explain things to people, and you would rather talk for ninety seconds than write for three pages.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Pick your person and name them. Your grandmother, your manager, a fourteen-year-old. The explanation changes depending, and the choice is part of the work.</li><li>Banned words: <em>think, know, understand, learn, believe, remember, intelligent, brain, conscious, decide</em>. Every one of them lets you skip the mechanism. Working around them is the assignment.</li><li>Record ninety seconds. Audio is fine; video is fine; a phone is fine. Production quality is not assessed and never will be.</li><li>Include one concrete demonstration - a thing you ran, described in a sentence - not only description.</li><li>Submit a short written note alongside: which banned word you most wanted, and what you said instead.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 1's Apply - name three AI systems and say what each is bad at. Explaining one of them out loud to a person is the harder version.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is the whole point of the banned list. <strong>Evidence</strong> is your demonstration. <strong>Calibration</strong> is saying, out loud, where the explanation is simplified. <strong>Transfer</strong> is the fit to your specific listener - a generic explainer scores low here no matter how polished.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-teardown" data-opt="teardown">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Annotated critique</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Teardown</span>
-              <span class="capopt__premise">Take one real AI claim in the wild and annotate it line by line against what you now know is actually happening.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You read things skeptically already and would like a license to do it properly.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.</li><li>At least one annotation must defend the source. Find something it gets <em>right</em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.</li><li>Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.</li><li>One closing paragraph: what would a reader have to already know to spot what you spotted?</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 5's Apply - a one-page comparison of three tools including what each refuses to do. Annotating somebody else's claims uses the same reading.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is what your annotations are measured against. <strong>Evidence</strong> is exact quotation - paraphrasing the source costs you here. <strong>Calibration</strong> is the required defense and the distinction between <em>imprecise</em> and <em>wrong</em>. <strong>Transfer</strong> is that no lesson covered your artefact.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-change" data-opt="change">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Written reflection</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Change of Mind</span>
-              <span class="capopt__premise">One belief you held in week one and no longer hold - and the specific thing that changed it.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You think by writing, and you would rather work something out on the page than record yourself or file a ticket.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Name one belief you held about AI before this module that you no longer hold. It must be <em>specific</em>. &lsquo;I understand it better now&rsquo; is not a belief, it is a feeling; &lsquo;I thought it looked answers up in a database&rsquo; is a belief.</li><li>Say where the belief came from. Nobody invents these - it came from somewhere, and naming the source is usually more interesting than the belief.</li><li>Name the exact moment it broke. A specific lesson, activity, or thing you ran. Quote it or paste it. &lsquo;Somewhere in Module 1&rsquo; is not a moment.</li><li>Explain what is actually true instead, in terms of the machinery. This paragraph carries most of the marks and is the one place vagueness costs you outright.</li><li>Then the harder half: name one thing you are <em>still</em> unsure about, and design the test you would run to settle it. You do not have to run it. You have to be able to say what would count as an answer.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>The opening predictions you locked in across Lessons 1 to 5. This route is those, read back.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p>This route is written, so it is the easiest one to fill with words and the easiest one to mark down for it. <strong>Mechanism</strong> is the correction paragraph and nothing else will rescue it. <strong>Evidence</strong> is the quoted moment - an unquoted &lsquo;I realized during Lesson 2&rsquo; scores <em>Not yet</em>. <strong>Calibration</strong> is the whole final section, which is why it is not optional. <strong>Transfer</strong> is the test you design. Word count is a guide, not a target: nothing is marked for length.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-clinic" data-opt="clinic">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Documented conversation</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Misconception Clinic</span>
-              <span class="capopt__premise">Find a real person with a wrong belief about AI, have an actual conversation, and document honestly whether it moved.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You learn by teaching, and you already know someone who says things about AI that make you wince.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find someone who holds a specific, wrong belief. &lsquo;It's just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it's basically conscious&rsquo;, &lsquo;it can't be wrong, it's a computer&rsquo;. Get their permission to write it up; no names needed.</li><li>Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.</li><li>Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.</li><li>Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.</li><li>Close by naming what <em>you</em> discovered you could not explain as well as you thought. There will be something.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 1's Apply again, pointed outward: the ring you placed a system in is what you will be arguing about.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is what you actually said to them, reported accurately. <strong>Evidence</strong> is what you showed them and how they responded. <strong>Calibration</strong> is the honest account of what did not land. <strong>Transfer</strong> is that a real person's actual confusion never matches a lesson example.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I'm doing this one</button>
-              </div>
-            </div>
-          </article></div>
-  </section>
-
-  <section class="block" id="chosen" hidden>
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-check"/></svg> Your choice</span>
-      <h2 id="chosenName">-</h2>
-      <p id="chosenPremise"></p>
-    </div>
-    <div class="card">
-      <div class="capcheck" id="capcheck"></div>
+  <section class="block beat" id="beat-predict">
+    <span class="beat__label"><svg class="i"><use href="#i-help"/></svg> Beat 2 &middot; Prediction gate</span>
+    <div class="gate" id="gate">
+      <p class="gate__stakes"><svg class="i"><use href="#i-help"/></svg> No stakes here - just guessing helps the learning!</p>
+      <h2 class="gate__q">Which of these is artificial intelligence? A spam filter, a chess computer, a chatbot, a smart thermostat, and Netflix telling you what to watch next.</h2>
+      <div class="options" id="gateOptions" role="group" aria-label="Prediction choices">
+        <button class="option" type="button" aria-pressed="false" data-key="A" data-pct="44">
+          <span class="option__key">A</span>
+          <span class="option__text">Only the chatbot.
+            <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
+          </span>
+        </button>
+        <button class="option" type="button" aria-pressed="false" data-key="B" data-pct="19">
+          <span class="option__key">B</span>
+          <span class="option__text">The chatbot and the chess computer.
+            <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
+          </span>
+        </button>
+        <button class="option" type="button" aria-pressed="false" data-key="C" data-pct="24" data-best="true">
+          <span class="option__key">C</span>
+          <span class="option__text">All of them except the thermostat.
+            <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
+          </span>
+        </button>
+        <button class="option" type="button" aria-pressed="false" data-key="D" data-pct="13">
+          <span class="option__key">D</span>
+          <span class="option__text">All five.
+            <span class="option__stats"><span class="option__bar"><i></i></span><span class="option__pct"></span></span>
+          </span>
+        </button>
+      </div>
+      <div class="field">
+        <label for="why">In a few words - why that one?</label>
+        <textarea id="why" placeholder="Five words is plenty. Nobody reads this but you."></textarea>
+      </div>
       <div class="btnrow">
-        <button class="btn btn--ghost" type="button" id="capBack">
-          <svg class="i"><use href="#i-arrow-right"/></svg> Look at the other five again</button>
+        <button class="btn btn--primary" id="commit" type="button" disabled>
+          Lock it in and start the lesson <svg class="i"><use href="#i-arrow-right"/></svg>
+        </button>
+        <button class="btn btn--ghost" id="skipGate" type="button">Skip to the lesson</button>
       </div>
-      <p class="small muted">Ticking these is for your benefit only - nothing here is
-      submitted or seen. Hand the work in through the Module&nbsp;1 assignment.</p>
+      <p class="hint" id="gateHint">Pick an answer and add a short reason to continue.</p>
+    </div>
+
+    <div class="locked" id="lock">
+      <div class="locked__ghost">
+        <span style="width:44%"></span><span style="width:92%"></span><span style="width:86%"></span>
+        <span style="width:70%"></span><span style="width:30%"></span><span style="width:88%"></span>
+        <span style="width:64%"></span>
+      </div>
+      <div class="locked__front">
+        <div class="icontile icontile--quiet"><svg class="i"><use href="#i-lock"/></svg></div>
+        <strong>The rest of the lesson opens once you commit</strong>
+        <p>Guessing before you are taught makes the real answer stick harder. Wrong guesses work just as well.</p>
+      </div>
     </div>
   </section>
 
-  <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Module 1 checkpoint &middot; <span class="ver" title="page version e8b2493, build 4e484f8, 2026-09-02 01:00">ve8b2493</span></span>
-    <span class="row" style="gap:.4rem">Marked out of 20 &middot; five criteria, four points each</span>
-  </footer>
+  <div id="gated" hidden>
+  <div class="lesson__body" style="padding-block:0">
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-target"/></svg> Beat 3 &middot; Objectives</span>
+      <div class="blockhead">
+        <span class="eyebrow"><svg class="i"><use href="#i-target"/></svg> What you'll walk out with</span>
+        <h2>By the end of this lesson you can&hellip;</h2>
+      </div>
+      <div class="card card--quiet">
+        <div class="objectives">
+          <div class="objective">
+            <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
+            <span class="objective__text"><strong>Place</strong> AI, machine learning, deep learning and large language models in their correct nesting order.
+              <span class="objective__clo">Course outcome 2 &middot; Evaluating and selecting tools</span></span>
+          </div>
+          <div class="objective">
+            <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
+            <span class="objective__text"><strong>Distinguish</strong> narrow AI from general AI, and say which one every tool in this course is.
+              <span class="objective__clo">Course outcome 2 &middot; Capabilities and limitations</span></span>
+          </div>
+          <div class="objective">
+            <span class="objective__mark"><svg class="i"><use href="#i-check"/></svg></span>
+            <span class="objective__text"><strong>Explain</strong> in one sentence why a seventy-year-old field produced tools that felt new in the 2020s.
+              <span class="objective__clo">Course outcome 2 &middot; Situating the tools</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block beat" hidden>
+      <span class="beat__label"><svg class="i"><use href="#i-zap"/></svg> Beat 4 &middot; Template deviation</span>
+      <div class="callout">
+        <div class="icontile"><svg class="i"><use href="#i-history"/></svg></div>
+        <div class="callout__body">
+          <p class="callout__label">No warm-up deck this time</p>
+          <p>This is the first lesson, so there is nothing behind you to retrieve yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 5 &middot; Content</span>
+      <div class="segment">
+        <h3><span class="segno">01</span> Seventy years, two winters, and what finally changed</h3>
+        <div class="prose">
+          <p>The phrase <b class='vt' data-v='artificial-intelligence-ai'><i>artificial intelligence</i></b> was coined at a workshop at Dartmouth in 1956. Not 2022 - 1956, before the moon landing, before the pocket calculator. Before Dungeons &amp; Dragons. Before The Oregon Trail. Before the personal computer! For most of the seventy years since, the field has been a serious academic discipline producing useful, unglamorous things: route planners, fraud detection, the software that reads the postcode on an envelope.</p>
+          <p>It has also over-promised twice, badly enough that funding collapsed both times. Those stretches have a name - the <b class='vt' data-v='ai-winter'><i>AI winters</i></b> - and they are worth remembering with you every time you read a sentence beginning &lsquo;<em>within five years, AI will&hellip;</em>&rsquo;. People have written that sentence before. They were confident. And they were wrong.</p>
+          <p>So what changed? Not the ideas, mostly. The core idea behind what you use today is older than most of the people reading this. What changed was scale: enough text to train on, and enough computing power to do it. A third thing changed too, in 2017, and it is specific - but I don&rsquo;t want to ruin the surprise. We will look at it in a future lesson. Just remember this word: <em>attention</em>.</p>
+        </div>
+        
+        <div class="demo" id="nesting">
+          <div class="demo__head">
+            <span class="demo__title"><svg class="i"><use href="#i-layers"/></svg> The Nesting Dolls</span>
+            <span class="scorepill" id="nProg">1 of 12</span>
+          </div>
+          <div class="demo__body">
+            <p class="small muted">Put each system in the <em>narrowest</em> ring that still contains it. Getting some wrong is useful here - a wrong answer tells you what that system actually runs on, which is the whole point. Yeah, I know we haven&rsquo;t covered this yet. But that&rsquo;s the point of <em>prediction</em>.</p>
+            <div class="nrow">
+              <div class="nrings" aria-hidden="true">
+                <span class="nrings__r nrings__r--0"><span class="nrings__lab">AI</span></span>
+                <span class="nrings__r nrings__r--1"><span class="nrings__lab">ML</span></span>
+                <span class="nrings__r nrings__r--2"><span class="nrings__lab">deep</span></span>
+                <span class="nrings__r nrings__r--3"><span class="nrings__lab">LM</span></span>
+              </div>
+              <div class="ncol">
+                <p class="nchip" id="nChip">&nbsp;</p>
+                <div class="nopts" id="nOpts"></div>
+              </div>
+            </div>
+            <div class="btnrow">
+              <button class="btn btn--ghost" type="button" id="nSkip">Not sure - show me</button>
+              <button class="btn btn--ghost" type="button" id="nReset">Start over</button>
+            </div>
+            <div class="nplaced" id="nPlaced"></div>
+          </div>
+          <div class="demo__foot" id="nNote"></div>
+        </div>
+      </div>
+    </section>
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-layers"/></svg> Beat 6 &middot; Content</span>
+      <div class="segment">
+        <h3><span class="segno">02</span> The nesting dolls</h3>
+        <div class="prose">
+          <p>Here is the thing - <b class='vt' data-v='artificial-intelligence-ai'><i>Artificial intelligence</i></b> is the <em>whole field</em> - any system built to do something that would take intelligence if a person did it. Inside it sits <b class='vt' data-v='machine-learning'><i>machine learning</i></b>: systems that work out their own behavior from data instead of following rules a person wrote down. Inside <em>that</em> sits <b class='vt' data-v='deep-learning'><i>deep learning</i></b>, which runs on <b class='vt' data-v='neural-network'><i>neural networks</i></b> stacked many layers deep. And inside that, right at the center, sit <b class='vt' data-v='large-language-model-llm'><i>large language models (LLM)</i></b> - the chatbots.</p>
+          <p>The chatbot is the innermost ring; it sits inside the LLM. It is the newest, the loudest, and by a wide margin the smallest part of the picture. The spam filter in your inbox is machine learning and has been for twenty years. Nobody wrote it a rule about wire transfers; it worked that out from examples.</p>
+          <p>One more thing - most everything in this course is <b class='vt' data-v='narrow-ai'><i>narrow AI</i></b> - very good at one thing, useless for most other tasks. <b class='vt' data-v='general-ai-agi'><i>General AI</i></b>, the kind that transfers skill across arbitrary tasks the way a person does, does not exist. Some people in the industry think we&rsquo;re real close to AGI (artificial general intelligence), but that remains to be seen.</p>
+        </div>
+        
+        <!-- Hidden for now, Dave's call. Kept rather than cut: the ring test is
+             good and may come back once the lesson has been taught once. -->
+        <div class="callout" hidden>
+          <div class="icontile icontile--quiet"><svg class="i"><use href="#i-help"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">A test you can run on any headline</p>
+            <p>Ask which ring it means. &ldquo;AI detects tumors in scans&rdquo; is deep learning doing one bounded job extremely well. &ldquo;AI writes your emails&rdquo; is the innermost ring. &ldquo;AI is coming for every job&rdquo; usually means the writer has not picked a ring, which is worth noticing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-video"/></svg> Beat 7 &middot; Video</span>
+      <div class="video">
+        <!-- VIDEO: to drop an embed straight into this page, replace everything
+             between this comment and /VIDEO with the <iframe> your video host
+             gives you. Keep the wrapping <div class="embed"> and it will size
+             itself to 16:9 with the course's corner radius. -->
+        <div class="embed"><iframe src="https://inlineteaching.com/tools/vids-iframer.html?id=12iu3ZiAVmEbFwH1vNF3Oba7bherkY7gmJx__XoVnINU&amp;title=Anthropomorphizing+AI&amp;bg=d4400b&amp;titleColor=ffffff&amp;clickColor=ffffff" title="Google Vids Content" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share" allowfullscreen aria-label="Play: Why I&rsquo;m okay anthropomorphizing AI."></iframe></div>
+        <!-- /VIDEO -->
+        
+        <div class="video__meta"><span>Why I&rsquo;m okay anthropomorphizing AI.</span></div>
+        <details class="disclosure">
+          <summary>Transcript <svg class="i"><use href="#i-chevron-down"/></svg></summary>
+          <div class="disclosure__body">
+            <p>Full transcript coming.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-history"/></svg> Beat 8 &middot; Prediction callback</span>
+      <div class="card">
+        <div class="row" style="gap:1rem; align-items:flex-start; flex-wrap:nowrap">
+          <div class="icontile"><svg class="i"><use href="#i-sparkles"/></svg></div>
+          <div class="stack">
+            <span class="eyebrow">Back to your prediction</span>
+            <p id="callbackText" class="muted">-</p>
+            <p><strong>C was the one - all of them except the thermostat.</strong> If you picked &lsquo;only the chatbot&rsquo;, you are in the large majority, and the whole lesson is about why that answer feels obvious and is not.</p><p>The spam filter, the chess computer and the Netflix recommendation are all AI. Two of the three are older than many people reading this! None of them writes you a paragraph, which is exactly the point: <b class='vt' data-v='generative-ai'><i>generative AI</i></b> - making something new rather than sorting or scoring something that exists.</p><p>The thermostat is the interesting one, though. A thermostat that switches on below 68&deg;F is following a rule somebody wrote down. That is automation, not machine learning - and the line between them is the line this lesson is really about. If a smart thermostat learns your schedule from your behavior, it crosses over into a form of AI.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-pencil"/></svg> Beat 9 &middot; Apply</span>
+      <div class="blockhead">
+        <span class="eyebrow"><svg class="i"><use href="#i-pencil"/></svg> Do this before the next lesson</span>
+        <h2>Three you did not notice</h2>
+      </div>
+      <div class="apply">
+        <div class="steps">
+          <div class="step"><span>Name three AI systems you used this week without thinking of them as AI. Your phone, your inbox and your streaming service are all fair game.</span></div>
+          <div class="step"><span>For each one, say which ring it sits in - machine learning, deep learning, or generative.</span></div>
+          <div class="step"><span>For each one, write a single line on what that system is <em>bad</em> at.</span></div>
+          <div class="step"><span>One of the three should be something you would have called &lsquo;just software&rsquo; a week ago. If none of them is, look again.</span></div>
+        </div>
+        <div class="deliverable">
+          <svg class="i i--lg" style="color:var(--accent-text)"><use href="#i-notebook-pen"/></svg>
+          <span><strong>Reflection:</strong> Be sure to log this in your workbook (if you are using it).</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block beat">
+      <span class="beat__label"><svg class="i"><use href="#i-list-checks"/></svg> Beat 10 &middot; Exit check</span>
+      <div class="blockhead">
+        <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Before you go</span>
+        <h2>Two questions</h2>
+        <p>These enter the course item bank tonight and come back at you unannounced, weeks from now. Don&rsquo;t worry! This is the design, not a threat!</p>
+      </div>
+      <div class="recall" id="exit">
+        <div class="recallcard" data-answer="1">
+          <p class="recallcard__q">Which nesting order is correct?</p>
+          <div class="answers">
+            <button class="answer" type="button" data-i="0">Machine learning contains AI, which contains deep learning</button>
+            <button class="answer" type="button" data-i="1">AI contains machine learning, which contains deep learning, which contains LLMs</button>
+            <button class="answer" type="button" data-i="2">Deep learning contains AI, which contains LLMs</button>
+            <button class="answer" type="button" data-i="3">They are four names for the same thing</button>
+          </div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Widest to narrowest.</strong> AI is the field, machine learning is how most of it is built now, deep learning is the branch that scales, and the chatbot sits at the center. Getting this order right makes most AI coverage readable.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 5 and 10</p>
+        </div>
+        <div class="recallcard" data-answer="1">
+          <p class="recallcard__q">&ldquo;General AI&rdquo; refers to&hellip;</p>
+          <div class="answers">
+            <button class="answer" type="button" data-i="0">Any AI available to the general public</button>
+            <button class="answer" type="button" data-i="1">A hypothetical system matching human flexibility across arbitrary tasks</button>
+            <button class="answer" type="button" data-i="2">A model trained on general-purpose text rather than one field</button>
+            <button class="answer" type="button" data-i="3">The free tier of a commercial AI tool</button>
+          </div>
+          <div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>Hypothetical.</strong> Note what the wrong answers have in common: three of them describe things that do exist, which is precisely how the term gets blurred in coverage. Everything you will touch this term is narrow.</span></div>
+          <p class="pooltag"><svg class="i"><use href="#i-history"/></svg> This resurfaces in Lessons 5 and 17</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="lessonfoot">
+      <span>CSC 150 &middot; AI Foundations &middot; Lesson 1 of 17 &middot; <span class="ver" title="page version e1b97a5, build 7564836, 2026-09-02 01:09">ve1b97a5</span></span>
+      <span class="row" style="gap:.4rem" id="lessonNext">Next: <a href="02-the-next-word-machine.html">Lesson 2 - The Next Word Machine</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
+    </footer>
+
+  </div>
+  </div>
 </main>
+
+<button class="btn scaffoldtoggle" id="scaffoldBtn" type="button">
+  <svg class="i"><use href="#i-grid"/></svg> Template view
+</button>
 </div>
 <script>
 /* Two-click YouTube facade.
@@ -2296,86 +3075,905 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 </script>
 
 <script>
-var CAPOPTS=[{"id": "ledger", "name": "The Prediction Ledger", "premise": "Write down what you think will happen <em>before<\/em> you press enter, every time. Then run it, and mark yourself.", "steps": ["Pick six prompts you genuinely do not know the outcome of. At least two must involve something after the model's knowledge cutoff, and at least one must be a question where you expect the same prompt to give different answers on different runs.", "For each one, write your prediction <strong>before<\/strong> running it: what will come back, how confident you are out of five, and one sentence on <em>why<\/em> - the why is the part being marked.", "Run all six. Paste the actual output next to each prediction.", "Mark each row: right, wrong, or partly. Then annotate the wrong ones. A wrong prediction with a good diagnosis is worth more here than a right one with no reasoning, and the rubric is written so that is literally true.", "Close with one paragraph: which of your predictions was wrong for the most interesting reason, and what you now think you had wrong about the machinery."], "hand": "A six-row ledger - prediction, confidence, reasoning, actual output, verdict, annotation - plus the closing paragraph."}, {"id": "bug", "name": "The Bug Report", "premise": "Find one reproducible misbehaviour and file it the way an engineer would - minimal case, expected versus actual, and a root cause in terms of the mechanism.", "steps": ["Find a behavior in any AI tool that is wrong, surprising, or inconsistent. Fabricated citations, a confident answer about something past the cutoff, a long thread going strange, a prompt that works and its near-twin that does not.", "Reproduce it. Then <strong>minimize it<\/strong>: cut everything that is not needed to make it happen. This is most of the work and most of the marks.", "File it: a one-line title, exact steps, expected result, actual result, and how often it reproduces out of five attempts.", "Write the root cause in terms of what the machine is actually doing. &lsquo;It hallucinated&rsquo; is a restatement, not a cause. Name which part of the mechanism produces this.", "Add a workaround a classmate could use tomorrow, and say what it costs them."], "hand": "A filed report with title, minimal repro, expected/actual, reproduction rate, root cause, and workaround."}, {"id": "explainer", "name": "The 90-Second Explainer", "premise": "Explain what a language model is actually doing, to one real person who does not know, in ninety seconds - without the words that let you avoid understanding it.", "steps": ["Pick your person and name them. Your grandmother, your manager, a fourteen-year-old. The explanation changes depending, and the choice is part of the work.", "Banned words: <em>think, know, understand, learn, believe, remember, intelligent, brain, conscious, decide<\/em>. Every one of them lets you skip the mechanism. Working around them is the assignment.", "Record ninety seconds. Audio is fine; video is fine; a phone is fine. Production quality is not assessed and never will be.", "Include one concrete demonstration - a thing you ran, described in a sentence - not only description.", "Submit a short written note alongside: which banned word you most wanted, and what you said instead."], "hand": "A file of at most 90 seconds, plus a note of under 150 words. A transcript is required for accessibility - your tool will generate one, check it."}, {"id": "teardown", "name": "The Teardown", "premise": "Take one real AI claim in the wild and annotate it line by line against what you now know is actually happening.", "steps": ["Find a real artefact making claims about AI: a news article, a vendor's product page, a LinkedIn post, a press release, a university policy. It must be public and you must link it.", "Annotate at least six specific passages. For each: quote it exactly, then say whether it is accurate, imprecise, or wrong - and which ring of the nesting dolls it is really talking about.", "At least one annotation must defend the source. Find something it gets <em>right<\/em> that a cynical reader would dismiss. A teardown that finds only faults is not a teardown, it is a mood.", "Identify the single most misleading sentence and rewrite it accurately without making it boring. This is harder than it sounds and is the center of the assignment.", "One closing paragraph: what would a reader have to already know to spot what you spotted?"], "hand": "The link, six or more quoted-and-annotated passages, one rewritten sentence with the original beside it, and the closing paragraph."}, {"id": "change", "name": "The Change of Mind", "premise": "One belief you held in week one and no longer hold - and the specific thing that changed it.", "steps": ["Name one belief you held about AI before this module that you no longer hold. It must be <em>specific<\/em>. &lsquo;I understand it better now&rsquo; is not a belief, it is a feeling; &lsquo;I thought it looked answers up in a database&rsquo; is a belief.", "Say where the belief came from. Nobody invents these - it came from somewhere, and naming the source is usually more interesting than the belief.", "Name the exact moment it broke. A specific lesson, activity, or thing you ran. Quote it or paste it. &lsquo;Somewhere in Module 1&rsquo; is not a moment.", "Explain what is actually true instead, in terms of the machinery. This paragraph carries most of the marks and is the one place vagueness costs you outright.", "Then the harder half: name one thing you are <em>still<\/em> unsure about, and design the test you would run to settle it. You do not have to run it. You have to be able to say what would count as an answer."], "hand": "Roughly 700&ndash;1,000 words in five clearly separated parts - the belief, its origin, the moment, the correction, the open question and its test. Plus your AI-use statement."}, {"id": "clinic", "name": "The Misconception Clinic", "premise": "Find a real person with a wrong belief about AI, have an actual conversation, and document honestly whether it moved.", "steps": ["Find someone who holds a specific, wrong belief. &lsquo;It's just a search engine&rsquo;, &lsquo;it learns from our chats&rsquo;, &lsquo;it's basically conscious&rsquo;, &lsquo;it can't be wrong, it's a computer&rsquo;. Get their permission to write it up; no names needed.", "Before you speak: write down their belief in one sentence, and your plan - what you will show them, and what you predict will be the sticking point.", "Have the conversation. Show them something running rather than only telling them. Fifteen minutes is plenty.", "Write up what actually happened, including the parts that did not work. If they were unconvinced, that is a legitimate and interesting result - say what held.", "Close by naming what <em>you<\/em> discovered you could not explain as well as you thought. There will be something."], "hand": "The belief in one sentence, your plan and prediction, an account of the conversation, and your closing note. Roughly 600&ndash;900 words."}];
+/* ---- editing switch ------------------------------------------------------
+   true opens this lesson without the prediction gate, so refreshing while you
+   edit does not send you back to the question. Set it back to false before
+   this page goes anywhere: publish.py refuses a page carrying it, and
+   build/all.py fails if it is on in source or output.
 
-/* Module 1 capstone: expand a route to read it, pick one to work from.
+   Adding ?gate=off to the address does the same thing without editing the
+   file, which is the version you cannot forget to undo.                     */
+var GATE_OFF = false;
 
-   The choice is deliberately not remembered anywhere. Storage on this page
-   would be a promise it cannot keep across a lab machine or a phone, and the
-   real record of what a student chose is the thing they hand in. */
+var SURGERY=[{"add": null, "label": "The bare prompt", "prompt": "Write something about climate change.", "score": 8, "out": "Climate change refers to long-term shifts in temperatures and weather patterns. While some of these shifts are natural, since the 1800s human activities have been the main driver&hellip; <em>(continues for 600 generic words you have read a hundred times)<\/em>"}, {"add": "task", "label": "A real task", "prompt": "Explain why our town's solar project raised property taxes this year.", "score": 30, "out": "The increase is likely tied to the capital financing structure of the installation. Municipalities typically fund such projects through bonds, which are serviced by&hellip; <em>Better, but it is guessing at your town and hedging every sentence.<\/em>"}, {"add": "audience", "label": "+ audience", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.", "score": 52, "out": "You will have noticed a bigger number on your tax bill this year, and the solar array on the old landfill is part of the reason. Here is what happened, without the jargon&hellip; <em>The register changed completely.<\/em>"}, {"add": "format", "label": "+ format and length", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.", "score": 71, "out": "<strong>Why your tax bill went up<\/strong><br>You will have noticed a bigger number this year&hellip; <em>Now it stops at 150 words and has a headline, because you asked for a newsletter rather than an essay.<\/em>"}, {"add": "constraint", "label": "+ a hard constraint", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.", "score": 86, "out": "&hellip;the bond covering construction is repaid over twelve years, and this is the first year of that repayment. <em>The sales pitch is gone. Constraints remove things, which is often what you actually needed.<\/em>"}, {"add": "example", "label": "+ a worked example", "prompt": "Explain why our town's solar project raised property taxes this year.\nWrite for residents with no background in energy or municipal finance.\n150 words, for the back page of a printed newsletter.\nDo not defend the decision or predict future savings.\nMatch the tone of this paragraph from last issue: \"The water main on Chapel Street is being replaced. It is loud, it is inconvenient, and it will take until October.\"", "score": 100, "out": "The solar array is being paid for. It is on your bill, it starts this year, and it runs for twelve. <em>One example did more for the voice than four instructions did.<\/em>"}];
+var CUTOFF=[{"q": "What is photosynthesis?", "pos": 18, "kind": "ok", "t": "Answered, and reliably.", "d": "Settled knowledge that was written down long before the cutoff and has not changed since. This is the model at its best."}, {"q": "Who wrote <em>Middlemarch<\/em>?", "pos": 8, "kind": "ok", "t": "Answered, and reliably.", "d": "Same category. Old, stable, written about endlessly. Nothing about the cutoff threatens it."}, {"q": "What is 17 &times; 24?", "pos": 45, "kind": "warn", "t": "Nothing to do with the cutoff - and still a coin flip.", "d": "Arithmetic is not a knowledge problem, so the wall is irrelevant here. It fails for a different reason: the model is predicting the shape of an answer rather than calculating one. Lesson 2 explains why."}, {"q": "What is in the news today?", "pos": 88, "kind": "bad", "t": "Past the wall. Usually refuses - which is the good outcome.", "d": "Obviously post-cutoff, and models are generally trained to say so. A refusal here is the system working."}, {"q": "What is the current version of this software?", "pos": 79, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "This is the dangerous shape: a question that <em>sounds<\/em> like stable knowledge but has a moving answer. The model gives you the version that was current when it was trained, with no hedging at all, and you have no way to tell from the reply."}, {"q": "Who holds this office right now?", "pos": 84, "kind": "bad", "t": "Past the wall, and it will answer anyway.", "d": "Same trap. Roles feel permanent and are not. The reply will be confident and it will be whoever held the post during training."}];
+var NESTING=[{"n": "Spam filter", "r": 1, "why": "Nobody wrote a rule about wire transfers. It worked out what spam looks like from millions of labeled examples - and has been doing that since the late 1990s."}, {"n": "Chess engine", "r": 0, "why": "Searches millions of positions and scores them against rules a person wrote down. It beat the world champion in 1997 using almost nothing from the inner rings."}, {"n": "Spell-check", "r": 0, "why": "A dictionary and a set of edit rules. Genuinely AI by the original definition, and genuinely not learning anything. The oldest thing on this list."}, {"n": "Netflix &lsquo;because you watched&rsquo;", "r": 1, "why": "Predicts how likely you are to finish something, from what people like you finished. It predicts a number, not a paragraph - AI, and not generative."}, {"n": "Face unlock", "r": 2, "why": "A deep network built its own internal representation of your face. Nobody described your face to it in words, which is also why it cannot tell you what it is looking at."}, {"n": "A chatbot", "r": 3, "why": "The innermost ring: a language model predicting one token at a time. The newest thing here by a wide margin, and the reason you signed up."}, {"n": "Smart thermostat", "r": -1, "why": "If it switches on below a temperature you set, that is a rule somebody wrote into a thermostat. Automation, not AI. If it learns your schedule from your behavior, it moves into machine learning - and most of the ones sold as &lsquo;smart&rsquo; do not."}, {"n": "Handwriting recognition", "r": 2, "why": "Deep networks reading shapes, and one of the first places deep learning beat everything else. Your bank was using it before you had an account."}, {"n": "Self-driving car", "r": 2, "why": "Deep learning for perception, wrapped in a great deal of hand-written safety logic. Two rings at once - a useful reminder that real systems are rarely just one."}, {"n": "Machine translation", "r": 3, "why": "Modern translation runs on the same architecture as the chatbot. In fact that architecture was invented <em>for<\/em> translation, which is a clue about the lesson after next."}, {"n": "Loan approval model", "r": 1, "why": "Learns from historical lending decisions - including, if nobody checks, whose applications were historically refused. Lesson 10 is about exactly this."}, {"n": "Phone autocomplete", "r": 3, "why": "The same job as the chatbot, running very small and very fast: predict the next word. You have been using a language model for years without calling it one."}];
+var SPOT=[{"id": "trophy", "a": {"swap": "big", "words": ["The", "trophy", "would", "not", "fit", "in", "the", "suitcase", "because", "it", "was", "too", "big", "."], "pro": 9, "ans": 1, "alt": 7, "why": "Too big for the suitcase - so <em>it<\/em> is the trophy. The pronoun sits eight words after the noun it points at, and the word that settles <em>which<\/em> noun comes three words later still."}, "b": {"swap": "small", "words": ["The", "trophy", "would", "not", "fit", "in", "the", "suitcase", "because", "it", "was", "too", "small", "."], "pro": 9, "ans": 7, "alt": 1, "why": "Too small to hold the trophy - so now <em>it<\/em> is the suitcase. One word changed. The pronoun did not move, the grammar did not move, and the meaning went somewhere else entirely."}}, {"id": "council", "a": {"swap": "feared", "words": ["The", "council", "refused", "the", "marchers", "a", "permit", "because", "they", "feared", "violence", "."], "pro": 8, "ans": 1, "alt": 4, "why": "The council did the fearing - <em>they<\/em> is the council."}, "b": {"swap": "advocated", "words": ["The", "council", "refused", "the", "marchers", "a", "permit", "because", "they", "advocated", "violence", "."], "pro": 8, "ans": 4, "alt": 1, "why": "Now the marchers are doing the advocating, so <em>they<\/em> flips to the marchers. Same eleven words, one verb different."}}, {"id": "delivery", "a": {"swap": "damaged", "words": ["I", "left", "the", "vase", "on", "the", "crate", "because", "it", "was", "damaged", "."], "pro": 8, "ans": 3, "alt": 6, "why": "A damaged vase gets left behind - <em>it<\/em> is the vase."}, "b": {"swap": "sturdy", "words": ["I", "left", "the", "vase", "on", "the", "crate", "because", "it", "was", "sturdy", "."], "pro": 8, "ans": 6, "alt": 3, "why": "A sturdy crate is a good place to put something - <em>it<\/em> is the crate. The last word of the sentence decides a word in the middle of it."}}];
+
 (function () {
   "use strict";
-  var wrap = document.getElementById("capopts");
-  if (!wrap || typeof CAPOPTS === "undefined") return;
+  /* ---------------------------------------------------- prediction gate --- */
 
-  var byId = {};
-  CAPOPTS.forEach(function (o) { byId[o.id] = o; });
+  /* Editing switch. Two ways in, and they do the same thing:
 
-  /* ---- expand / collapse ------------------------------------------------ */
-  wrap.addEventListener("click", function (e) {
-    var head = e.target.closest(".capopt__head");
-    if (head) {
-      var card = head.parentNode;
-      var open = head.getAttribute("aria-expanded") === "true";
-      /* One at a time. Five open cards is a wall of text, and the point of the
-         page is comparing them, which needs them closed. */
-      wrap.querySelectorAll(".capopt__head").forEach(function (h) {
-        h.setAttribute("aria-expanded", "false");
-        h.parentNode.classList.remove("is-open");
-        h.parentNode.querySelector(".capopt__body").hidden = true;
-      });
-      if (!open) {
-        head.setAttribute("aria-expanded", "true");
-        card.classList.add("is-open");
-        card.querySelector(".capopt__body").hidden = false;
-      }
-      return;
-    }
-    var pick = e.target.closest(".capopt__pick");
-    if (pick) choose(pick.closest(".capopt").getAttribute("data-opt"));
-  });
+       GATE_OFF = true      declared at the top of each lesson page's script
+                            block by pack.py, and false in everything the
+                            build produces. Flip it in a copy you are editing.
 
-  /* ---- the working checklist -------------------------------------------- */
-  function choose(id) {
-    var o = byId[id];
-    if (!o) return;
-    document.getElementById("chosenName").innerHTML = o.name;
-    document.getElementById("chosenPremise").innerHTML = o.premise;
+       ?gate=off            in the address bar. Same effect, touches no file,
+                            and therefore cannot be forgotten and shipped.
+                            Prefer this one.
 
-    var box = document.getElementById("capcheck");
-    box.innerHTML = "";
-    /* The disclosure line is appended to every route's checklist rather than
-       written into each brief, so it cannot drift between them and cannot be
-       quietly dropped from one. */
-    var rows = o.steps.concat([
-      "<strong>Write your AI-use statement.</strong> What tools you used, for what, and " +
-      "which parts are your own words. Specific enough that a reader could check it. " +
-      "Without this the work comes back unmarked.",
-      "<strong>Hand in:</strong> " + o.hand
-    ]);
-    rows.forEach(function (s, i) {
-      var id2 = "capstep" + i;
-      var row = document.createElement("label");
-      row.className = "capcheck__row";
-      row.setAttribute("for", id2);
-      row.innerHTML = '<input type="checkbox" id="' + id2 + '">' +
-                      '<span class="capcheck__n">' + (i < o.steps.length ? (i + 1) : "&#10003;") + '</span>' +
-                      '<span class="capcheck__t">' + s + '</span>';
-      box.appendChild(row);
-    });
+     Either way the lesson opens on load, so a refresh mid-edit does not put
+     you back at the prediction question. The gate is replaced by a visible
+     notice rather than silently vanishing, because a page that quietly skips
+     a beat is indistinguishable from a page whose beat is broken.
 
-    document.getElementById("choose").hidden = true;
-    var sec = document.getElementById("chosen");
-    sec.hidden = false;
-    sec.scrollIntoView({ behavior: "smooth", block: "start" });
+     Ways this cannot reach a student: publish.py refuses any page carrying
+     the flag on, and _verify.py fails the build if it is on anywhere in
+     build/, csc-150/, dist/ or publish/. A copy under edits/ is reported
+     rather than refused, since turning it on there is the entire point. */
+  var GATE_EDIT = (typeof GATE_OFF !== "undefined" && GATE_OFF === true) ||
+                  /[?&]gate=off(&|$)/.test(location.search);
+
+  var gate = document.getElementById("gate");
+  if (gate && GATE_EDIT) {
+    /* .gate__stakes is a flex row, so the message has to arrive as one
+       element - otherwise every <code> in it starts its own column. */
+    gate.innerHTML =
+      '<p class="gate__stakes gate__stakes--edit">' +
+      '<svg class="i"><use href="#i-alert"/></svg>' +
+      '<span>Prediction gate off for editing. This is not how the page ships: set ' +
+      '<code>GATE_OFF</code> back to <code>false</code>, or drop ' +
+      '<code>?gate=off</code> from the address, to see it as a learner does.</span></p>';
+    document.getElementById("callbackText").textContent =
+      "The prediction gate was switched off for editing, so there is nothing to compare against here.";
+    document.getElementById("lock").remove();
+    document.getElementById("gated").hidden = false;
+  } else if (gate) {
+  var opts = Array.prototype.slice.call(document.querySelectorAll("#gateOptions .option"));
+  var why = document.getElementById("why");
+  var commit = document.getElementById("commit");
+  var hint = document.getElementById("gateHint");
+  var lock = document.getElementById("lock");
+  var gated = document.getElementById("gated");
+  var picked = null;
+
+  function refreshCommit() {
+    var ok = picked !== null && why.value.trim().length >= 3;
+    commit.disabled = !ok;
+    hint.textContent = ok
+      ? "Locked answers are never graded and never shown to anyone."
+      : "Pick an answer and add a short reason to continue.";
   }
 
-  document.getElementById("capBack").addEventListener("click", function () {
-    document.getElementById("chosen").hidden = true;
-    var c = document.getElementById("choose");
-    c.hidden = false;
-    c.scrollIntoView({ behavior: "smooth", block: "start" });
+  opts.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (gate.classList.contains("is-revealed")) return;
+      opts.forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
+      btn.setAttribute("aria-pressed", "true");
+      picked = btn;
+      refreshCommit();
+    });
   });
+  why.addEventListener("input", refreshCommit);
+
+  function openLesson(showStats) {
+    if (showStats) {
+      gate.classList.add("is-revealed");
+      /* The class distribution stays hidden. Dave's call: the numbers are sample
+         data, and showing a learner that 44% picked what they picked either
+         reassures them out of the correction or embarrasses them into it -
+         neither is the point of the gate. To bring it back, restore the two
+         lines below and un-hide .option__stats in lesson.css. */
+      // opts.forEach(function (o) {
+      //   var pct = o.getAttribute("data-pct");
+      //   o.querySelector(".option__bar > i").style.width = pct + "%";
+      //   o.querySelector(".option__pct").textContent = pct + "% of your classmates chose this";
+      // });
+      var key = picked.getAttribute("data-key");
+      var text = picked.querySelector(".option__text").textContent.trim().split("\n")[0];
+      document.getElementById("callbackText").innerHTML =
+        "You predicted <strong>" + key + "</strong> - " + text +
+        (why.value.trim() ? " <em>&ldquo;" + why.value.trim().replace(/[<>]/g, "") + "&rdquo;</em>" : "");
+      commit.disabled = true;
+      commit.innerHTML = 'Locked in <svg class="i"><use href="#i-check"/></svg>';
+      document.getElementById("skipGate").remove();
+    }
+    lock.remove();
+    gated.hidden = false;
+    gated.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  commit.addEventListener("click", function () { openLesson(true); });
+  document.getElementById("skipGate").addEventListener("click", function () {
+    document.getElementById("callbackText").textContent =
+      "You skipped the prediction - so there is nothing to compare against here.";
+    openLesson(false);
+  });
+
+  }
+
+  /* ------------------------------------------------ retrieval questions --- */
+  Array.prototype.slice.call(document.querySelectorAll(".recallcard")).forEach(function (card) {
+    var right = parseInt(card.getAttribute("data-answer"), 10);
+    var answers = Array.prototype.slice.call(card.querySelectorAll(".answer"));
+    answers.forEach(function (a) {
+      a.addEventListener("click", function () {
+        var i = parseInt(a.getAttribute("data-i"), 10);
+        answers.forEach(function (b) {
+          b.disabled = true;
+          var bi = parseInt(b.getAttribute("data-i"), 10);
+          if (bi === right) b.classList.add("is-right");
+          else if (bi === i) b.classList.add("is-wrong");
+          else b.classList.add("is-dim");
+        });
+        card.classList.add("is-open");
+        card.querySelector(".feedback").classList.add("is-shown");
+      });
+    });
+  });
+
+  /* -------------------------------------------------- flashcard deck (pre) */
+  (function () {
+    var deck = document.getElementById("recallDeck");
+    if (!deck) return;
+    var stack = document.getElementById("recallStack");
+    var cards = Array.prototype.slice.call(stack.querySelectorAll(".fcard"));
+    var dots  = document.getElementById("recallDots");
+    var count = document.getElementById("recallCount");
+    var next  = document.getElementById("recallNext");
+    var hint  = document.getElementById("recallHint");
+    var i = 0, pid = null, startX = 0, dx = 0, dragging = false, suppressClick = false;
+
+    cards.forEach(function () {
+      var d = document.createElement("span");
+      d.className = "deck__dot";
+      dots.appendChild(d);
+    });
+
+    function answered(c) { return c.classList.contains("is-answered"); }
+
+    function layout() {
+      cards.forEach(function (c, ix) {
+        var pos = ix - i;
+        if (pos < 0) {
+          c.removeAttribute("data-pos");
+          c.setAttribute("aria-hidden", "true");
+          if (!c.classList.contains("is-leaving")) c.classList.add("is-gone");
+        } else {
+          c.classList.remove("is-gone");
+          c.setAttribute("data-pos", String(Math.min(pos, 3)));
+          c.setAttribute("aria-hidden", pos === 0 ? "false" : "true");
+          c.style.transform = "";
+          c.style.opacity = "";
+          c.style.transition = "";
+        }
+        Array.prototype.slice.call(c.querySelectorAll("button")).forEach(function (b) {
+          if (pos === 0) b.removeAttribute("tabindex");
+          else b.setAttribute("tabindex", "-1");
+        });
+      });
+
+      Array.prototype.slice.call(dots.children).forEach(function (d, ix) {
+        d.className = "deck__dot" + (ix < i ? " is-done" : (ix === i ? " is-active" : ""));
+      });
+
+      if (i >= cards.length) { deck.classList.add("is-finished"); return; }
+      count.textContent = "Card " + (i + 1) + " of " + cards.length;
+      next.disabled = !answered(cards[i]);
+      hint.classList.remove("is-nudging");
+      hint.textContent = answered(cards[i])
+        ? "Swipe it away, or press next"
+        : "Answer, then swipe the card away";
+    }
+
+    function advance(dir) {
+      var c = cards[i];
+      c.classList.add("is-leaving");
+      c.style.transition = "transform .5s cubic-bezier(.3,.9,.4,1), opacity .4s ease";
+      c.style.transform = "translateX(" + (dir * 130) + "%) rotate(" + (dir * 16) + "deg)";
+      c.style.opacity = "0";
+      i++;
+      layout();
+      window.setTimeout(function () {
+        c.classList.remove("is-leaving");
+        c.classList.add("is-gone");
+      }, 480);
+    }
+
+    /* answering ---------------------------------------------------------- */
+    cards.forEach(function (card) {
+      var right = parseInt(card.getAttribute("data-answer"), 10);
+      var answers = Array.prototype.slice.call(card.querySelectorAll(".answer"));
+      answers.forEach(function (a) {
+        a.addEventListener("click", function () {
+          if (suppressClick || answered(card)) return;
+          var chosen = parseInt(a.getAttribute("data-i"), 10);
+          answers.forEach(function (b) {
+            b.disabled = true;
+            var bi = parseInt(b.getAttribute("data-i"), 10);
+            if (bi === right) b.classList.add("is-right");
+            else if (bi === chosen && chosen >= 0) b.classList.add("is-wrong");
+            else b.classList.add("is-dim");
+          });
+          card.classList.add("is-answered");
+          card.querySelector(".feedback").classList.add("is-shown");
+          next.disabled = false;
+          hint.classList.remove("is-nudging");
+          hint.textContent = "Swipe it away, or press next";
+        });
+      });
+    });
+
+    next.addEventListener("click", function () {
+      if (i < cards.length && answered(cards[i])) advance(1);
+    });
+
+    /* dragging ----------------------------------------------------------- */
+    stack.addEventListener("pointerdown", function (e) {
+      if (i >= cards.length || !cards[i].contains(e.target)) return;
+      pid = e.pointerId; startX = e.clientX; dx = 0; dragging = false;
+    });
+
+    stack.addEventListener("pointermove", function (e) {
+      if (pid === null || e.pointerId !== pid) return;
+      dx = e.clientX - startX;
+      if (!dragging && Math.abs(dx) > 8) {
+        dragging = true;
+        cards[i].classList.add("is-dragging");
+        try { stack.setPointerCapture(pid); } catch (err) {}
+      }
+      if (dragging) {
+        cards[i].style.transform = "translateX(" + dx + "px) rotate(" + (dx / 24) + "deg)";
+      }
+    });
+
+    function endDrag() {
+      if (pid === null) return;
+      var c = cards[i];
+      if (dragging && c) {
+        c.classList.remove("is-dragging");
+        suppressClick = true;
+        window.setTimeout(function () { suppressClick = false; }, 0);
+        if (Math.abs(dx) > 90) {
+          if (answered(c)) { var dir = dx > 0 ? 1 : -1; pid = null; dragging = false; dx = 0; advance(dir); return; }
+          hint.textContent = "Take a guess first - or tap “Not sure yet”.";
+          hint.classList.add("is-nudging");
+        }
+        c.style.transform = "";
+      }
+      pid = null; dragging = false; dx = 0;
+    }
+    stack.addEventListener("pointerup", endDrag);
+    stack.addEventListener("pointercancel", endDrag);
+
+    layout();
+  })();
+
+  /* --------------------------------------------------------- progress rail */
+  var rail = document.getElementById("rail");
+  function onScroll() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    rail.style.width = (h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0) + "%";
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  /* ------------------------------------------------------- scaffold toggle */
+  var sb = document.getElementById("scaffoldBtn");
+  if (sb) sb.addEventListener("click", function () {
+    document.body.classList.toggle("show-scaffold");
+  });
+})();
+
+
+/* Module 1 interactives. Loaded after lesson_core.js; each guards on its own
+   root element so one file can serve all three lessons. */
+(function () {
+  "use strict";
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function icon(n) { return '<svg class="i"><use href="#i-' + n + '"/></svg>'; }
+  function ws(s) { return esc(s).replace(/ /g, '<span class="tok__ws">·</span>'); }
+  /* .demo__foot lays its children out as a flex row, so note text has to arrive
+     as one element - otherwise every <strong> starts its own column. */
+  function setNote(el, name, html) { el.innerHTML = icon(name) + "<span>" + html + "</span>"; }
+
+  /* -- L1 . Token Roulette --------------------------------------------------
+     A real (very small) next-word model built from the course's own prose by
+     build/corpus.py. Trigram where it offers a genuine choice, bigram otherwise,
+     so the chain runs as long as the learner keeps clicking. Temperature is
+     p^(1/T) renormalised - the same maths a real sampler uses. */
+  (function () {
+    if (!document.getElementById("roulette")) return;
+    var START = "\u0002", END = "\u0003", SEP = "\u0001";
+    var elS = document.getElementById("rSentence"), elT = document.getElementById("rTokens"),
+        elN = document.getElementById("rNote"), elR = document.getElementById("rRolls"),
+        elO = document.getElementById("rOrder"),
+        temp = document.getElementById("temp"), tempOut = document.getElementById("rTemp");
+    var hist, built, done, T = 0.8, order = "", greedy = 0;
+    /* Real generators take a min_length parameter so a sample cannot stop after
+       four words. Same idea: end-of-sentence is held back until the sentence has
+       something to it, and the panel says so rather than hiding it. */
+    var MINLEN = 8;
+    /* Every table is capped at this many candidates, so the list has a known
+       tallest state to reserve room for. */
+    var MAXROWS = 8;
+
+    /* Two things above the buttons can change height between steps: the
+       candidate list (fewer candidates = shorter row count, and none at all
+       once the walk ends) and the caption above the slider (which wraps to a
+       different number of lines depending on which table is in play). Both are
+       held at their tallest so "Let it pick" never moves out from under the
+       pointer.
+
+       pad() fills the candidate list out to MAXROWS with invisible rows.
+
+       primeOrder() hands the caption to Steady, which measures the longest
+       string it can produce and reserves that height. Steady re-measures when
+       the element's width actually changes and once the real typeface loads,
+       which is what makes an up-front measurement safe here: at load the panel
+       sits inside the gated region at the wrong width, and the fallback font
+       wraps a line short of the real one. */
+    function pad(el, from) {
+      for (var g = from; g < MAXROWS; g++) {
+        var ghost = document.createElement("span");
+        ghost.className = "token token--ghost";
+        ghost.setAttribute("aria-hidden", "true");
+        ghost.innerHTML = '<span class="token__word">&nbsp;</span>' +
+          '<span class="token__meter"></span><span class="token__pct">&nbsp;</span>';
+        el.appendChild(ghost);
+      }
+    }
+    var WORST = 'Looking at overall word frequency - nothing recorded follows ' +
+      'that word - <strong>8</strong> candidates, ranked by how often each ' +
+      'one followed in the training text. <span class="muted">End-of-sentence is ' +
+      'held back until ' + MINLEN + ' words - the same <em>min length</em> ' +
+      'setting real generators use.</span>';
+    /* The caption's longest possible state, primed once by Steady rather than
+       re-measured on every render. WORST is a real string it can produce. */
+    function primeOrder() {
+      Steady.prime(elO, 1, function () { elO.innerHTML = WORST; });
+    }
+
+    function reset() { hist = [START, START]; built = []; done = false; greedy = 0; elR.innerHTML = ""; }
+
+    /* Drop end-of-sentence until MINLEN words are down. If that leaves nothing --
+       the corpus is small, so a word's only recorded continuation is sometimes
+       the end -- back off one more level to overall word frequency rather than
+       killing the walk. Trigram, then bigram, then unigram. */
+    function allowed(list, n) {
+      if (n >= MINLEN) return list;
+      var f = list.filter(function (o) { return o[0] !== END; });
+      if (f.length) return f;
+      order = "overall word frequency - nothing recorded follows that word";
+      return RMODEL.uni;
+    }
+
+    function raw(h) {
+      var k = h[h.length - 2] + SEP + h[h.length - 1];
+      if (RMODEL.tri[k]) { order = "the last two words"; return RMODEL.tri[k]; }
+      var b = RMODEL.bi[h[h.length - 1]];
+      if (b) { order = "the last word only"; return b; }
+      order = ""; return null;
+    }
+    function temper(list) {
+      var tot = list.reduce(function (a, o) { return a + o[1]; }, 0);
+      var w = list.map(function (o) { return Math.pow(o[1] / tot, 1 / T); });
+      var s = w.reduce(function (a, b) { return a + b; }, 0);
+      return list.map(function (o, i) { return [o[0], (w[i] / s) * 100]; });
+    }
+    function sample(list) {
+      var r = Math.random() * 100, acc = 0;
+      for (var i = 0; i < list.length; i++) { acc += list[i][1]; if (r <= acc) return list[i][0]; }
+      return list[list.length - 1][0];
+    }
+    function completeFrom(h) {
+      var loc = h.slice(), out = [], n = built.length;
+      for (var i = 0; i < 30; i++) {
+        var o = raw(loc); if (!o) break;
+        var pick = sample(temper(allowed(o, n + out.length)));
+        if (pick === END) break;
+        out.push(pick); loc.push(pick);
+      }
+      return out;
+    }
+    function step() {
+      var o = raw(hist); if (!o) { done = true; return; }
+      var pick = sample(temper(allowed(o, built.length)));
+      if (pick === END) { done = true; return; }
+      built.push(pick); hist.push(pick);
+    }
+
+    function render() {
+      elS.innerHTML = (built.length ? esc(built.join(" ")) : '<span class="muted">the sentence starts here</span>') +
+                      (done ? "" : ' <span class="cursor"></span>');
+      elT.innerHTML = "";
+      elT.className = "tokens";
+      elT.style.minHeight = "";
+      if (done) {
+        /* Measure the tallest the list ever gets, then hold that height with a
+           note in it, so the end of a walk neither yanks the buttons up the
+           page nor leaves an unexplained void. */
+        pad(elT, 0);
+        var tall = elT.getBoundingClientRect().height;
+        elT.className = "tokens tokens--end";
+        elT.innerHTML = '<div class="tokens__end">' + icon("check") +
+          "<b>End of sentence</b><span>End-of-sentence was the likeliest next token, so it stopped. That is <strong>" +
+          built.length + " word" + (built.length === 1 ? "" : "s") +
+          "</strong>, every one of them chosen exactly the same way.</span></div>";
+        elT.style.minHeight = tall + "px";
+        elO.textContent = "";
+        setNote(elN, "history", "Run it again. The sentence comes out different every time and nothing about the " +
+          "model has changed - only the roll. Move the temperature first and the difference gets larger.");
+        return;
+      }
+      var o = allowed(raw(hist), built.length);
+      if (!o) { done = true; render(); return; }
+      elO.innerHTML = "Looking at " + order + " - <strong>" + o.length +
+        "</strong> candidate" + (o.length === 1 ? "" : "s") +
+        ", ranked by how often each one followed in the training text." +
+        (built.length < MINLEN
+          ? ' <span class="muted">End-of-sentence is held back until ' + MINLEN +
+            " words - the same <em>min length</em> setting real generators use.</span>"
+          : "");
+      var ranked = temper(o);
+      ranked.forEach(function (t, ix) {
+        var b = document.createElement("button");
+        b.className = "token"; b.type = "button";
+        var label = t[0] === END ? '<em class="muted">end of sentence</em>' : ws(t[0]);
+        b.innerHTML = '<span class="token__word">' + label + "</span>" +
+          '<span class="token__meter"><i style="width:' + t[1].toFixed(1) + '%"></i></span>' +
+          '<span class="token__pct">' + t[1].toFixed(0) + "%</span>";
+        b.addEventListener("click", function () {
+          elR.innerHTML = "";
+          greedy = ix === 0 ? greedy + 1 : 0;
+          if (t[0] === END) { done = true; } else { built.push(t[0]); hist.push(t[0]); }
+          render();
+        });
+        elT.appendChild(b);
+      });
+      pad(elT, ranked.length);
+      if (greedy >= 4) {
+        setNote(elN, "lightbulb", "You have taken the top option " + greedy + " times running. That is " +
+          "<strong>greedy decoding</strong> - always the leader, never a gamble - and it is a real " +
+          "strategy with a real cost: it is repetitive, and it is what a temperature near zero gives you. " +
+          "Take a lower-ranked word and see where the sentence goes instead.");
+      } else {
+        setNote(elN, "arrow-right", built.length === 0
+          ? "Pick a word to begin, or let it pick for you. Keep going as long as you like - there is no fixed number of steps."
+          : "Keep going. Move the temperature slider and watch the same candidates redistribute - the words never change, only how strongly the leader is favored.");
+      }
+    }
+
+    ["input", "pointerdown", "keydown"].forEach(function (e) {
+      temp.addEventListener(e, function () {
+        T = parseInt(temp.value, 10) / 100;
+        tempOut.textContent = "Temperature " + T.toFixed(2);
+        render();
+      });
+    });
+    document.getElementById("rStep").addEventListener("click", function () { elR.innerHTML = ""; step(); render(); });
+    document.getElementById("rFinish").addEventListener("click", function () {
+      elR.innerHTML = "";
+      var guard = 0;
+      while (!done && guard++ < 40) step();
+      done = true; render();
+    });
+    document.getElementById("rFive").addEventListener("click", function () {
+      var outs = [], seen = {};
+      for (var i = 0; i < 5; i++) outs.push(built.concat(completeFrom(hist)).join(" "));
+      outs.forEach(function (s) { seen[s] = 1; });
+      elR.innerHTML = outs.map(function (s, i) {
+        return '<div class="roll"><span class="roll__n">' + (i + 1) +
+               '</span><span class="roll__t">' + esc(s) + "</span></div>";
+      }).join("");
+      var distinct = Object.keys(seen).length;
+      setNote(elN, "lightbulb", "Five continuations from exactly the same starting point, at temperature " +
+        T.toFixed(2) + " - <strong>" + distinct + " of them different</strong>. " +
+        (distinct === 1
+          ? "At this setting it takes the safe option every time and repeats itself."
+          : "Nothing changed between the runs except which way the dice fell. That is the question at the top of this page, answered."));
+    });
+    document.getElementById("rReset").addEventListener("click", function () { reset(); render(); });
+
+    primeOrder();
+    reset(); render();
+    var st = RMODEL.stats;
+    var prov = document.createElement("p");
+    prov.className = "small muted";
+    prov.style.marginTop = ".6rem";
+    prov.innerHTML = "Built from <strong>" + st.sentences + " sentences</strong> (" +
+      st.words.toLocaleString() + " words, " + st.vocab.toLocaleString() +
+      " distinct) of this course's own writing. A real model has read a large fraction of everything ever published. " +
+      "That difference is why its sentences hold together over paragraphs and this one starts wandering after about a line " +
+      "- the mechanism is identical, the scale is not.";
+    document.querySelector("#roulette .demo__body").appendChild(prov);
+  })();
+
+  /* ── L2 · Prompt Surgery ───────────────────────────────────────────────── */
+  (function () {
+    if (!document.getElementById("surgery")) return;
+    var i = 0, polite = false;
+    var POLITE = "\nPlease do a really good job on this, thank you so much!";
+    var elPrompt = document.getElementById("sPrompt"), elOut = document.getElementById("sOut"),
+        elLabel  = document.getElementById("sLabel"),  elStep = document.getElementById("sStep"),
+        elBar    = document.getElementById("sBar"),    elScore = document.getElementById("sScore"),
+        elNote   = document.getElementById("sNote"),
+        bNext = document.getElementById("sNext"), bBack = document.getElementById("sBack"),
+        bPolite = document.getElementById("sPolite");
+
+    function render(changed) {
+      var s = SURGERY[i], prev = i > 0 ? SURGERY[i - 1].prompt : "";
+      var html = (i > 0 && s.prompt.indexOf(prev) === 0)
+        ? esc(prev) + '<span class="pbadd">' + esc(s.prompt.slice(prev.length)) + "</span>"
+        : esc(s.prompt);
+      if (polite) html += '<span class="pbadd">' + esc(POLITE) + "</span>";
+      elPrompt.innerHTML = html;
+      elOut.innerHTML = s.out;
+      elLabel.textContent = s.label;
+      elStep.textContent = "Step " + (i + 1) + " of " + SURGERY.length;
+      elBar.style.width = s.score + "%";
+      elScore.textContent = s.score + " / 100 specified";
+      bNext.disabled = i >= SURGERY.length - 1;
+      bBack.disabled = i === 0;
+      bNext.innerHTML = i >= SURGERY.length - 1
+        ? "That is all five components"
+        : 'Add the next piece <svg class="i"><use href="#i-arrow-right"/></svg>';
+
+      if (changed === "polite" && polite) {
+        setNote(elNote, "alert", "<strong>Nothing moved.</strong> Not the output, not the meter. Politeness adds " +
+          "words without adding information about what you want, and there are no feelings here to appeal to. " +
+          "It is not harmful. It is just not prompt engineering.");
+      } else if (i === SURGERY.length - 1) {
+        setNote(elNote, "check", "Every line in that prompt is doing a job. Note which step changed the output " +
+          "most: it was the worked example, and it was not close.");
+      } else {
+        setNote(elNote, "arrow-right", "Six clicks from useless to usable. Watch the output, not the meter.");
+      }
+    }
+    bNext.addEventListener("click", function () { if (i < SURGERY.length - 1) { i++; render(); } });
+    bBack.addEventListener("click", function () { if (i > 0) { i--; render(); } });
+    bPolite.addEventListener("click", function () {
+      polite = !polite; bPolite.setAttribute("aria-pressed", String(polite)); render("polite");
+    });
+    /* .pbuild holds the prompt and the sample output, both of which change
+       length at every step; the buttons sit under it. Six states, all known,
+       so measure them all rather than growing into the tallest. */
+    Steady.prime(document.querySelector("#surgery .pbuild"), SURGERY.length, function (n) {
+      i = n; render();
+    });
+    i = 0;
+    render();
+  })();
+
+  /* ── L3 · The Cutoff Wall ──────────────────────────────────────────────── */
+  (function () {
+    if (!document.getElementById("wall")) return;
+    var axis = document.getElementById("wAxis"), qs = document.getElementById("wQs"),
+        verdict = document.getElementById("wVerdict"), count = document.getElementById("wCount"),
+        note = document.getElementById("wNote");
+    var placed = 0;
+
+    CUTOFF.forEach(function (item) {
+      var b = document.createElement("button");
+      b.className = "preset"; b.type = "button";
+      b.innerHTML = item.q;
+      b.addEventListener("click", function () {
+        if (b.disabled) return;
+        b.disabled = true; b.setAttribute("aria-pressed", "true");
+        var dot = document.createElement("span");
+        dot.className = "tl__dot" + (item.kind === "bad" ? " is-blind" : item.kind === "warn" ? " is-warn" : "");
+        dot.style.left = "50%";
+        dot.title = item.q.replace(/<[^>]+>/g, "");
+        axis.appendChild(dot);
+        window.setTimeout(function () { dot.style.left = item.pos + "%"; }, 20);
+        placed++;
+        count.textContent = placed + " of " + CUTOFF.length + " placed";
+        verdict.className = "verdict is-shown verdict--" +
+          (item.kind === "ok" ? "ok" : item.kind === "warn" ? "warn" : "bad");
+        verdict.innerHTML = '<div class="icontile">' +
+          icon(item.kind === "ok" ? "check" : item.kind === "warn" ? "help" : "alert") + "</div>" +
+          '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
+        if (placed === CUTOFF.length) {
+          setNote(note, "lightbulb", "All six placed. The two worth remembering are the ones sitting just past " +
+            "the wall that get answered anyway - the version number and the officeholder. Both <em>look</em> " +
+            "like stable facts, so nothing in the reply warns you. &ldquo;What is in the news today?&rdquo; is " +
+            "safer precisely because it sounds recent enough to trigger a refusal.");
+        } else {
+          setNote(note, "arrow-right", (CUTOFF.length - placed) + " to go.");
+        }
+      });
+      qs.appendChild(b);
+    });
+
+    /* The verdict panel is empty until the first placement and then a different
+       height for each of the six. Reserve the tallest so nothing below it moves. */
+    Steady.prime(verdict, CUTOFF.length, function (n) {
+      var item = CUTOFF[n];
+      verdict.className = "verdict is-shown";
+      verdict.innerHTML = '<div class="icontile">' + icon("check") + "</div>" +
+        '<div><span class="verdict__t">' + item.t + "</span><p>" + item.d + "</p></div>";
+    });
+    verdict.className = "verdict";
+    verdict.innerHTML = "";
+  })();
+
+  /* -- L1 . The Nesting Dolls ------------------------------------------------
+     One system at a time, five flat choices, and a static ring diagram beside
+     them that lights up as you go. Deliberately not drag-and-drop: nesting
+     rings are the wrong shape for a drop target on a phone, and the point is
+     the classification, not the dexterity. */
+  (function () {
+    if (!document.getElementById("nesting")) return;
+    var LABELS = [
+      {r: -1, t: "Not AI at all"},
+      {r: 0,  t: "Rules somebody wrote"},
+      {r: 1,  t: "Machine learning"},
+      {r: 2,  t: "Deep learning"},
+      {r: 3,  t: "Language models"}];
+    var elChip = document.getElementById("nChip"),
+        elOpts = document.getElementById("nOpts"),
+        elNote = document.getElementById("nNote"),
+        elProg = document.getElementById("nProg"),
+        elDone = document.getElementById("nPlaced"),
+        rings  = document.querySelectorAll(".nrings__r");
+    var i, answered, order;
+
+    function shuffle(a) {
+      for (var k = a.length - 1; k > 0; k--) {
+        var j = Math.floor(Math.random() * (k + 1)), t = a[k]; a[k] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+    function reset() {
+      i = 0; answered = [];
+      order = shuffle(NESTING.map(function (_, ix) { return ix; }));
+      elDone.innerHTML = ""; render();
+    }
+    function lightRing(r) {
+      for (var k = 0; k < rings.length; k++)
+        rings[k].classList.toggle("is-lit", r >= 0 && k <= r);
+    }
+    function render() {
+      var done = i >= order.length;
+      elProg.textContent = done ? "12 of 12" : (i + 1) + " of " + order.length;
+      if (done) {
+        elChip.innerHTML = '<span class="muted">That is all twelve.</span>';
+        elOpts.innerHTML = ""; lightRing(-1);
+        var right = answered.filter(function (a) { return a.ok; }).length;
+        setNote(elNote, "check", "<strong>" + right + " of 12.</strong> The count matters less than the spread: " +
+          "eight of these twelve are AI by any working definition, most are older than the chatbot, and " +
+          "only three live in the ring everyone means when they say the word.");
+        return;
+      }
+      var item = NESTING[order[i]];
+      elChip.innerHTML = item.n;
+      elOpts.innerHTML = "";
+      LABELS.forEach(function (L) {
+        var b = document.createElement("button");
+        b.className = "nopt"; b.type = "button"; b.textContent = L.t;
+        b.addEventListener("click", function () { choose(item, L.r, b); });
+        elOpts.appendChild(b);
+      });
+      lightRing(-1);
+      setNote(elNote, "arrow-right", i === 0
+        ? "Pick the narrowest ring that still contains it. "
+        : "Keep going. Some of these are older than you would guess.");
+    }
+    function choose(item, r, btn) {
+      var ok = r === item.r;
+      lightRing(item.r);
+      [].forEach.call(elOpts.children, function (c) { c.disabled = true; });
+      btn.classList.add(ok ? "is-right" : "is-wrong");
+      if (!ok) {
+        var want = LABELS.filter(function (L) { return L.r === item.r; })[0];
+        [].forEach.call(elOpts.children, function (c) {
+          if (c.textContent === want.t) c.classList.add("is-right");
+        });
+      }
+      answered.push({n: item.n, ok: ok});
+      var row = document.createElement("span");
+      row.className = "nplaced__i " + (ok ? "is-right" : "is-wrong");
+      row.innerHTML = icon(ok ? "check" : "x") + "<span>" + item.n + "</span>";
+      elDone.appendChild(row);
+      setNote(elNote, ok ? "check" : "lightbulb", item.why);
+      setTimeout(function () { i++; render(); }, ok ? 1500 : 3200);
+    }
+    document.getElementById("nSkip").addEventListener("click", function () {
+      var item = NESTING[order[i]];
+      if (!item) return;
+      lightRing(item.r);
+      setNote(elNote, "lightbulb", item.why);
+      answered.push({n: item.n, ok: false});
+      setTimeout(function () { i++; render(); }, 2600);
+    });
+    document.getElementById("nReset").addEventListener("click", reset);
+    reset();
+    /* The system name wraps to two lines for the longer ones, which moved the
+       options and the buttons under them. Twelve known states. */
+    Steady.prime(document.querySelector("#nesting .nrow"), NESTING.length, function (n) {
+      elChip.innerHTML = NESTING[n].n;
+    });
+    render();
+  })();
+
+  /* -- L3 . Attention Spotlight ----------------------------------------------
+     Two versions of one sentence, one word apart, and the referent flips. The
+     arc weights are authored rather than measured and the panel says so; the
+     behavior they illustrate is real and the Apply task has the learner check
+     it against an actual model. */
+  (function () {
+    if (!document.getElementById("spotlight")) return;
+    var elS = document.getElementById("sSent"),
+        elW = document.getElementById("sSwap"),
+        elN = document.getElementById("sNote"),
+        elP = document.getElementById("sPair");
+    var pair = 0, side = "a", lit = false;
+
+    function render() {
+      var P = SPOT[pair], V = P[side];
+      elP.textContent = "Pair " + (pair + 1) + " of " + SPOT.length;
+      elS.innerHTML = "";
+      V.words.forEach(function (w, ix) {
+        var sp = document.createElement("span");
+        sp.className = "sw";
+        if (ix === V.pro) sp.className += " sw--pro";
+        if (lit && ix === V.ans) sp.className += " sw--ans";
+        if (lit && ix === V.alt) sp.className += " sw--alt";
+        if (w === V.swap) sp.className += " sw--swap";
+        sp.textContent = (/^[.,;]$/.test(w) ? "" : " ") + w;
+        elS.appendChild(sp);
+      });
+      elW.innerHTML = "";
+      ["a", "b"].forEach(function (k) {
+        var b = document.createElement("button");
+        b.className = "sswap__b" + (k === side ? " is-on" : "");
+        b.type = "button";
+        b.innerHTML = "&hellip;too <b>" + P[k].swap + "</b>";
+        if (P.id === "council") b.innerHTML = "&hellip;they <b>" + P[k].swap + "</b>&hellip;";
+        if (P.id === "delivery") b.innerHTML = "&hellip;it was <b>" + P[k].swap + "</b>";
+        b.addEventListener("click", function () { side = k; render(); });
+        elW.appendChild(b);
+      });
+      if (lit) {
+        setNote(elN, "zap", V.why + " <em>The highlighted word is the link the model has to make; " +
+          "the grayed one is the reading it has to rule out.</em>");
+      } else {
+        setNote(elN, "arrow-right", "Flip between the two versions and watch the meaning move. " +
+          "Then light up the connection.");
+      }
+    }
+    document.getElementById("sShow").addEventListener("click", function () {
+      lit = !lit;
+      this.innerHTML = lit
+        ? 'Hide the connection <svg class="i"><use href="#i-eye"/></svg>'
+        : 'Light up the connection <svg class="i"><use href="#i-zap"/></svg>';
+      render();
+    });
+    document.getElementById("sNext").addEventListener("click", function () {
+      pair = (pair + 1) % SPOT.length; side = "a"; render();
+    });
+    /* Three pairs, two sides each, and the sentences differ in length enough to
+       wrap differently. Six states, all reachable, so measure all six. */
+    Steady.prime(elS, SPOT.length * 2, function (n) {
+      pair = Math.floor(n / 2); side = n % 2 ? "b" : "a"; render();
+    });
+    /* The two swap buttons carry the pair's own wording - "...too big" against
+       "...they advocated..." - so the row wraps to two lines on some pairs and
+       one on others, which moved the buttons underneath it. */
+    Steady.prime(elW, SPOT.length, function (n) { pair = n; render(); });
+    pair = 0; side = "a"; lit = false;
+    render();
+  })();
+
+})();
+
+var VOCAB={"artificial-intelligence-ai":{"t":"Artificial intelligence (AI)","l":1,"d":"The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.","w":"The broadest word on this list and the least useful on its own - always ask which kind.","s":"artificial-intelligence-ai","e":["A 1997 chess computer, a spam filter, and a chatbot are all AI. Only one of them writes you a paragraph."]},"machine-learning":{"t":"Machine learning","l":1,"d":"Systems that derive their behavior from data rather than from rules a person wrote out.","w":"The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.","s":"machine-learning","e":["Nobody wrote a rule saying <em>emails containing &lsquo;wire transfer urgently&rsquo; are spam<\/em>. The filter derived that from a few million examples."]},"deep-learning":{"t":"Deep learning","l":1,"d":"Machine learning built on neural networks with many layers. The inner ring where language models live.","w":"Explains why these systems are hard to inspect - nobody wrote the intermediate steps.","s":"deep-learning","e":["Face unlock on your phone. Nobody described your face to it in words - it built its own internal representation and cannot explain it back to you."]},"neural-network":{"t":"Neural network","l":1,"d":"A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.","w":"The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.","s":"neural-network","e":["The idea dates to the 1950s. What changed was not the concept but the amount of data and computing power available to train one."]},"narrow-ai":{"t":"Narrow AI","l":1,"d":"A system good at one bounded task and useless outside it. Every tool in this course.","w":"Cuts through most of the hype in one move.","s":"narrow-ai","e":["A model that writes a decent cover letter cannot book you a dentist appointment, and is not almost able to."]},"general-ai-agi":{"t":"General AI (AGI)","l":1,"d":"A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.","w":"Worth naming precisely so you can tell when a headline is describing something else.","s":"general-ai-agi","e":["Not a product you can buy, a milestone anyone has demonstrated, or a thing this course teaches you to use."]},"generative-ai":{"t":"Generative AI","l":1,"d":"The branch that produces new text, images or audio rather than sorting or scoring existing things.","w":"Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.","s":"generative-ai","e":["Generative: a chatbot writing a paragraph, an image model drawing a poster."]},"ai-winter":{"t":"AI winter","l":1,"d":"One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.","w":"The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.","s":"ai-winter","e":["<strong>The first, roughly 1974 to 1980.<\/strong> A decade of confident promises about machine translation and general problem solving had not arrived. Britain&rsquo;s Lighthill report in 1973 concluded the field had not delivered on any of it, and funding was cut sharply on both sides of the Atlantic."]},"attention":{"t":"Attention","l":3,"d":"The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.","w":"The answer to why the token machine wandered and current models do not.","s":"attention","e":["In <em>the trophy would not fit in the suitcase because it was too big<\/em>, attention is what lets the model connect <em>it<\/em> back to <em>trophy<\/em> rather than to the nearer word."]},"transformer":{"t":"Transformer","l":3,"d":"The architecture built on attention, introduced in 2017. Effectively every model in this course is one.","w":"The single piece of architecture worth knowing by name - the T in GPT.","s":"transformer","e":["Introduced in <em>Attention Is All You Need<\/em>, a 2017 paper from a team at Google."]},"context-long-range":{"t":"Context (long-range)","l":3,"d":"Material far from the current word that still determines its meaning.","w":"What a two-word memory cannot hold and attention can - and why paragraphs hold together now.","s":"context-long-range","e":["A pronoun in the last line of a paragraph whose meaning was fixed in the first line."]},"token":{"t":"Token","l":2,"d":"The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.","w":"Cost, speed and context limits are all measured in tokens, never in words.","s":"token","e":["&ldquo;Unbelievable&rdquo; is three tokens. &ldquo;Cat&rdquo; is one. A rare surname might be five."]},"large-language-model-llm":{"t":"Large language model (LLM)","l":2,"d":"A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.","w":"If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.","s":"large-language-model-llm","e":["ChatGPT, Claude and Gemini are products; the LLM is the thing underneath doing the predicting."]},"training":{"t":"Training","l":2,"d":"The one-time process of building the model by having it predict text over and over across a huge corpus. It finished before you ever typed anything.","w":"The model is not learning from your conversation, whatever it sounds like.","s":"training","e":["It finished before you opened the tab. Nothing you type today changes the model - though it may be stored and used in a <em>later<\/em> training run, which is what Lesson 15 is about."]},"inference":{"t":"Inference","l":2,"d":"What happens when you press enter: the finished model generating one token at a time.","w":"Explains why the identical prompt can come back different twice in a row.","s":"inference","e":["The pause after you press enter is inference: the finished model producing one token, then the next, then the next."]},"temperature":{"t":"Temperature","l":2,"d":"A setting controlling how strongly the model favors the single most likely next token over a less likely one.","w":"Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.","s":"temperature","e":["Token Roulette&rsquo;s slider is this setting, exposed. Most chat tools hide it and pick a middling value for you."]},"parameters":{"t":"Parameters","l":2,"d":"The numbers inside the model that training adjusted. Sizes are quoted in billions of them.","w":"The number marketing leans on hardest, and a poor predictor of whether a model suits your task.","s":"parameters","e":["&ldquo;70 billion parameters&rdquo; tells you roughly how big a model is and almost nothing about whether it suits your task."]},"prompt":{"t":"Prompt","l":4,"d":"Everything you send in one turn - the question plus whatever context, examples and instructions come with it.","w":"Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.","s":"prompt","e":["Everything in the box when you press enter: your question, whatever you pasted above it, and any instructions you added."]},"context":{"t":"Context","l":4,"d":"The material you hand the model to work from: pasted text, uploaded files, earlier turns.","w":"Grounding a request in real context is the single largest quality lever you control.","s":"context","e":["Pasting the actual assignment brief beats describing it. &lsquo;Write a lab report&rsquo; and &lsquo;here is the rubric, write to it&rsquo; are different requests."]},"few-shot-worked-example":{"t":"Few-shot (worked example)","l":4,"d":"Showing the model one or more examples of the output you want rather than describing it.","w":"Far more reliable than adjectives for pinning down a format.","s":"few-shot-worked-example","e":["Instead of &lsquo;make it punchy&rsquo;, paste two headlines you like and say &lsquo;this style&rsquo;."]},"system-prompt":{"t":"System prompt","l":4,"d":"Standing instructions sitting behind a conversation that shape every reply in it.","w":"How custom assistants get their rules - and the foundation of CSC 240.","s":"system-prompt","e":["&lsquo;You are a tutor for an introductory statistics course. Never give the final answer; ask a question that gets the student one step closer.&rsquo;"]},"constraint":{"t":"Constraint","l":4,"d":"A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.","w":"Constraints do real work. &ldquo;Be good&rdquo; does none.","s":"constraint","e":["Works: <em>under 150 words, no bullet points, eighth-grade reading level, do not mention pricing<\/em>."]},"context-window":{"t":"Context window","l":5,"d":"The maximum amount of text a model can hold in view at once, your prompt and its reply together.","w":"Go past it and the earliest material silently drops out of view - no warning.","s":"context-window","e":["In a long conversation the earliest turns fall out of view. Nothing warns you; the model simply stops being able to see them."]},"knowledge-cutoff":{"t":"Knowledge cutoff","l":5,"d":"The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.","w":"The single most common cause of a confidently wrong answer about anything current.","s":"knowledge-cutoff","e":["Ask a bare chat model who won an election held after its cutoff and you will often get a fluent, specific, wrong answer rather than a refusal."]},"multimodal":{"t":"Multimodal","l":5,"d":"A model that handles more than text - images, audio, sometimes video, as input or output.","w":"Decides whether you can paste a screenshot at all.","s":"multimodal","e":["Photographing a handwritten page and asking for a transcript. If a tool is text-only, that is not a prompting problem - it simply cannot see."]},"reasoning-model":{"t":"Reasoning model","l":5,"d":"A model that spends extra computation working through a problem in steps before answering.","w":"Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.","s":"reasoning-model","e":["Worth the wait for a multi-step word problem. Wasted on &lsquo;make this email shorter&rsquo;."]},"foundation-model":{"t":"Foundation model","l":5,"d":"A large general-purpose model that other products are built on top of.","w":"Several tools you use may be the same model wearing different clothes.","s":"foundation-model","e":["Several products you think of as different tools may be the same foundation model with different instructions wrapped around it."]},"rate-limit":{"t":"Rate limit","l":5,"d":"A cap on how much you can use a tool in a given window, usually much tighter on free tiers.","w":"Find yours before an assignment is due, not during.","s":"rate-limit","e":["Find yours on a Tuesday, not at 11pm the night an assignment is due."]},"benchmark":{"t":"Benchmark","l":6,"d":"A standard test used to compare models on one specific skill.","w":"Models can be tuned to score well on benchmarks without being better at your actual work.","s":"benchmark"},"leaderboard":{"t":"Leaderboard","l":6,"d":"A ranked table of models by benchmark score or human preference.","w":"Genuinely useful and routinely over-read.","s":"leaderboard"},"blind-comparison":{"t":"Blind comparison","l":6,"d":"Rating two outputs without knowing which model produced either.","w":"The only way to measure the answer instead of the brand.","s":"blind-comparison"},"elo-rating":{"t":"Elo rating","l":6,"d":"A ranking score borrowed from chess, updated every time one option beats another head to head.","w":"How LM Arena turns a pile of votes into an ordered list.","s":"elo-rating"},"thread":{"t":"Thread","l":7,"d":"One continuous conversation. Everything in it stays in context until the window fills up.","w":"A long thread can quietly poison a new question asked inside it.","s":"thread"},"context-accumulation":{"t":"Context accumulation","l":7,"d":"The build-up of earlier turns, which increasingly shapes every later answer.","w":"The reason a fresh chat sometimes beats one more follow-up.","s":"context-accumulation"},"regeneration":{"t":"Regeneration","l":7,"d":"Asking for another attempt at the same prompt instead of editing the prompt.","w":"Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.","s":"regeneration"},"hallucination":{"t":"Hallucination","l":8,"d":"A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.","w":"Not a malfunction. The same machinery that produces correct answers produces these.","s":"hallucination"},"confabulation":{"t":"Confabulation","l":8,"d":"Filling a gap with plausible invention instead of signaling uncertainty.","w":"Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.","s":"confabulation"},"plausibility":{"t":"Plausibility","l":8,"d":"How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.","w":"The trap inside every fabricated citation you will ever see.","s":"plausibility"},"grounding":{"t":"Grounding","l":9,"d":"Tying an answer to specific retrieved source material rather than to training alone.","w":"The main structural defense against fabrication.","s":"grounding"},"retrieval":{"t":"Retrieval","l":9,"d":"Fetching documents or search results and putting them into the model&rsquo;s context before it answers.","w":"What lets a tool discuss last week at all.","s":"retrieval"},"citation":{"t":"Citation","l":9,"d":"A reference to a source. Check two things: that it exists, and that it says what was claimed.","w":"The second check is the one almost everybody skips.","s":"citation"},"bias":{"t":"Bias","l":10,"d":"Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.","w":"A different problem from being wrong, and it needs a different fix.","s":"bias"},"rlhf":{"t":"RLHF","l":10,"d":"Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.","w":"The second place bias enters, after the training data.","s":"rlhf"},"probe":{"t":"Probe","l":10,"d":"A deliberately controlled prompt pair that changes exactly one variable to surface a difference.","w":"Turns &ldquo;it feels biased&rdquo; into something you can show someone.","s":"probe"},"verification":{"t":"Verification","l":11,"d":"Independently confirming a claim before you rely on it.","w":"The habit this entire course exists to install.","s":"verification"},"provenance":{"t":"Provenance","l":11,"d":"Where a piece of content came from and what happened to it along the way.","w":"Increasingly the thing you will be asked to document.","s":"provenance"},"stakes":{"t":"Stakes","l":11,"d":"What happens if this is wrong, and how hard it would be to check.","w":"Together these decide how much verification a task actually deserves.","s":"stakes"},"diffusion-model":{"t":"Diffusion model","l":12,"d":"The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.","w":"Explains why counting, hands and text-in-images are so hard for it.","s":"diffusion-model"},"negative-prompt":{"t":"Negative prompt","l":12,"d":"A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.","w":"&ldquo;No people&rdquo; in the main prompt reliably produces people.","s":"negative-prompt"},"seed":{"t":"Seed","l":12,"d":"The starting random number. The same seed with the same prompt reproduces the same image.","w":"How you change one thing without losing the whole picture.","s":"seed"},"speech-to-text-asr":{"t":"Speech-to-text (ASR)","l":13,"d":"Automatic transcription of recorded speech into written text.","w":"Error rates are not evenly distributed across accents, names, or speakers.","s":"speech-to-text-asr"},"text-to-speech":{"t":"Text-to-speech","l":13,"d":"Generating spoken audio from written text.","w":"Good enough now that consent is a real question rather than a hypothetical.","s":"text-to-speech"},"voice-cloning":{"t":"Voice cloning","l":13,"d":"Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.","w":"Legally and ethically the sharpest edge anywhere in this course.","s":"voice-cloning"},"word-error-rate-wer":{"t":"Word error rate (WER)","l":13,"d":"The standard measure of transcription accuracy: errors divided by words spoken.","w":"Lets you compare two tools instead of arguing about which felt better.","s":"word-error-rate-wer"},"vision-input":{"t":"Vision input","l":14,"d":"Giving a model an image - screenshot, photo, scan - as part of the prompt.","w":"Degrades badly with skew, handwriting and dense tables, and does so silently.","s":"vision-input"},"ocr":{"t":"OCR","l":14,"d":"Optical character recognition: pulling text out of an image of text.","w":"Frequently the better tool than a vision model when the scan is clean.","s":"ocr"},"modality":{"t":"Modality","l":14,"d":"A kind of input or output: text, image, audio, video.","w":"Choosing the right one is usually a bigger win than improving the prompt.","s":"modality"},"personally-identifiable-information-pii":{"t":"Personally identifiable information (PII)","l":15,"d":"Anything that identifies a specific person, on its own or combined with other data.","w":"The category that decides what you may and may not paste.","s":"personally-identifiable-information-pii"},"data-retention":{"t":"Data retention","l":15,"d":"How long a vendor keeps what you send, and what they are permitted to do with it.","w":"Varies by tier, and lives in the settings rather than the marketing.","s":"data-retention"},"training-opt-out":{"t":"Training opt-out","l":15,"d":"A setting that stops your conversations being used to improve the vendor&rsquo;s models.","w":"Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.","s":"training-opt-out"},"ferpa":{"t":"FERPA","l":15,"d":"US federal law protecting student education records.","w":"Applies to anyone at FLCC handling student data - including inside a chatbot.","s":"ferpa"},"zero-retention":{"t":"Zero-retention","l":15,"d":"An arrangement in which the vendor does not store your inputs at all.","w":"Usually enterprise-only, and worth knowing exists before you need it.","s":"zero-retention"},"attribution":{"t":"Attribution","l":16,"d":"Crediting a source you drew on.","w":"A different obligation from disclosure, and often confused with it.","s":"attribution"},"disclosure":{"t":"Disclosure","l":16,"d":"Stating that you used AI, and saying how.","w":"The line moves by context - a school, an employer and a journal each draw it differently.","s":"disclosure"},"ai-use-statement":{"t":"AI-use statement","l":16,"d":"A short written note describing what AI did in a piece of work.","w":"Increasingly required. You write your own in Lesson 16.","s":"ai-use-statement"},"derivative-work":{"t":"Derivative work","l":16,"d":"Something based on existing copyrighted material.","w":"The genuinely open legal question sitting under image generation.","s":"derivative-work"},"personal-ai-policy":{"t":"Personal AI policy","l":17,"d":"Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.","w":"The capstone deliverable, and the only thing here that is entirely yours.","s":"personal-ai-policy"}};
+
+/* Inline vocabulary. A term in the prose is written as
+     <b class="vt" data-v="token"><i>token</i></b>
+   and this turns it into a button that opens its own definition in place.
+   The data is inlined by pack.py (build/generated/vocab_data.js) - nothing is
+   fetched, so this works from file://, from an LMS page, and offline. */
+(function () {
+  "use strict";
+  if (typeof VOCAB === "undefined" || window.__vocabReady) return;
+  window.__vocabReady = true;
+
+  var open = null;
+
+  function close() {
+    if (!open) return;
+    open.btn.setAttribute("aria-expanded", "false");
+    if (open.pop.parentNode) open.pop.parentNode.removeChild(open.pop);
+    open = null;
+  }
+
+  function build(rec, btn) {
+    var pop = document.createElement("span");
+    pop.className = "vpop";
+    pop.setAttribute("role", "dialog");
+    pop.setAttribute("aria-label", rec.t);
+    var eg = rec.e && rec.e.length
+      ? '<span class="vpop__eg">' + rec.e[0] + "</span>" : "";
+    pop.innerHTML =
+      '<span class="vpop__top"><b class="vpop__name">' + rec.t + "</b>" +
+      '<span class="vpop__from">Lesson ' + (rec.l < 10 ? "0" : "") + rec.l + "</span></span>" +
+      '<span class="vpop__def">' + rec.d + "</span>" +
+      '<span class="vpop__why">' + rec.w + "</span>" + eg +
+      /* New tab, always. Inside an LMS frame this link would otherwise
+         navigate the frame away from the lesson, and coming back re-loads the
+         page - which throws away the prediction the learner committed to and
+         everything they have done since. A vocabulary lookup is a side trip,
+         not a destination. rel=noopener because target=_blank without it hands
+         the new tab a reference back to this window. */
+      '<span class="vpop__foot"><a class="vpop__more" target="_blank" ' +
+      'rel="noopener" href="../vocabulary.html#' +
+      rec.s + '">Full entry, with examples <svg class="i"><use href="#i-arrow-right"/></svg>' +
+      '<span class="visually-hidden">(opens in a new tab)</span></a>' +
+      '<button class="vpop__x" type="button" aria-label="Close">' +
+      '<svg class="i"><use href="#i-x"/></svg></button></span>';
+
+    pop.addEventListener("click", function (e) {
+      if (e.target.closest(".vpop__x")) { close(); btn.focus(); }
+      e.stopPropagation();
+    });
+    return pop;
+  }
+
+  /* Keep the panel inside the page. It is positioned relative to the term, so
+     the only thing that can go wrong is running off the right edge on a narrow
+     screen; nudge it back rather than letting the page scroll sideways. */
+  function place(pop, btn) {
+    pop.style.left = "0px";
+    var r = pop.getBoundingClientRect();
+    var over = r.right - (document.documentElement.clientWidth - 12);
+    if (over > 0) pop.style.left = -Math.min(over, r.left - 12) + "px";
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".vt");
+    if (!btn) { close(); return; }
+    var key = btn.getAttribute("data-v"), rec = VOCAB[key];
+    if (!rec) return;                       /* unknown key: leave it as text */
+    var wasOpen = open && open.btn === btn;
+    close();
+    if (wasOpen) return;
+    var pop = build(rec, btn);
+    btn.appendChild(pop);
+    btn.setAttribute("aria-expanded", "true");
+    open = { btn: btn, pop: pop };
+    place(pop, btn);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && open) { var b = open.btn; close(); b.focus(); }
+  });
+
+  /* Every .vt becomes focusable and announces itself, without the authoring
+     markup having to carry any of that. */
+  function arm() {
+    var all = document.querySelectorAll(".vt");
+    for (var i = 0; i < all.length; i++) {
+      var b = all[i];
+      if (b.hasAttribute("data-armed")) continue;
+      b.setAttribute("data-armed", "1");
+      b.setAttribute("role", "button");
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("aria-expanded", "false");
+      var rec = VOCAB[b.getAttribute("data-v")];
+      if (rec) b.setAttribute("aria-label", rec.t + " - definition");
+      b.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+      });
+    }
+  }
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", arm);
+  else arm();
+  window.armVocab = arm;      /* gated content reveals more terms later */
 })();
 
 </script>
