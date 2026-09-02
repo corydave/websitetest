@@ -1,0 +1,135 @@
+{
+  "build": "89b496e",
+  "built": "2026-09-02 17:34",
+  "course": "csc-150",
+  "pages": {
+    "00a-how-this-course-works.html": {
+      "path": "00-start/00a-how-this-course-works.html",
+      "version": "066a192"
+    },
+    "00b-where-youre-starting-from.html": {
+      "path": "00-start/00b-where-youre-starting-from.html",
+      "version": "4844414"
+    },
+    "01-module-1-checkpoint.html": {
+      "path": "01-intro/01-module-1-checkpoint.html",
+      "version": "bd285c8"
+    },
+    "01-what-this-even-is.html": {
+      "path": "01-intro/01-what-this-even-is.html",
+      "version": "7c9c9da"
+    },
+    "02-module-2-checkpoint.html": {
+      "path": "02-output/02-module-2-checkpoint.html",
+      "version": "12581cc"
+    },
+    "02-the-next-word-machine.html": {
+      "path": "01-intro/02-the-next-word-machine.html",
+      "version": "ac512ff"
+    },
+    "03-module-3-checkpoint.html": {
+      "path": "03-checking/03-module-3-checkpoint.html",
+      "version": "e7336d4"
+    },
+    "03-why-it-wanders.html": {
+      "path": "01-intro/03-why-it-wanders.html",
+      "version": "13d950b"
+    },
+    "04-anatomy-of-a-prompt.html": {
+      "path": "01-intro/04-anatomy-of-a-prompt.html",
+      "version": "f6b128c"
+    },
+    "04-module-4-checkpoint.html": {
+      "path": "04-beyond-text/04-module-4-checkpoint.html",
+      "version": "f1ed03e"
+    },
+    "05-module-5-checkpoint.html": {
+      "path": "05-responsibly/05-module-5-checkpoint.html",
+      "version": "b3c1952"
+    },
+    "05-the-landscape.html": {
+      "path": "01-intro/05-the-landscape.html",
+      "version": "1847c63"
+    },
+    "06-choosing-a-model-blind.html": {
+      "path": "02-output/06-choosing-a-model-blind.html",
+      "version": "76b6802"
+    },
+    "07-iteration-and-repair.html": {
+      "path": "02-output/07-iteration-and-repair.html",
+      "version": "1afee70"
+    },
+    "08-why-ai-makes-things-up.html": {
+      "path": "02-output/08-why-ai-makes-things-up.html",
+      "version": "0539abc"
+    },
+    "09-models-that-can-actually-look-things-up.html": {
+      "path": "03-checking/09-models-that-can-actually-look-things-up.html",
+      "version": "43fb7cd"
+    },
+    "10-where-bias-comes-from.html": {
+      "path": "03-checking/10-where-bias-comes-from.html",
+      "version": "4fc1149"
+    },
+    "11-the-verification-habit.html": {
+      "path": "03-checking/11-the-verification-habit.html",
+      "version": "d03b901"
+    },
+    "12-making-images.html": {
+      "path": "04-beyond-text/12-making-images.html",
+      "version": "5a47c77"
+    },
+    "13-voice-and-audio.html": {
+      "path": "04-beyond-text/13-voice-and-audio.html",
+      "version": "8b99bb9"
+    },
+    "14-working-across-modalities.html": {
+      "path": "04-beyond-text/14-working-across-modalities.html",
+      "version": "841950f"
+    },
+    "15-your-data-their-servers.html": {
+      "path": "05-responsibly/15-your-data-their-servers.html",
+      "version": "0734c49"
+    },
+    "16-attribution-copyright-and-honest-work.html": {
+      "path": "05-responsibly/16-attribution-copyright-and-honest-work.html",
+      "version": "0f5664b"
+    },
+    "17-your-ai-practice.html": {
+      "path": "05-responsibly/17-your-ai-practice.html",
+      "version": "012f9e8"
+    },
+    "learning-hub.html": {
+      "path": "learning-hub.html",
+      "version": "b4481ef"
+    },
+    "module-1-overview.html": {
+      "path": "01-intro/module-1-overview.html",
+      "version": "07dd97f"
+    },
+    "module-2-overview.html": {
+      "path": "02-output/module-2-overview.html",
+      "version": "af27df2"
+    },
+    "module-3-overview.html": {
+      "path": "03-checking/module-3-overview.html",
+      "version": "ea1fd81"
+    },
+    "module-4-overview.html": {
+      "path": "04-beyond-text/module-4-overview.html",
+      "version": "7a34e98"
+    },
+    "module-5-overview.html": {
+      "path": "05-responsibly/module-5-overview.html",
+      "version": "9cca4e7"
+    },
+    "tokenizer.html": {
+      "path": "tokenizer.html",
+      "version": "37e0f97"
+    },
+    "vocabulary.html": {
+      "path": "vocabulary.html",
+      "version": "fd2f57b"
+    }
+  }
+}
