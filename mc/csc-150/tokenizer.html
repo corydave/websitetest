@@ -1,5 +1,7 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tokenizer</title>
+<link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -403,7 +405,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -413,6 +421,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1094,6 +1103,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    The module and lesson number stay too: Brightspace shows the topic title but
    not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
 :root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
 :root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
 :root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
@@ -1143,14 +1156,14 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .preset:hover { color: var(--accent-text); background: var(--accent-wash); }
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
 
-/* ============================================================================
-   FLCC AI Specialist Microcredential - tool.css
-   Standing tools. Course-agnostic; the tokenizer uses this.
 
-   Load order matters: core.css first, then the genre sheet, then the course
-   theme. Nothing here sets a color except through a token.
-   ========================================================================= */
-
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
 
 .tokout {
   display: flex;
@@ -1246,14 +1259,11 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   text-align: left;
   font: inherit;
   border: 0;
-  cursor: pointer;
   background: var(--surface);
   box-shadow: var(--shadow-1);
   border-radius: var(--r-sm);
   padding: .7rem .9rem;
-  transition: box-shadow .18s ease, transform .12s ease;
 }
-.factrow:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
 .factrow__ex {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: .92rem;
@@ -1284,6 +1294,170 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   .factrow { grid-template-columns: 1fr auto; }
   .factrow__bits { grid-column: 1 / -1; }
 }
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+/* ============================================================================
+   FLCC AI Specialist Microcredential - tool.css
+   Standing tools. Course-agnostic; the tokenizer uses this.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+
+/* The tokenizer panel moved to core.css when Lesson 2 embedded it: a component
+   two genres load has to live where both can see it, which is the same call
+   .preset, .authoring and the step block all got before it.
+
+   This sheet is now empty. It is kept rather than deleted because the genre
+   still exists in pack.py and check_sheets.py, and a tool page that needs a
+   rule of its own has an obvious place to put it. */
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -1330,8 +1504,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page tokenizer.html  v37e0f97  ·  build c54ad0e  ·  2026-09-02 15:04 -->
+<div data-build="c54ad0e" data-page="tokenizer.html" data-version="37e0f97" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1356,7 +1530,15 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
   <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
   <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
 </svg>
+
 <div class="railtrack"><div class="railtrack__fill" id="rail"></div></div>
 
 <header class="masthead">
@@ -1373,90 +1555,90 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 <main class="wrap lesson__body">
 
   <section class="block">
-    <label class="visually-hidden" for="src">Text to tokenize</label>
-    <textarea class="tokinput" id="src" spellcheck="false" placeholder="Type something. Anything."></textarea>
-    <div class="presetrow">
-      <span class="small muted">Or try:</span>
-      <button class="preset" type="button" data-p="0">Plain English</button><button class="preset" type="button" data-p="1">A rare word</button><button class="preset" type="button" data-p="2">Numbers and money</button><button class="preset" type="button" data-p="3">Emoji</button><button class="preset" type="button" data-p="4">Not English</button><button class="preset" type="button" data-p="5">Code</button><button class="preset" type="button" data-p="6">Course prose</button>
-    </div>
-  </section>
 
-  <section class="block">
-    <div class="statrow">
-      <span class="stat"><b id="sChars">0</b><span>Characters</span></span>
-      <span class="stat"><b id="sWords">0</b><span>Words</span></span>
-      <span class="stat stat--accent"><b id="sToks">0</b><span>Tokens</span></span>
-      <span class="stat"><b id="sRatio">-</b><span>Characters per token</span></span>
-    </div>
-  </section>
+        <div class="tokpanel">
+          <label class="visually-hidden" for="src">Text to tokenize</label>
+          <textarea class="tokinput" id="src" spellcheck="false" placeholder="Type something. Anything."></textarea>
+          <div class="presetrow">
+            <span class="small muted">Or try:</span>
+            <button class="preset" type="button" data-p="0">Plain English</button><button class="preset" type="button" data-p="1">A rare word</button><button class="preset" type="button" data-p="2">Numbers and money</button><button class="preset" type="button" data-p="3">Emoji</button><button class="preset" type="button" data-p="4">Not English</button><button class="preset" type="button" data-p="5">Code</button><button class="preset" type="button" data-p="6">Course prose</button>
+          </div>
 
-  <section class="block">
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> The pieces</span>
-      <h2>What the model sees</h2>
-      <p>Each block is one token. The tint alternates only so you can tell where one ends and the next begins - the colors carry no other meaning. Notice where the spaces went.</p>
-    </div>
-    <div class="row" style="gap:.75rem">
-      <button class="preset" type="button" id="tIds" aria-pressed="false">Show token IDs</button>
-      <button class="preset" type="button" id="tWs" aria-pressed="true">Mark spaces</button>
-    </div>
-    <div class="tokout tokout--empty" id="out">Start typing and your text appears here, in pieces.</div>
-  </section>
+          <div class="statrow">
+            <span class="stat"><b id="sChars">0</b><span>Characters</span></span>
+            <span class="stat"><b id="sWords">0</b><span>Words</span></span>
+            <span class="stat stat--accent"><b id="sToks">0</b><span>Tokens</span></span>
+            <span class="stat"><b id="sRatio">-</b><span>Characters per token</span></span>
+          </div>
 
-  <section class="block">
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-eye"/></svg> Read-out</span>
-      <h2>What this particular text is doing</h2>
-    </div>
-    <div class="card"><div class="obs" id="obs"></div></div>
-  </section>
+          <div class="blockhead">
+            <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> The pieces</span>
+            <h2>What the model sees</h2>
+            <p>Each block is one token. The tint alternates only so you can tell where one ends and the next begins - the colors carry no other meaning. Notice where the spaces went.</p>
+          </div>
+          <div class="row" style="gap:.75rem">
+            <button class="preset" type="button" id="tIds" aria-pressed="false">Show token IDs</button>
+            <button class="preset" type="button" id="tWs" aria-pressed="true">Mark spaces</button>
+          </div>
+          <div class="tokout tokout--empty" id="out">Start typing and your text appears here, in pieces.</div>
 
-  <section class="block">
-    <div class="callout callout--warn">
-      <div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>
-      <div class="callout__body">
-        <p class="callout__label">Which tokenizer this is</p>
-        <p>This runs the <strong>real <code>cl100k_base</code> tokenizer</strong> - the one used by OpenAI&rsquo;s GPT-3.5 and GPT-4 generation - entirely inside your browser. Nothing you type is sent anywhere. The counts here are exact for those models.</p>
-        <p><strong>Other models tokenize differently.</strong> Claude, Gemini, Llama and newer OpenAI models each use their own vocabulary, so the same sentence can come out to a different number of tokens on each. The <em>patterns</em> you see here hold everywhere - common words are cheap, rare words fragment, spaces belong to the token that follows them, and anything that isn&rsquo;t English costs more. The exact figures don&rsquo;t. If you need a precise count for a specific model, use that vendor&rsquo;s own tokenizer.</p>
-      </div>
-    </div>
+          <div class="blockhead">
+            <span class="eyebrow"><svg class="i"><use href="#i-eye"/></svg> Read-out</span>
+            <h2>What this particular text is doing</h2>
+          </div>
+          <div class="card"><div class="obs" id="obs"></div></div>
+
+          <p class="toknote">
+            This simulation runs the real <code>cl100k_base</code> tokenizer, in your browser.
+            <button class="tokwhy" type="button" id="tokWhy" aria-haspopup="dialog"
+                    aria-label="Which tokenizer is this, and does it match the model I use?">?</button>
+          </p>
+        </div>
+
+        <dialog class="tokmodal" id="tokModal" aria-labelledby="tokModalT">
+          <form method="dialog" class="tokmodal__x">
+            <button class="btn btn--ghost" value="close" aria-label="Close">
+              <svg class="i"><use href="#i-x"/></svg></button>
+          </form>
+          <h2 id="tokModalT">Which tokenizer this is</h2>
+          <p>This runs the <strong>real <code>cl100k_base</code> tokenizer</strong> - the one used by OpenAI&rsquo;s GPT-3.5 and GPT-4 generation - entirely inside your browser. Nothing you type is sent anywhere. The counts here are exact for those models.</p>
+          <p><strong>Other models tokenize differently.</strong> Claude, Gemini, Llama and newer OpenAI models each use their own vocabulary, so the same sentence can come out to a different number of tokens on each. The <em>patterns</em> you see here hold everywhere - common words are cheap, rare words fragment, spaces belong to the token that follows them, and anything that isn&rsquo;t English costs more. The exact figures don&rsquo;t. If you need a precise count for a specific model, use that vendor&rsquo;s own tokenizer.</p>
+        </dialog>
   </section>
 
   <section class="block">
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-help"/></svg> The thing most people get wrong</span>
       <h2>So what <em>is</em> a token?</h2>
-      <p>Almost everyone arrives assuming a token is a piece of a word - that the tokenizer chops words into
-         syllables or stems. That is half right, and the wrong half is the more interesting one.</p>
+      <p>Almost everyone arrives assuming a token is a piece of a word - that the tokenizer chops words into syllables or stems. That is half right, and the wrong half is the more interesting one.</p>
     </div>
 
-    <div class="facts" id="facts"></div>
+        <div class="facts" id="facts"></div>
 
-    <div class="callout">
-      <div class="icontile"><svg class="i"><use href="#i-lightbulb"/></svg></div>
-      <div class="callout__body">
-        <p class="callout__label">The actual rule</p>
-        <p>The unit is not the word, and it is not the sub-word either. It is <strong>a sequence of characters that
-           turned up often enough in the training text to be worth its own entry in a lookup table.</strong> Usually
-           that lands on a whole common word. Sometimes it lands on a fragment. Sometimes, as above, it lands on
-           something that is not a word at all.</p>
-        <p>No linguistics is happening here. Nothing in the tokenizer knows what a word is, so it cannot be
-           &ldquo;breaking words up&rdquo; - it is closer to the dictionary inside a zip file than to a
-           dictionary of English. Frequency decides everything.</p>
-      </div>
-    </div>
+        <div class="callout">
+          <div class="icontile"><svg class="i"><use href="#i-lightbulb"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">The actual rule</p>
+            <p>The unit is not the word, and it is not the sub-word either. It is <strong>a sequence of characters that
+               turned up often enough in the training text to be worth its own entry in a lookup table.</strong> Usually
+               that lands on a whole common word. Sometimes it lands on a fragment. Sometimes, as above, it lands on
+               something that is not a word at all.</p>
+            <p>No linguistics is happening here. Nothing in the tokenizer knows what a word is, so it cannot be
+               &ldquo;breaking words up&rdquo;. Frequency (or math!) decides everything.</p>
+          </div>
+        </div>
 
-    <div class="callout callout--warn">
-      <div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>
-      <div class="callout__body">
-        <p class="callout__label">Why this explains a famous failure</p>
-        <p>Ask a model how many times the letter <strong>r</strong> appears in <em>strawberry</em> and it will often
-           get it wrong. Not because it is stupid about spelling - because <strong>it never saw the letters.</strong>
-           It saw two or three chunks. Counting letters inside a token is like being asked how many times the letter E
-           appears in a photograph of a page. Try <code>strawberry</code> in the box above and look at what actually
-           arrives.</p>
-      </div>
-    </div>
+        <div class="callout callout--warn">
+          <div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>
+          <div class="callout__body">
+            <p class="callout__label">Why this explains a famous failure</p>
+            <p>In the past, if you asked a model how many times the letter <strong>r</strong> appears in <em>strawberry</em> and it will often
+               get it wrong. Not because it is stupid about spelling - because <strong>it never saw the letters.</strong>
+               It saw two or three chunks. Counting letters inside a token is like being asked how many times the letter E
+               appears in a photograph of a page. Try <code>strawberry</code> in the box above and look at what actually
+               arrives.</p>
+          </div>
+        </div>
   </section>
 
   <section class="block">
@@ -1474,7 +1656,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   </section>
 
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Course tool</span>
+    <span>CSC 150 &middot; AI Foundations &middot; Course tool &middot; <span class="ver" title="page version 37e0f97, build c54ad0e, 2026-09-02 15:04">v37e0f97</span></span>
     <span class="row" style="gap:.4rem">Related: <a href="01-intro/02-the-next-word-machine.html">Lesson 2 - The Next Word Machine</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
   </footer>
 </main>
@@ -1489,7 +1671,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
  *
  * Markup it expects:
  *   <div class="embed embed--facade"
- *        data-video="VIDEO_ID"
+ *        data-video="VIDEO_ID"              (YouTube) OR
+ *        data-embed="https://..."           (any other player's embed URL)
  *        data-title="What the video is"
  *        data-sub="Demo · 2:40"            (optional)
  *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
@@ -1511,7 +1694,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     var b = document.createElement("button");
     b.type = "button";
     b.className = "facade" + (poster ? "" : " facade--noposter");
-    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.setAttribute("aria-label", "Play: " + title +
+      (el.getAttribute("data-video")
+        ? ". The video loads from YouTube only after this."
+        : ". The video loads only after this."));
     b.innerHTML =
       (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
       '<span class="facade__scrim"></span>' +
@@ -1530,11 +1716,25 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   function play(el) {
+    /* Two sources, one behavior. data-video is a YouTube id and gets the
+       nocookie host built for it; data-embed is any other player's own embed
+       URL and is used exactly as given, because Kaltura, YuJa, Panopto and
+       Brightspace all sign their URLs differently and none of that is ours to
+       reconstruct.
+
+       The click-to-load part is the point either way: no request leaves the
+       page for anybody's server until the learner asks for the video. */
     var id = el.getAttribute("data-video");
-    if (!id) return;
+    var url = el.getAttribute("data-embed");
+    if (!id && !url) return;
     var start = el.getAttribute("data-start");
-    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var src;
+    if (url) {
+      src = url + (url.indexOf("?") === -1 ? "?" : "&") + "autoplay=1";
+    } else {
+      src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+            "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    }
     var f = document.createElement("iframe");
     f.setAttribute("src", src);
     f.setAttribute("title", el.getAttribute("data-title") || "Video");
@@ -2083,26 +2283,21 @@ var PRESETS = ["The quick brown fox jumps over the lazy dog. Nothing unusual her
           return '<span class="bit">' + marks(c.text, true, false) + "</span>";
         }).join("");
         var label = marks(s, true, false);
-        return '<button class="factrow' + (ids.length === 1 ? " factrow--one" : "") +
-               '" type="button" data-load="' + esc(s).replace(/"/g, "&quot;") + '">' +
+        /* Static rows. These used to be buttons that loaded the word into the
+           box at the top of the page and scrolled you back up to it - which on
+           a phone means being thrown out of what you were reading, every time
+           you touch one. Seeing the split is the whole point; loading it was a
+           shortcut nobody needed. */
+        return '<div class="factrow' + (ids.length === 1 ? " factrow--one" : "") + '">' +
                '<span class="factrow__ex">' + label + "</span>" +
                '<span class="factrow__bits">' + bits + "</span>" +
-               '<span class="factrow__n">' + ids.length + "</span></button>";
+               '<span class="factrow__n">' + ids.length + "</span></div>";
       }).join("");
       return '<div class="factgroup"><span class="factgroup__t">' + g[0] + "</span>" +
              '<p class="factgroup__d">' + g[1] + "</p>" +
              '<div class="factlist">' + rows + "</div></div>";
     }).join("");
 
-    Array.prototype.slice.call(wrap.querySelectorAll("[data-load]")).forEach(function (b) {
-      b.addEventListener("click", function () {
-        src.value = b.getAttribute("data-load");
-        Array.prototype.slice.call(document.querySelectorAll(".preset[data-p]"))
-          .forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
-        render();
-        src.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
-    });
   }
 
   src.addEventListener("input", function () {
@@ -2127,14 +2322,37 @@ var PRESETS = ["The quick brown fox jumps over the lazy dog. Nothing unusual her
     showWs = !showWs; this.setAttribute("aria-pressed", String(showWs)); render();
   });
 
+  /* The progress rail. Skipped on a lesson page, where lesson_core.js already
+     drives the same element - two listeners writing one width is at best waste
+     and at worst a fight. The gate is the reliable tell that we are embedded in
+     a lesson rather than standing alone. */
   var rail = document.getElementById("rail");
-  function onScroll() {
-    var h = document.documentElement.scrollHeight - window.innerHeight;
-    rail.style.width = (h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0) + "%";
+  if (rail && !document.getElementById("gate")) {
+    (function () {
+      function onScroll() {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        rail.style.width = (h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0) + "%";
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      onScroll();
+    })();
   }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
-  onScroll();
+
+  /* "Which tokenizer is this" - one line under the panel, the full answer in a
+     modal. Native <dialog>, so focus trapping and Escape come for free rather
+     than being reimplemented badly. */
+  (function () {
+    var why = document.getElementById("tokWhy"), modal = document.getElementById("tokModal");
+    if (!why || !modal) return;
+    why.addEventListener("click", function () {
+      if (typeof modal.showModal === "function") modal.showModal();
+      else modal.setAttribute("open", "");   /* very old browsers: inline, still readable */
+    });
+    /* Clicking the backdrop closes it. The dialog's own box is a child, so a
+       click landing on the dialog element itself is a click outside the box. */
+    modal.addEventListener("click", function (e) { if (e.target === modal) modal.close(); });
+  })();
 
   buildFacts();
   src.value = PRESETS[0];
