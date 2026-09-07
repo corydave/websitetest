@@ -797,7 +797,7 @@
 <section id="text-file">
 <h2>1. A web page is a text file</h2>
 <p>When you double-clicked <code>qr-code.html</code> and your browser opened it, here is what happened: the browser read the file from top to bottom, like you’d read a recipe, and drew what it described. That’s all a web page is. A text file with a description of a page in it, and a browser that knows how to read the description.</p>
-<p>The file has two kinds of things in it. <strong>Words you’ll see</strong> on the page - the heading, the paragraphs, the label on a button. And <strong>instructions about those words</strong> - <em>this is a heading, this is a paragraph, this is a link to somewhere.</em> The instructions are called <strong>tags</strong>, and they’re the only thing that makes it a web page instead of a plain note.</p>
+<p>The file has two kinds of things in it. Words you’ll see on the page - the heading, the paragraphs, the label on a button. And instructions about those words - <em>this is a heading, this is a paragraph, this is a link to somewhere.</em> The instructions are called tags, and they’re the only thing that makes it a web page instead of a plain note.</p>
 <p>Here is the smallest one that does anything. Change the words and watch.</p>
 
 <div class="demo" data-file="first.html">
@@ -816,7 +816,7 @@
 <!-- ============================================================ -->
 <section id="tags">
 <h2>2. Tags: the angle brackets</h2>
-<p>A tag is a word in angle brackets: <code>&lt;h1&gt;</code>. Most tags come in pairs, like <strong>bookends</strong>: an <strong>opening tag</strong> that says <em>start being a heading</em>, and a <strong>closing tag</strong> that says <em>stop</em>. The closing tag is the same word with a slash in front: <code>&lt;/h1&gt;</code>. Whatever sits between the bookends is the <strong>content</strong>, and the tags tell the browser what the content <em>is</em>.</p>
+<p>A tag is a word in angle brackets: <code>&lt;h1&gt;</code>. Most tags come in pairs, like <strong>bookends</strong>: an opening tag that says <em>start being a heading</em>, and a closing tag that says <em>stop</em>. The closing tag is the same word with a slash in front: <code>&lt;/h1&gt;</code>. Whatever sits between the bookends is the <em>content</em>, and the tags tell the browser what the content <em>is</em>.</p>
 
 <figure class="diagram">
   <svg viewBox="0 0 640 170" role="img" aria-labelledby="tag-anatomy-title tag-anatomy-desc">
@@ -840,7 +840,7 @@
 </figure>
 
 <p>Tags nest inside each other like boxes - or like bookends on a shelf that has smaller bookends on it. A paragraph can sit inside the body; a bit of bold can sit inside a paragraph. The rule is simple: whatever you open last, you close first. <code>&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</code> - the <code>strong</code> bookends sit inside the <code>p</code> bookends.</p>
-<p>Try this in the demo below: <strong>delete the <code>&lt;/h1&gt;</code></strong> - take away the right-hand bookend - and see what happens to the rest of the page. Then press Reset. That’s the most common mistake in all of HTML, and now you know what it looks like.</p>
+<p>Try this in the demo below: delete the <code>&lt;/h1&gt;</code> - take away the right-hand bookend - and see what happens to the rest of the page. Then press Reset. That’s the most common mistake in all of HTML, and now you know what it looks like.</p>
 
 <div class="demo" data-file="tags.html">
 <textarea>&lt;!DOCTYPE html&gt;
@@ -857,7 +857,7 @@
 <!-- ============================================================ -->
 <section id="six">
 <h2>3. The six landmarks</h2>
-<p>Here is the thing that turns a 300-line wall of code into a place you can find your way around. Every web page you will ever open in this course has the same six tags in the same arrangement. Learn them as a map, and you’ll always know where you are.</p>
+<p>Every web page you will ever open in this course has the same six tags in the same arrangement. The <code>html</code>, <code>head</code>, and <code>body</code> are mission critical. Every page needs that. If you have <code>style</code> or <code>script</code>, you need to include them in the proper place. But since AI will be coding for you, you won't have to worry about it too much!</p>
 
 <figure class="diagram">
   <svg viewBox="0 0 640 470" role="img" aria-labelledby="six-title six-desc">
@@ -895,7 +895,7 @@
 
     <text class="label-strong" x="40" y="448">&lt;/html&gt;</text>
   </svg>
-  <figcaption>Six pairs of bookends, one shape. Every box opens at the top and closes at the bottom. Head is settings; body is what you see. Style lives in the head and controls looks; script usually sits at the end of the body and controls behavior.</figcaption>
+  <figcaption>Six pairs of bookends! Every box opens at the top and closes at the bottom. <code>head</code> is settings; <code>body</code> is what you see. <code>style</code> lives in the <code>head</code> and controls looks; <code>script</code> usually sits at the end of the <code>body</code> and controls behavior.</figcaption>
 </figure>
 
 <div class="table-scroll">
@@ -948,14 +948,14 @@
 &lt;/html&gt;</textarea>
 </div>
 
-<p class="aside"><strong>Head or body?</strong> If it’s something a visitor <em>sees</em>, it’s in the body. If it’s a setting - the tab’s name, the colors - it’s in the head. That one question answers most “where do I look?” moments for the rest of the semester.</p>
+<p class="aside"><strong>Head or body?</strong> If it’s something a visitor <em>sees</em>, it’s in the body. If it’s a setting - the tab’s name, the colors - it’s in the head.</p>
 </section>
 
 <!-- ============================================================ -->
 <section id="paragraphs">
 <h2>4. Paragraphs: <code>&lt;p&gt;</code></h2>
 <p>Words on a page go in paragraphs, and a paragraph is a <code>&lt;p&gt;</code> tag with words inside. The browser puts a little space above and below each one, so two paragraphs look like two paragraphs. Every paragraph gets its own pair of tags.</p>
-<p>Try adding a third paragraph below the second. Then try <strong>deleting all four <code>p</code> tags</strong> and see what the browser does with the words when nobody tells it what they are.</p>
+<p>Try adding a third paragraph below the second. Then try deleting all four <code>p</code> tags and see what the browser does with the words when nobody tells it what they are.</p>
 
 <div class="demo" data-file="paragraphs.html">
 <textarea>&lt;!DOCTYPE html&gt;
@@ -967,16 +967,16 @@
 &lt;/html&gt;</textarea>
 </div>
 
-<p>Without the tags the words run together into one lump, because the browser has no idea where one thought ends and the next begins. The tags aren’t decoration; they’re how you tell it.</p>
+<p>Without the tags the words run together into one lump, because the browser has no idea where one thought ends and the next begins.</p>
 </section>
 
 <!-- ============================================================ -->
 <section id="breaks">
 <h2>5. Line breaks: <code>&lt;br /&gt;</code></h2>
-<p>Here’s something that surprises everyone once. In the code, <strong>pressing Enter does nothing.</strong> You can put every line of an address on its own line in the file, and the browser will run them all together on one line anyway. <strong>Extra spaces do nothing either</strong> - ten spaces between two words show up as one. The browser squashes any run of spaces and new lines down to a single space. All that neat indentation in the AI’s code? That’s for <em>you</em>, so you can see what’s inside what. The browser politely ignores it.</p>
+<p>Here’s something that surprises everyone once. In the code, <em>pressing Enter does nothing.</em> You can put every line of an address on its own line in the file, and the browser will run them all together on one line anyway. <em>Extra spaces do nothing either</em> - ten spaces between two words show up as one. The browser squashes any run of spaces and new lines down to a single space. All that neat indentation in the AI’s code? That’s for <em>you</em>, so you can see what’s inside what. The browser politely ignores it.</p>
 <p>When you want a line to end <em>inside</em> a paragraph - the lines of an address, a poem, a recipe’s ingredient list - you say so with <code>&lt;br /&gt;</code>. It means <em>break the line here</em>.</p>
 <p>Look at it closely: <code>&lt;br /&gt;</code>. It has no closing tag, because there’s nothing to put inside a line break. Instead the slash goes <em>at the end</em>, inside the same tag. That slash is the signal that this tag is complete on its own. You’ll see <code>&lt;br&gt;</code> without the slash out in the world, and browsers accept it; in this course we write <code>&lt;br /&gt;</code>, because the slash reminds you that nothing goes inside, and you’ll meet other tags that work the same way soon.</p>
-<p>In the demo, the address below is broken. Two lines have their <code>&lt;br /&gt;</code> and two don’t. <strong>Add the missing ones.</strong></p>
+<p>In the demo, the address below is broken. Two lines have their <code>&lt;br /&gt;</code> and two don’t. Add the missing ones.</p>
 
 <div class="demo" data-file="address.html">
 <textarea>&lt;!DOCTYPE html&gt;
@@ -995,7 +995,7 @@
 
 <h3>Two or three in a row</h3>
 <p>Sometimes you want a gap, not just a new line - a blank line between the stanzas of a poem, or a little air before a signature. Two <code>&lt;br /&gt;</code>s in a row make one blank line; three make a bigger gap. That’s fine and normal.</p>
-<p>But if you find yourself using <code>&lt;br /&gt;&lt;br /&gt;</code> to separate <em>paragraphs</em>, stop: that’s what <code>&lt;p&gt;</code> is for. The rule of thumb: <strong><code>&lt;p&gt;</code> for a new thought, <code>&lt;br /&gt;</code> for a new line inside the same thought.</strong></p>
+<p>But if you find yourself using <code>&lt;br /&gt;&lt;br /&gt;</code> to separate <em>paragraphs</em>, stop: that’s what <code>&lt;p&gt;</code> is for. The rule of thumb: <code>&lt;p&gt;</code> for a new thought, <code>&lt;br /&gt;</code> for a new line inside the same thought.</p>
 <p class="aside">This is also why you never have to worry about getting the spacing “right” when you paste code from the AI. If it works, it works. The only thing spacing can affect is how easy the file is to read - so keep it tidy for your own sake, not the browser’s.</p>
 
 <div class="demo" data-file="poem.html">
@@ -1017,10 +1017,10 @@
 <!-- ============================================================ -->
 <section id="comments">
 <h2>6. Comments: notes to humans</h2>
-<p>Code files can contain notes that the browser skips entirely. They’re called <strong>comments</strong>, and they’re for people - a reminder of what a section does, a note from the AI explaining a block, a line you want to keep but not use right now.</p>
+<p>Code files can contain notes that the browser skips entirely. They’re called comments, and they’re for people - a reminder of what a section does, a note from the AI explaining a block, a line you want to keep but not use right now.</p>
 <p>In HTML a comment starts with <code>&lt;!--</code> and ends with <code>--&gt;</code>. In JavaScript, inside <code>&lt;script&gt;</code>, a comment is a line that starts with <code>//</code>. You saw those in the six-landmarks demo above.</p>
-<p>Here’s why this matters more for you than for most people learning to code: <strong>the AI is going to write your code, and it writes a lot of comments.</strong> The specification you paste into every prompt asks it to explain every block in plain language, so when you open a file the AI built, nearly every chunk has a sentence above it saying what that chunk does. Those comments aren’t for the browser and they aren’t really for the AI. They’re for <em>you</em> - they’re how you’ll find your way around code you didn’t write, and they’re the first place to look when you want to change something.</p>
-<p>In the demo, one line is commented out. <strong>Remove the <code>&lt;!--</code> and <code>--&gt;</code></strong> around it and watch it appear.</p>
+<p>Here’s why this matters more for you than for most people learning to code: the AI is going to write your code, and it writes a lot of comments! The specification you paste into every prompt asks it to explain every block in plain language, so when you open a file the AI built, nearly every chunk has a sentence above it saying what that chunk does. Those comments aren’t for the browser and they aren’t really for the AI. They’re for <em>you</em> - they’re how you’ll find your way around code you didn’t write, and they’re the first place to look when you want to change something.</p>
+<p>In the demo, one line is commented out. Remove the <code>&lt;!--</code> and <code>--&gt;</code> around it and watch it appear.</p>
 
 <div class="demo" data-file="comments.html">
 <textarea>&lt;!DOCTYPE html&gt;
@@ -1061,7 +1061,7 @@
 <div class="q">
   <p><strong>What’s the difference between <code>&lt;p&gt;</code> and <code>&lt;br /&gt;</code>?</strong></p>
   <button class="btn quiet reveal" aria-expanded="false" aria-controls="chk-2">Show answer</button>
-  <div class="answer" id="chk-2" hidden><code>&lt;p&gt;</code> is a paragraph: a new thought, with space around it, and it needs a closing <code>&lt;/p&gt;</code>. <code>&lt;br /&gt;</code> is a line break inside a paragraph: a new line, no extra space, and it closes itself with the slash at the end.</div>
+  <div class="answer" id="chk-2" hidden><code>&lt;p&gt;</code> is a paragraph: a new thought, with space around it, and it needs a closing <code>&lt;/p&gt;</code> (it is bookended!). <code>&lt;br /&gt;</code> is a line break inside a paragraph: a new line, no extra space, and it closes itself with the slash at the end.</div>
 </div>
 
 <div class="q">
@@ -1080,7 +1080,7 @@
 <!-- ============================================================ -->
 <section id="cheat">
 <h2>9. Cheat sheet</h2>
-<p>Everything on this page, in one table. You don’t need to memorize it; you need to recognize these when you see them.</p>
+<p>Everything on this page, in one table. You don’t need to memorize it but you might want to try to recognize these when you are inevitably looking at code..</p>
 <div class="table-scroll">
 <table class="tags">
   <thead><tr><th>You see</th><th>It means</th><th>Closes?</th></tr></thead>
@@ -1478,6 +1478,38 @@
         };
         new ResizeObserver(reportHeight).observe(document.body);
         window.addEventListener('load', reportHeight);
+      }
+
+
+      // ---------------------------------------------------------------
+      // 10. THE HAND-IN LINK COMES FROM THE LMS
+      // The "Click here to submit your work" card is hidden until it has a link.
+      // The assignment URL belongs to the course running this page, not to the
+      // page itself, so the Brightspace embed posts it in:
+      //     frame.contentWindow.postMessage({ vibeSubmit: url }, 'https://our-site');
+      // We accept it only from our own parent window, and only if it is an
+      // https address. Anything else is ignored and the card stays hidden.
+      // ---------------------------------------------------------------
+      const submitCard = $('submit-card');
+      function showSubmit(url) {
+        if (typeof url !== 'string' || !/^https:\/\//i.test(url)) return;   // https only
+        submitCard.href = url;
+        submitCard.hidden = false;
+      }
+      if (submitCard) {
+        // Route 1: the parent page posts the link in (the normal, LMS-embed route).
+        if (window.parent !== window) {
+          window.addEventListener('message', function (e) {
+            if (e.source !== window.parent) return;
+            showSubmit(e.data && e.data.vibeSubmit);
+          });
+        }
+        // Route 2: the link is in the page's own address, ?submit=ENCODED-URL.
+        // For a topic that cannot run script. The value must be URL-encoded
+        // (encodeURIComponent), since LMS links are full of ? and & themselves.
+        try {
+          showSubmit(new URL(window.location.href).searchParams.get('submit'));
+        } catch (e) { /* no usable address - card stays hidden */ }
       }
 
 
