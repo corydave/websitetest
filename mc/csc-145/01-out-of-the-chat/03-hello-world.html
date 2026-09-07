@@ -1,14 +1,14 @@
 <!--
   Vibe Coding - CSC 145 - Finger Lakes Community College
-  Reading: Vocabulary
-  Chapter: Vibe Coding
+  Lab: Hello, world - typed by hand
+  Chapter: Out of the chat, onto your computer
 
   GENERATED FILE - do not edit. Built 2026-09-07 by build/build.py from
-  chapters/shared/vocabulary.html. Edit the source, or shared/lab.css and shared/lab.js,
+  chapters/01-files/03-hello-world.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
-  This reading is one HTML file: the page, its styles, its behavior and its
-  live demos all live here. It follows the same spec block students use for their own apps,
+  This handout is one HTML file: the page, its styles, and its behavior all
+  live here. It follows the same spec block students use for their own apps,
   on purpose - View Source and it should look like something you could have
   made. The only thing it loads from outside is the two fonts.
 
@@ -27,10 +27,10 @@
   <!-- What names this lab. Written by the build from the source's header. -->
   <script>
     const LAB = {
-      title:   "Vocabulary",
-      chapter: "Vibe Coding",
-      time:    "Every term in the course, in one place",
-      id:      "vibe-vocabulary"
+      title:   "Hello, world - typed by hand",
+      chapter: "Out of the chat, onto your computer",
+      time:    "About 15 minutes",
+      id:      "vibe-lab-hello"
     };
   </script>
 
@@ -626,142 +626,13 @@
       .step-head .btn { margin-left: calc(2.1rem + 0.75rem); }
       .step-body { padding-left: 1rem; }
     }
-
-    /* ====================================================================
-       Vibe Coding - reading pages
-       Inlined by the build after lab.css, only on kind: reading pages.
-       Adds: the live demo widget with its pretend browser, the inline SVG
-       diagrams, the tag cheat-sheet table, and the "in this reading" list.
-       Colors all come from the tokens in lab.css, so light and dark both work.
-       ==================================================================== */
-
-    /* Reading pages are prose. Give the sections room and the headings weight. */
-    .reading h2 { margin-top: 2.6rem; font-size: 1.55rem; }
-    .reading h3 { margin-top: 1.6rem; font-size: 1.15rem; }
-    .reading p, .reading li { max-width: 68ch; }
-    .reading section { scroll-margin-top: 1rem; }
-
-    /* "In this reading" - the short contents list under the lede. */
-    .contents { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; margin: 1.5rem 0; }
-    .contents p { margin: 0 0 0.4rem; font-weight: 700; color: var(--heading); font-family: var(--font-display); }
-    .contents ol { margin: 0; padding-left: 1.3rem; columns: 2; column-gap: 2rem; }
-    .contents li { break-inside: avoid; margin-bottom: 0.25rem; }
-    @media (max-width: 600px) { .contents ol { columns: 1; } }
-
-    /* Inline code samples that are NOT demos - a few lines to look at. */
-    .reading pre.sample {
-      background: var(--accent-soft); border-left: 4px solid var(--accent);
-      padding: 0.8rem 1rem; border-radius: 8px; overflow-x: auto; margin: 0.8rem 0 1rem;
-      font-size: 0.95rem; line-height: 1.5;
-    }
-
-    /* ------------------------------------------------------------------
-       THE LIVE DEMO
-       Two panes side by side: code on the left, pretend browser on the right.
-       They stack on narrow screens.
-       ------------------------------------------------------------------ */
-    .demo {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-      margin: 1.25rem 0 1.75rem;
-    }
-    @media (max-width: 760px) { .demo { grid-template-columns: 1fr; } }
-
-    .demo-code { display: flex; flex-direction: column; min-width: 0; }
-    .demo-bar {
-      display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-      margin-bottom: 0.4rem; font-weight: 700; font-size: 0.9rem; color: var(--ink-soft);
-    }
-    .demo-hint { font-weight: 400; color: var(--ink-faint); }
-    .demo-buttons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-    .demo-buttons .btn { padding: 0.25rem 0.7rem; font-size: 0.8rem; }
-
-    .demo textarea {
-      flex: 1; width: 100%; min-height: 180px; resize: vertical;
-      font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.5;
-      color: var(--ink); background: var(--card);
-      border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 0.9rem;
-      tab-size: 2; white-space: pre; overflow: auto;
-    }
-    .demo textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-    /* The pretend browser window. The rendered page inside is always on white,
-       because that is what a real page looks like by default - even when this
-       reading is in dark mode. */
-    .demo-browser {
-      display: flex; flex-direction: column; min-width: 0;
-      border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
-      background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-    .fake-chrome { background: #e9e6ee; border-bottom: 1px solid #d5d0dd; font-family: var(--font-body); }
-    .fake-tabs { display: flex; align-items: flex-end; gap: 0.6rem; padding: 0.5rem 0.6rem 0; }
-    .fake-dots { display: inline-flex; gap: 5px; padding: 0 0.2rem 0.55rem; }
-    .fake-dots i { width: 10px; height: 10px; border-radius: 50%; background: #c9c3d2; display: inline-block; }
-    .fake-tab {
-      display: inline-flex; align-items: center; gap: 0.45rem; min-width: 0; max-width: 70%;
-      background: #fff; color: #1a1523; border-radius: 8px 8px 0 0; padding: 0.35rem 0.8rem;
-      font-size: 0.82rem; font-weight: 700;
-    }
-    .fake-favicon { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); flex: none; }
-    .fake-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .fake-address { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.6rem; background: #fff; }
-    .fake-nav { color: #8a8399; font-size: 0.9rem; letter-spacing: 0.15em; flex: none; }
-    .fake-url {
-      flex: 1; background: #f1eff5; color: #5b5468; border-radius: 999px; padding: 0.25rem 0.8rem;
-      font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .demo-frame { flex: 1; width: 100%; min-height: 220px; border: 0; background: #fff; }
-
-    /* ------------------------------------------------------------------
-       DIAGRAMS - inline SVG, drawn with the page's tokens
-       ------------------------------------------------------------------ */
-    .diagram { margin: 1.25rem 0; }
-    .diagram svg { width: 100%; height: auto; display: block; max-width: 640px; }
-    .diagram figcaption { color: var(--ink-soft); font-size: 0.9rem; margin-top: 0.5rem; max-width: 68ch; }
-    .diagram .box    { fill: var(--card); stroke: var(--accent); stroke-width: 2; }
-    .diagram .box-soft { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
-    .diagram .label  { font-family: var(--font-mono); font-size: 14px; fill: var(--ink); }
-    .diagram .label-strong { font-family: var(--font-mono); font-size: 15px; font-weight: 700; fill: var(--accent-text); }
-    .diagram .note   { font-family: var(--font-body); font-size: 13px; fill: var(--ink-soft); }
-    .diagram .arrow  { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
-    .diagram .arrowhead { fill: var(--ink-soft); }
-
-    /* ------------------------------------------------------------------
-       THE CHEAT SHEET TABLE
-       ------------------------------------------------------------------ */
-    .tags { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
-    .tags th, .tags td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-    .tags th { color: var(--heading); font-family: var(--font-display); font-size: 0.9rem; }
-    .tags td:first-child { white-space: nowrap; }
-    .table-scroll { overflow-x: auto; }
-
-    /* ------------------------------------------------------------------
-       THE VOCABULARY PAGE (publish/vocabulary.html)
-       ------------------------------------------------------------------ */
-    .vocab-search { display: flex; gap: 0.6rem; align-items: center; margin: 1rem 0 0.5rem; flex-wrap: wrap; }
-    .vocab-search label { font-weight: 700; color: var(--ink-soft); }
-    .vocab-search input {
-      flex: 1; min-width: 12rem; font: inherit; padding: 0.55rem 0.8rem;
-      border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink);
-    }
-    .vocab-search input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .vocab-count { color: var(--ink-faint); font-size: 0.9rem; }
-    .letters { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0 1.5rem; }
-    .letters a { font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 6px; text-decoration: none; color: var(--accent-text); background: var(--accent-soft); }
-    .reading .term {
-      background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-      padding: 1rem 1.25rem; margin: 0 0 0.9rem; scroll-margin-top: 1rem;
-    }
-    .reading .term h3 { margin: 0 0 0.5rem; font-size: 1.15rem; }
-    .reading .term p:last-child { margin-bottom: 0; }
-    .reading .term[hidden] { display: none; }
-    .letter-head { margin-top: 2rem; font-size: 1.1rem; color: var(--ink-faint); font-family: var(--font-display); }
   </style>
 </head>
 
 <body>
-  <a class="skip" href="#main">Skip to the reading</a>
+  <a class="skip" href="#main">Skip to the steps</a>
 
-  <div class="wrap reading">
+  <div class="wrap">
 
     <header class="lab-head">
       <div class="ribbon">
@@ -772,261 +643,299 @@
         </button>
       </div>
       <h1 id="lab-title"></h1>
-      <p class="lede">Every word this course uses that it does not expect you to know already. Click any dotted word on a lab or reading and you land on its entry here; or search.</p>
+      <p class="lede">The smallest complete web page there is, typed by you - just this once.</p>
+      <p class="tools-note">These instructions say <strong>TXTEDTR</strong> and a folder called <code>vibe-coding</code>. Those are our conventions, not requirements. If you use Notepad++, VS Code, or a folder with a different name, everything here still works - swap in your names as you read.</p>
     </header>
 
+    <!-- One segment per step. The build writes the count, so a checklist lab
+         with five steps and a build lab with seven both get the right bar. -->
+    <div class="progress" role="progressbar" aria-label="Lab progress" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="progress">
+      <div class="progress-bar" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="progress-text">
+        <span id="progress-label">0 of 7 steps done</span>
+        <span>Your progress is saved on this device</span>
+      </div>
+    </div>
+
+    <!-- WATCH PANEL - a video tutorial for this lab. Sits above the steps, is not a step,
+         and does not count toward progress. To turn it on: put the embed URL on the
+         video: line in the lab source (and video-length:, transcript: if you have them)
+         and rebuild - or replace the example URL below and remove this comment's markers.
+    <details class="watch" open>
+      <summary><span>Watch first</span><span class="len"></span></summary>
+      <div class="watch-body">
+        <div class="embed">
+          <iframe src="https://example.com/your-video-embed" title="Video tutorial for this lab" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </details>
+    -->
+
     <main id="main">
-<div class="vocab-search">
-  <label for="vocab-filter">Find a term</label>
-  <input type="search" id="vocab-filter" placeholder="Type to filter…" autocomplete="off">
-  <span class="vocab-count" id="vocab-count" aria-live="polite">47 terms</span>
-</div>
-<nav class="letters" aria-label="Jump to a letter"><a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-F">F</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
+      <!-- ============ 1 - PICTURE IT ============ -->
+      <section class="step" data-step="1" data-beat="picture">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">1</span>
+          <button class="step-toggle" aria-expanded="true" aria-controls="body-1">
+            <h2>Picture it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-1">
+          <p>The QR generator was a couple hundred lines. A web page can be eight. You’re going to type the smallest complete web page there is - <em>type</em> it, not paste it, just this once - and open it. Then you’ll mess with the spacing and discover that the browser doesn’t care.</p>
+          <p>After this lab, every file you ever open in this course has the same six landmarks, and you’ll know where they are.</p>
+          <p><strong>Definition of Done:</strong> The file opens in your browser and shows your own heading.</p>
+          <!-- DEMO CARD - a link to your finished version of this lab.
+               To turn it on: put the URL on the demo: line in the lab source and rebuild,
+               or (quick fix) replace the example URL below and remove this comment's markers.
+          <a class="demo-card" href="https://example.com/your-finished-version" target="_blank" rel="noopener">
+            <span><span class="demo-label">See a finished one</span><span class="demo-title">Open the instructor’s version in a new tab</span></span>
+            <span class="demo-arrow" aria-hidden="true">→</span>
+          </a>
+          -->
+        </div>
+      </section>
+      <!-- ============ 2 - ASK FOR IT ============ -->
+      <section class="step" data-step="2" data-beat="ask">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">2</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-2">
+            <h2>Ask for it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-2" hidden>
+          <p>No specification this time - this one is too small to need it. Ask the AI, in your own words, for <strong>the smallest complete web page that has a title and one heading</strong>, and ask it to <strong>explain what each line does, one plain sentence per line</strong>.</p>
+          <p>Read the explanation. Then <strong>type</strong> the page into a new TXTEDTR file, line by line. Don’t paste it. Eight lines, give or take. Typing it once is how the shape of a page goes through your fingers; after today you’ll never need to again.</p>
+          <p class="aside">The AI will hand back something with <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;title&gt;</code>, <code>&lt;body&gt;</code>, and <code>&lt;h1&gt;</code>. If yours has a lot more than that, ask for the <em>smallest</em> version again.</p>
+        </div>
+      </section>
+      <!-- ============ 3 - RUN IT ============ -->
+      <section class="step" data-step="3" data-beat="run">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">3</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-3">
+            <h2>Run it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-3" hidden>
+          <p><strong>Save as</strong> <code>hello.html</code>, in your <code>vibe-coding</code> folder, next to the QR generator. Then open it. There’s your heading.</p>
 
-<h2 class="letter-head" id="letter-B">B</h2>
-<article class="term" id="body" data-search="&lt;body&gt; … &lt;/body&gt;  the body">
-  <h3>&lt;body&gt; … &lt;/body&gt;</h3>
-  <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;</code> usually sits at the very end of the body.</p>
-</article>
-<article class="term" id="br" data-search="&lt;br /&gt;   line break line breaks">
-  <h3>&lt;br /&gt;</h3>
-  <p>A line break: <em>end the line here</em>, inside a paragraph. For the lines of an address, a poem, an ingredient list. It has no closing tag, because nothing goes inside a line break; instead the slash goes at the end. Two in a row make a blank line. But for a new <em>thought</em>, use <code>&lt;p&gt;</code>, not a pile of <code>&lt;br /&gt;</code>s.</p>
-  <pre class="sample">3325 Marvin Sands Drive&lt;br /&gt;
-Canandaigua, NY 14424</pre>
-</article>
-<article class="term" id="browser" data-search="browser browser browsers">
-  <h3>Browser</h3>
-  <p>The program that reads web page files and draws them on your screen: Chrome, Safari, Edge, Firefox. It reads the file top to bottom and follows the instructions in it. When you double-click an <code>.html</code> file, this is what opens.</p>
-</article>
-<article class="term" id="button" data-search="&lt;button&gt; … &lt;/button&gt; ">
-  <h3>&lt;button&gt; … &lt;/button&gt;</h3>
-  <p>A thing to press. The words between the tags are its label. What the button <em>says</em> is HTML; what it <em>does</em> is JavaScript, somewhere in the script.</p>
-</article>
-<h2 class="letter-head" id="letter-C">C</h2>
-<article class="term" id="comment" data-search="comment comment comments commented out">
-  <h3>Comment</h3>
-  <p>A note in the code that the browser skips completely. For people, not machines. In HTML: <code>&lt;!-- like this --&gt;</code>. In JavaScript: a line starting with <code>//</code>. The AI writes lots of them, one above nearly every block, saying what the block does in plain language. They are the first place to look when you want to change something.</p>
-</article>
-<article class="term" id="content" data-search="content the content">
-  <h3>Content</h3>
-  <p>The words between a pair of tags - the part that actually shows on the page. In <code>&lt;h1&gt;Hello, world&lt;/h1&gt;</code>, the content is <em>Hello, world</em>. Changing content is always safe; you cannot break a page by changing the words between two tags.</p>
-</article>
-<article class="term" id="css" data-search="css css">
-  <h3>CSS</h3>
-  <p>The language that says what a page <em>looks like</em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;</code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.</p>
-</article>
-<h2 class="letter-head" id="letter-D">D</h2>
-<article class="term" id="definition-of-done" data-search="definition of done definition of done">
-  <h3>Definition of Done</h3>
-  <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.</p>
-</article>
-<article class="term" id="developer-console" data-search="developer console developer console the console devtools">
-  <h3>Developer Console</h3>
-  <p>A panel built into every browser that shows what went wrong and where. Open it with <kbd>F12</kbd>, or right-click the page and choose <em>Inspect</em>, then the <em>Console</em> tab. A <strong>red line</strong> is an error: it has a message and a line number. Copy the red line exactly and paste it to the AI. Most students do not know this panel exists; now you do.</p>
-</article>
-<article class="term" id="doctype" data-search="&lt;!doctype html&gt;  doctype">
-  <h3>&lt;!DOCTYPE html&gt;</h3>
-  <p>The very first line of every page. It tells the browser <em>this is a modern web page</em>. It is not really a tag and it never closes. It is always there and you never think about it.</p>
-</article>
-<h2 class="letter-head" id="letter-F">F</h2>
-<article class="term" id="file-extension" data-search="file extension file extension file extensions extensions shown show file extensions">
-  <h3>File extension</h3>
-  <p>The last part of a file's name, after the dot: <code>.html</code>, <code>.jpg</code>, <code>.txt</code>. It tells the computer what kind of file it is. Mac and Windows <em>hide</em> extensions by default, so a file that looks like <code>qr-code.html</code> can secretly be <code>qr-code.html.txt</code> and show a blank page. Turning extensions on is the first thing this course asks you to do.</p>
-</article>
-<h2 class="letter-head" id="letter-H">H</h2>
-<article class="term" id="h1" data-search="&lt;h1&gt; … &lt;/h1&gt; ">
-  <h3>&lt;h1&gt; … &lt;/h1&gt;</h3>
-  <p>The biggest heading on a page. <code>&lt;h2&gt;</code> through <code>&lt;h6&gt;</code> are smaller headings, in order. Changing the words between the tags is the safest edit you can make.</p>
-</article>
-<article class="term" id="hand-edit" data-search="hand edit hand edit hand edits">
-  <h3>Hand edit</h3>
-  <p>A change you make to the code yourself, in the editor, without asking the AI. This course builds up to them slowly: first the words between two tags (safe; you cannot break anything), then a number the code uses, then a date with a strict format.</p>
-</article>
-<article class="term" id="head" data-search="&lt;head&gt; … &lt;/head&gt;  the head">
-  <h3>&lt;head&gt; … &lt;/head&gt;</h3>
-  <p>The settings section of a page. Nothing inside the head shows on the page itself. It holds the <code>&lt;title&gt;</code> (the browser tab's text) and the <code>&lt;style&gt;</code> (how things look). <strong>Head or body?</strong> If a visitor can see it, it is in the body; if it is a setting, it is in the head.</p>
-</article>
-<article class="term" id="html" data-search="html html">
-  <h3>HTML</h3>
-  <p>The language that says what is <em>on</em> a page. It is mostly your own words, wrapped in tags that say what each thing is: a heading, a paragraph, a button. Stands for HyperText Markup Language, which you will never need to say out loud.</p>
-</article>
-<article class="term" id="html-tag" data-search="&lt;html&gt; … &lt;/html&gt; ">
-  <h3>&lt;html&gt; … &lt;/html&gt;</h3>
-  <p>The outermost pair of bookends. Everything on the page sits between <code>&lt;html&gt;</code> near the top and <code>&lt;/html&gt;</code> on the last line.</p>
-</article>
-<h2 class="letter-head" id="letter-I">I</h2>
-<article class="term" id="iteration" data-search="iteration iteration iterations iterate">
-  <h3>Iteration</h3>
-  <p>Asking for a change to something that already works, then another, then another. <em>Add a color picker. Now put my initials in the middle.</em> Small asks, one at a time, is the normal way to build; nobody gets the whole thing in one prompt.</p>
-</article>
-<h2 class="letter-head" id="letter-J">J</h2>
-<article class="term" id="javascript" data-search="javascript javascript">
-  <h3>JavaScript</h3>
-  <p>The language that makes a page <em>do</em> things: count down, flip a card, respond to a click. It lives inside the <code>&lt;script&gt;</code> tag. Not related to Java, despite the name.</p>
-</article>
-<h2 class="letter-head" id="letter-K">K</h2>
-<article class="term" id="keep-everything" data-search="“keep everything else the same” keep everything else the same keep everything else exactly the same">
-  <h3>“Keep everything else the same”</h3>
-  <p>The sentence to put at the end of an ask for one change. Left alone, an AI asked to change one thing will sometimes redesign three, or quietly drop a feature you added earlier. Saying what <em>not</em> to touch is part of asking well.</p>
-</article>
-<h2 class="letter-head" id="letter-L">L</h2>
-<article class="term" id="library" data-search="library library libraries">
-  <h3>Library</h3>
-  <p>Someone else's code that your page borrows, usually with one line like <code>&lt;script src="https://…"&gt;</code>. The QR code generator borrows a library that knows how to draw QR codes; nobody writes that part themselves. It is also why some pages need the internet even though they are files on your computer.</p>
-</article>
-<h2 class="letter-head" id="letter-M">M</h2>
-<article class="term" id="milliseconds" data-search="milliseconds milliseconds millisecond">
-  <h3>Milliseconds</h3>
-  <p>Thousandths of a second. JavaScript measures time in them, so <code>1000</code> means one second and <code>60000</code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.</p>
-</article>
-<h2 class="letter-head" id="letter-N">N</h2>
-<article class="term" id="nan" data-search="nan nan">
-  <h3>NaN</h3>
-  <p>“Not a Number.” What the browser says when it was asked to do math on something that is not a number - most often a date typed in a form it did not understand. If you just edited a date and see this, look at what you changed: a month over 12, a missing dash, a lost quote. Fix that one thing.</p>
-</article>
-<article class="term" id="nesting" data-search="nesting nest inside nested nesting">
-  <h3>Nesting</h3>
-  <p>Tags inside tags, like boxes inside boxes. A paragraph sits inside the body; a bit of bold sits inside the paragraph. The rule: whatever you open last, you close first.</p>
-  <pre class="sample">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</pre>
-</article>
-<h2 class="letter-head" id="letter-O">O</h2>
-<article class="term" id="bookends" data-search="opening and closing tags (bookends) bookends bookend opening tag closing tag opening and closing tags">
-  <h3>Opening and closing tags (bookends)</h3>
-  <p>The two halves of a tag pair. The <strong>opening tag</strong> says <em>start</em>: <code>&lt;p&gt;</code>. The <strong>closing tag</strong> is the same word with a slash in front and says <em>stop</em>: <code>&lt;/p&gt;</code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.</p>
-</article>
-<h2 class="letter-head" id="letter-P">P</h2>
-<article class="term" id="p" data-search="&lt;p&gt; … &lt;/p&gt; ">
-  <h3>&lt;p&gt; … &lt;/p&gt;</h3>
-  <p>A paragraph. Every paragraph gets its own pair. The browser adds a little space above and below each one, so two paragraphs look like two paragraphs. Without the tags, the words run together into one lump.</p>
-</article>
-<article class="term" id="paste-over" data-search="paste over everything paste over everything paste it over everything paste over">
-  <h3>Paste over everything</h3>
-  <p>Replacing the whole file with the AI's new version: in your editor, select all (<kbd>Ctrl</kbd>+<kbd>A</kbd>, Mac <kbd>⌘</kbd>+<kbd>A</kbd>), then paste. Not <em>adding</em> the new code below the old - replacing it. Half-pasted files are a common cause of a blank page.</p>
-</article>
-<article class="term" id="plain-text" data-search="plain text plain text plain-text">
-  <h3>Plain text</h3>
-  <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.</p>
-</article>
-<article class="term" id="prompt" data-search="prompt prompt prompts">
-  <h3>Prompt</h3>
-  <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.</p>
-</article>
-<h2 class="letter-head" id="letter-S">S</h2>
-<article class="term" id="save-as" data-search="save as save as save as">
-  <h3>Save As</h3>
-  <p>Saving a file under a name and location you choose. In this course you type the whole name yourself, including the <code>.html</code>, and pick the <code>vibe-coding</code> folder on purpose. Plain <em>Save</em> writes over the file you already have; <em>Save As</em> makes a new one.</p>
-</article>
-<article class="term" id="save-refresh" data-search="save, then refresh save and refresh save then refresh refresh the browser">
-  <h3>Save, then refresh</h3>
-  <p>The two-step loop for seeing a change. <strong>Save</strong> the file in your editor, then <strong>refresh</strong> the browser tab (the circular arrow, or <kbd>F5</kbd>, or <kbd>⌘</kbd>+<kbd>R</kbd>) so it reads the file again. If nothing changed, you skipped one of the two. This is the first thing to check, every time.</p>
-</article>
-<article class="term" id="screenshot" data-search="screenshot screenshot screenshots">
-  <h3>Screenshot</h3>
-  <p>A picture of your screen. Mac: <kbd>Shift</kbd>+<kbd>⌘</kbd>+<kbd>4</kbd>, then drag a box. Windows: <kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>. Chromebook: <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>Show windows</kbd>. You will use it for hand-ins and for showing someone exactly what went wrong.</p>
-</article>
-<article class="term" id="script" data-search="&lt;script&gt; … &lt;/script&gt;  the script">
-  <h3>&lt;script&gt; … &lt;/script&gt;</h3>
-  <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves</em> or <em>responds</em>, this is where it happens.</p>
-</article>
-<article class="term" id="self-closing" data-search="self-closing tag self-closing self-closing tag">
-  <h3>Self-closing tag</h3>
-  <p>A tag that is complete on its own, with no closing partner, because nothing goes inside it. The slash goes at the end: <code>&lt;br /&gt;</code>. You will meet <code>&lt;img … /&gt;</code> next chapter - an image has nothing inside it either.</p>
-</article>
-<article class="term" id="setinterval" data-search="setinterval setinterval">
-  <h3>setInterval</h3>
-  <p>The line of JavaScript that makes a page tick: <em>run this again every so many milliseconds</em>. <code>setInterval(update, 1000)</code> means run <code>update</code> once a second. It is the reason a countdown counts and a timer times. You will recognize it in every app that moves.</p>
-</article>
-<article class="term" id="specification" data-search="specification (the spec) specification the spec spec block">
-  <h3>Specification (the spec)</h3>
-  <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.</p>
-</article>
-<article class="term" id="strong-em" data-search="&lt;strong&gt; and &lt;em&gt;  ">
-  <h3>&lt;strong&gt; and &lt;em&gt;</h3>
-  <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;</code></p>
-</article>
-<article class="term" id="style" data-search="&lt;style&gt; … &lt;/style&gt; ">
-  <h3>&lt;style&gt; … &lt;/style&gt;</h3>
-  <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.</p>
-</article>
-<h2 class="letter-head" id="letter-T">T</h2>
-<article class="term" id="tag" data-search="tag tag tags">
-  <h3>Tag</h3>
-  <p>A word in angle brackets that tells the browser what something is: <code>&lt;h1&gt;</code> means <em>a big heading</em>, <code>&lt;p&gt;</code> means <em>a paragraph</em>. Most tags come in pairs, like bookends, with your content between them:</p>
-  <pre class="sample">&lt;h1&gt;Hello, world&lt;/h1&gt;</pre>
-  <p>The tags never show on the page. Only the words between them do.</p>
-</article>
-<article class="term" id="copy-button" data-search="the copy button copy button">
-  <h3>The Copy button</h3>
-  <p>The small button in the corner of a code block in the AI's reply. It copies the whole block, exactly. Always use it instead of selecting the code by hand, which misses the top or bottom line more often than you would think.</p>
-</article>
-<article class="term" id="six-landmarks" data-search="the six landmarks six landmarks the orientation six landmarks">
-  <h3>The six landmarks</h3>
-  <p>The six tags every page in this course has, in the same arrangement: <code>&lt;html&gt;</code> around everything; <code>&lt;head&gt;</code> for settings, holding <code>&lt;title&gt;</code> and <code>&lt;style&gt;</code>; and <code>&lt;body&gt;</code> for everything you see, with <code>&lt;script&gt;</code> usually at its end. Learn them as a map. A 300-line file becomes three rooms to look in.</p>
-</article>
-<article class="term" id="title" data-search="&lt;title&gt; … &lt;/title&gt; ">
-  <h3>&lt;title&gt; … &lt;/title&gt;</h3>
-  <p>The page's name. It lives in the head and shows on the <strong>browser tab</strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.</p>
-  <pre class="sample">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;</pre>
-</article>
-<article class="term" id="txtedtr" data-search="txtedtr txtedtr text editor plain-text editor">
-  <h3>TXTEDTR</h3>
-  <p>The plain-text editor we use in this course, at <a href="https://txtedtr.app" target="_blank" rel="noopener">txtedtr.app</a>. It is one HTML file, built with AI, by your instructor - the same kind of thing you are making. Notepad++, VS Code, or Sublime Text work too. What does not work: Word, Google Docs, TextEdit, Notepad.</p>
-</article>
-<h2 class="letter-head" id="letter-V">V</h2>
-<article class="term" id="value" data-search="value a value">
-  <h3>Value</h3>
-  <p>A fact the code uses: the <code>25</code> in a Pomodoro timer, the date in a countdown. Values often sit near the top of the script so you can find them. Changing a value changes how the whole app behaves, which is why it is a step up from changing words.</p>
-</article>
-<article class="term" id="version-copy" data-search="version copy version copy versions the version">
-  <h3>Version copy</h3>
-  <p>A duplicate of a working file, made <em>before</em> you let the AI change it: <code>pomodoro.html</code> becomes <code>pomodoro-v1.html</code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.</p>
-</article>
-<article class="term" id="vibe-coding" data-search="vibe coding vibe coding vibe code">
-  <h3>Vibe coding</h3>
-  <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.</p>
-</article>
-<h2 class="letter-head" id="letter-W">W</h2>
-<article class="term" id="web-page" data-search="web page web page web pages webpage">
-  <h3>Web page</h3>
-  <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.</p>
-</article>
-<article class="term" id="whitespace" data-search="whitespace whitespace white space indentation indented">
-  <h3>Whitespace</h3>
-  <p>Spaces, tabs, and new lines. The browser squashes any amount of it down to one space, so pressing Enter in the code does nothing and ten spaces look like one. All that neat indentation in the AI's code is for <em>you</em>, so you can see what is inside what. The browser ignores it.</p>
-</article>
+          <figure class="tree">
+            <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains three files: setup-check.html, qr-code.html, and hello.html. The last is this lab.">vibe-coding/
+          ├── setup-check.html
+          ├── qr-code.html
+          └── hello.html   <span class="here">← this lab</span></pre>
+            <figcaption>Two apps now, side by side. Each app is one file with its own name; that’s how it stays for this chapter.</figcaption>
+          </figure>
 
-<script>
-  // Filter the list as you type. Matches the term, its other spellings, and
-  // the words of its definition. Letter headings hide when their group is empty.
-  (function () {
-    const box = document.getElementById('vocab-filter');
-    const count = document.getElementById('vocab-count');
-    const terms = Array.from(document.querySelectorAll('.reading .term'));
-    const heads = Array.from(document.querySelectorAll('.letter-head'));
-    box.addEventListener('input', function () {
-      const q = box.value.trim().toLowerCase();
-      let shown = 0;
-      terms.forEach(function (t) {
-        const hit = !q || t.dataset.search.includes(q) || t.textContent.toLowerCase().includes(q);
-        t.hidden = !hit; if (hit) shown++;
-      });
-      heads.forEach(function (h) {
-        let next = h.nextElementSibling, any = false;
-        while (next && !next.classList.contains('letter-head')) { if (!next.hidden) any = true; next = next.nextElementSibling; }
-        h.hidden = !any;
-      });
-      count.textContent = shown + (shown === 1 ? ' term' : ' terms');
-    });
-  })();
-</script>
+          <h3>Troubleshooting</h3>
+          <p>Every lab has a few ways to go sideways. None of them mean you did something wrong - they mean you’re doing the lab. Scan the titles for what you’re seeing and open that one.</p>
+
+          <h4 class="group">Start here</h4>
+
+          <details class="note">
+            <summary>Nothing changed after you fixed something?</summary>
+            <div class="note-body">
+              <p>Did you save? Did you refresh? Both, every time. Edit → save → switch to the browser → refresh. Most “it’s broken” moments this semester are one of those two steps skipped.</p>
+            </div>
+          </details>
+
+          <details class="note" id="console">
+            <summary>Open the Developer Console - it tells you what broke, and where</summary>
+            <div class="note-body">
+              <p>Your browser has a hidden panel that reports exactly what went wrong and <strong>which line it went wrong on</strong> - even when the page itself shows nothing. That’s far more useful than guessing, and it’s what you paste to the AI. Open it with:</p>
+              <table class="shortcuts">
+                <tr><th scope="row">Chrome, Edge, Brave</th><td><kbd>F12</kbd>, or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>J</kbd> (Mac: <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>J</kbd>)</td></tr>
+                <tr><th scope="row">Firefox</th><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (Mac: <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>K</kbd>)</td></tr>
+                <tr><th scope="row">Safari</th><td>Once: Safari → Settings → Advanced → turn on <em>Show features for web developers</em>. Then <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>C</kbd></td></tr>
+                <tr><th scope="row">Any browser</th><td>Right-click the page → <strong>Inspect</strong> → click the <strong>Console</strong> tab</td></tr>
+              </table>
+              <p>What you’re looking for: <strong>red lines</strong>. Each one has a message (what broke) and, at the right, a file name and a number like <code>countdown.html:42</code> (where - line 42). Copy the message exactly and paste it to the AI. The line number tells you where to look in your editor if you’re curious.</p>
+            </div>
+          </details>
+
+          <h4 class="group">This lab</h4>
+
+          <details class="flag">
+            <summary>Blank page, and I typed it myself</summary>
+            <div class="flag-body">
+              <p>Typos. Compare yours to the AI’s version line by line - a missing <code>&gt;</code> is the usual one, or an opening tag with no closing partner. Or paste yours to the AI and ask <em>“what’s wrong with this?”</em> Same loop as always.</p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary>The heading shows the tags too, like <code>&lt;h1&gt;Hello&lt;/h1&gt;</code></summary>
+            <div class="flag-body">
+              <p>The file was saved as plain text instead of HTML - either the name ends in <code>.txt</code>, or the editor isn’t TXTEDTR. Check the file’s full name; it has to end in <code>.html</code> and nothing else.</p>
+            </div>
+          </details>
+
+          <h4 class="group">Every lab</h4>
+
+          <details class="flag">
+            <summary>A blank page, or red text on it</summary>
+            <div class="flag-body">
+              <p>The file is fine. Something in it broke - and a blank page is the browser giving up quietly rather than telling you. <strong>Open the Developer Console</strong> (see above). There will almost always be a red line there, even though the page shows nothing. <strong>Copy the exact message</strong> - not “it’s broken” - and paste it to the AI with “I got this error.” Then copy the fixed code, paste it over everything, save, refresh.</p>
+              <p>This is the loop: console → red text → copy it exactly → paste it back. You’ll use it all semester, and the difference between quoting the error and describing it is enormous.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>Double-clicking opens the code, not the page</summary>
+            <div class="flag-body">
+              <p>Your computer sent the <code>.html</code> file to a text editor. Right-click the file → <strong>Open with</strong> → pick your browser. Or drag the file onto an open browser window.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>The file ends in <code>.html.txt</code></summary>
+            <div class="flag-body">
+              <p>Your editor added <code>.txt</code>. If you can’t see file extensions, turn them on (Mac: Finder → Settings → Advanced. Windows: File Explorer → View → File name extensions). Then rename the file to end in <code>.html</code> and nothing else.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>Blank page, and the console is empty too</summary>
+            <div class="flag-body">
+              <p>No red line and nothing on the page usually means the browser never got a whole page. Scroll to the bottom of your file - it should end with <code>&lt;/html&gt;</code>. If it doesn’t, you copied only part of the code: go back to the AI’s reply and use the <strong>Copy</strong> button on the code block, not select-and-drag. Also check the file really ends in <code>.html</code> and not <code>.txt</code>.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>The AI gave you two or three separate files</summary>
+            <div class="flag-body">
+              <p>Sometimes it splits the HTML, CSS, and JavaScript apart even when asked not to. Tell it: <em>“put everything in one HTML file, please.”</em> That line in the specification is there for exactly this.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>You pasted through a Word document or email first</summary>
+            <div class="flag-body">
+              <p>Word-processor-shaped things turn straight quotes <code>"</code> into curly ones <code>“ ”</code>, and code can’t read curly quotes. Go back to the AI’s code block and copy it straight into your editor.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>You can’t find the file you saved</summary>
+            <div class="flag-body">
+              <p>It probably landed in Downloads. Search your computer for the file name you gave it, move it into your course folder, and from now on use <strong>Save as</strong> and pick the folder deliberately.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+      <!-- ============ 4 - READ IT ============ -->
+      <section class="step" data-step="4" data-beat="read">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">4</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-4">
+            <h2>Read it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-4" hidden>
+          <p>You typed this one, so you already know every line. Now name them. Six tags are the map of <em>every</em> file you’ll meet in this course - a 300-line wall collapses into a few places to look.</p>
+
+          <div class="q">
+            <p><strong>Which of these six does your page have?</strong> <code>&lt;html&gt;</code> <code>&lt;head&gt;</code> <code>&lt;body&gt;</code> <code>&lt;title&gt;</code> <code>&lt;style&gt;</code> <code>&lt;script&gt;</code></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+            <div class="answer" id="ans-1" hidden>Four of six. No <code>&lt;style&gt;</code> and no <code>&lt;script&gt;</code> - a page doesn’t <em>need</em> them. The QR generator had all six: <code>&lt;style&gt;</code> is where all the looks live, and <code>&lt;script&gt;</code> is where all the behavior lives. When they’re present, that’s where to go looking.</div>
+          </div>
+
+          <div class="q">
+            <p><strong>What’s the difference between what’s inside <code>&lt;head&gt;</code> and what’s inside <code>&lt;body&gt;</code>?</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+            <div class="answer" id="ans-2" hidden>Head: settings - nothing in there shows on the page. Body: everything you can see. Your <code>&lt;title&gt;</code> is in the head and shows on the tab, not the page. That’s the whole idea in one example.</div>
+          </div>
+        </div>
+      </section>
+      <!-- ============ 5 - MAKE IT YOURS ============ -->
+      <section class="step" data-step="5" data-beat="yours">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">5</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-5">
+            <h2>Make it yours</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-5" hidden>
+          <p>Change the heading text - the words between <code>&lt;h1&gt;</code> and <code>&lt;/h1&gt;</code>. Change the title too. Save, refresh. Both changed: one on the page, one on the tab.</p>
+          <p>Two edits you now trust completely.</p>
+        </div>
+      </section>
+      <!-- ============ 6 - GROW IT ============ -->
+      <section class="step" data-step="6" data-beat="grow">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">6</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-6">
+            <h2>Grow it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-6" hidden>
+          <p>No AI for this one. <strong>Wreck the spacing.</strong> Put the whole file on one line. Save, refresh. Same page. Now put every tag on its own line with ten spaces in front of it. Save, refresh. Same page.</p>
+          <p>The browser ignores spacing. The spacing is for <em>you</em> - so you can find things. That’s why the AI indents its code, and why you never have to worry about getting it “right.” Put it back to something you can read, and save.</p>
+        </div>
+      </section>
+      <!-- ============ 7 - KEEP IT ============ -->
+      <section class="step" data-step="7" data-beat="keep">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">7</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-7">
+            <h2>Keep it</h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-7" hidden>
+          <ul>
+            <li><code>vibe-coding/hello.html</code>. It stays.</li>
+            <li>No version copy needed - you didn’t let the AI change it.</li>
+            <!-- BOARD (parked until the Lessons Learned board opens - restore this line, drop the one below):
+            <li>Anything surprise you? A typo that produced a blank page, most likely. <strong>Post it to the board.</strong></li>
+            -->
+            <li>Anything surprise you? A typo that produced a blank page, most likely. <strong>Write it down</strong> - what happened, what fixed it.</li>
+          </ul>
+        </div>
+      </section>
     </main>
 
+    <section class="panel" aria-labelledby="dod-title">
+      <h2 id="dod-title">Definition of Done</h2>
+      <p>The file opens in your browser and shows your own heading.</p>
+    </section>
+
+
+
+    <!-- SUBMIT LINK - paste the LMS submission URL on the submit: line in the lab source
+         and rebuild, or replace the # in the href below. -->
+    <a class="submit-card" href="#" target="_blank" rel="noopener">
+      <span class="submit-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </span>
+      <span class="submit-text">Click here to submit your work.</span>
+    </a>
+
     <footer>
-      <span>Every demo on this page runs right here, in your browser. Nothing you type is sent anywhere.</span>
+      <span>Your progress on this page is saved on this device only.</span>
+      <button class="btn danger" id="reset">Start over</button>
     </footer>
 
   </div>
 
+  <div id="report-print" aria-hidden="true"></div>
   <div class="sr-only" aria-live="polite" id="announce"></div>
 
   <!-- The vocabulary pop-up. Empty until a term is clicked; filled by shared/vocab.js. -->
@@ -1407,13 +1316,166 @@ Canandaigua, NY 14424</pre>
   </script>
   <!-- The vocabulary: definitions inlined by the build from shared/vocabulary.html. -->
   <script>
-    const VOCAB = {};
+    const VOCAB = {"web-page":{"title":"Web page","match":["web page","web pages","webpage"],"html":"  <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.<\/p>"},"browser":{"title":"Browser","match":["browser","browsers"],"html":"  <p>The program that reads web page files and draws them on your screen: Chrome, Safari, Edge, Firefox. It reads the file top to bottom and follows the instructions in it. When you double-click an <code>.html<\/code> file, this is what opens.<\/p>"},"html":{"title":"HTML","match":["HTML"],"html":"  <p>The language that says what is <em>on<\/em> a page. It is mostly your own words, wrapped in tags that say what each thing is: a heading, a paragraph, a button. Stands for HyperText Markup Language, which you will never need to say out loud.<\/p>"},"css":{"title":"CSS","match":["CSS"],"html":"  <p>The language that says what a page <em>looks like<\/em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;<\/code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.<\/p>"},"javascript":{"title":"JavaScript","match":["JavaScript"],"html":"  <p>The language that makes a page <em>do<\/em> things: count down, flip a card, respond to a click. It lives inside the <code>&lt;script&gt;<\/code> tag. Not related to Java, despite the name.<\/p>"},"vibe-coding":{"title":"Vibe coding","match":["vibe coding","vibe code"],"html":"  <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.<\/p>"},"tag":{"title":"Tag","match":["tag","tags"],"html":"  <p>A word in angle brackets that tells the browser what something is: <code>&lt;h1&gt;<\/code> means <em>a big heading<\/em>, <code>&lt;p&gt;<\/code> means <em>a paragraph<\/em>. Most tags come in pairs, like bookends, with your content between them:<\/p>\n  <pre class=\"sample\">&lt;h1&gt;Hello, world&lt;/h1&gt;<\/pre>\n  <p>The tags never show on the page. Only the words between them do.<\/p>"},"bookends":{"title":"Opening and closing tags (bookends)","match":["bookends","bookend","opening tag","closing tag","opening and closing tags"],"html":"  <p>The two halves of a tag pair. The <strong>opening tag<\/strong> says <em>start<\/em>: <code>&lt;p&gt;<\/code>. The <strong>closing tag<\/strong> is the same word with a slash in front and says <em>stop<\/em>: <code>&lt;/p&gt;<\/code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.<\/p>"},"content":{"title":"Content","match":["the content"],"html":"  <p>The words between a pair of tags - the part that actually shows on the page. In <code>&lt;h1&gt;Hello, world&lt;/h1&gt;<\/code>, the content is <em>Hello, world<\/em>. Changing content is always safe; you cannot break a page by changing the words between two tags.<\/p>"},"nesting":{"title":"Nesting","match":["nest inside","nested","nesting"],"html":"  <p>Tags inside tags, like boxes inside boxes. A paragraph sits inside the body; a bit of bold sits inside the paragraph. The rule: whatever you open last, you close first.<\/p>\n  <pre class=\"sample\">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;<\/pre>"},"six-landmarks":{"title":"The six landmarks","match":["six landmarks","the orientation six","landmarks"],"html":"  <p>The six tags every page in this course has, in the same arrangement: <code>&lt;html&gt;<\/code> around everything; <code>&lt;head&gt;<\/code> for settings, holding <code>&lt;title&gt;<\/code> and <code>&lt;style&gt;<\/code>; and <code>&lt;body&gt;<\/code> for everything you see, with <code>&lt;script&gt;<\/code> usually at its end. Learn them as a map. A 300-line file becomes three rooms to look in.<\/p>"},"doctype":{"title":"&lt;!DOCTYPE html&gt;","match":["<!DOCTYPE html>","doctype"],"html":"  <p>The very first line of every page. It tells the browser <em>this is a modern web page<\/em>. It is not really a tag and it never closes. It is always there and you never think about it.<\/p>"},"html-tag":{"title":"&lt;html&gt; … &lt;/html&gt;","match":["<html>"],"html":"  <p>The outermost pair of bookends. Everything on the page sits between <code>&lt;html&gt;<\/code> near the top and <code>&lt;/html&gt;<\/code> on the last line.<\/p>"},"head":{"title":"&lt;head&gt; … &lt;/head&gt;","match":["<head>","the head"],"html":"  <p>The settings section of a page. Nothing inside the head shows on the page itself. It holds the <code>&lt;title&gt;<\/code> (the browser tab's text) and the <code>&lt;style&gt;<\/code> (how things look). <strong>Head or body?<\/strong> If a visitor can see it, it is in the body; if it is a setting, it is in the head.<\/p>"},"body":{"title":"&lt;body&gt; … &lt;/body&gt;","match":["<body>","the body"],"html":"  <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;<\/code> usually sits at the very end of the body.<\/p>"},"title":{"title":"&lt;title&gt; … &lt;/title&gt;","match":["<title>"],"html":"  <p>The page's name. It lives in the head and shows on the <strong>browser tab<\/strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.<\/p>\n  <pre class=\"sample\">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;<\/pre>"},"style":{"title":"&lt;style&gt; … &lt;/style&gt;","match":["<style>"],"html":"  <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.<\/p>"},"script":{"title":"&lt;script&gt; … &lt;/script&gt;","match":["<script>","the script"],"html":"  <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves<\/em> or <em>responds<\/em>, this is where it happens.<\/p>"},"h1":{"title":"&lt;h1&gt; … &lt;/h1&gt;","match":["<h1>"],"html":"  <p>The biggest heading on a page. <code>&lt;h2&gt;<\/code> through <code>&lt;h6&gt;<\/code> are smaller headings, in order. Changing the words between the tags is the safest edit you can make.<\/p>"},"p":{"title":"&lt;p&gt; … &lt;/p&gt;","match":["<p>"],"html":"  <p>A paragraph. Every paragraph gets its own pair. The browser adds a little space above and below each one, so two paragraphs look like two paragraphs. Without the tags, the words run together into one lump.<\/p>"},"br":{"title":"&lt;br /&gt;","match":["<br />","<br>","line break","line breaks"],"html":"  <p>A line break: <em>end the line here<\/em>, inside a paragraph. For the lines of an address, a poem, an ingredient list. It has no closing tag, because nothing goes inside a line break; instead the slash goes at the end. Two in a row make a blank line. But for a new <em>thought<\/em>, use <code>&lt;p&gt;<\/code>, not a pile of <code>&lt;br /&gt;<\/code>s.<\/p>\n  <pre class=\"sample\">3325 Marvin Sands Drive&lt;br /&gt;\nCanandaigua, NY 14424<\/pre>"},"self-closing":{"title":"Self-closing tag","match":["self-closing","self-closing tag"],"html":"  <p>A tag that is complete on its own, with no closing partner, because nothing goes inside it. The slash goes at the end: <code>&lt;br /&gt;<\/code>. You will meet <code>&lt;img … /&gt;<\/code> next chapter - an image has nothing inside it either.<\/p>"},"strong-em":{"title":"&lt;strong&gt; and &lt;em&gt;","match":["<strong>","<em>"],"html":"  <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;<\/code><\/p>"},"button":{"title":"&lt;button&gt; … &lt;/button&gt;","match":["<button>"],"html":"  <p>A thing to press. The words between the tags are its label. What the button <em>says<\/em> is HTML; what it <em>does<\/em> is JavaScript, somewhere in the script.<\/p>"},"whitespace":{"title":"Whitespace","match":["whitespace","white space","indentation","indented"],"html":"  <p>Spaces, tabs, and new lines. The browser squashes any amount of it down to one space, so pressing Enter in the code does nothing and ten spaces look like one. All that neat indentation in the AI's code is for <em>you<\/em>, so you can see what is inside what. The browser ignores it.<\/p>"},"comment":{"title":"Comment","match":["comment","comments","commented out"],"html":"  <p>A note in the code that the browser skips completely. For people, not machines. In HTML: <code>&lt;!-- like this --&gt;<\/code>. In JavaScript: a line starting with <code>//<\/code>. The AI writes lots of them, one above nearly every block, saying what the block does in plain language. They are the first place to look when you want to change something.<\/p>"},"file-extension":{"title":"File extension","match":["file extension","file extensions","extensions shown","show file extensions"],"html":"  <p>The last part of a file's name, after the dot: <code>.html<\/code>, <code>.jpg<\/code>, <code>.txt<\/code>. It tells the computer what kind of file it is. Mac and Windows <em>hide<\/em> extensions by default, so a file that looks like <code>qr-code.html<\/code> can secretly be <code>qr-code.html.txt<\/code> and show a blank page. Turning extensions on is the first thing this course asks you to do.<\/p>"},"plain-text":{"title":"Plain text","match":["plain text","plain-text"],"html":"  <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.<\/p>"},"txtedtr":{"title":"TXTEDTR","match":["TXTEDTR","text editor","plain-text editor"],"html":"  <p>The plain-text editor we use in this course, at <a href=\"https://txtedtr.app\" target=\"_blank\" rel=\"noopener\">txtedtr.app<\/a>. It is one HTML file, built with AI, by your instructor - the same kind of thing you are making. Notepad++, VS Code, or Sublime Text work too. What does not work: Word, Google Docs, TextEdit, Notepad.<\/p>"},"save-as":{"title":"Save As","match":["Save As","Save as"],"html":"  <p>Saving a file under a name and location you choose. In this course you type the whole name yourself, including the <code>.html<\/code>, and pick the <code>vibe-coding<\/code> folder on purpose. Plain <em>Save<\/em> writes over the file you already have; <em>Save As<\/em> makes a new one.<\/p>"},"save-refresh":{"title":"Save, then refresh","match":["save and refresh","save then refresh","refresh the browser"],"html":"  <p>The two-step loop for seeing a change. <strong>Save<\/strong> the file in your editor, then <strong>refresh<\/strong> the browser tab (the circular arrow, or <kbd>F5<\/kbd>, or <kbd>⌘<\/kbd>+<kbd>R<\/kbd>) so it reads the file again. If nothing changed, you skipped one of the two. This is the first thing to check, every time.<\/p>"},"copy-button":{"title":"The Copy button","match":["Copy button"],"html":"  <p>The small button in the corner of a code block in the AI's reply. It copies the whole block, exactly. Always use it instead of selecting the code by hand, which misses the top or bottom line more often than you would think.<\/p>"},"paste-over":{"title":"Paste over everything","match":["paste over everything","paste it over everything","paste over"],"html":"  <p>Replacing the whole file with the AI's new version: in your editor, select all (<kbd>Ctrl<\/kbd>+<kbd>A<\/kbd>, Mac <kbd>⌘<\/kbd>+<kbd>A<\/kbd>), then paste. Not <em>adding<\/em> the new code below the old - replacing it. Half-pasted files are a common cause of a blank page.<\/p>"},"version-copy":{"title":"Version copy","match":["version copy","versions","the version"],"html":"  <p>A duplicate of a working file, made <em>before<\/em> you let the AI change it: <code>pomodoro.html<\/code> becomes <code>pomodoro-v1.html<\/code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.<\/p>"},"developer-console":{"title":"Developer Console","match":["Developer Console","the console","DevTools"],"html":"  <p>A panel built into every browser that shows what went wrong and where. Open it with <kbd>F12<\/kbd>, or right-click the page and choose <em>Inspect<\/em>, then the <em>Console<\/em> tab. A <strong>red line<\/strong> is an error: it has a message and a line number. Copy the red line exactly and paste it to the AI. Most students do not know this panel exists; now you do.<\/p>"},"library":{"title":"Library","match":["library","libraries"],"html":"  <p>Someone else's code that your page borrows, usually with one line like <code>&lt;script src=\"https://…\"&gt;<\/code>. The QR code generator borrows a library that knows how to draw QR codes; nobody writes that part themselves. It is also why some pages need the internet even though they are files on your computer.<\/p>"},"screenshot":{"title":"Screenshot","match":["screenshot","screenshots"],"html":"  <p>A picture of your screen. Mac: <kbd>Shift<\/kbd>+<kbd>⌘<\/kbd>+<kbd>4<\/kbd>, then drag a box. Windows: <kbd>Win<\/kbd>+<kbd>Shift<\/kbd>+<kbd>S<\/kbd>. Chromebook: <kbd>Shift<\/kbd>+<kbd>Ctrl<\/kbd>+<kbd>Show windows<\/kbd>. You will use it for hand-ins and for showing someone exactly what went wrong.<\/p>"},"prompt":{"title":"Prompt","match":["prompt","prompts"],"html":"  <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.<\/p>"},"specification":{"title":"Specification (the spec)","match":["specification","the spec","spec block"],"html":"  <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.<\/p>"},"iteration":{"title":"Iteration","match":["iteration","iterations","iterate"],"html":"  <p>Asking for a change to something that already works, then another, then another. <em>Add a color picker. Now put my initials in the middle.<\/em> Small asks, one at a time, is the normal way to build; nobody gets the whole thing in one prompt.<\/p>"},"keep-everything":{"title":"“Keep everything else the same”","match":["keep everything else the same","keep everything else exactly the same"],"html":"  <p>The sentence to put at the end of an ask for one change. Left alone, an AI asked to change one thing will sometimes redesign three, or quietly drop a feature you added earlier. Saying what <em>not<\/em> to touch is part of asking well.<\/p>"},"hand-edit":{"title":"Hand edit","match":["hand edit","hand edits"],"html":"  <p>A change you make to the code yourself, in the editor, without asking the AI. This course builds up to them slowly: first the words between two tags (safe; you cannot break anything), then a number the code uses, then a date with a strict format.<\/p>"},"definition-of-done":{"title":"Definition of Done","match":["Definition of Done"],"html":"  <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.<\/p>"},"setinterval":{"title":"setInterval","match":["setInterval"],"html":"  <p>The line of JavaScript that makes a page tick: <em>run this again every so many milliseconds<\/em>. <code>setInterval(update, 1000)<\/code> means run <code>update<\/code> once a second. It is the reason a countdown counts and a timer times. You will recognize it in every app that moves.<\/p>"},"milliseconds":{"title":"Milliseconds","match":["milliseconds","millisecond"],"html":"  <p>Thousandths of a second. JavaScript measures time in them, so <code>1000<\/code> means one second and <code>60000<\/code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.<\/p>"},"nan":{"title":"NaN","match":["NaN"],"html":"  <p>“Not a Number.” What the browser says when it was asked to do math on something that is not a number - most often a date typed in a form it did not understand. If you just edited a date and see this, look at what you changed: a month over 12, a missing dash, a lost quote. Fix that one thing.<\/p>"},"value":{"title":"Value","match":["a value"],"html":"  <p>A fact the code uses: the <code>25<\/code> in a Pomodoro timer, the date in a countdown. Values often sit near the top of the script so you can find them. Changing a value changes how the whole app behaves, which is why it is a step up from changing words.<\/p>"}};
   </script>
   <script>
+    /* ====================================================================
+       Vibe Coding - vocabulary pop-ups
+       Inlined by the build into every lab and reading, after lab.js.
 
-  </script>
-  <script>
+       The build also inlines a VOCAB object (from shared/vocabulary.html):
 
+         VOCAB = {
+           "tag": { title: "Tag", match: ["tag", "tags"], html: "<p>...</p>" },
+           ...
+         }
+
+       What this script does:
+         1. Walks the text of the page and, the FIRST time a vocabulary term
+            appears in each step (or each section, on a reading), wraps that
+            word in a small button. Later mentions in the same step are left
+            alone, so a page is not covered in links.
+         2. Clicking the button opens a small pop-up (a native <dialog>) with
+            the term's definition and a link to the full vocabulary page.
+
+       It never touches code samples in <pre>, the demo <textarea>s, links,
+       other buttons, headings, or the pretend-browser chrome. Inline <code>
+       IS allowed, on purpose: that is where "<title>" appears in a sentence.
+       ==================================================================== */
+    (function () {
+      'use strict';
+      if (typeof VOCAB !== 'object' || !VOCAB) return;
+      const dialog = document.getElementById('vocab-dialog');
+      if (!dialog) return;
+
+      // ---------------------------------------------------------------
+      // 1. ONE REGULAR EXPRESSION FOR EVERY SPELLING OF EVERY TERM
+      // Longest spellings first, so "opening tag" wins over "tag".
+      // ---------------------------------------------------------------
+      const spellings = [];             // [{ text, id }]
+      Object.keys(VOCAB).forEach(function (id) {
+        (VOCAB[id].match || []).forEach(function (text) {
+          if (text.trim()) spellings.push({ text: text.trim(), id: id });
+        });
+      });
+      spellings.sort(function (a, b) { return b.text.length - a.text.length; });
+      const byLower = {};
+      spellings.forEach(function (s) { byLower[s.text.toLowerCase()] = s.id; });
+
+      function escapeRegex(text) { return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+      const pattern = new RegExp(spellings.map(function (s) { return escapeRegex(s.text); }).join('|'), 'gi');
+
+      // A match only counts if it is a whole word: no letter or digit directly
+      // before it (when it starts with one) or after it (when it ends with one).
+      // "tag" must not light up inside "tags" or "stage".
+      // Dots, hyphens, slashes and underscores count as glue too, so "html" does
+      // not light up inside the file name "qr-code.html".
+      const GLUE = /[\w.\-\/_]/;
+      function isWholeWord(text, start, end) {
+        const first = text[start], last = text[end - 1];
+        const before = text[start - 1] || ' ', after = text[end] || ' ';
+        if (/\w/.test(first) && GLUE.test(before)) return false;
+        if (/\w/.test(last) && GLUE.test(after)) return false;
+        return true;
+      }
+
+      // ---------------------------------------------------------------
+      // 2. WHERE NOT TO LOOK
+      // ---------------------------------------------------------------
+      const SKIP = 'pre, textarea, svg, a, button, label, input, select, script, style, h1, h2, dialog, .fake-chrome, .contents, .ribbon, .term-link, .tools-note, .submit-card';
+
+      function skippable(node) {
+        for (let el = node.parentElement; el; el = el.parentElement) {
+          if (el.matches(SKIP)) return true;
+        }
+        return false;
+      }
+
+      // ---------------------------------------------------------------
+      // 3. LINK THE FIRST MENTION OF EACH TERM IN EACH BLOCK
+      // A "block" is a step body on a lab, or a section on a reading.
+      // ---------------------------------------------------------------
+      const main = document.getElementById('main');
+      if (!main) return;
+      let blocks = Array.from(main.querySelectorAll('.step-body, :scope > section'));
+      if (!blocks.length) blocks = [main];
+
+      blocks.forEach(function (block) {
+        const seen = new Set();
+        const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        let node;
+        while ((node = walker.nextNode())) {
+          if (node.nodeValue.trim() && !skippable(node)) textNodes.push(node);
+        }
+        textNodes.forEach(function (textNode) { linkTerms(textNode, seen); });
+      });
+
+      function linkTerms(textNode, seen) {
+        const text = textNode.nodeValue;
+        pattern.lastIndex = 0;
+        let match, last = 0;
+        const pieces = [];
+        while ((match = pattern.exec(text))) {
+          const start = match.index, end = start + match[0].length;
+          const id = byLower[match[0].toLowerCase()];
+          if (!id || seen.has(id) || !isWholeWord(text, start, end)) continue;
+          seen.add(id);
+          pieces.push(document.createTextNode(text.slice(last, start)));
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'term-link';
+          button.dataset.term = id;
+          button.textContent = match[0];
+          button.setAttribute('aria-label', match[0] + ' - show definition');
+          pieces.push(button);
+          last = end;
+        }
+        if (!pieces.length) return;
+        pieces.push(document.createTextNode(text.slice(last)));
+        const parent = textNode.parentNode;
+        pieces.forEach(function (piece) { parent.insertBefore(piece, textNode); });
+        parent.removeChild(textNode);
+      }
+
+      // ---------------------------------------------------------------
+      // 4. THE POP-UP
+      // A native <dialog>: Escape closes it, focus stays inside it, and the
+      // page behind is dimmed. When it closes, focus goes back to the word
+      // that opened it.
+      // ---------------------------------------------------------------
+      const titleEl = dialog.querySelector('#vocab-title');
+      const bodyEl  = dialog.querySelector('#vocab-body');
+      const moreEl  = dialog.querySelector('#vocab-more');
+      let opener = null;
+
+      function open(id, button) {
+        const entry = VOCAB[id];
+        if (!entry) return;
+        opener = button;
+        titleEl.innerHTML = entry.title;
+        // The definition HTML comes from shared/vocabulary.html, written by the
+        // course author and inlined at build time - not from anything a visitor
+        // typed - so putting it in with innerHTML is safe here.
+        bodyEl.innerHTML = entry.html;
+        if (moreEl) moreEl.hash = '#' + id;
+        if (typeof dialog.showModal === 'function') { dialog.showModal(); } else { dialog.setAttribute('open', ''); }
+      }
+
+      document.addEventListener('click', function (e) {
+        const button = e.target.closest('.term-link');
+        if (button) { e.preventDefault(); open(button.dataset.term, button); }
+      });
+
+      dialog.querySelector('#vocab-close').addEventListener('click', function () { dialog.close(); });
+      // Clicking the dimmed backdrop (outside the pop-up's box) closes it too.
+      dialog.addEventListener('click', function (e) {
+        const box = dialog.getBoundingClientRect();
+        const outside = e.clientX < box.left || e.clientX > box.right || e.clientY < box.top || e.clientY > box.bottom;
+        if (outside) dialog.close();
+      });
+      dialog.addEventListener('close', function () { if (opener) { opener.focus(); opener = null; } });
+    })();
   </script>
 </body>
 </html>
