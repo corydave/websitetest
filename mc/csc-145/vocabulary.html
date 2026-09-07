@@ -1,0 +1,281 @@
+<!--
+  Vibe Coding - the running vocabulary. ONE place for every term.
+
+  The build does two things with this file:
+    1. Publishes it as publish/vocabulary.html, alphabetical, searchable.
+    2. Inlines the definitions into every lab and reading, where the first
+       time a term appears in each step or section it becomes a clickable
+       word that opens a small pop-up with the definition.
+
+  One entry looks like this:
+
+    <article class="term" id="tag" data-match="tag, tags">
+      <h3>Tag</h3>
+      <p>Plain-language definition. Examples and small illustrations are welcome.</p>
+    </article>
+
+  - id: a short unique slug. It is the anchor on the vocabulary page.
+  - data-match: every spelling that should become clickable in the course,
+    comma-separated. Matching ignores case. Leave a word out of data-match
+    if it is too common to link (we don't link "value" or "folder").
+  - <h3>: how the term is shown. Everything after the <h3> is the definition.
+
+  House rules: hyphens, never em dashes. Plain language. If an example helps,
+  put it in <code> or a <pre class="sample">. Keep each entry short enough to
+  read in a pop-up.
+
+  Terms arrive when the course needs them (the bank's rule: introduce a word
+  the moment it's needed). Chapter 1's terms are here; add each chapter's as
+  it is built.
+-->
+
+<!-- ============ THE BIG PICTURE ============ -->
+
+<article class="term" id="web-page" data-match="web page, web pages, webpage">
+  <h3>Web page</h3>
+  <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.</p>
+</article>
+
+<article class="term" id="browser" data-match="browser, browsers">
+  <h3>Browser</h3>
+  <p>The program that reads web page files and draws them on your screen: Chrome, Safari, Edge, Firefox. It reads the file top to bottom and follows the instructions in it. When you double-click an <code>.html</code> file, this is what opens.</p>
+</article>
+
+<article class="term" id="html" data-match="HTML">
+  <h3>HTML</h3>
+  <p>The language that says what is <em>on</em> a page. It is mostly your own words, wrapped in tags that say what each thing is: a heading, a paragraph, a button. Stands for HyperText Markup Language, which you will never need to say out loud.</p>
+</article>
+
+<article class="term" id="css" data-match="CSS">
+  <h3>CSS</h3>
+  <p>The language that says what a page <em>looks like</em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;</code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.</p>
+</article>
+
+<article class="term" id="javascript" data-match="JavaScript">
+  <h3>JavaScript</h3>
+  <p>The language that makes a page <em>do</em> things: count down, flip a card, respond to a click. It lives inside the <code>&lt;script&gt;</code> tag. Not related to Java, despite the name.</p>
+</article>
+
+<article class="term" id="vibe-coding" data-match="vibe coding, vibe code">
+  <h3>Vibe coding</h3>
+  <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.</p>
+</article>
+
+<!-- ============ TAGS AND THE SIX LANDMARKS ============ -->
+
+<article class="term" id="tag" data-match="tag, tags">
+  <h3>Tag</h3>
+  <p>A word in angle brackets that tells the browser what something is: <code>&lt;h1&gt;</code> means <em>a big heading</em>, <code>&lt;p&gt;</code> means <em>a paragraph</em>. Most tags come in pairs, like bookends, with your content between them:</p>
+  <pre class="sample">&lt;h1&gt;Hello, world&lt;/h1&gt;</pre>
+  <p>The tags never show on the page. Only the words between them do.</p>
+</article>
+
+<article class="term" id="bookends" data-match="bookends, bookend, opening tag, closing tag, opening and closing tags">
+  <h3>Opening and closing tags (bookends)</h3>
+  <p>The two halves of a tag pair. The <strong>opening tag</strong> says <em>start</em>: <code>&lt;p&gt;</code>. The <strong>closing tag</strong> is the same word with a slash in front and says <em>stop</em>: <code>&lt;/p&gt;</code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.</p>
+</article>
+
+<article class="term" id="content" data-match="the content">
+  <h3>Content</h3>
+  <p>The words between a pair of tags - the part that actually shows on the page. In <code>&lt;h1&gt;Hello, world&lt;/h1&gt;</code>, the content is <em>Hello, world</em>. Changing content is always safe; you cannot break a page by changing the words between two tags.</p>
+</article>
+
+<article class="term" id="nesting" data-match="nest inside, nested, nesting">
+  <h3>Nesting</h3>
+  <p>Tags inside tags, like boxes inside boxes. A paragraph sits inside the body; a bit of bold sits inside the paragraph. The rule: whatever you open last, you close first.</p>
+  <pre class="sample">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</pre>
+</article>
+
+<article class="term" id="six-landmarks" data-match="six landmarks, the orientation six, landmarks">
+  <h3>The six landmarks</h3>
+  <p>The six tags every page in this course has, in the same arrangement: <code>&lt;html&gt;</code> around everything; <code>&lt;head&gt;</code> for settings, holding <code>&lt;title&gt;</code> and <code>&lt;style&gt;</code>; and <code>&lt;body&gt;</code> for everything you see, with <code>&lt;script&gt;</code> usually at its end. Learn them as a map. A 300-line file becomes three rooms to look in.</p>
+</article>
+
+<article class="term" id="doctype" data-match="<!DOCTYPE html>, doctype">
+  <h3>&lt;!DOCTYPE html&gt;</h3>
+  <p>The very first line of every page. It tells the browser <em>this is a modern web page</em>. It is not really a tag and it never closes. It is always there and you never think about it.</p>
+</article>
+
+<article class="term" id="html-tag" data-match="<html>">
+  <h3>&lt;html&gt; … &lt;/html&gt;</h3>
+  <p>The outermost pair of bookends. Everything on the page sits between <code>&lt;html&gt;</code> near the top and <code>&lt;/html&gt;</code> on the last line.</p>
+</article>
+
+<article class="term" id="head" data-match="<head>, the head">
+  <h3>&lt;head&gt; … &lt;/head&gt;</h3>
+  <p>The settings section of a page. Nothing inside the head shows on the page itself. It holds the <code>&lt;title&gt;</code> (the browser tab's text) and the <code>&lt;style&gt;</code> (how things look). <strong>Head or body?</strong> If a visitor can see it, it is in the body; if it is a setting, it is in the head.</p>
+</article>
+
+<article class="term" id="body" data-match="<body>, the body">
+  <h3>&lt;body&gt; … &lt;/body&gt;</h3>
+  <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;</code> usually sits at the very end of the body.</p>
+</article>
+
+<article class="term" id="title" data-match="<title>">
+  <h3>&lt;title&gt; … &lt;/title&gt;</h3>
+  <p>The page's name. It lives in the head and shows on the <strong>browser tab</strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.</p>
+  <pre class="sample">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;</pre>
+</article>
+
+<article class="term" id="style" data-match="<style>">
+  <h3>&lt;style&gt; … &lt;/style&gt;</h3>
+  <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.</p>
+</article>
+
+<article class="term" id="script" data-match="<script>, the script">
+  <h3>&lt;script&gt; … &lt;/script&gt;</h3>
+  <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves</em> or <em>responds</em>, this is where it happens.</p>
+</article>
+
+<article class="term" id="h1" data-match="<h1>">
+  <h3>&lt;h1&gt; … &lt;/h1&gt;</h3>
+  <p>The biggest heading on a page. <code>&lt;h2&gt;</code> through <code>&lt;h6&gt;</code> are smaller headings, in order. Changing the words between the tags is the safest edit you can make.</p>
+</article>
+
+<article class="term" id="p" data-match="<p>">
+  <h3>&lt;p&gt; … &lt;/p&gt;</h3>
+  <p>A paragraph. Every paragraph gets its own pair. The browser adds a little space above and below each one, so two paragraphs look like two paragraphs. Without the tags, the words run together into one lump.</p>
+</article>
+
+<article class="term" id="br" data-match="<br />, <br>, line break, line breaks">
+  <h3>&lt;br /&gt;</h3>
+  <p>A line break: <em>end the line here</em>, inside a paragraph. For the lines of an address, a poem, an ingredient list. It has no closing tag, because nothing goes inside a line break; instead the slash goes at the end. Two in a row make a blank line. But for a new <em>thought</em>, use <code>&lt;p&gt;</code>, not a pile of <code>&lt;br /&gt;</code>s.</p>
+  <pre class="sample">3325 Marvin Sands Drive&lt;br /&gt;
+Canandaigua, NY 14424</pre>
+</article>
+
+<article class="term" id="self-closing" data-match="self-closing, self-closing tag">
+  <h3>Self-closing tag</h3>
+  <p>A tag that is complete on its own, with no closing partner, because nothing goes inside it. The slash goes at the end: <code>&lt;br /&gt;</code>. You will meet <code>&lt;img … /&gt;</code> next chapter - an image has nothing inside it either.</p>
+</article>
+
+<article class="term" id="strong-em" data-match="<strong>, <em>">
+  <h3>&lt;strong&gt; and &lt;em&gt;</h3>
+  <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;</code></p>
+</article>
+
+<article class="term" id="button" data-match="<button>">
+  <h3>&lt;button&gt; … &lt;/button&gt;</h3>
+  <p>A thing to press. The words between the tags are its label. What the button <em>says</em> is HTML; what it <em>does</em> is JavaScript, somewhere in the script.</p>
+</article>
+
+<article class="term" id="whitespace" data-match="whitespace, white space, indentation, indented">
+  <h3>Whitespace</h3>
+  <p>Spaces, tabs, and new lines. The browser squashes any amount of it down to one space, so pressing Enter in the code does nothing and ten spaces look like one. All that neat indentation in the AI's code is for <em>you</em>, so you can see what is inside what. The browser ignores it.</p>
+</article>
+
+<article class="term" id="comment" data-match="comment, comments, commented out">
+  <h3>Comment</h3>
+  <p>A note in the code that the browser skips completely. For people, not machines. In HTML: <code>&lt;!-- like this --&gt;</code>. In JavaScript: a line starting with <code>//</code>. The AI writes lots of them, one above nearly every block, saying what the block does in plain language. They are the first place to look when you want to change something.</p>
+</article>
+
+<!-- ============ FILES AND TOOLS ============ -->
+
+<article class="term" id="file-extension" data-match="file extension, file extensions, extensions shown, show file extensions">
+  <h3>File extension</h3>
+  <p>The last part of a file's name, after the dot: <code>.html</code>, <code>.jpg</code>, <code>.txt</code>. It tells the computer what kind of file it is. Mac and Windows <em>hide</em> extensions by default, so a file that looks like <code>qr-code.html</code> can secretly be <code>qr-code.html.txt</code> and show a blank page. Turning extensions on is the first thing this course asks you to do.</p>
+</article>
+
+<article class="term" id="plain-text" data-match="plain text, plain-text">
+  <h3>Plain text</h3>
+  <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.</p>
+</article>
+
+<article class="term" id="txtedtr" data-match="TXTEDTR, text editor, plain-text editor">
+  <h3>TXTEDTR</h3>
+  <p>The plain-text editor we use in this course, at <a href="https://txtedtr.app" target="_blank" rel="noopener">txtedtr.app</a>. It is one HTML file, built with AI, by your instructor - the same kind of thing you are making. Notepad++, VS Code, or Sublime Text work too. What does not work: Word, Google Docs, TextEdit, Notepad.</p>
+</article>
+
+<article class="term" id="save-as" data-match="Save As, Save as">
+  <h3>Save As</h3>
+  <p>Saving a file under a name and location you choose. In this course you type the whole name yourself, including the <code>.html</code>, and pick the <code>vibe-coding</code> folder on purpose. Plain <em>Save</em> writes over the file you already have; <em>Save As</em> makes a new one.</p>
+</article>
+
+<article class="term" id="save-refresh" data-match="save and refresh, save then refresh, refresh the browser">
+  <h3>Save, then refresh</h3>
+  <p>The two-step loop for seeing a change. <strong>Save</strong> the file in your editor, then <strong>refresh</strong> the browser tab (the circular arrow, or <kbd>F5</kbd>, or <kbd>⌘</kbd>+<kbd>R</kbd>) so it reads the file again. If nothing changed, you skipped one of the two. This is the first thing to check, every time.</p>
+</article>
+
+<article class="term" id="copy-button" data-match="Copy button">
+  <h3>The Copy button</h3>
+  <p>The small button in the corner of a code block in the AI's reply. It copies the whole block, exactly. Always use it instead of selecting the code by hand, which misses the top or bottom line more often than you would think.</p>
+</article>
+
+<article class="term" id="paste-over" data-match="paste over everything, paste it over everything, paste over">
+  <h3>Paste over everything</h3>
+  <p>Replacing the whole file with the AI's new version: in your editor, select all (<kbd>Ctrl</kbd>+<kbd>A</kbd>, Mac <kbd>⌘</kbd>+<kbd>A</kbd>), then paste. Not <em>adding</em> the new code below the old - replacing it. Half-pasted files are a common cause of a blank page.</p>
+</article>
+
+<article class="term" id="version-copy" data-match="version copy, versions, the version">
+  <h3>Version copy</h3>
+  <p>A duplicate of a working file, made <em>before</em> you let the AI change it: <code>pomodoro.html</code> becomes <code>pomodoro-v1.html</code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.</p>
+</article>
+
+<article class="term" id="developer-console" data-match="Developer Console, the console, DevTools">
+  <h3>Developer Console</h3>
+  <p>A panel built into every browser that shows what went wrong and where. Open it with <kbd>F12</kbd>, or right-click the page and choose <em>Inspect</em>, then the <em>Console</em> tab. A <strong>red line</strong> is an error: it has a message and a line number. Copy the red line exactly and paste it to the AI. Most students do not know this panel exists; now you do.</p>
+</article>
+
+<article class="term" id="library" data-match="library, libraries">
+  <h3>Library</h3>
+  <p>Someone else's code that your page borrows, usually with one line like <code>&lt;script src="https://…"&gt;</code>. The QR code generator borrows a library that knows how to draw QR codes; nobody writes that part themselves. It is also why some pages need the internet even though they are files on your computer.</p>
+</article>
+
+<article class="term" id="screenshot" data-match="screenshot, screenshots">
+  <h3>Screenshot</h3>
+  <p>A picture of your screen. Mac: <kbd>Shift</kbd>+<kbd>⌘</kbd>+<kbd>4</kbd>, then drag a box. Windows: <kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>. Chromebook: <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>Show windows</kbd>. You will use it for hand-ins and for showing someone exactly what went wrong.</p>
+</article>
+
+<!-- ============ WORKING WITH THE AI ============ -->
+
+<article class="term" id="prompt" data-match="prompt, prompts">
+  <h3>Prompt</h3>
+  <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.</p>
+</article>
+
+<article class="term" id="specification" data-match="specification, the spec, spec block">
+  <h3>Specification (the spec)</h3>
+  <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.</p>
+</article>
+
+<article class="term" id="iteration" data-match="iteration, iterations, iterate">
+  <h3>Iteration</h3>
+  <p>Asking for a change to something that already works, then another, then another. <em>Add a color picker. Now put my initials in the middle.</em> Small asks, one at a time, is the normal way to build; nobody gets the whole thing in one prompt.</p>
+</article>
+
+<article class="term" id="keep-everything" data-match="keep everything else the same, keep everything else exactly the same">
+  <h3>“Keep everything else the same”</h3>
+  <p>The sentence to put at the end of an ask for one change. Left alone, an AI asked to change one thing will sometimes redesign three, or quietly drop a feature you added earlier. Saying what <em>not</em> to touch is part of asking well.</p>
+</article>
+
+<article class="term" id="hand-edit" data-match="hand edit, hand edits">
+  <h3>Hand edit</h3>
+  <p>A change you make to the code yourself, in the editor, without asking the AI. This course builds up to them slowly: first the words between two tags (safe; you cannot break anything), then a number the code uses, then a date with a strict format.</p>
+</article>
+
+<article class="term" id="definition-of-done" data-match="Definition of Done">
+  <h3>Definition of Done</h3>
+  <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.</p>
+</article>
+
+<!-- ============ FIRST JAVASCRIPT ============ -->
+
+<article class="term" id="setinterval" data-match="setInterval">
+  <h3>setInterval</h3>
+  <p>The line of JavaScript that makes a page tick: <em>run this again every so many milliseconds</em>. <code>setInterval(update, 1000)</code> means run <code>update</code> once a second. It is the reason a countdown counts and a timer times. You will recognize it in every app that moves.</p>
+</article>
+
+<article class="term" id="milliseconds" data-match="milliseconds, millisecond">
+  <h3>Milliseconds</h3>
+  <p>Thousandths of a second. JavaScript measures time in them, so <code>1000</code> means one second and <code>60000</code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.</p>
+</article>
+
+<article class="term" id="nan" data-match="NaN">
+  <h3>NaN</h3>
+  <p>“Not a Number.” What the browser says when it was asked to do math on something that is not a number - most often a date typed in a form it did not understand. If you just edited a date and see this, look at what you changed: a month over 12, a missing dash, a lost quote. Fix that one thing.</p>
+</article>
+
+<article class="term" id="value" data-match="a value">
+  <h3>Value</h3>
+  <p>A fact the code uses: the <code>25</code> in a Pomodoro timer, the date in a countdown. Values often sit near the top of the script so you can find them. Changing a value changes how the whole app behaves, which is why it is a step up from changing words.</p>
+</article>
