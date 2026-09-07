@@ -991,9 +991,9 @@
 
 
 
-    <!-- SUBMIT LINK - paste the LMS submission URL on the submit: line in the lab source
-         and rebuild, or replace the # in the href below. -->
-    <a class="submit-card" href="#" target="_blank" rel="noopener">
+    <!-- SUBMIT CARD - hidden until it has a link. The Brightspace embed snippet (README)
+         posts the assignment URL into the page; or put a URL on the submit: line and rebuild. -->
+    <a class="submit-card" id="submit-card" href="#" target="_blank" rel="noopener" hidden>
       <span class="submit-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -1376,6 +1376,38 @@
         };
         new ResizeObserver(reportHeight).observe(document.body);
         window.addEventListener('load', reportHeight);
+      }
+
+
+      // ---------------------------------------------------------------
+      // 10. THE HAND-IN LINK COMES FROM THE LMS
+      // The "Click here to submit your work" card is hidden until it has a link.
+      // The assignment URL belongs to the course running this page, not to the
+      // page itself, so the Brightspace embed posts it in:
+      //     frame.contentWindow.postMessage({ vibeSubmit: url }, 'https://our-site');
+      // We accept it only from our own parent window, and only if it is an
+      // https address. Anything else is ignored and the card stays hidden.
+      // ---------------------------------------------------------------
+      const submitCard = $('submit-card');
+      function showSubmit(url) {
+        if (typeof url !== 'string' || !/^https:\/\//i.test(url)) return;   // https only
+        submitCard.href = url;
+        submitCard.hidden = false;
+      }
+      if (submitCard) {
+        // Route 1: the parent page posts the link in (the normal, LMS-embed route).
+        if (window.parent !== window) {
+          window.addEventListener('message', function (e) {
+            if (e.source !== window.parent) return;
+            showSubmit(e.data && e.data.vibeSubmit);
+          });
+        }
+        // Route 2: the link is in the page's own address, ?submit=ENCODED-URL.
+        // For a topic that cannot run script. The value must be URL-encoded
+        // (encodeURIComponent), since LMS links are full of ? and & themselves.
+        try {
+          showSubmit(new URL(window.location.href).searchParams.get('submit'));
+        } catch (e) { /* no usable address - card stays hidden */ }
       }
 
 
