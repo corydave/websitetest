@@ -1,107 +1,123 @@
 {
-  "build": "ee01530",
-  "built": "2026-09-09 16:34",
+  "build": "8073a5b",
+  "built": "2026-09-09 17:51",
   "course": "csc-150",
   "pages": {
     "00a-how-this-course-works.html": {
       "path": "00-start/00a-how-this-course-works.html",
-      "version": "b18e1c2"
+      "version": "a55523b"
     },
     "00b-where-youre-starting-from.html": {
       "path": "00-start/00b-where-youre-starting-from.html",
-      "version": "2e5fbde"
+      "version": "2c8e9a7"
+    },
+    "01-discussion.html": {
+      "path": "01-intro/01-discussion.html",
+      "version": "901972e"
     },
     "01-module-1-checkpoint.html": {
       "path": "01-intro/01-module-1-checkpoint.html",
-      "version": "84b0690"
+      "version": "2691602"
     },
     "01-what-this-even-is.html": {
       "path": "01-intro/01-what-this-even-is.html",
-      "version": "6487e3a"
+      "version": "fdef12b"
     },
     "02-module-2-checkpoint.html": {
       "path": "02-output/02-module-2-checkpoint.html",
-      "version": "ac32fc4"
+      "version": "ba65c14"
     },
     "02-the-next-word-machine.html": {
       "path": "01-intro/02-the-next-word-machine.html",
-      "version": "8696cf9"
+      "version": "59bc6d6"
     },
     "03-module-3-checkpoint.html": {
       "path": "03-checking/03-module-3-checkpoint.html",
-      "version": "53a4dc1"
+      "version": "a06adb1"
     },
     "03-why-it-wanders.html": {
       "path": "01-intro/03-why-it-wanders.html",
-      "version": "cdded76"
+      "version": "139a10a"
     },
     "04-anatomy-of-a-prompt.html": {
       "path": "01-intro/04-anatomy-of-a-prompt.html",
-      "version": "79666f6"
+      "version": "30df237"
     },
     "04-module-4-checkpoint.html": {
       "path": "04-beyond-text/04-module-4-checkpoint.html",
-      "version": "e5f00a0"
+      "version": "b75aa6a"
+    },
+    "05-lab.html": {
+      "path": "01-intro/05-lab.html",
+      "version": "fd65033"
     },
     "05-module-5-checkpoint.html": {
       "path": "05-responsibly/05-module-5-checkpoint.html",
-      "version": "3e35516"
+      "version": "e9b6ebd"
     },
     "05-the-landscape.html": {
       "path": "01-intro/05-the-landscape.html",
-      "version": "0e210bc"
+      "version": "dc5e19f"
     },
     "06-choosing-a-model-blind.html": {
       "path": "02-output/06-choosing-a-model-blind.html",
-      "version": "33d1df1"
+      "version": "a7a332d"
+    },
+    "06-discussion.html": {
+      "path": "02-output/06-discussion.html",
+      "version": "a02e607"
     },
     "07-iteration-and-repair.html": {
       "path": "02-output/07-iteration-and-repair.html",
-      "version": "acdc736"
+      "version": "df0a829"
+    },
+    "07-lab.html": {
+      "path": "02-output/07-lab.html",
+      "version": "38e9ab8"
     },
     "08-why-ai-makes-things-up.html": {
       "path": "02-output/08-why-ai-makes-things-up.html",
-      "version": "1230653"
+      "version": "2b90824"
     },
     "09-models-that-can-actually-look-things-up.html": {
       "path": "03-checking/09-models-that-can-actually-look-things-up.html",
-      "version": "395570f"
+      "version": "555ee5a"
     },
     "10-where-bias-comes-from.html": {
       "path": "03-checking/10-where-bias-comes-from.html",
-      "version": "af010b3"
+      "version": "508beac"
     },
     "11-the-verification-habit.html": {
       "path": "03-checking/11-the-verification-habit.html",
-      "version": "cdd13b2"
+      "version": "2fc2739"
     },
     "12-making-images.html": {
       "path": "04-beyond-text/12-making-images.html",
-      "version": "4e2ab10"
+      "version": "af90e77"
     },
     "13-voice-and-audio.html": {
       "path": "04-beyond-text/13-voice-and-audio.html",
-      "version": "ca02365"
+      "version": "4ded2b5"
     },
     "14-working-across-modalities.html": {
       "path": "04-beyond-text/14-working-across-modalities.html",
-      "version": "1364f38"
+      "version": "c5d34f0"
     },
     "15-your-data-their-servers.html": {
       "path": "05-responsibly/15-your-data-their-servers.html",
-      "version": "dc475f7"
+      "version": "4ab4ca7"
     },
     "16-attribution-copyright-and-honest-work.html": {
       "path": "05-responsibly/16-attribution-copyright-and-honest-work.html",
-      "version": "0e74bee"
+      "version": "f20466a"
     },
     "17-your-ai-practice.html": {
       "path": "05-responsibly/17-your-ai-practice.html",
-      "version": "53f3b7a"
+      "version": "eab10c1"
     },
     "learning-hub.html": {
       "path": "learning-hub.html",
-      "version": "8b5065c"
+      "version": "dbba2f9"
     },
     "module-1-overview.html": {
       "path": "01-intro/module-1-overview.html",
@@ -125,11 +141,11 @@
     },
     "tokenizer.html": {
       "path": "tokenizer.html",
-      "version": "632943d"
+      "version": "f7ccb84"
     },
     "vocabulary.html": {
       "path": "vocabulary.html",
-      "version": "2128bc0"
+      "version": "aef2051"
     }
   }
 }
