@@ -18,6 +18,24 @@
   var TAG = "csc150";
   var MIN = 200, MAX = 20000;
 
+  /* Grow the frame to fit its content on desktops only.
+
+     A phone paints a cross-origin iframe lazily and does not repaint its tiles
+     until the scroll gesture ends, so a frame several thousand pixels tall goes
+     white while a finger is moving and only comes back on lift. That is
+     compositor checkerboarding and no CSS fixes it. So phones and tablets keep
+     a screen-height frame and scroll the lesson inside it - one scrollbar, no
+     flashing - while desktops get a content-height frame and scroll the
+     Brightspace page as one.
+
+     (hover: hover) keeps a wide tablet on the phone path, which is right:
+     tablets checkerboard too. Evaluated per message rather than cached, so a
+     desktop window dragged narrow behaves like the narrow thing it now is. */
+  var DESKTOP = "(min-width: 900px) and (hover: hover)";
+  function grows() {
+    return !window.matchMedia || window.matchMedia(DESKTOP).matches;
+  }
+
   function ready(fn) {
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", fn);
@@ -46,7 +64,7 @@
       return null;
     }
 
-    function context() {
+    function context(f) {
       /* Brightspace puts the course and topic ids in its own URL. That is the
          only context available from here.
 
@@ -58,9 +76,18 @@
                   .map(function (x) { return x.replace(/\//g, ""); });
       return {
         tag: TAG, type: "host", host: "brightspace",
+        /* The hand-in link, read off the iframe's own data-submit attribute.
+           It cannot come from an inline <script> in the topic: Brightspace
+           keeps the tag and empties it, which is why this listener is a file
+           in the first place. An attribute on the element survives the same
+           sanitiser that eats the script, exactly as src and style do.
+           Absent or empty means the page keeps its card hidden. */
+        submit: (f.getAttribute("data-submit") || "").trim(),
         course: ids[0] || "", topic: ids[1] || "",
         hash: location.hash || "",
-        chrome: true            /* the LMS already shows a title above the frame */
+        /* Dave's call: keep the page's own h1 even though Brightspace prints
+           a title above the frame. Set this to true to hide the duplicate. */
+        chrome: false
       };
     }
 
@@ -76,13 +103,18 @@
          So greet on FIRST CONTACT of any kind, not only on "ready". */
       if (!rec.greeted) {
         rec.greeted = true;
-        rec.f.contentWindow.postMessage(context(), rec.origin);
+        rec.f.contentWindow.postMessage(context(rec.f), rec.origin);
       }
 
       if (d.type === "ready") {
         /* already greeted above */
 
       } else if (d.type === "height" && typeof d.height === "number") {
+        /* Phones keep the height their stylesheet gave them. The page still
+           reports, and this still ignores it - cheaper than negotiating, and it
+           means one page behaves correctly in both places without knowing
+           which it is in. */
+        if (!grows()) return;
         /* Clamp: a buggy or hostile page should not be able to set the topic
            to four million pixels, nor collapse it to nothing. */
         rec.f.style.height = Math.min(Math.max(d.height, MIN), MAX) + "px";

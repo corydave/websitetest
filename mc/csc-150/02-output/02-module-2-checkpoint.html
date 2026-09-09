@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CSC 150 Learning Hub</title>
-<link rel="icon" href="../favicon.ico">
+<title>Module 2 Checkpoint</title>
+<link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -1562,135 +1562,420 @@ html[data-theme="dark"] .sidetrip {
 }
 
 /* ============================================================================
-   FLCC AI Specialist Microcredential - companion.css
-   The Learning Hub. One per course.
+   FLCC AI Specialist Microcredential - instrument.css
+   Instruments only - inventories, surveys, anything that collects.
 
    Load order matters: core.css first, then the genre sheet, then the course
    theme. Nothing here sets a color except through a token.
    ========================================================================= */
-.hubtabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem;
+
+
+/* Segmented exposure scale ------------------------------------------------ */
+
+.scalelegend {
+  display: none;
   position: sticky;
   top: 0;
-  z-index: 40;
-  background: var(--ground);
-  padding-block: .8rem;
+  z-index: 2;
+  background: var(--surface);
+  padding-block: .9rem .5rem;
+  box-shadow: 0 1px 0 var(--line);
+  grid-template-columns: 12rem 1fr;
+  gap: 1rem;
+  align-items: end;
+  padding: 0 1.35rem;
 }
-.hubtab {
-  font: inherit;
+.scalelegend > div {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .3rem;
+}
+.scalelegend span {
   font-family: var(--display);
   font-weight: 700;
-  font-size: .88rem;
-  display: inline-flex;
-  align-items: center;
-  gap: .45rem;
-  padding: .55rem 1rem;
-  border: 0;
-  border-radius: var(--r-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-1);
-  color: var(--ink-2);
-  cursor: pointer;
-  transition: background-color .18s ease, color .18s ease;
+  font-size: .62rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: center;
+  line-height: 1.25;
 }
-.hubtab:hover { color: var(--accent-text); }
-.hubtab[aria-selected="true"] {
-  background: var(--accent-fill);
-  color: var(--accent-on);
-  box-shadow: var(--shadow-accent);
-}
-.panel[hidden] { display: none; }
-.panel, .deck { scroll-margin-top: 5.5rem; }
 
-/* progress ---------------------------------------------------------------- */
-.pgrid {
+.scale {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
-  gap: .55rem;
-}
-.ptile {
-  font: inherit;
-  text-align: left;
-  border: 0;
-  cursor: pointer;
-  background: var(--surface);
-  box-shadow: var(--shadow-1);
-  border-radius: var(--r-sm);
-  padding: .7rem .8rem;
-  display: flex;
-  flex-direction: column;
-  gap: .2rem;
-  transition: background-color .18s ease, box-shadow .18s ease, transform .12s ease;
-}
-.ptile:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
-.ptile__id { font-family: var(--display); font-weight: 700; font-size: .72rem; letter-spacing: .06em; color: var(--ink-3); }
-.ptile__t { font-size: .78rem; color: var(--ink-2); line-height: 1.3; }
-.ptile__check { margin-top: .25rem; width: 1.1rem; height: 1.1rem; border-radius: var(--r-xs); background: var(--surface-3); display: grid; place-items: center; color: transparent; }
-.ptile[aria-pressed="true"] { background: var(--accent-fill); }
-.ptile[aria-pressed="true"] .ptile__id,
-.ptile[aria-pressed="true"] .ptile__t { color: var(--accent-on); }
-.ptile[aria-pressed="true"] .ptile__t { opacity: .85; }
-.ptile[aria-pressed="true"] .ptile__check { background: rgba(255,255,255,.25); color: var(--accent-on); }
-.ptile__check .i { width: .8rem; height: .8rem; }
-
-/* reflection -------------------------------------------------------------- */
-.promptcard {
-  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
-  padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
-}
-.promptcard__kind {
-  font-family: var(--display); font-weight: 700; font-size: .7rem;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
-}
-.promptcard__q { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.4; }
-.promptcard textarea { min-height: 8rem; }
-
-.jentry {
-  background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--shadow-1);
-  padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: .4rem;
-}
-.jentry__meta { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
-.jentry__date { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
-.jentry__q { font-size: .9rem; color: var(--accent-text); font-weight: 700; }
-.jentry__a { font-size: .95rem; color: var(--ink-2); white-space: pre-wrap; }
-.linkbtn {
-  font: inherit; font-size: .78rem; background: none; border: 0; padding: 0;
-  color: var(--ink-3); cursor: pointer; text-decoration: underline;
-}
-.linkbtn:hover { color: var(--bad); }
-
-/* confidence -------------------------------------------------------------- */
-.deltarow {
-  display: grid;
-  grid-template-columns: 12rem 1fr auto;
-  gap: .9rem;
+  grid-template-columns: 12rem 1fr;
+  gap: 1rem;
   align-items: center;
-  padding: .9rem 0;
+  padding: .75rem 1.35rem;
   border-bottom: 1px solid var(--line);
 }
-.deltarow:last-child { border-bottom: 0; }
-.deltarow__label { font-size: .93rem; }
-.track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--surface-2); }
-.track__span { position: absolute; top: 0; bottom: 0; border-radius: var(--r-pill); background: var(--accent); opacity: .3; }
-.track__dot {
-  position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
-  border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent);
+.scale:last-child { border-bottom: 0; }
+.scale__name { font-weight: 700; font-size: .95rem; }
+.scale__name small { display: block; font-weight: 400; font-size: .8rem; color: var(--ink-3); }
+.scale__opts { display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; }
+
+.segbtn {
+  font: inherit;
+  font-size: .74rem;
+  line-height: 1.2;
+  text-align: center;
+  padding: .5rem .3rem;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color .16s ease, color .16s ease, box-shadow .16s ease;
 }
-.track__dot.is-now { background: var(--accent); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--accent); }
-.delta {
-  font-family: var(--display); font-weight: 700; font-size: .8rem;
-  padding: .2rem .5rem; border-radius: var(--r-xs); white-space: nowrap;
-  background: var(--surface-2); color: var(--ink-3);
+.segbtn:hover { background: var(--accent-wash); color: var(--accent-text); }
+.segbtn[aria-checked="true"] {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-1);
 }
-.delta.is-up { background: var(--good-soft); color: var(--good); }
-.delta.is-down { background: var(--warn-soft); color: var(--warn); }
+
+@media (min-width: 46rem) {
+  .scalelegend { display: grid; }
+  .segbtn { font-size: 0; padding: .7rem .3rem; }
+  .segbtn::after {
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .35;
+  }
+  .segbtn[aria-checked="true"]::after { opacity: 1; }
+}
+@media (max-width: 46rem) {
+  .scale { grid-template-columns: 1fr; gap: .5rem; padding: 1rem 1.1rem; }
+}
+
+/* Calibration questions --------------------------------------------------- */
+
+.calq {
+  padding: 1.2rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.calq:last-child { border-bottom: 0; }
+.calq__q { font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.4; }
+.calq .answers { flex-direction: column; align-items: stretch; }
+.calq .answer { text-align: left; }
+
+/* Result profile ---------------------------------------------------------- */
+
+.profile {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-3);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.profile__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  align-self: flex-start;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: .55rem 1rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-accent);
+}
+.profile h3 { font-size: 1.3rem; }
+.profile__lede { color: var(--ink-2); }
+
+.readout { display: grid; gap: .8rem; }
+.readout__row {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.5rem;
+  gap: .8rem;
+  align-items: center;
+  font-size: .92rem;
+}
+.readout__label { color: var(--ink-2); }
+.readout__bar { height: 9px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
+.readout__bar > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: var(--r-pill); transition: width .7s cubic-bezier(.2,.8,.3,1); }
+.readout__num { font-family: var(--display); font-weight: 700; font-size: .82rem; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+
+.watchlist { display: flex; flex-direction: column; gap: .7rem; }
+.watchitem {
+  display: flex;
+  gap: .85rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .9rem 1rem;
+}
+.watchitem__n {
+  font-family: var(--display); font-weight: 700; font-size: .78rem;
+  display: grid; place-items: center;
+  width: 1.5rem; height: 1.5rem; flex: none; margin-top: .1rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-fill); color: var(--accent-on);
+}
+.watchitem strong { display: block; font-family: var(--display); font-size: .95rem; }
+.watchitem p { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
 
 @media (max-width: 40rem) {
-  .deltarow { grid-template-columns: 1fr; gap: .45rem; }
-  .hubtab { font-size: .8rem; padding: .5rem .8rem; }
+  .readout__row { grid-template-columns: 1fr; gap: .3rem; }
+  .readout__num { text-align: left; }
 }
+/* ── Name field on the result panel ─────────────────────────────────────── */
+.whorow { display: grid; gap: .3rem; margin: .9rem 0 1rem; max-width: 26rem; }
+.whorow__lab { font-size: .82rem; font-weight: 700; color: var(--ink-2); }
+.whorow__lab span { display: block; font-weight: 400; font-size: .76rem; color: var(--ink-3); }
+.whorow__in {
+  font: inherit;
+  padding: .6rem .8rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.whorow__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+/* ── Print: the fallback route to a PDF ─────────────────────────────────────
+   The PDF button is the primary path; print exists for anyone whose browser
+   or device refuses it, and it is the only route that keeps Comfortaa and
+   Atkinson Hyperlegible. Everything except the result panel is scaffolding
+   for filling the thing in, so none of it belongs on paper. */
+@media print {
+  body { background: #fff; }
+  .masthead, .standfirst,
+  .invsection, .btnrow, .copybox, .whorow,
+  .deck, .demo, .progressbar, .sitefoot, #pdfNote { display: none !important; }
+
+  #result { display: block !important; }
+  #result, #result * { box-shadow: none !important; }
+
+  .band, .readout, .watchlist, .calib {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .watchitem { break-inside: avoid; page-break-inside: avoid; }
+
+  /* A printed page has no accent bar at the top of the viewport, so the
+     document needs its own heading - supplied here rather than in the markup
+     so it never shows on screen. */
+  #result::before {
+    content: "CSC 150 · AI Foundations - Where You're Starting From";
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15pt;
+    color: #000;
+    margin-bottom: 1.2rem;
+    padding-bottom: .6rem;
+    border-bottom: 2px solid #d64214;
+  }
+  a[href]::after { content: ""; }
+}
+
+/* ── Module capstone ────────────────────────────────────────────────────────
+   Five routes to one rubric. The rubric is shown first and at full size,
+   because a student choosing before reading it is choosing on vibes. */
+.crits { display: grid; gap: .7rem; }
+.crit {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+}
+.crit__top { margin-bottom: .8rem; }
+.crit__n { font-family: var(--display); font-size: 1.05rem; margin: 0 0 .15rem; }
+.crit__q { margin: 0; color: var(--ink-2); font-size: .95rem; }
+.crit__levels { display: grid; gap: .5rem; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 44rem) { .crit__levels { grid-template-columns: 1fr; } }
+.crit__lvl { background: var(--surface-2); border-radius: 10px; padding: .65rem .75rem; }
+.crit__lvl--top { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
+.crit__lab {
+  display: block;
+  font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: .25rem;
+}
+.crit__lvl--top .crit__lab { color: var(--accent-text); }
+.crit__lvl p { margin: 0; font-size: .86rem; line-height: 1.45; color: var(--ink-2); }
+.capnote { margin-top: .9rem; }
+
+.capopts { display: grid; gap: .7rem; }
+.capopt { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1); overflow: hidden; }
+.capopt.is-open { box-shadow: var(--shadow-2); }
+.capopt__head {
+  display: grid; gap: .3rem;
+  width: 100%; text-align: left;
+  font: inherit; color: inherit;
+  background: none; border: 0;
+  padding: 1.1rem 1.2rem;
+  cursor: pointer;
+}
+.capopt__head:hover { background: var(--surface-2); }
+.capopt__head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.capopt__meta { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+.capopt__kind {
+  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--accent-text);
+}
+.capopt__time { font-size: .72rem; color: var(--ink-3); }
+.capopt__name { font-family: var(--display); font-size: 1.2rem; font-weight: 700; }
+.capopt__premise { color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
+.capopt__fit {
+  display: flex; gap: .4rem; align-items: flex-start;
+  font-size: .88rem; color: var(--ink-3); margin-top: .25rem;
+}
+.capopt__fit .i { width: .95rem; height: .95rem; flex: none; margin-top: .2rem; color: var(--accent); }
+.capopt__more {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .8rem; font-weight: 700; color: var(--accent-text); margin-top: .45rem;
+}
+.capopt__more .i { width: .9rem; height: .9rem; transition: transform .2s; }
+.capopt.is-open .capopt__more .i { transform: rotate(180deg); }
+.capopt.is-open .capopt__more span::after { content: " (open)"; font-weight: 400; color: var(--ink-3); }
+.capopt__body { padding: 0 1.2rem 1.2rem; display: grid; gap: .9rem; }
+
+.capsteps { margin: 0; padding-left: 1.3rem; display: grid; gap: .55rem; }
+.capsteps li { font-size: .95rem; line-height: 1.55; color: var(--ink-2); }
+.caphand, .caphow { background: var(--surface-2); border-radius: 10px; padding: .8rem .9rem; }
+/* Provenance: which Apply task this route is a longer version of. Tinted
+   rather than plain so it reads as a pointer backwards, not as another
+   instruction. */
+.capfrom {
+  background: var(--accent-wash); border-radius: 10px; padding: .8rem .9rem;
+}
+.capfrom__lab {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--accent-text); margin-bottom: .35rem;
+}
+.capfrom__lab .i { width: .9rem; height: .9rem; }
+.capfrom p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
+.caphand__lab, .caphow__lab {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: .35rem;
+}
+.caphand__lab .i { width: .9rem; height: .9rem; }
+.caphand p, .caphow p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
+
+.capcheck { display: grid; gap: .5rem; margin-bottom: 1rem; }
+.capcheck__row {
+  display: grid; grid-template-columns: auto auto 1fr; gap: .6rem; align-items: start;
+  padding: .7rem .8rem; background: var(--surface-2); border-radius: 10px; cursor: pointer;
+}
+.capcheck__row input { margin-top: .25rem; accent-color: var(--accent); }
+.capcheck__n {
+  font-size: .72rem; font-weight: 700; color: var(--accent-text);
+  min-width: 1rem; margin-top: .15rem;
+}
+.capcheck__t { font-size: .92rem; line-height: 1.5; color: var(--ink-2); }
+.capcheck__row:has(input:checked) .capcheck__t { color: var(--ink-3); text-decoration: line-through; }
+
+/* The disclosure gate. Sits above the rubric because it is a precondition for
+   being marked at all, not one criterion among five. */
+.capgate {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.2rem 1.3rem;
+  margin: 0 0 1.1rem;
+  display: grid;
+  gap: .7rem;
+}
+.capgate__head { display: flex; align-items: center; gap: .7rem; }
+.capgate__head h3 { font-family: var(--display); font-size: 1.1rem; margin: 0; }
+.capgate > p { margin: 0; color: var(--ink-2); font-size: .96rem; line-height: 1.6; }
+.capgate__eg { display: grid; gap: .5rem; grid-template-columns: 1fr 1fr; }
+@media (max-width: 40rem) { .capgate__eg { grid-template-columns: 1fr; } }
+.capgate__ex { background: var(--surface-2); border-radius: 10px; padding: .7rem .8rem; }
+.capgate__ex:last-child { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
+.capgate__lab {
+  display: block;
+  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: .3rem;
+}
+.capgate__ex:last-child .capgate__lab { color: var(--accent-text); }
+.capgate__ex p { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink-2); }
+
+/* Rubric criteria as accordions ---------------------------------------------
+   Collapsed by default, and independent of each other: opening one does not
+   shut the rest. That is deliberately the opposite of .capopt above, which is
+   one-at-a-time. The difference is what each list is for - the rubric is
+   something you compare across, and comparing needs two or five panels open
+   at once; the route cards are something you choose between, where five open
+   briefs is a wall of text nobody can choose from. Same page, opposite rule,
+   and worth not "fixing" later into consistency.  */
+.crits--acc .crit { padding: 0; }
+.crits--acc .crit__n { margin: 0; font-size: inherit; font-weight: inherit; }
+.crit__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .1rem .7rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 1rem 1.2rem;
+  font: inherit;
+  color: inherit;
+  border-radius: var(--r);
+}
+.crit__head:hover { background: var(--accent-wash); }
+.crit__head:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.crit__nm {
+  grid-column: 1;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.crits--acc .crit__q {
+  grid-column: 1;
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.crit__chev {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 1.1rem; height: 1.1rem;
+  color: var(--ink-3);
+  transition: transform .18s ease;
+}
+.crit__head[aria-expanded="true"] .crit__chev { transform: rotate(180deg); }
+.crit__head[aria-expanded="true"] { border-radius: var(--r) var(--r) 0 0; }
+.crits--acc .crit__levels { padding: 0 1.2rem 1.1rem; }
+
+.crits__bar { display: flex; justify-content: flex-end; }
+/* No negative margin here. It saved three pixels and pulled the first
+   criterion up over the bar, which left the expand-all button's bottom edge
+   underneath a full-width header button - a hover tint on Mechanism in a
+   screenshot is how that turned up, and a stolen click is where it ends. */
+.crits__all {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--display); font-weight: 700;
+  font-size: .74rem; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--accent-text);
+  padding: .3rem .2rem;
+  border-radius: var(--r-xs);
+}
+.crits__all:hover { text-decoration: underline; }
+.crits__all:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.crits__all .i { width: .85rem; height: .85rem; transition: transform .18s ease; }
+.crits__all[aria-expanded="true"] .i { transform: rotate(180deg); }
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -1737,8 +2022,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page learning-hub.html  v8b5065c  ·  build ee01530  ·  2026-09-09 16:34 -->
-<div data-build="ee01530" data-page="learning-hub.html" data-version="8b5065c" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page 02-module-2-checkpoint.html  vac32fc4  ·  build ee01530  ·  2026-09-09 16:34 -->
+<div data-build="ee01530" data-page="02-module-2-checkpoint.html" data-version="ac32fc4" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1768,117 +2053,259 @@ html[data-theme="dark"] .sidetrip {
   <div class="wrap">
     <div class="masthead__row">
       <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
-      <span class="lessonno">Companion &middot; open all term</span>
+      <span class="lessonno">Module 2 &middot; Checkpoint</span>
     </div>
-    <h1>Learning Hub</h1>
-    <p class="standfirst">Your progress, the vocabulary, and a place to think out loud. Nothing here is graded and nothing here is submitted - it is yours, and it stays in this browser.</p>
+    <h1>Show Me You Can Get Good Output!</h1>
+    <p class="standfirst">One piece of work at the end of Module&nbsp;2, in whichever of four
+    forms suits how you think. They are marked identically - the choice is yours.</p>
   </div>
 </header>
 
-<main class="wrap lesson__body" style="padding-block:0 5rem">
+<main class="wrap">
 
-  <div class="hubtabs" role="tablist">
-    <button class="hubtab" role="tab" aria-selected="true"  data-p="progress"><svg class="i"><use href="#i-grid"/></svg> Progress</button>
-    <button class="hubtab" role="tab" aria-selected="false" data-p="vocab"><svg class="i"><use href="#i-book-open"/></svg> Vocabulary</button>
-    <button class="hubtab" role="tab" aria-selected="false" data-p="reflect"><svg class="i"><use href="#i-pencil"/></svg> Reflection</button>
-    <button class="hubtab" role="tab" aria-selected="false" data-p="confidence"><svg class="i"><use href="#i-target"/></svg> Confidence</button>
+  <section class="block">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Read this first</span>
+      <h2>The Rubric</h2>
+      <p>Whichever option you choose, use this rubric as a guide. These are the criteria that should inform your design. They are written to be format-blind on purpose: a recording, a bug report and an annotated transcript can all satisfy them, and none of them can be satisfied by length.</p>
+    </div>
+    <div class="capgate">
+      <div class="capgate__head">
+        <div class="icontile"><svg class="i"><use href="#i-lock"/></svg></div>
+        <h3>Every choice needs an AI-use statement</h3>
+      </div>
+      <p>Whichever choice you make, the work must arrive with a short statement of what AI did in making it. <strong>Work submitted without one will not be graded</strong>. You merely have to fix it and resubmit. This is not an integrity trap! Using AI on this work is expected, and on several of these choices it is the point. What is being assessed is whether you can say plainly what it did. That is the skill, and it is the same one Lesson&nbsp;16 calls an <em>AI-use statement</em> and asks you to write for real.</p>
+      <div class="capgate__eg">
+        <div class="capgate__ex"><span class="capgate__lab">Not a statement</span><p>&ldquo;I used AI to help with this assignment.&rdquo;</p></div><div class="capgate__ex"><span class="capgate__lab">A statement</span><p>&ldquo;All six prompts and the ledger rows are mine. I used Claude to check my grammar in the closing paragraph and it rewrote two sentences, which I kept. The diagnosis in row 4 is mine and I checked it against Lesson&nbsp;3 rather than asking a model.&rdquo;</p></div>
+      </div>
+    </div>
+    <div class="crits crits--acc">
+      <div class="crits__bar">
+        <button class="crits__all" type="button" id="critsAll" aria-expanded="false">
+          <svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          <span id="critsAllLab">Expand all</span>
+        </button>
+      </div>
+      <article class="crit">
+            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-2-1">
+              <span class="crit__nm">Mechanism</span>
+              <span class="crit__q">Do you explain what happened using the machinery, rather than the machine&rsquo;s personality?</span>
+              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button></h3>
+            <div class="crit__levels" id="crit-2-1" hidden>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behavior with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behavior.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Reaches for the right level of mechanism without prompting, including where attention or the context window is the actual explanation, and does not over-claim beyond what the mechanism supports.</p></div>
+            </div>
+          </article><article class="crit">
+            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-2-2">
+              <span class="crit__nm">Evidence</span>
+              <span class="crit__q">Is every claim anchored to something you actually ran or found?</span>
+              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button></h3>
+            <div class="crit__levels" id="crit-2-2" hidden>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Claims are general and unsourced - describes what models &ldquo;tend to&rdquo; do with nothing attached.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Each substantive claim is tied to a specific quoted output, screenshot or link that a reader could check.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Evidence is chosen deliberately, including at least one case that complicates the story rather than confirming it.</p></div>
+            </div>
+          </article><article class="crit">
+            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-2-3">
+              <span class="crit__nm">Calibration</span>
+              <span class="crit__q">Can you tell what you observed from what you are inferring?</span>
+              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button></h3>
+            <div class="crit__levels" id="crit-2-3" hidden>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>States inferences as observations, or hedges everything equally so nothing is claimed at all.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Marks clearly which parts are observed, which are inferred, and where you are unsure.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Names something you cannot determine from what you have, and says what evidence would settle it.</p></div>
+            </div>
+          </article><article class="crit">
+            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-2-4">
+              <span class="crit__nm">Disclosure</span>
+              <span class="crit__q">Can a reader tell exactly what part AI played in making this?</span>
+              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button></h3>
+            <div class="crit__levels" id="crit-2-4" hidden>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>No statement, or one so vague it says nothing - <em>I used AI to help</em>. Work arriving with no statement at all is returned unmarked; see the gate above.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>A short statement naming which tools were used, for what, and which parts of the submission are your own words.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Specific enough to be checked - names the tool and roughly what was asked of it, distinguishes drafting from editing from analysis, and discloses use that nobody would have caught. Reads as a professional note rather than a confession.</p></div>
+            </div>
+          </article><article class="crit">
+            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-2-5">
+              <span class="crit__nm">Transfer</span>
+              <span class="crit__q">Does it reach past the examples the lessons handed you?</span>
+              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button></h3>
+            <div class="crit__levels" id="crit-2-5" hidden>
+              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Re-uses a lesson example or an activity output with minor changes.</p></div>
+              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Applies the idea to a case of your own choosing that the lessons did not cover.</p></div>
+              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>The case is one where the lesson&rsquo;s account needed adjusting, and you say how.</p></div>
+            </div>
+          </article>
+    </div>
+    <p class="small muted capnote">Five criteria, four points each, twenty total. Length is not a criterion and nothing here rewards it - a tight two pages beats a loose six all day, every day. Disclosure is both a gate and a criterion: without a statement the work is not marked at all, and with one, how well you did it counts like everything else.</p>
+  </section>
+
+  <section class="block" id="choose">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Four routes</span>
+      <h2>Pick one</h2>
+      <p>Open each one and read what it actually involves before deciding.</p>
+    </div>
+    <div class="capopts" id="capopts"><article class="capopt" id="opt-bakeoff" data-opt="bakeoff">
+            <button class="capopt__head" type="button" aria-expanded="false">
+              <span class="capopt__meta"><span class="capopt__kind">Comparison write-up</span>
+                <span class="capopt__time">60&ndash;90 min</span></span>
+              <span class="capopt__name">The Bake-Off</span>
+              <span class="capopt__premise">Run one real task of your own blind across three models, and report the result even when it is not the one you wanted.</span>
+              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You have a tool you defend in conversations (I know I do) and you would quite like to find out whether you are right.</span>
+              <span class="capopt__more"><span>See what it involves</span>
+                <svg class="i"><use href="#i-chevron-down"/></svg></span>
+            </button>
+            <div class="capopt__body" hidden>
+              <ol class="capsteps"><li>Pick three different tasks you actually did in the last month - something creative, something checkable, something technical or procedural. I suppose you can make some up if you would rather.</li><li>Run each through at least two models. Strip the names. Leave it long enough that you have forgotten which was which - an hour is usually enough.</li><li>Vote on all six outputs blind, and write one sentence per vote on what decided it <em>before</em> you unmask anything.</li><li>Unmask. Report which model won which task, and whether any model swept.</li><li>Close with the uncomfortable part: which task did your usual tool lose, and is that a reason to switch? Say why or why not - &ldquo;no&rdquo; is a perfectly good answer if you argue it.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 6's Apply - five blind battles with your votes and the reveals. This is that, on one task of your own, done deliberately.</p>
+              </div>
+              <div class="caphand">
+                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
+                <p>Three tasks, six outputs, six blind votes with reasons, the reveal, and your closing judgment.</p>
+              </div>
+              <div class="caphow">
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p><strong>Mechanism</strong> is in your reasons for each vote - if they are all &ldquo;this one reads better&rdquo; you have rated fluency and the criterion says so. <strong>Evidence</strong> is the pasted outputs. <strong>Calibration</strong> is separating &ldquo;I preferred it&rdquo; from &ldquo;it was better&rdquo;, which on the uncheckable task you cannot honestly claim. <strong>Transfer</strong> is using your own tasks rather than the three in Class Arena.</p>
+              </div>
+              <div class="btnrow">
+                <button class="btn btn--primary capopt__pick" type="button">
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
+              </div>
+            </div>
+          </article><article class="capopt" id="opt-arena-explainer" data-opt="arena-explainer">
+            <button class="capopt__head" type="button" aria-expanded="false">
+              <span class="capopt__meta"><span class="capopt__kind">Audio or video</span>
+                <span class="capopt__time">45&ndash;75 min</span></span>
+              <span class="capopt__name">The 90-Second Explainer</span>
+              <span class="capopt__premise">Tell one real person how to choose a model for a task, in ninety seconds, without any of the words that let you skip the thinking.</span>
+              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You would rather talk for ninety seconds than write for three pages, and you can explain things to actual people.</span>
+              <span class="capopt__more"><span>See what it involves</span>
+                <svg class="i"><use href="#i-chevron-down"/></svg></span>
+            </button>
+            <div class="capopt__body" hidden>
+              <ol class="capsteps"><li>Pick one real person and one real task they have. Or pretend you are an influencer!</li><li>Explain how they should decide which tool to use - and do it with these words banned: <em>best, better, smartest, most powerful, advanced, cutting-edge, state-of-the-art, top-rated, leading</em>.</li><li>Every one of those words lets you assert a ranking instead of naming a reason. Working around them is the assignment.</li><li>Ninety seconds. Record it. One take is fine and a fluffed sentence is not marked.</li><li>Add three lines of text: what you cut to make it fit, and the one thing you are least sure you got right.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>Lesson 6's Apply, said out loud: the round where your favorite lost is the ninety seconds.</p>
+              </div>
+              <div class="caphand">
+                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
+                <p>A ninety-second recording plus your three lines. Captions or a transcript, please - the same standard the course videos hold themselves to.</p>
+              </div>
+              <div class="caphow">
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p><strong>Mechanism</strong> is what fills the space the banned words used to occupy: task type, checkability, cost, refusal behavior. <strong>Evidence</strong> is naming the real person and the real task. <strong>Calibration</strong> is the &ldquo;least sure&rdquo; line, and it is marked on how specific it is. <strong>Transfer</strong> is that their task is not one of yours.</p>
+              </div>
+              <div class="btnrow">
+                <button class="btn btn--primary capopt__pick" type="button">
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
+              </div>
+            </div>
+          </article><article class="capopt" id="opt-showdown" data-opt="showdown">
+            <button class="capopt__head" type="button" aria-expanded="false">
+              <span class="capopt__meta"><span class="capopt__kind">Documented comparison</span>
+                <span class="capopt__time">60&ndash;90 min</span></span>
+              <span class="capopt__name">A Real Arena Showdown</span>
+              <span class="capopt__premise">Run your own battles on a public arena, rank the models yourself, and report honestly on the one you had never heard of.</span>
+              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You want to do the thing Lesson 6 simulated, for real, on the live site, with the votes recorded.</span>
+              <span class="capopt__more"><span>See what it involves</span>
+                <svg class="i"><use href="#i-chevron-down"/></svg></span>
+            </button>
+            <div class="capopt__body" hidden>
+              <ol class="capsteps"><li>Go to <a href='https://arena.ai'>arena.ai</a> and open &ldquo;battle mode&rdquo;. Browsing is free and needs nothing; <strong>casting a vote needs a free account</strong>, so make one.</li><li><strong>Read this before you type.</strong> <a href='https://arena.ai/'>arena.ai</a> states that your conversations are passed to the model providers and may be made public. So: no student work, no names, no grades, nothing under FERPA or HIPAA, nothing your employer would call confidential. Write prompts that <em>resemble</em> your real tasks without carrying their content.</li><li>Run <strong>at least six</strong> battles across at least three different kinds of task - something creative, something checkable, something technical or procedural. Two per kind, minimum.</li><li>For every battle, before you vote: one sentence on what decided it. Then vote, then screenshot the reveal. The reason has to be written before the names appear or it is not evidence of anything.</li><li>Rank the models you met, first to last, and say what the ranking is <em>for</em>. A ranking with no task attached is the thing this module spent three lessons taking apart.</li><li>If any model you had not heard of beat one you had, name it and write a short paragraph on it - who makes it, what it appears to be for, whether it is open-weight, and what you would use it for. If nothing unfamiliar won, say that instead and name the unfamiliar model that came closest. You might be surprised by all the models out there!</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>The Apply tasks from this module.</p>
+              </div>
+              <div class="caphand">
+                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
+                <p>Six or more battles with pre-vote reasons and reveal screenshots, your ranking with the task it is for, and the paragraph on the unfamiliar model.</p>
+              </div>
+              <div class="caphow">
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p><strong>Mechanism</strong> is in your pre-vote reasons - &ldquo;this one reads better&rdquo; six times means you rated fluency, and the criterion says so. <strong>Evidence</strong> is the screenshots; a reported vote with no reveal attached is a claim. <strong>Calibration</strong> is naming what your ranking is for, and admitting where six battles cannot support it. <strong>Disclosure</strong> includes saying which prompts you altered to keep real content out. <strong>Transfer</strong> is the unfamiliar model paragraph - you are researching something no lesson mentioned.</p>
+              </div>
+              <div class="btnrow">
+                <button class="btn btn--primary capopt__pick" type="button">
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
+              </div>
+            </div>
+          </article><article class="capopt" id="opt-benchmarking" data-opt="benchmarking">
+            <button class="capopt__head" type="button" aria-expanded="false">
+              <span class="capopt__meta"><span class="capopt__kind">Comparison table with commentary</span>
+                <span class="capopt__time">60&ndash;90 min</span></span>
+              <span class="capopt__name">Benchmarking</span>
+              <span class="capopt__premise">Pick one model, look it up on five public boards, and explain why they do not agree.</span>
+              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You would rather read other people&rsquo;s numbers carefully than generate your own, and you want to know why the rankings never agree.</span>
+              <span class="capopt__more"><span>See what it involves</span>
+                <svg class="i"><use href="#i-chevron-down"/></svg></span>
+            </button>
+            <div class="capopt__body" hidden>
+              <ol class="capsteps"><li>Pick <strong>one</strong> model you actually use. Name the exact version.</li><li>Look it up on each of these, and <strong>record the date you looked</strong> - these move: <a href='https://arena.ai/leaderboard'>arena.ai/leaderboard</a> (human preference votes), <a href='https://artificialanalysis.ai/leaderboards/models'>Artificial Analysis</a> (a composite index, plus price and speed), <a href='https://www.swebench.com/verified.html'>SWE-bench Verified</a> (real GitHub issues, graded by whether the tests pass), <a href='https://arcprize.org/leaderboard'>ARC Prize</a> (novel puzzles, plotted against cost per task), and <a href='https://openrouter.ai/rankings'>OpenRouter Rankings</a> (not quality at all - how many tokens developers actually send).</li><li>Build a table: board, what it measures, your model&rsquo;s rank or score, and the date. <strong>Absent</strong> is a real and interesting result - several boards carry only recent frontier releases, and a model simply not being there tells you what that board chose to look at.</li><li>Now the actual assignment: <strong>explain a disagreement.</strong> Find two boards that rank your model differently and account for it from what each one measures. Not &ldquo;boards vary&rdquo; - the specific mechanism.</li><li>Look at Artificial Analysis&rsquo;s published weights for its index. Someone chose those percentages. Say what a different set of weights would do to your model&rsquo;s position, and what weights <em>you</em> would want for your own work.</li><li>Close with one paragraph: after all that, what would you actually need to see to justify switching models? If the honest answer is &ldquo;none of this&rdquo;, argue it - that is a defensible finding and this module has been building toward it.</li></ol>
+              <div class="capfrom">
+                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
+                <p>The Apply tasks from this module.</p>
+              </div>
+              <div class="caphand">
+                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
+                <p>The table with dates, the explained disagreement, your note on the index weights, and the closing paragraph.</p>
+              </div>
+              <div class="caphow">
+                <span class="caphow__lab">How the five criteria land on this one</span>
+                <p><strong>Mechanism</strong> is the explained disagreement, and this route lives or dies on it: preference votes and passed test suites are different measurements, and saying which is which is the whole skill. <strong>Evidence</strong> is the dated table - an undated score is not checkable, because every one of these boards moves. <strong>Calibration</strong> is treating <em>absent</em> honestly rather than as a zero, and the closing paragraph. <strong>Transfer</strong> is the weights question: nothing in the lessons told you what to want.</p>
+              </div>
+              <div class="btnrow">
+                <button class="btn btn--primary capopt__pick" type="button">
+                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
+              </div>
+            </div>
+          </article></div>
+  </section>
+
+  <section class="block" id="chosen" hidden>
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-check"/></svg> Your choice</span>
+      <h2 id="chosenName">-</h2>
+      <p id="chosenPremise"></p>
+    </div>
+    <div class="card">
+      <div class="capcheck" id="capcheck"></div>
+      <div class="btnrow">
+        <button class="btn btn--ghost" type="button" id="capBack">
+          <svg class="i"><use href="#i-arrow-right"/></svg> Look at the other three again</button>
+      </div>
+      <p class="small muted">Ticking these is for your benefit only - nothing here is
+      submitted or seen. Hand the work in through Brightspace.</p>
+    </div>
+  </section>
+
+  <!-- The hand-in link, hidden until the LMS hands one in.
+
+       A dropbox URL belongs to one section of one course in one term, so it is
+       not in this repository - the Brightspace topic supplies it, either as
+       data-submit on the iframe or as ?submit= on the frame&rsquo;s src. See
+       shared/js/frame.js. A page opened directly on the public site shows no
+       card, which is right: a stranger has nothing to hand in. -->
+  <div class="handin" id="handin" hidden>
+    <div class="icontile"><svg class="i"><use href="#i-upload"/></svg></div>
+    <div class="stack">
+      <span class="eyebrow">When you are ready</span>
+      <a class="btn btn--primary" href="#">Hand in your checkpoint</a>
+    </div>
   </div>
 
-  <!-- PROGRESS ---------------------------------------------------------- -->
-  <section class="panel block" id="p-progress">
-    <div class="blockhead">
-      <h2>Where you are</h2>
-      <p id="progSummary">Tap anything you&rsquo;ve finished. This also decides which vocabulary counts as covered.</p>
-    </div>
-    <div class="pgrid" id="pgrid"><button class="ptile" type="button" aria-pressed="false" data-item="0"><span class="ptile__id">0A</span><span class="ptile__t">How This Course Works</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="1"><span class="ptile__id">0B</span><span class="ptile__t">Where You&rsquo;re Starting From</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="2"><span class="ptile__id">0C</span><span class="ptile__t">Getting Your Tools</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="3"><span class="ptile__id">0D</span><span class="ptile__t">Introduce Yourself</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="4"><span class="ptile__id">01</span><span class="ptile__t">What This Even Is</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="5"><span class="ptile__id">02</span><span class="ptile__t">The Next Word Machine</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="6"><span class="ptile__id">03</span><span class="ptile__t">Why It Wanders</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="7"><span class="ptile__id">04</span><span class="ptile__t">Anatomy of a Prompt</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="8"><span class="ptile__id">05</span><span class="ptile__t">The Landscape</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="9"><span class="ptile__id">06</span><span class="ptile__t">Choosing a Model, Blind</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="10"><span class="ptile__id">07</span><span class="ptile__t">Iteration and Repair</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="11"><span class="ptile__id">08</span><span class="ptile__t">Why AI Makes Things Up</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="12"><span class="ptile__id">09</span><span class="ptile__t">Models That Can Actually Look Things Up</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="13"><span class="ptile__id">10</span><span class="ptile__t">Where Bias Comes From</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="14"><span class="ptile__id">11</span><span class="ptile__t">The Verification Habit</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="15"><span class="ptile__id">12</span><span class="ptile__t">Making Images</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="16"><span class="ptile__id">13</span><span class="ptile__t">Voice and Audio</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="17"><span class="ptile__id">14</span><span class="ptile__t">Working Across Modalities</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="18"><span class="ptile__id">15</span><span class="ptile__t">Your Data, Their Servers</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="19"><span class="ptile__id">16</span><span class="ptile__t">Attribution, Copyright and Honest Work</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button><button class="ptile" type="button" aria-pressed="false" data-item="20"><span class="ptile__id">17</span><span class="ptile__t">Your AI Practice</span><span class="ptile__check"><svg class="i"><use href="#i-check"/></svg></span></button></div>
-    <div class="callout">
-      <div class="icontile icontile--quiet"><svg class="i"><use href="#i-zap"/></svg></div>
-      <div class="callout__body">
-        <p class="callout__label">A note on this grid</p>
-        <p>You are marking these yourself, which means it is a to-do list rather than a gradebook. When the hub is wired into the LMS it will read real completion instead - but the marking-it-yourself version is worth keeping, because deciding you are done with something is its own small act of reflection.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- VOCABULARY -------------------------------------------------------- -->
-  <section class="panel block" id="p-vocab" hidden>
-    <div class="blockhead">
-      <h2>Vocabulary</h2>
-      <p id="vocabSummary">-</p>
-    </div>
-
-    <div class="searchrow">
-      <label class="search">
-        <svg class="i"><use href="#i-eye"/></svg>
-        <input type="search" id="vsearch" placeholder="Search terms and definitions&hellip;" aria-label="Search vocabulary">
-      </label>
-      <button class="fbtn togchip" type="button" id="onlyCovered" aria-pressed="false">
-        <svg class="i"><use href="#i-check"/></svg> Only what I&rsquo;ve covered
-      </button>
-      <button class="btn btn--primary" type="button" id="practiceBtn"><svg class="i"><use href="#i-flask"/></svg> Practice</button>
-    </div>
-
-    <div id="practiceZone" hidden></div>
-
-    <div class="termlist" id="termlist"><div class="term" data-lesson="1" data-search="artificial intelligence (ai) the whole field: any system built to do something that would need intelligence if a person did it. seventy years old, and most of it is not what you think. the broadest word on this list and the least useful on its own - always ask which kind."><div class="term__top"><span class="term__name">Artificial intelligence (AI)</span><span class="term__from">Lesson 01</span></div><p class="term__def">The whole field: any system built to do something that would need intelligence if a person did it. Seventy years old, and most of it is not what you think.</p><p class="term__why">The broadest word on this list and the least useful on its own - always ask which kind.</p></div><div class="term" data-lesson="1" data-search="machine learning systems that derive their behavior from data rather than from rules a person wrote out. the shift that made most modern ai possible: nobody hand-wrote the rules for spotting spam."><div class="term__top"><span class="term__name">Machine learning</span><span class="term__from">Lesson 01</span></div><p class="term__def">Systems that derive their behavior from data rather than from rules a person wrote out.</p><p class="term__why">The shift that made most modern AI possible: nobody hand-wrote the rules for spotting spam.</p></div><div class="term" data-lesson="1" data-search="deep learning machine learning built on neural networks with many layers. the inner ring where language models live. explains why these systems are hard to inspect - nobody wrote the intermediate steps."><div class="term__top"><span class="term__name">Deep learning</span><span class="term__from">Lesson 01</span></div><p class="term__def">Machine learning built on neural networks with many layers. The inner ring where language models live.</p><p class="term__why">Explains why these systems are hard to inspect - nobody wrote the intermediate steps.</p></div><div class="term" data-lesson="1" data-search="neural network a stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data. the mechanism underneath every tool in this course, and older than most people assume. for more information, watch terminator 2."><div class="term__top"><span class="term__name">Neural network</span><span class="term__from">Lesson 01</span></div><p class="term__def">A stack of numerical layers loosely inspired by neurons, adjusted during training until its outputs match the data.</p><p class="term__why">The mechanism underneath every tool in this course, and older than most people assume. For more information, watch Terminator 2.</p></div><div class="term" data-lesson="1" data-search="narrow ai a system good at one bounded task and useless outside it. every tool in this course. cuts through most of the hype in one move."><div class="term__top"><span class="term__name">Narrow AI</span><span class="term__from">Lesson 01</span></div><p class="term__def">A system good at one bounded task and useless outside it. Every tool in this course.</p><p class="term__why">Cuts through most of the hype in one move.</p></div><div class="term" data-lesson="1" data-search="general ai (agi) a hypothetical system matching human flexibility across arbitrary tasks. does not exist. worth naming precisely so you can tell when a headline is describing something else."><div class="term__top"><span class="term__name">General AI (AGI)</span><span class="term__from">Lesson 01</span></div><p class="term__def">A hypothetical system matching human flexibility across arbitrary tasks. Does not exist.</p><p class="term__why">Worth naming precisely so you can tell when a headline is describing something else.</p></div><div class="term" data-lesson="1" data-search="generative ai the branch that produces new text, images or audio rather than sorting or scoring existing things. distinguishes the chatbot from the spam filter, which is the distinction most coverage skips."><div class="term__top"><span class="term__name">Generative AI</span><span class="term__from">Lesson 01</span></div><p class="term__def">The branch that produces new text, images or audio rather than sorting or scoring existing things.</p><p class="term__why">Distinguishes the chatbot from the spam filter, which is the distinction most coverage skips.</p></div><div class="term" data-lesson="1" data-search="ai winter one of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in ai collapsed after the field promised far more than it delivered. the reason to be careful with any claim about what is about to happen next. confident, specific predictions about ai have been made before, and twice the field had to spend a decade recovering from them."><div class="term__top"><span class="term__name">AI winter</span><span class="term__from">Lesson 01</span></div><p class="term__def">One of two stretches - roughly 1974 to 1980, and 1987 to 1993 - when research funding and public interest in AI collapsed after the field promised far more than it delivered.</p><p class="term__why">The reason to be careful with any claim about what is about to happen next. Confident, specific predictions about AI have been made before, and twice the field had to spend a decade recovering from them.</p></div><div class="term" data-lesson="3" data-search="attention the mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing. the answer to why the token machine wandered and current models do not."><div class="term__top"><span class="term__name">Attention</span><span class="term__from">Lesson 03</span></div><p class="term__def">The mechanism that lets a model weigh every word in the input at once and decide which ones bear on the word it is producing.</p><p class="term__why">The answer to why the token machine wandered and current models do not.</p></div><div class="term" data-lesson="3" data-search="transformer the architecture built on attention, introduced in 2017. effectively every model in this course is one. the single piece of architecture worth knowing by name - the t in gpt."><div class="term__top"><span class="term__name">Transformer</span><span class="term__from">Lesson 03</span></div><p class="term__def">The architecture built on attention, introduced in 2017. Effectively every model in this course is one.</p><p class="term__why">The single piece of architecture worth knowing by name - the T in GPT.</p></div><div class="term" data-lesson="3" data-search="context (long-range) material far from the current word that still determines its meaning. what a two-word memory cannot hold and attention can - and why paragraphs hold together now."><div class="term__top"><span class="term__name">Context (long-range)</span><span class="term__from">Lesson 03</span></div><p class="term__def">Material far from the current word that still determines its meaning.</p><p class="term__why">What a two-word memory cannot hold and attention can - and why paragraphs hold together now.</p></div><div class="term" data-lesson="2" data-search="token the chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;unbelievable&rdquo; might be three tokens. cost, speed and context limits are all measured in tokens, never in words."><div class="term__top"><span class="term__name">Token</span><span class="term__from">Lesson 02</span></div><p class="term__def">The chunk of text a model actually works with - usually a word, a piece of a word, or a punctuation mark. &ldquo;Unbelievable&rdquo; might be three tokens.</p><p class="term__why">Cost, speed and context limits are all measured in tokens, never in words.</p></div><div class="term" data-lesson="2" data-search="large language model (llm) a system trained on an enormous amount of text to predict what comes next. everything else it appears to do follows from that one job. if you keep one definition from this course, keep this one - most of module 3 is a consequence of it."><div class="term__top"><span class="term__name">Large language model (LLM)</span><span class="term__from">Lesson 02</span></div><p class="term__def">A system trained on an enormous amount of text to predict what comes next. Everything else it appears to do follows from that one job.</p><p class="term__why">If you keep one definition from this course, keep this one - most of Module 3 is a consequence of it.</p></div><div class="term" data-lesson="2" data-search="training building the model, in stages, before anyone could use it - first predicting text across a huge corpus, then being tuned by people toward answering usefully. all of it finished before you ever typed anything. the model is not learning from your conversation, whatever it sounds like."><div class="term__top"><span class="term__name">Training</span><span class="term__from">Lesson 02</span></div><p class="term__def">Building the model, in stages, before anyone could use it - first predicting text across a huge corpus, then being tuned by people toward answering usefully.</p><p class="term__why">All of it finished before you ever typed anything. The model is not learning from your conversation, whatever it sounds like.</p></div><div class="term" data-lesson="2" data-search="inference what happens when you press enter: the finished model generating one token at a time. explains why the identical prompt can come back different twice in a row."><div class="term__top"><span class="term__name">Inference</span><span class="term__from">Lesson 02</span></div><p class="term__def">What happens when you press enter: the finished model generating one token at a time.</p><p class="term__why">Explains why the identical prompt can come back different twice in a row.</p></div><div class="term" data-lesson="2" data-search="temperature a setting controlling how strongly the model favors the single most likely next token over a less likely one. low is repetitive and safe, high is inventive and unreliable. most chat tools hide this."><div class="term__top"><span class="term__name">Temperature</span><span class="term__from">Lesson 02</span></div><p class="term__def">A setting controlling how strongly the model favors the single most likely next token over a less likely one.</p><p class="term__why">Low is repetitive and safe, high is inventive and unreliable. Most chat tools hide this.</p></div><div class="term" data-lesson="2" data-search="parameters the numbers inside the model that training adjusted. sizes are quoted in billions of them. the number marketing leans on hardest, and a poor predictor of whether a model suits your task."><div class="term__top"><span class="term__name">Parameters</span><span class="term__from">Lesson 02</span></div><p class="term__def">The numbers inside the model that training adjusted. Sizes are quoted in billions of them.</p><p class="term__why">The number marketing leans on hardest, and a poor predictor of whether a model suits your task.</p></div><div class="term" data-lesson="4" data-search="prompt everything you send in one turn - the question plus whatever context, examples and instructions come with it. most of what gets blamed on &ldquo;bad ai&rdquo; is a prompt problem."><div class="term__top"><span class="term__name">Prompt</span><span class="term__from">Lesson 04</span></div><p class="term__def">Everything you send in one turn - the question plus whatever context, examples and instructions come with it.</p><p class="term__why">Most of what gets blamed on &ldquo;bad AI&rdquo; is a prompt problem.</p></div><div class="term" data-lesson="4" data-search="context the material you hand the model to work from: pasted text, uploaded files, earlier turns. grounding a request in real context is the single largest quality lever you control."><div class="term__top"><span class="term__name">Context</span><span class="term__from">Lesson 04</span></div><p class="term__def">The material you hand the model to work from: pasted text, uploaded files, earlier turns.</p><p class="term__why">Grounding a request in real context is the single largest quality lever you control.</p></div><div class="term" data-lesson="4" data-search="few-shot (worked example) showing the model one or more examples of the output you want rather than describing it. far more reliable than adjectives for pinning down a format."><div class="term__top"><span class="term__name">Few-shot (worked example)</span><span class="term__from">Lesson 04</span></div><p class="term__def">Showing the model one or more examples of the output you want rather than describing it.</p><p class="term__why">Far more reliable than adjectives for pinning down a format.</p></div><div class="term" data-lesson="4" data-search="system prompt standing instructions sitting behind a conversation that shape every reply in it. how custom assistants get their rules - and the foundation of csc 240."><div class="term__top"><span class="term__name">System prompt</span><span class="term__from">Lesson 04</span></div><p class="term__def">Standing instructions sitting behind a conversation that shape every reply in it.</p><p class="term__why">How custom assistants get their rules - and the foundation of CSC 240.</p></div><div class="term" data-lesson="4" data-search="constraint a hard limit written into the prompt: word count, reading level, what to leave out, what to never say. constraints do real work. &ldquo;be good&rdquo; does none."><div class="term__top"><span class="term__name">Constraint</span><span class="term__from">Lesson 04</span></div><p class="term__def">A hard limit written into the prompt: word count, reading level, what to leave out, what to never say.</p><p class="term__why">Constraints do real work. &ldquo;Be good&rdquo; does none.</p></div><div class="term" data-lesson="5" data-search="context window the maximum amount of text a model can hold in view at once, your prompt and its reply together. go past it and the earliest material silently drops out of view - no warning."><div class="term__top"><span class="term__name">Context window</span><span class="term__from">Lesson 05</span></div><p class="term__def">The maximum amount of text a model can hold in view at once, your prompt and its reply together.</p><p class="term__why">Go past it and the earliest material silently drops out of view - no warning.</p></div><div class="term" data-lesson="5" data-search="knowledge cutoff the date after which a model&rsquo;s training data stops. it knows nothing later unless a tool fetches it. the single most common cause of a confidently wrong answer about anything current."><div class="term__top"><span class="term__name">Knowledge cutoff</span><span class="term__from">Lesson 05</span></div><p class="term__def">The date after which a model&rsquo;s training data stops. It knows nothing later unless a tool fetches it.</p><p class="term__why">The single most common cause of a confidently wrong answer about anything current.</p></div><div class="term" data-lesson="5" data-search="multimodal a model that handles more than text - images, audio, sometimes video, as input or output. decides whether you can paste a screenshot at all."><div class="term__top"><span class="term__name">Multimodal</span><span class="term__from">Lesson 05</span></div><p class="term__def">A model that handles more than text - images, audio, sometimes video, as input or output.</p><p class="term__why">Decides whether you can paste a screenshot at all.</p></div><div class="term" data-lesson="5" data-search="chat model the default kind: it answers in one pass, immediately, and is the right tool for most things. the one you are already using. it is the baseline the other two are being compared against, which is why it needs a name."><div class="term__top"><span class="term__name">Chat model</span><span class="term__from">Lesson 05</span></div><p class="term__def">The default kind: it answers in one pass, immediately, and is the right tool for most things.</p><p class="term__why">The one you are already using. It is the baseline the other two are being compared against, which is why it needs a name.</p></div><div class="term" data-lesson="5" data-search="reasoning model a model that spends extra computation working through a problem in steps before answering. slower and costlier. worth it for multi-step problems, wasted on a rewrite."><div class="term__top"><span class="term__name">Reasoning model</span><span class="term__from">Lesson 05</span></div><p class="term__def">A model that spends extra computation working through a problem in steps before answering.</p><p class="term__why">Slower and costlier. Worth it for multi-step problems, wasted on a rewrite.</p></div><div class="term" data-lesson="5" data-search="foundation model a large general-purpose model that other products are built on top of. several tools you use may be the same model wearing different clothes."><div class="term__top"><span class="term__name">Foundation model</span><span class="term__from">Lesson 05</span></div><p class="term__def">A large general-purpose model that other products are built on top of.</p><p class="term__why">Several tools you use may be the same model wearing different clothes.</p></div><div class="term" data-lesson="5" data-search="rate limit a cap on how much you can use a tool in a given window, usually much tighter on free tiers. find yours before an assignment is due, not during."><div class="term__top"><span class="term__name">Rate limit</span><span class="term__from">Lesson 05</span></div><p class="term__def">A cap on how much you can use a tool in a given window, usually much tighter on free tiers.</p><p class="term__why">Find yours before an assignment is due, not during.</p></div><div class="term" data-lesson="6" data-search="benchmark a standard test used to compare models on one specific skill. models can be tuned to score well on benchmarks without being better at your actual work."><div class="term__top"><span class="term__name">Benchmark</span><span class="term__from">Lesson 06</span></div><p class="term__def">A standard test used to compare models on one specific skill.</p><p class="term__why">Models can be tuned to score well on benchmarks without being better at your actual work.</p></div><div class="term" data-lesson="6" data-search="leaderboard a ranked table of models by benchmark score or human preference. genuinely useful and routinely over-read."><div class="term__top"><span class="term__name">Leaderboard</span><span class="term__from">Lesson 06</span></div><p class="term__def">A ranked table of models by benchmark score or human preference.</p><p class="term__why">Genuinely useful and routinely over-read.</p></div><div class="term" data-lesson="6" data-search="blind comparison rating two outputs without knowing which model produced either. the only way to measure the answer instead of the brand."><div class="term__top"><span class="term__name">Blind comparison</span><span class="term__from">Lesson 06</span></div><p class="term__def">Rating two outputs without knowing which model produced either.</p><p class="term__why">The only way to measure the answer instead of the brand.</p></div><div class="term" data-lesson="6" data-search="elo rating a ranking score borrowed from chess, updated every time one option beats another head to head. how lm arena turns a pile of votes into an ordered list."><div class="term__top"><span class="term__name">Elo rating</span><span class="term__from">Lesson 06</span></div><p class="term__def">A ranking score borrowed from chess, updated every time one option beats another head to head.</p><p class="term__why">How LM Arena turns a pile of votes into an ordered list.</p></div><div class="term" data-lesson="7" data-search="thread one continuous conversation. everything in it stays in context until the window fills up. a long thread can quietly poison a new question asked inside it."><div class="term__top"><span class="term__name">Thread</span><span class="term__from">Lesson 07</span></div><p class="term__def">One continuous conversation. Everything in it stays in context until the window fills up.</p><p class="term__why">A long thread can quietly poison a new question asked inside it.</p></div><div class="term" data-lesson="7" data-search="context accumulation the build-up of earlier turns, which increasingly shapes every later answer. the reason a fresh chat sometimes beats one more follow-up."><div class="term__top"><span class="term__name">Context accumulation</span><span class="term__from">Lesson 07</span></div><p class="term__def">The build-up of earlier turns, which increasingly shapes every later answer.</p><p class="term__why">The reason a fresh chat sometimes beats one more follow-up.</p></div><div class="term" data-lesson="7" data-search="drift a thread gradually moving away from what you originally asked, as each turn is written against everything before it. the symptom you notice; context accumulation is the cause underneath it. naming it is what stops you arguing with a thread you should be restarting."><div class="term__top"><span class="term__name">Drift</span><span class="term__from">Lesson 07</span></div><p class="term__def">A thread gradually moving away from what you originally asked, as each turn is written against everything before it.</p><p class="term__why">The symptom you notice; context accumulation is the cause underneath it. Naming it is what stops you arguing with a thread you should be restarting.</p></div><div class="term" data-lesson="7" data-search="regeneration asking for another attempt at the same prompt instead of editing the prompt. cheap to try, and it tells you whether the problem is your prompt or the luck of the draw."><div class="term__top"><span class="term__name">Regeneration</span><span class="term__from">Lesson 07</span></div><p class="term__def">Asking for another attempt at the same prompt instead of editing the prompt.</p><p class="term__why">Cheap to try, and it tells you whether the problem is your prompt or the luck of the draw.</p></div><div class="term" data-lesson="8" data-search="hallucination a fluent, confident, well-formatted output that is simply untrue. &ldquo;fabrication&rdquo; is the plainer word for it. not a malfunction. the same machinery that produces correct answers produces these."><div class="term__top"><span class="term__name">Hallucination</span><span class="term__from">Lesson 08</span></div><p class="term__def">A fluent, confident, well-formatted output that is simply untrue. &ldquo;Fabrication&rdquo; is the plainer word for it.</p><p class="term__why">Not a malfunction. The same machinery that produces correct answers produces these.</p></div><div class="term" data-lesson="8" data-search="confabulation filling a gap with plausible invention instead of signaling uncertainty. borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;."><div class="term__top"><span class="term__name">Confabulation</span><span class="term__from">Lesson 08</span></div><p class="term__def">Filling a gap with plausible invention instead of signaling uncertainty.</p><p class="term__why">Borrowed from neurology, and a more honest description than &ldquo;hallucination&rdquo;.</p></div><div class="term" data-lesson="8" data-search="plausibility how right something sounds. exactly what the model optimises for, and therefore useless as a truth test. the trap inside every fabricated citation you will ever see."><div class="term__top"><span class="term__name">Plausibility</span><span class="term__from">Lesson 08</span></div><p class="term__def">How right something sounds. Exactly what the model optimises for, and therefore useless as a truth test.</p><p class="term__why">The trap inside every fabricated citation you will ever see.</p></div><div class="term" data-lesson="9" data-search="grounding tying an answer to specific retrieved source material rather than to training alone. the main structural defense against fabrication."><div class="term__top"><span class="term__name">Grounding</span><span class="term__from">Lesson 09</span></div><p class="term__def">Tying an answer to specific retrieved source material rather than to training alone.</p><p class="term__why">The main structural defense against fabrication.</p></div><div class="term" data-lesson="9" data-search="retrieval fetching documents or search results and putting them into the model&rsquo;s context before it answers. what lets a tool discuss last week at all."><div class="term__top"><span class="term__name">Retrieval</span><span class="term__from">Lesson 09</span></div><p class="term__def">Fetching documents or search results and putting them into the model&rsquo;s context before it answers.</p><p class="term__why">What lets a tool discuss last week at all.</p></div><div class="term" data-lesson="9" data-search="citation a reference to a source. check two things: that it exists, and that it says what was claimed. the second check is the one almost everybody skips."><div class="term__top"><span class="term__name">Citation</span><span class="term__from">Lesson 09</span></div><p class="term__def">A reference to a source. Check two things: that it exists, and that it says what was claimed.</p><p class="term__why">The second check is the one almost everybody skips.</p></div><div class="term" data-lesson="10" data-search="bias systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself. a different problem from being wrong, and it needs a different fix."><div class="term__top"><span class="term__name">Bias</span><span class="term__from">Lesson 10</span></div><p class="term__def">Systematic skew in output tracing back to training data, human feedback, or the framing of the prompt itself.</p><p class="term__why">A different problem from being wrong, and it needs a different fix.</p></div><div class="term" data-lesson="10" data-search="rlhf reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred. the second place bias enters, after the training data."><div class="term__top"><span class="term__name">RLHF</span><span class="term__from">Lesson 10</span></div><p class="term__def">Reinforcement learning from human feedback - people rate outputs, and the model is tuned toward what they preferred.</p><p class="term__why">The second place bias enters, after the training data.</p></div><div class="term" data-lesson="10" data-search="probe a deliberately controlled prompt pair that changes exactly one variable to surface a difference. turns &ldquo;it feels biased&rdquo; into something you can show someone."><div class="term__top"><span class="term__name">Probe</span><span class="term__from">Lesson 10</span></div><p class="term__def">A deliberately controlled prompt pair that changes exactly one variable to surface a difference.</p><p class="term__why">Turns &ldquo;it feels biased&rdquo; into something you can show someone.</p></div><div class="term" data-lesson="11" data-search="verification independently confirming a claim before you rely on it. the habit this entire course exists to install."><div class="term__top"><span class="term__name">Verification</span><span class="term__from">Lesson 11</span></div><p class="term__def">Independently confirming a claim before you rely on it.</p><p class="term__why">The habit this entire course exists to install.</p></div><div class="term" data-lesson="11" data-search="provenance where a piece of content came from and what happened to it along the way. increasingly the thing you will be asked to document."><div class="term__top"><span class="term__name">Provenance</span><span class="term__from">Lesson 11</span></div><p class="term__def">Where a piece of content came from and what happened to it along the way.</p><p class="term__why">Increasingly the thing you will be asked to document.</p></div><div class="term" data-lesson="11" data-search="stakes what happens if this is wrong, and how hard it would be to check. together these decide how much verification a task actually deserves."><div class="term__top"><span class="term__name">Stakes</span><span class="term__from">Lesson 11</span></div><p class="term__def">What happens if this is wrong, and how hard it would be to check.</p><p class="term__why">Together these decide how much verification a task actually deserves.</p></div><div class="term" data-lesson="12" data-search="diffusion model the kind of model behind most image generators. it starts from noise and repeatedly refines toward your prompt. explains why counting, hands and text-in-images are so hard for it."><div class="term__top"><span class="term__name">Diffusion model</span><span class="term__from">Lesson 12</span></div><p class="term__def">The kind of model behind most image generators. It starts from noise and repeatedly refines toward your prompt.</p><p class="term__why">Explains why counting, hands and text-in-images are so hard for it.</p></div><div class="term" data-lesson="12" data-search="negative prompt a separate field listing what you do not want. not the same as writing &ldquo;no x&rdquo; in the prompt itself. &ldquo;no people&rdquo; in the main prompt reliably produces people."><div class="term__top"><span class="term__name">Negative prompt</span><span class="term__from">Lesson 12</span></div><p class="term__def">A separate field listing what you do not want. Not the same as writing &ldquo;no X&rdquo; in the prompt itself.</p><p class="term__why">&ldquo;No people&rdquo; in the main prompt reliably produces people.</p></div><div class="term" data-lesson="12" data-search="seed the starting random number. the same seed with the same prompt reproduces the same image. how you change one thing without losing the whole picture."><div class="term__top"><span class="term__name">Seed</span><span class="term__from">Lesson 12</span></div><p class="term__def">The starting random number. The same seed with the same prompt reproduces the same image.</p><p class="term__why">How you change one thing without losing the whole picture.</p></div><div class="term" data-lesson="13" data-search="speech-to-text (asr) automatic transcription of recorded speech into written text. error rates are not evenly distributed across accents, names, or speakers."><div class="term__top"><span class="term__name">Speech-to-text (ASR)</span><span class="term__from">Lesson 13</span></div><p class="term__def">Automatic transcription of recorded speech into written text.</p><p class="term__why">Error rates are not evenly distributed across accents, names, or speakers.</p></div><div class="term" data-lesson="13" data-search="text-to-speech generating spoken audio from written text. good enough now that consent is a real question rather than a hypothetical."><div class="term__top"><span class="term__name">Text-to-speech</span><span class="term__from">Lesson 13</span></div><p class="term__def">Generating spoken audio from written text.</p><p class="term__why">Good enough now that consent is a real question rather than a hypothetical.</p></div><div class="term" data-lesson="13" data-search="voice cloning producing synthetic speech in a specific person&rsquo;s voice from a sample of it. legally and ethically the sharpest edge anywhere in this course."><div class="term__top"><span class="term__name">Voice cloning</span><span class="term__from">Lesson 13</span></div><p class="term__def">Producing synthetic speech in a specific person&rsquo;s voice from a sample of it.</p><p class="term__why">Legally and ethically the sharpest edge anywhere in this course.</p></div><div class="term" data-lesson="13" data-search="word error rate (wer) the standard measure of transcription accuracy: errors divided by words spoken. lets you compare two tools instead of arguing about which felt better."><div class="term__top"><span class="term__name">Word error rate (WER)</span><span class="term__from">Lesson 13</span></div><p class="term__def">The standard measure of transcription accuracy: errors divided by words spoken.</p><p class="term__why">Lets you compare two tools instead of arguing about which felt better.</p></div><div class="term" data-lesson="14" data-search="vision input giving a model an image - screenshot, photo, scan - as part of the prompt. degrades badly with skew, handwriting and dense tables, and does so silently."><div class="term__top"><span class="term__name">Vision input</span><span class="term__from">Lesson 14</span></div><p class="term__def">Giving a model an image - screenshot, photo, scan - as part of the prompt.</p><p class="term__why">Degrades badly with skew, handwriting and dense tables, and does so silently.</p></div><div class="term" data-lesson="14" data-search="ocr optical character recognition: pulling text out of an image of text. frequently the better tool than a vision model when the scan is clean."><div class="term__top"><span class="term__name">OCR</span><span class="term__from">Lesson 14</span></div><p class="term__def">Optical character recognition: pulling text out of an image of text.</p><p class="term__why">Frequently the better tool than a vision model when the scan is clean.</p></div><div class="term" data-lesson="14" data-search="modality a kind of input or output: text, image, audio, video. choosing the right one is usually a bigger win than improving the prompt."><div class="term__top"><span class="term__name">Modality</span><span class="term__from">Lesson 14</span></div><p class="term__def">A kind of input or output: text, image, audio, video.</p><p class="term__why">Choosing the right one is usually a bigger win than improving the prompt.</p></div><div class="term" data-lesson="15" data-search="personally identifiable information (pii) anything that identifies a specific person, on its own or combined with other data. the category that decides what you may and may not paste."><div class="term__top"><span class="term__name">Personally identifiable information (PII)</span><span class="term__from">Lesson 15</span></div><p class="term__def">Anything that identifies a specific person, on its own or combined with other data.</p><p class="term__why">The category that decides what you may and may not paste.</p></div><div class="term" data-lesson="15" data-search="data retention how long a vendor keeps what you send, and what they are permitted to do with it. varies by tier, and lives in the settings rather than the marketing."><div class="term__top"><span class="term__name">Data retention</span><span class="term__from">Lesson 15</span></div><p class="term__def">How long a vendor keeps what you send, and what they are permitted to do with it.</p><p class="term__why">Varies by tier, and lives in the settings rather than the marketing.</p></div><div class="term" data-lesson="15" data-search="training opt-out a setting that stops your conversations being used to improve the vendor&rsquo;s models. off by default on a number of consumer tiers. lesson 15 has you go and find yours."><div class="term__top"><span class="term__name">Training opt-out</span><span class="term__from">Lesson 15</span></div><p class="term__def">A setting that stops your conversations being used to improve the vendor&rsquo;s models.</p><p class="term__why">Off by default on a number of consumer tiers. Lesson 15 has you go and find yours.</p></div><div class="term" data-lesson="15" data-search="ferpa us federal law protecting student education records. applies to anyone at flcc handling student data - including inside a chatbot."><div class="term__top"><span class="term__name">FERPA</span><span class="term__from">Lesson 15</span></div><p class="term__def">US federal law protecting student education records.</p><p class="term__why">Applies to anyone at FLCC handling student data - including inside a chatbot.</p></div><div class="term" data-lesson="15" data-search="zero-retention an arrangement in which the vendor does not store your inputs at all. usually enterprise-only, and worth knowing exists before you need it."><div class="term__top"><span class="term__name">Zero-retention</span><span class="term__from">Lesson 15</span></div><p class="term__def">An arrangement in which the vendor does not store your inputs at all.</p><p class="term__why">Usually enterprise-only, and worth knowing exists before you need it.</p></div><div class="term" data-lesson="16" data-search="attribution crediting a source you drew on. a different obligation from disclosure, and often confused with it."><div class="term__top"><span class="term__name">Attribution</span><span class="term__from">Lesson 16</span></div><p class="term__def">Crediting a source you drew on.</p><p class="term__why">A different obligation from disclosure, and often confused with it.</p></div><div class="term" data-lesson="16" data-search="disclosure stating that you used ai, and saying how. the line moves by context - a school, an employer and a journal each draw it differently."><div class="term__top"><span class="term__name">Disclosure</span><span class="term__from">Lesson 16</span></div><p class="term__def">Stating that you used AI, and saying how.</p><p class="term__why">The line moves by context - a school, an employer and a journal each draw it differently.</p></div><div class="term" data-lesson="16" data-search="ai-use statement a short written note describing what ai did in a piece of work. increasingly required. you write your own in lesson 16."><div class="term__top"><span class="term__name">AI-use statement</span><span class="term__from">Lesson 16</span></div><p class="term__def">A short written note describing what AI did in a piece of work.</p><p class="term__why">Increasingly required. You write your own in Lesson 16.</p></div><div class="term" data-lesson="16" data-search="derivative work something based on existing copyrighted material. the genuinely open legal question sitting under image generation."><div class="term__top"><span class="term__name">Derivative work</span><span class="term__from">Lesson 16</span></div><p class="term__def">Something based on existing copyrighted material.</p><p class="term__why">The genuinely open legal question sitting under image generation.</p></div><div class="term" data-lesson="17" data-search="personal ai policy your own written rules: what you use it for, what you never paste, how you verify, how you disclose. the capstone deliverable, and the only thing here that is entirely yours."><div class="term__top"><span class="term__name">Personal AI policy</span><span class="term__from">Lesson 17</span></div><p class="term__def">Your own written rules: what you use it for, what you never paste, how you verify, how you disclose.</p><p class="term__why">The capstone deliverable, and the only thing here that is entirely yours.</p></div></div>
-    <p class="emptystate" id="noTerms" hidden>Nothing matches that.</p>
-  </section>
-
-  <!-- REFLECTION -------------------------------------------------------- -->
-  <section class="panel block" id="p-reflect" hidden>
-    <div class="blockhead">
-      <h2>Reflection</h2>
-      <p>Guided prompts rather than a blank box, because blank boxes get blank answers. One at a time, whenever you want one.</p>
-    </div>
-
-    <div class="promptcard">
-      <span class="promptcard__kind" id="pKind">This week</span>
-      <p class="promptcard__q" id="pQ">-</p>
-      <div class="field">
-        <textarea id="pA" placeholder="Three sentences is a real answer. So is one, if it&rsquo;s the right one."></textarea>
-      </div>
-      <div class="btnrow">
-        <button class="btn btn--primary" type="button" id="saveEntry" disabled><svg class="i"><use href="#i-check"/></svg> Save this</button>
-        <button class="btn btn--ghost" type="button" id="otherPrompt"><svg class="i"><use href="#i-history"/></svg> Give me a different one</button>
-        <button class="btn btn--ghost" type="button" id="modulePrompt">Module checkpoint</button>
-      </div>
-    </div>
-
-    <div class="blockhead" style="margin-top:1rem">
-      <span class="eyebrow"><svg class="i"><use href="#i-history"/></svg> Your journal</span>
-      <h2 id="jCount">No entries yet</h2>
-    </div>
-    <div class="stack" id="journal"></div>
-    <p class="emptystate" id="noEntries">Nothing saved yet. The first one is the hardest and the least interesting; it gets better once there&rsquo;s something to compare against.</p>
-    <div class="btnrow" id="exportRow" hidden>
-      <button class="btn btn--ghost" type="button" id="exportJ"><svg class="i"><use href="#i-upload"/></svg> Copy the whole journal</button>
-    </div>
-  </section>
-
-  <!-- CONFIDENCE -------------------------------------------------------- -->
-  <section class="panel block" id="p-confidence" hidden>
-    <div class="blockhead">
-      <h2>Confidence over time</h2>
-      <p>The same four questions from the Week 1 inventory. Take it again whenever you like - every few weeks is plenty. The gap between your first answer and your last is the number worth looking at.</p>
-    </div>
-
-    <div class="card card--flush"><div class="slrow"><label class="slrow__q" for="c0">Prompting</label><input class="sl" type="range" id="c0" min="1" max="5" step="1" value="3" data-c="0"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv0">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c1">Choosing the right tool</label><input class="sl" type="range" id="c1" min="1" max="5" step="1" value="3" data-c="1"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv1">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c2">Knowing what to trust</label><input class="sl" type="range" id="c2" min="1" max="5" step="1" value="3" data-c="2"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv2">3 - Okay on simple things</p></div><div class="slrow"><label class="slrow__q" for="c3">Data and disclosure</label><input class="sl" type="range" id="c3" min="1" max="5" step="1" value="3" data-c="3"><div class="slticks"><span>No idea where to start</span><span>I could teach it</span></div><p class="slrow__val" id="cv3">3 - Okay on simple things</p></div></div>
-    <div class="btnrow">
-      <button class="btn btn--primary" type="button" id="recordConf"><svg class="i"><use href="#i-check"/></svg> Record a checkpoint</button>
-      <span class="hint" id="confHint">-</span>
-    </div>
-
-    <div class="card" id="deltaCard" hidden>
-      <div class="stack">
-        <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> First checkpoint &rarr; most recent</span>
-        <div id="deltas"></div>
-      </div>
-    </div>
-  </section>
-
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Learning Hub &middot; <span class="ver" title="page version 8b5065c, build ee01530, 2026-09-09 16:34">v8b5065c</span></span>
-    <span class="row" style="gap:.4rem"><button class="linkbtn" type="button" id="wipe">Erase everything stored here</button></span>
+    <span>CSC 150 &middot; AI Foundations &middot; Module 2 checkpoint &middot; <span class="ver" title="page version ac32fc4, build ee01530, 2026-09-09 16:34">vac32fc4</span></span>
+    <span class="row" style="gap:.4rem">Marked out of 20 &middot; five criteria, four points each</span>
   </footer>
 </main>
 </div>
@@ -2410,408 +2837,131 @@ html[data-theme="dark"] .sidetrip {
 </script>
 
 <script>
-var TERMS=[["Artificial intelligence (AI)", 1], ["Machine learning", 1], ["Deep learning", 1], ["Neural network", 1], ["Narrow AI", 1], ["General AI (AGI)", 1], ["Generative AI", 1], ["AI winter", 1], ["Attention", 3], ["Transformer", 3], ["Context (long-range)", 3], ["Token", 2], ["Large language model (LLM)", 2], ["Training", 2], ["Inference", 2], ["Temperature", 2], ["Parameters", 2], ["Prompt", 4], ["Context", 4], ["Few-shot (worked example)", 4], ["System prompt", 4], ["Constraint", 4], ["Context window", 5], ["Knowledge cutoff", 5], ["Multimodal", 5], ["Chat model", 5], ["Reasoning model", 5], ["Foundation model", 5], ["Rate limit", 5], ["Benchmark", 6], ["Leaderboard", 6], ["Blind comparison", 6], ["Elo rating", 6], ["Thread", 7], ["Context accumulation", 7], ["Drift", 7], ["Regeneration", 7], ["Hallucination", 8], ["Confabulation", 8], ["Plausibility", 8], ["Grounding", 9], ["Retrieval", 9], ["Citation", 9], ["Bias", 10], ["RLHF", 10], ["Probe", 10], ["Verification", 11], ["Provenance", 11], ["Stakes", 11], ["Diffusion model", 12], ["Negative prompt", 12], ["Seed", 12], ["Speech-to-text (ASR)", 13], ["Text-to-speech", 13], ["Voice cloning", 13], ["Word error rate (WER)", 13], ["Vision input", 14], ["OCR", 14], ["Modality", 14], ["Personally identifiable information (PII)", 15], ["Data retention", 15], ["Training opt-out", 15], ["FERPA", 15], ["Zero-retention", 15], ["Attribution", 16], ["Disclosure", 16], ["AI-use statement", 16], ["Derivative work", 16], ["Personal AI policy", 17]];
-var PROMPTS=["What&rsquo;s one thing you believed about AI a month ago that you don&rsquo;t believe now?", "Where did you catch yourself trusting an output you shouldn&rsquo;t have? What tipped you off - or what didn&rsquo;t?", "What did you use AI for this week that genuinely saved you time? What did you try that wasted it?", "Describe a moment this week when you chose <em>not<\/em> to use AI. Why not?", "Which term from this course would you struggle to explain to a friend? Try explaining it here anyway.", "Whose work does your AI use affect besides your own?", "What did you get wrong in a warm-up card recently - and does the right answer still feel wrong?", "If you had to defend one tool choice you made this week to a skeptical colleague, what would you say?", "What are you still doing by hand that you suspect you shouldn&rsquo;t be? What&rsquo;s stopping you?", "What did you check this week that turned out to be fine? Was checking it still worth the time?", "Write down one thing you&rsquo;re confused about right now. Be specific - vague confusion never resolves.", "What would you tell yourself in Week 1 that you know now?"];
-var MODULE_PROMPTS=[["After Module 1", "You now have a mental model of what a language model is doing. Write it in three sentences, for someone who has never used one."], ["After Module 2", "You can prompt, choose a model, and repair a bad answer. Which of those three is weakest for you, and what would actually fix it?"], ["After Module 3", "Module 3 was largely about not trusting things. Has it changed how you read anything <em>outside<\/em> this course?"], ["After Module 4", "Images, voice, mixed input. Which modality surprised you most, and what did it cost you to find that out?"], ["After Module 5", "You&rsquo;ve written a personal AI policy. Which rule in it will be hardest to keep, and what will break it first?"]];
-var OUTCOMES=["Prompting", "Choosing the right tool", "Knowing what to trust", "Data and disclosure"];
-var ITEM_LESSON=[0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+var CAPOPTS=[{"id": "bakeoff", "name": "The Bake-Off", "premise": "Run one real task of your own blind across three models, and report the result even when it is not the one you wanted.", "steps": ["Pick three different tasks you actually did in the last month - something creative, something checkable, something technical or procedural. I suppose you can make some up if you would rather.", "Run each through at least two models. Strip the names. Leave it long enough that you have forgotten which was which - an hour is usually enough.", "Vote on all six outputs blind, and write one sentence per vote on what decided it <em>before<\/em> you unmask anything.", "Unmask. Report which model won which task, and whether any model swept.", "Close with the uncomfortable part: which task did your usual tool lose, and is that a reason to switch? Say why or why not - &ldquo;no&rdquo; is a perfectly good answer if you argue it."], "hand": "Three tasks, six outputs, six blind votes with reasons, the reveal, and your closing judgment."}, {"id": "arena-explainer", "name": "The 90-Second Explainer", "premise": "Tell one real person how to choose a model for a task, in ninety seconds, without any of the words that let you skip the thinking.", "steps": ["Pick one real person and one real task they have. Or pretend you are an influencer!", "Explain how they should decide which tool to use - and do it with these words banned: <em>best, better, smartest, most powerful, advanced, cutting-edge, state-of-the-art, top-rated, leading<\/em>.", "Every one of those words lets you assert a ranking instead of naming a reason. Working around them is the assignment.", "Ninety seconds. Record it. One take is fine and a fluffed sentence is not marked.", "Add three lines of text: what you cut to make it fit, and the one thing you are least sure you got right."], "hand": "A ninety-second recording plus your three lines. Captions or a transcript, please - the same standard the course videos hold themselves to."}, {"id": "showdown", "name": "A Real Arena Showdown", "premise": "Run your own battles on a public arena, rank the models yourself, and report honestly on the one you had never heard of.", "steps": ["Go to <a href='https://arena.ai'>arena.ai<\/a> and open &ldquo;battle mode&rdquo;. Browsing is free and needs nothing; <strong>casting a vote needs a free account<\/strong>, so make one.", "<strong>Read this before you type.<\/strong> <a href='https://arena.ai/'>arena.ai<\/a> states that your conversations are passed to the model providers and may be made public. So: no student work, no names, no grades, nothing under FERPA or HIPAA, nothing your employer would call confidential. Write prompts that <em>resemble<\/em> your real tasks without carrying their content.", "Run <strong>at least six<\/strong> battles across at least three different kinds of task - something creative, something checkable, something technical or procedural. Two per kind, minimum.", "For every battle, before you vote: one sentence on what decided it. Then vote, then screenshot the reveal. The reason has to be written before the names appear or it is not evidence of anything.", "Rank the models you met, first to last, and say what the ranking is <em>for<\/em>. A ranking with no task attached is the thing this module spent three lessons taking apart.", "If any model you had not heard of beat one you had, name it and write a short paragraph on it - who makes it, what it appears to be for, whether it is open-weight, and what you would use it for. If nothing unfamiliar won, say that instead and name the unfamiliar model that came closest. You might be surprised by all the models out there!"], "hand": "Six or more battles with pre-vote reasons and reveal screenshots, your ranking with the task it is for, and the paragraph on the unfamiliar model."}, {"id": "benchmarking", "name": "Benchmarking", "premise": "Pick one model, look it up on five public boards, and explain why they do not agree.", "steps": ["Pick <strong>one<\/strong> model you actually use. Name the exact version.", "Look it up on each of these, and <strong>record the date you looked<\/strong> - these move: <a href='https://arena.ai/leaderboard'>arena.ai/leaderboard<\/a> (human preference votes), <a href='https://artificialanalysis.ai/leaderboards/models'>Artificial Analysis<\/a> (a composite index, plus price and speed), <a href='https://www.swebench.com/verified.html'>SWE-bench Verified<\/a> (real GitHub issues, graded by whether the tests pass), <a href='https://arcprize.org/leaderboard'>ARC Prize<\/a> (novel puzzles, plotted against cost per task), and <a href='https://openrouter.ai/rankings'>OpenRouter Rankings<\/a> (not quality at all - how many tokens developers actually send).", "Build a table: board, what it measures, your model's rank or score, and the date. <strong>Absent<\/strong> is a real and interesting result - several boards carry only recent frontier releases, and a model simply not being there tells you what that board chose to look at.", "Now the actual assignment: <strong>explain a disagreement.<\/strong> Find two boards that rank your model differently and account for it from what each one measures. Not &ldquo;boards vary&rdquo; - the specific mechanism.", "Look at Artificial Analysis's published weights for its index. Someone chose those percentages. Say what a different set of weights would do to your model's position, and what weights <em>you<\/em> would want for your own work.", "Close with one paragraph: after all that, what would you actually need to see to justify switching models? If the honest answer is &ldquo;none of this&rdquo;, argue it - that is a defensible finding and this module has been building toward it."], "hand": "The table with dates, the explained disagreement, your note on the index weights, and the closing paragraph."}];
 
+/* Module 1 capstone: expand a route to read it, pick one to work from.
+
+   The choice is deliberately not remembered anywhere. Storage on this page
+   would be a promise it cannot keep across a lab machine or a phone, and the
+   real record of what a student chose is the thing they hand in. */
 (function () {
   "use strict";
-  var KEY = "csc150.hub.v1";
-  var CONF_LABELS = ["", "No idea where to start", "Shaky", "Okay on simple things", "Pretty solid", "I could teach it"];
-  /* Item index -> lesson number. Emitted by hub.py from data.py rather than
-     written here, because the hand-kept version survived the 15-to-17 renumber
-     unchanged and then disagreed with the rest of the course about which
-     lesson each tile was. */
-  var LESSON_OF_ITEM = window.ITEM_LESSON || [];
+  /* ---- the rubric: five independent accordions -------------------------- */
+  /* Placed above the CAPOPTS guard on purpose. The rubric has to work whether
+     or not the route data loaded, and an early return here would leave five
+     permanently collapsed panels with no way to open them - the one failure
+     mode worse than not having an accordion at all. */
+  var crits = document.querySelector(".crits--acc");
+  if (crits) {
+    var heads = crits.querySelectorAll(".crit__head");
+    var allBtn = document.getElementById("critsAll");
+    var allLab = document.getElementById("critsAllLab");
 
-  var S = { done: {}, entries: [], conf: [] };
-  function load() {
-    try { var raw = window.localStorage.getItem(KEY); if (raw) S = JSON.parse(raw); } catch (e) {}
-    S.done = S.done || {}; S.entries = S.entries || []; S.conf = S.conf || [];
-  }
-  /* A save that quietly does nothing is the worst possible failure here: the
-     page keeps working from memory all semester and the loss only shows up on
-     reload. Probe once, say so plainly if it does not hold, and keep going in
-     memory rather than breaking the page. Private browsing, cleared site data
-     and a storage-partitioned third-party frame all land here. */
-  var canStore = (function () {
-    try {
-      var probe = KEY + ".probe";
-      window.localStorage.setItem(probe, "1");
-      var ok = window.localStorage.getItem(probe) === "1";
-      window.localStorage.removeItem(probe);
-      return ok;
-    } catch (e) { return false; }
-  })();
+    function setOne(h, open) {
+      h.setAttribute("aria-expanded", open ? "true" : "false");
+      var panel = h.parentNode.parentNode.querySelector(".crit__levels");
+      if (panel) panel.hidden = !open;
+    }
 
-  /* ── Storage warning: currently OFF ────────────────────────────────────────
-     For the POC semester the Hub is deliberately allowed to run without durable
-     storage. Progress is tracked in Brightspace's own checklists, the Week 1
-     numbers live in the PDF the student keeps, and the vocabulary tab is
-     stateless - so a browser that refuses localStorage costs the student the
-     reflection tab and nothing else. Telling them "this browser is not keeping
-     your work" would be accurate but alarming about a thing we chose.
-
-     TO RE-ENABLE, for the server deployment after the semester:
-       set WARN_ON_NO_STORAGE to true, below. That is the whole change.
-       warn() and the probe are both still live and tested; only the two call
-       sites are gated. Turn it back on once reflection entries are worth
-       something to lose - i.e. as soon as they are not backed by a server.
-
-     A flag rather than commented-out code on purpose. Commented-out code stops
-     being compiled, stops being read, and quietly rots; this repo has already
-     produced three hand-maintained copies of the lesson list that drifted
-     exactly that way. This stays on the live path and keeps working. */
-  var WARN_ON_NO_STORAGE = false;
-
-  function save() {
-    if (!canStore) return;
-    try { window.localStorage.setItem(KEY, JSON.stringify(S)); }
-    catch (e) { canStore = false; if (WARN_ON_NO_STORAGE) warn(); }
-  }
-
-  function warn() {
-    if (document.getElementById("storeWarn")) return;
-    var el = document.createElement("div");
-    el.id = "storeWarn";
-    el.className = "callout callout--warn";
-    el.innerHTML =
-      '<div class="icontile"><svg class="i"><use href="#i-alert"/></svg></div>' +
-      '<div class="callout__body"><p class="callout__label">This browser is not keeping your work</p>' +
-      '<p>Everything on this page still works, but nothing will survive a reload - ' +
-      'usually private browsing, cleared site data, or this page being shown inside ' +
-      'another site. Open it in its own tab, or copy anything you want to keep before ' +
-      'you leave.</p></div>';
-    var host = document.querySelector(".wrap") || document.body;
-    host.insertBefore(el, host.firstChild);
-  }
-
-  load();
-  if (!canStore && WARN_ON_NO_STORAGE) warn();
-
-  /* ---- tabs ---- */
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".hubtab"));
-  tabs.forEach(function (t) {
-    t.addEventListener("click", function () {
-      tabs.forEach(function (o) {
-        o.setAttribute("aria-selected", String(o === t));
-        document.getElementById("p-" + o.getAttribute("data-p")).hidden = (o !== t);
+    /* The all-button reports the state it would produce, not the state it is
+       in, so its label is never a lie after somebody toggles one panel. */
+    function sync() {
+      var open = 0;
+      Array.prototype.forEach.call(heads, function (h) {
+        if (h.getAttribute("aria-expanded") === "true") open++;
       });
+      var every = heads.length > 0 && open === heads.length;
+      if (allBtn) allBtn.setAttribute("aria-expanded", every ? "true" : "false");
+      if (allLab) allLab.innerHTML = every ? "Collapse all" : "Expand all";
+    }
+
+    crits.addEventListener("click", function (e) {
+      var h = e.target.closest(".crit__head");
+      if (!h) return;
+      setOne(h, h.getAttribute("aria-expanded") !== "true");
+      sync();
     });
-  });
 
-  /* ---- progress ---- */
-  var tiles = Array.prototype.slice.call(document.querySelectorAll(".ptile"));
-  function coveredLessons() {
-    var set = {};
-    tiles.forEach(function (t, i) { if (S.done[i]) set[LESSON_OF_ITEM[i]] = true; });
-    return set;
-  }
-  function paintProgress() {
-    var n = 0;
-    tiles.forEach(function (t, i) {
-      var on = !!S.done[i];
-      t.setAttribute("aria-pressed", String(on));
-      if (on) n++;
+    if (allBtn) allBtn.addEventListener("click", function () {
+      var open = allBtn.getAttribute("aria-expanded") !== "true";
+      Array.prototype.forEach.call(heads, function (h) { setOne(h, open); });
+      sync();
     });
-    document.getElementById("progSummary").innerHTML =
-      "<strong>" + n + " of " + tiles.length + "</strong> marked done. Tap anything you&rsquo;ve finished - this also decides which vocabulary counts as covered.";
-    paintVocab();
+
+    sync();
   }
-  tiles.forEach(function (t, i) {
-    t.addEventListener("click", function () { S.done[i] = !S.done[i]; save(); paintProgress(); });
-  });
 
-  /* ---- vocabulary ---- */
-  var termEls = Array.prototype.slice.call(document.querySelectorAll(".term"));
-  var onlyCovered = document.getElementById("onlyCovered");
-  var vsearch = document.getElementById("vsearch");
+  var wrap = document.getElementById("capopts");
+  if (!wrap || typeof CAPOPTS === "undefined") return;
 
-  function paintVocab() {
-    var cov = coveredLessons();
-    var q = (vsearch.value || "").trim().toLowerCase();
-    var only = onlyCovered.getAttribute("aria-pressed") === "true";
-    var shown = 0, unlocked = 0;
-    termEls.forEach(function (el) {
-      var lesson = parseInt(el.getAttribute("data-lesson"), 10);
-      var isCov = !!cov[lesson];
-      if (isCov) unlocked++;
-      el.classList.toggle("is-unlocked", isCov);
-      el.classList.toggle("is-locked", !isCov);
-      var match = !q || el.getAttribute("data-search").indexOf(q) > -1;
-      var vis = match && (!only || isCov);
-      el.hidden = !vis;
-      if (vis) shown++;
-    });
-    document.getElementById("noTerms").hidden = shown > 0;
-    document.getElementById("vocabSummary").innerHTML =
-      "<strong>" + termEls.length + " terms</strong> in CSC 150 - <strong>" + unlocked +
-      "</strong> from lessons you&rsquo;ve marked done. Nothing is hidden from you; the dimmed ones simply haven&rsquo;t come up yet.";
-    return unlocked;
-  }
-  vsearch.addEventListener("input", paintVocab);
-  onlyCovered.addEventListener("click", function () {
-    this.setAttribute("aria-pressed", this.getAttribute("aria-pressed") === "true" ? "false" : "true");
-    paintVocab();
-  });
+  var byId = {};
+  CAPOPTS.forEach(function (o) { byId[o.id] = o; });
 
-  /* ---- vocabulary practice (reuses the flashcard deck) ---- */
-  document.getElementById("practiceBtn").addEventListener("click", function () {
-    var zone = document.getElementById("practiceZone");
-    var cov = coveredLessons();
-    var pool = TERMS.map(function (t, i) { return { name: t[0], lesson: t[1], el: termEls[i] }; })
-                    .filter(function (t) { return cov[t.lesson]; });
-    zone.hidden = false;
-    if (pool.length < 4) {
-      zone.innerHTML = '<p class="emptystate">Mark a few lessons done on the Progress tab first - practice needs at least four covered terms to build a question from, and right now there are ' + pool.length + '.</p>';
-      zone.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  /* ---- expand / collapse ------------------------------------------------ */
+  wrap.addEventListener("click", function (e) {
+    var head = e.target.closest(".capopt__head");
+    if (head) {
+      var card = head.parentNode;
+      var open = head.getAttribute("aria-expanded") === "true";
+      /* One at a time. Five open cards is a wall of text, and the point of the
+         page is comparing them, which needs them closed. */
+      wrap.querySelectorAll(".capopt__head").forEach(function (h) {
+        h.setAttribute("aria-expanded", "false");
+        h.parentNode.classList.remove("is-open");
+        h.parentNode.querySelector(".capopt__body").hidden = true;
+      });
+      if (!open) {
+        head.setAttribute("aria-expanded", "true");
+        card.classList.add("is-open");
+        card.querySelector(".capopt__body").hidden = false;
+      }
       return;
     }
-    var picked = pool.slice();
-    for (var i = picked.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = picked[i]; picked[i] = picked[j]; picked[j] = t; }
-    picked = picked.slice(0, Math.min(5, picked.length));
-
-    var cards = picked.map(function (item) {
-      var wrong = pool.filter(function (p) { return p.name !== item.name; });
-      for (var i = wrong.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = wrong[i]; wrong[i] = wrong[j]; wrong[j] = t; }
-      var opts = wrong.slice(0, 3).map(function (w) { return w.name; });
-      var right = Math.floor(Math.random() * 4);
-      opts.splice(right, 0, item.name);
-      var def = item.el.querySelector(".term__def").innerHTML;
-      var why = item.el.querySelector(".term__why").innerHTML;
-      return '<article class="fcard" data-answer="' + right + '">' +
-        '<div class="fcard__top"><p class="provenance"><svg class="i"><use href="#i-book-open"/></svg> Lesson ' +
-        (item.lesson < 10 ? "0" + item.lesson : item.lesson) + '</p>' +
-        '<span class="fcard__grip" aria-hidden="true"><span></span><span></span></span></div>' +
-        '<p class="fcard__q">' + def + '</p><div class="answers">' +
-        opts.map(function (o, k) { return '<button class="answer" type="button" data-i="' + k + '">' + o + '</button>'; }).join("") +
-        '<button class="answer answer--pass" type="button" data-i="-1">Not sure yet</button></div>' +
-        '<div class="feedback"><svg class="i"><use href="#i-lightbulb"/></svg><span><strong>' + item.name + '.</strong> ' + why + '</span></div></article>';
-    }).join("");
-
-    zone.innerHTML =
-      '<div class="deck" id="vdeck"><div class="deck__stack" id="vstack">' + cards + '</div>' +
-      '<div class="deck__bar"><div class="deck__left"><span class="deck__dots" id="vdots" aria-hidden="true"></span>' +
-      '<span class="deck__count" id="vcount"></span></div>' +
-      '<div class="row" style="gap:.75rem"><span class="deck__hint" id="vhint">Answer, then swipe the card away</span>' +
-      '<button class="btn btn--ghost" type="button" id="vnext" disabled>Next card <svg class="i"><use href="#i-arrow-right"/></svg></button>' +
-      '</div></div><div class="deck__done"><div class="icontile"><svg class="i"><use href="#i-check"/></svg></div>' +
-      '<strong>Round done</strong><p>Run it again for a different five. The terms you fumbled are the ones worth rereading below.</p></div></div>';
-    initDeck(document.getElementById("vdeck"), document.getElementById("vstack"),
-             document.getElementById("vdots"), document.getElementById("vcount"),
-             document.getElementById("vnext"), document.getElementById("vhint"));
-    zone.scrollIntoView({ behavior: "smooth", block: "start" });
+    var pick = e.target.closest(".capopt__pick");
+    if (pick) choose(pick.closest(".capopt").getAttribute("data-opt"));
   });
 
-  /* generic deck engine - same behavior as the lesson warm-up */
-  function initDeck(deck, stack, dots, count, next, hint) {
-    var cards = Array.prototype.slice.call(stack.querySelectorAll(".fcard"));
-    var i = 0, pid = null, startX = 0, dx = 0, dragging = false, suppressClick = false;
-    cards.forEach(function () { var d = document.createElement("span"); d.className = "deck__dot"; dots.appendChild(d); });
-    function answered(c) { return c.classList.contains("is-answered"); }
-    function layout() {
-      cards.forEach(function (c, ix) {
-        var pos = ix - i;
-        if (pos < 0) {
-          c.removeAttribute("data-pos"); c.setAttribute("aria-hidden", "true");
-          if (!c.classList.contains("is-leaving")) c.classList.add("is-gone");
-        } else {
-          c.classList.remove("is-gone");
-          c.setAttribute("data-pos", String(Math.min(pos, 3)));
-          c.setAttribute("aria-hidden", pos === 0 ? "false" : "true");
-          c.style.transform = ""; c.style.opacity = ""; c.style.transition = "";
-        }
-        Array.prototype.slice.call(c.querySelectorAll("button")).forEach(function (b) {
-          if (pos === 0) b.removeAttribute("tabindex"); else b.setAttribute("tabindex", "-1");
-        });
-      });
-      Array.prototype.slice.call(dots.children).forEach(function (d, ix) {
-        d.className = "deck__dot" + (ix < i ? " is-done" : (ix === i ? " is-active" : ""));
-      });
-      if (i >= cards.length) { deck.classList.add("is-finished"); return; }
-      count.textContent = "Card " + (i + 1) + " of " + cards.length;
-      next.disabled = !answered(cards[i]);
-      hint.classList.remove("is-nudging");
-      hint.textContent = answered(cards[i]) ? "Swipe it away, or press next" : "Answer, then swipe the card away";
-    }
-    function advance(dir) {
-      var c = cards[i];
-      c.classList.add("is-leaving");
-      c.style.transition = "transform .5s cubic-bezier(.3,.9,.4,1), opacity .4s ease";
-      c.style.transform = "translateX(" + (dir * 130) + "%) rotate(" + (dir * 16) + "deg)";
-      c.style.opacity = "0";
-      i++; layout();
-      window.setTimeout(function () { c.classList.remove("is-leaving"); c.classList.add("is-gone"); }, 480);
-    }
-    cards.forEach(function (card) {
-      var right = parseInt(card.getAttribute("data-answer"), 10);
-      var answers = Array.prototype.slice.call(card.querySelectorAll(".answer"));
-      answers.forEach(function (a) {
-        a.addEventListener("click", function () {
-          if (suppressClick || answered(card)) return;
-          var chosen = parseInt(a.getAttribute("data-i"), 10);
-          answers.forEach(function (b) {
-            b.disabled = true;
-            var bi = parseInt(b.getAttribute("data-i"), 10);
-            if (bi === right) b.classList.add("is-right");
-            else if (bi === chosen && chosen >= 0) b.classList.add("is-wrong");
-            else b.classList.add("is-dim");
-          });
-          card.classList.add("is-answered");
-          card.querySelector(".feedback").classList.add("is-shown");
-          next.disabled = false;
-          hint.textContent = "Swipe it away, or press next";
-        });
-      });
+  /* ---- the working checklist -------------------------------------------- */
+  function choose(id) {
+    var o = byId[id];
+    if (!o) return;
+    document.getElementById("chosenName").innerHTML = o.name;
+    document.getElementById("chosenPremise").innerHTML = o.premise;
+
+    var box = document.getElementById("capcheck");
+    box.innerHTML = "";
+    /* The disclosure line is appended to every route's checklist rather than
+       written into each brief, so it cannot drift between them and cannot be
+       quietly dropped from one. */
+    var rows = o.steps.concat([
+      "<strong>Write your AI-use statement.</strong> What tools you used, for what, and " +
+      "which parts are your own words. Specific enough that a reader could check it. " +
+      "Without this the work comes back unmarked.",
+      "<strong>Hand in:</strong> " + o.hand
+    ]);
+    rows.forEach(function (s, i) {
+      var id2 = "capstep" + i;
+      var row = document.createElement("label");
+      row.className = "capcheck__row";
+      row.setAttribute("for", id2);
+      row.innerHTML = '<input type="checkbox" id="' + id2 + '">' +
+                      '<span class="capcheck__n">' + (i < o.steps.length ? (i + 1) : "&#10003;") + '</span>' +
+                      '<span class="capcheck__t">' + s + '</span>';
+      box.appendChild(row);
     });
-    next.addEventListener("click", function () { if (i < cards.length && answered(cards[i])) advance(1); });
-    stack.addEventListener("pointerdown", function (e) {
-      if (i >= cards.length || !cards[i].contains(e.target)) return;
-      pid = e.pointerId; startX = e.clientX; dx = 0; dragging = false;
-    });
-    stack.addEventListener("pointermove", function (e) {
-      if (pid === null || e.pointerId !== pid) return;
-      dx = e.clientX - startX;
-      if (!dragging && Math.abs(dx) > 8) {
-        dragging = true; cards[i].classList.add("is-dragging");
-        try { stack.setPointerCapture(pid); } catch (err) {}
-      }
-      if (dragging) cards[i].style.transform = "translateX(" + dx + "px) rotate(" + (dx / 24) + "deg)";
-    });
-    function endDrag() {
-      if (pid === null) return;
-      var c = cards[i];
-      if (dragging && c) {
-        c.classList.remove("is-dragging");
-        suppressClick = true; window.setTimeout(function () { suppressClick = false; }, 0);
-        if (Math.abs(dx) > 90) {
-          if (answered(c)) { var dir = dx > 0 ? 1 : -1; pid = null; dragging = false; dx = 0; advance(dir); return; }
-          hint.textContent = "Take a guess first - or tap “Not sure yet”.";
-          hint.classList.add("is-nudging");
-        }
-        c.style.transform = "";
-      }
-      pid = null; dragging = false; dx = 0;
-    }
-    stack.addEventListener("pointerup", endDrag);
-    stack.addEventListener("pointercancel", endDrag);
-    layout();
+
+    document.getElementById("choose").hidden = true;
+    var sec = document.getElementById("chosen");
+    sec.hidden = false;
+    sec.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  /* ---- reflection ---- */
-  var pQ = document.getElementById("pQ"), pA = document.getElementById("pA"),
-      pKind = document.getElementById("pKind"), saveBtn = document.getElementById("saveEntry");
-  var current = { kind: "This week", q: "" }, pi = 0, mi = 0;
-
-  function setPrompt(kind, q) { current = { kind: kind, q: q }; pKind.textContent = kind; pQ.innerHTML = q; }
-  function nextWeekly() { setPrompt("This week", PROMPTS[pi % PROMPTS.length]); pi++; }
-  function nextModule() { var m = MODULE_PROMPTS[mi % MODULE_PROMPTS.length]; setPrompt(m[0], m[1]); mi++; }
-  pi = Math.floor(Math.random() * PROMPTS.length); nextWeekly();
-
-  document.getElementById("otherPrompt").addEventListener("click", nextWeekly);
-  document.getElementById("modulePrompt").addEventListener("click", nextModule);
-  pA.addEventListener("input", function () { saveBtn.disabled = pA.value.trim().length < 3; });
-
-  saveBtn.addEventListener("click", function () {
-    S.entries.unshift({ d: new Date().toISOString().slice(0, 10), kind: current.kind, q: pQ.textContent, a: pA.value.trim() });
-    save(); pA.value = ""; saveBtn.disabled = true; nextWeekly(); paintJournal();
+  document.getElementById("capBack").addEventListener("click", function () {
+    document.getElementById("chosen").hidden = true;
+    var c = document.getElementById("choose");
+    c.hidden = false;
+    c.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-
-  function paintJournal() {
-    var wrap = document.getElementById("journal");
-    wrap.innerHTML = "";
-    S.entries.forEach(function (e, ix) {
-      var d = document.createElement("div");
-      d.className = "jentry";
-      d.innerHTML = '<div class="jentry__meta"><span class="jentry__date">' + e.d + ' &middot; ' + e.kind +
-                    '</span><button class="linkbtn" type="button" data-del="' + ix + '">delete</button></div>' +
-                    '<p class="jentry__q"></p><p class="jentry__a"></p>';
-      d.querySelector(".jentry__q").textContent = e.q;
-      d.querySelector(".jentry__a").textContent = e.a;
-      wrap.appendChild(d);
-    });
-    Array.prototype.slice.call(wrap.querySelectorAll("[data-del]")).forEach(function (b) {
-      b.addEventListener("click", function () {
-        S.entries.splice(parseInt(b.getAttribute("data-del"), 10), 1); save(); paintJournal();
-      });
-    });
-    document.getElementById("noEntries").hidden = S.entries.length > 0;
-    document.getElementById("exportRow").hidden = S.entries.length === 0;
-    document.getElementById("jCount").textContent =
-      S.entries.length === 0 ? "No entries yet" : S.entries.length + (S.entries.length === 1 ? " entry" : " entries");
-  }
-
-  document.getElementById("exportJ").addEventListener("click", function () {
-    var b = this;
-    var text = "CSC 150 - Reflection journal\n\n" + S.entries.map(function (e) {
-      return e.d + "  [" + e.kind + "]\n" + e.q + "\n\n" + e.a + "\n";
-    }).join("\n---\n\n");
-    var o = b.innerHTML;
-    function done() { b.innerHTML = "Copied"; window.setTimeout(function () { b.innerHTML = o; }, 1600); }
-    try { navigator.clipboard.writeText(text).then(done, function () { b.innerHTML = "Couldn’t copy - select and copy manually"; }); }
-    catch (e) { b.innerHTML = "Couldn’t copy - select and copy manually"; }
-  });
-
-  /* ---- confidence ---- */
-  var confVals = [3, 3, 3, 3];
-  Array.prototype.slice.call(document.querySelectorAll("[data-c]")).forEach(function (sl) {
-    var k = parseInt(sl.getAttribute("data-c"), 10);
-    var out = document.getElementById("cv" + k);
-    function upd() { confVals[k] = parseInt(sl.value, 10); out.textContent = confVals[k] + " - " + CONF_LABELS[confVals[k]]; }
-    ["input", "pointerdown", "keydown"].forEach(function (e) { sl.addEventListener(e, upd); });
-    upd();
-  });
-
-  document.getElementById("recordConf").addEventListener("click", function () {
-    S.conf.push({ d: new Date().toISOString().slice(0, 10), v: confVals.slice() });
-    save(); paintConf();
-  });
-
-  function paintConf() {
-    var hint = document.getElementById("confHint");
-    var card = document.getElementById("deltaCard");
-    if (!S.conf.length) { hint.textContent = "No checkpoints yet. Start with the numbers you gave in Week 1."; card.hidden = true; return; }
-    hint.textContent = S.conf.length + (S.conf.length === 1 ? " checkpoint recorded - take it again in a few weeks." : " checkpoints recorded.");
-    if (S.conf.length < 2) { card.hidden = true; return; }
-    card.hidden = false;
-    var first = S.conf[0], last = S.conf[S.conf.length - 1];
-    var wrap = document.getElementById("deltas");
-    wrap.innerHTML = "";
-    OUTCOMES.forEach(function (o, k) {
-      var a = first.v[k], b = last.v[k], d = b - a;
-      var lo = Math.min(a, b), hi = Math.max(a, b);
-      var pct = function (v) { return ((v - 1) / 4) * 100; };
-      var row = document.createElement("div");
-      row.className = "deltarow";
-      row.innerHTML = '<span class="deltarow__label">' + o + '</span>' +
-        '<span class="track"><span class="track__span" style="left:' + pct(lo) + '%;right:' + (100 - pct(hi)) + '%"></span>' +
-        '<span class="track__dot" style="left:' + pct(a) + '%"></span>' +
-        '<span class="track__dot is-now" style="left:' + pct(b) + '%"></span></span>' +
-        '<span class="delta ' + (d > 0 ? "is-up" : (d < 0 ? "is-down" : "")) + '">' +
-        a + ' → ' + b + (d === 0 ? " · no change" : (d > 0 ? " · +" + d : " · " + d)) + '</span>';
-      wrap.appendChild(row);
-    });
-  }
-
-  /* ---- wipe ---- */
-  document.getElementById("wipe").addEventListener("click", function () {
-    var b = this;
-    if (b.getAttribute("data-armed") !== "1") {
-      b.setAttribute("data-armed", "1");
-      b.textContent = "Really erase it? Click again - this cannot be undone";
-      window.setTimeout(function () { b.removeAttribute("data-armed"); b.textContent = "Erase everything stored here"; }, 6000);
-      return;
-    }
-    S = { done: {}, entries: [], conf: [] };
-    try { window.localStorage.removeItem(KEY); } catch (e) {}
-    b.removeAttribute("data-armed"); b.textContent = "Erased";
-    paintProgress(); paintJournal(); paintConf();
-    window.setTimeout(function () { b.textContent = "Erase everything stored here"; }, 2500);
-  });
-
-  paintProgress(); paintJournal(); paintConf();
 })();
 
 </script>
