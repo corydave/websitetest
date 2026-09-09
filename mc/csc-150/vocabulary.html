@@ -1561,6 +1561,52 @@ html[data-theme="dark"] .sidetrip {
   box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
 }
 
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
 /* ============================================================================
    FLCC AI Specialist Microcredential - companion.css
    The Learning Hub. One per course.
@@ -1737,8 +1783,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page vocabulary.html  v2128bc0  ·  build ee01530  ·  2026-09-09 16:34 -->
-<div data-build="ee01530" data-page="vocabulary.html" data-version="2128bc0" class="lesson" data-course="150">
+<!-- CSC 150  page vocabulary.html  vaef2051  ·  build 8073a5b  ·  2026-09-09 17:51 -->
+<div data-build="8073a5b" data-page="vocabulary.html" data-version="aef2051" class="lesson" data-course="150">
 <header class="masthead">
   <div class="wrap">
     <div class="masthead__row">
