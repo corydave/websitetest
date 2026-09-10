@@ -1607,6 +1607,23 @@ html[data-theme="dark"] .sidetrip {
 .atable-wrap { overflow-x: auto; }
 .atable-wrap .atable { min-width: 34rem; }
 
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
 /* ============================================================================
    FLCC AI Specialist Microcredential - lesson.css
    Lesson pages only - the nine-beat components.
@@ -2786,6 +2803,43 @@ html[data-theme="dark"] .sidetrip {
 }
 .scaffoldtoggle:hover { background: var(--surface); color: var(--accent-text); }
 
+/* ── captured model output, rendered ──────────────────────────────────────
+   The arena cards and the bench output replay real responses, and real
+   responses are Markdown. build/module2_js.js md() converts the forms those
+   captures actually contain; these are the classes it emits.
+
+   Deliberately quiet. This is somebody else's writing being shown as evidence,
+   not the course speaking - so a heading inside a capture is a bold line, not
+   an h3 competing with the page's own headings, and the whole block stays a
+   notch below body copy. A capture that out-shouted the lesson around it would
+   be the wrong thing twice: wrong typographically, and wrong about who is
+   talking. */
+.acard__body .mdh, .bout .mdh {
+  font-weight: 700; font-size: .95em; margin: .9em 0 .35em; color: var(--ink);
+}
+.acard__body .mdh:first-child, .bout .mdh:first-child { margin-top: 0; }
+.acard__body .mdlist, .bout .mdlist { margin: .4em 0 .7em; padding-left: 1.35em; }
+.acard__body .mdlist li, .bout .mdlist li { margin: .25em 0; }
+.acard__body .mdhr, .bout .mdhr {
+  border: 0; border-top: 1px solid var(--line); margin: .9em 0;
+}
+.acard__body .mdq, .bout .mdq {
+  margin: .5em 0; padding-left: .8em; border-left: 2px solid var(--accent-wash);
+  color: var(--ink-2);
+}
+.acard__body .mdcode, .bout .mdcode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em;
+  background: var(--surface-2); border-radius: var(--r-xs); padding: .05em .3em;
+}
+.acard__body .mdpre, .bout .mdpre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em;
+  background: var(--surface-2); border-radius: var(--r-sm);
+  padding: .7em .85em; margin: .6em 0; overflow-x: auto; white-space: pre;
+}
+.acard__body p, .bout p { margin: .5em 0; }
+.acard__body p:first-child, .bout p:first-child { margin-top: 0; }
+.acard__body p:last-child, .bout p:last-child { margin-bottom: 0; }
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -2832,8 +2886,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page 08-why-ai-makes-things-up.html  v2b90824  ·  build 8073a5b  ·  2026-09-09 17:45 -->
-<div data-build="8073a5b" data-page="08-why-ai-makes-things-up.html" data-version="2b90824" class="lesson" data-course="150">
+<!-- CSC 150  page 08-why-ai-makes-things-up.html  vdd5f662  ·  build 7370564  ·  2026-09-10 12:39 -->
+<div data-build="7370564" data-page="08-why-ai-makes-things-up.html" data-version="dd5f662" class="lesson" data-course="150">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
@@ -3160,6 +3214,7 @@ html[data-theme="dark"] .sidetrip {
         <h2>Break one on purpose</h2>
       </div>
       <div class="apply">
+        
         <div class="steps">
           <div class="step"><span>Pick a topic you already know well - your job, your major, a hobby with a real literature.</span></div>
           <div class="step"><span>Ask a chat model with no web access for five sources on a narrow question inside it. Ask for author, title, year and where it appeared.</span></div>
@@ -3207,7 +3262,7 @@ html[data-theme="dark"] .sidetrip {
     </section>
 
     <footer class="lessonfoot">
-      <span>CSC 150 &middot; AI Foundations &middot; Lesson 8 of 17 &middot; <span class="ver" title="page version 2b90824, build 8073a5b, 2026-09-09 17:45">v2b90824</span></span>
+      <span>CSC 150 &middot; AI Foundations &middot; Lesson 8 of 17 &middot; <span class="ver" title="page version dd5f662, build 7370564, 2026-09-10 12:39">vdd5f662</span></span>
       <span class="row" style="gap:.4rem" id="lessonNext">Next: <a href="../03-checking/09-models-that-can-actually-look-things-up.html">Lesson 9 - Models That Can Actually Look Things Up</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
     </footer>
 
@@ -3745,6 +3800,33 @@ html[data-theme="dark"] .sidetrip {
 })();
 
 </script>
+<script>
+/* One copy button, wherever a page needs one.
+
+   Lives in shared/ because the same control now appears in two places that do
+   not share a stylesheet or a script: the prompt block on a Discussion or Lab
+   page, and the same prompt lifted into a lesson's Apply beat. It was in
+   build/task_js.js and so existed only on the task pages - which is how the
+   lesson version came to render the prompt with a Copy button that did
+   nothing.
+
+   Delegated from the document, so markup added after load still works. */
+(function () {
+  "use strict";
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-copy]");
+    if (!b) return;
+    var el = document.getElementById(b.getAttribute("data-copy"));
+    if (!el || !navigator.clipboard) return;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      var was = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(function () { b.textContent = was; }, 1600);
+    });
+  });
+})();
+
+</script>
 
 <script>
 /* ---- editing switch ------------------------------------------------------
@@ -3760,7 +3842,7 @@ var GATE_OFF = false;
 var CAPTURED=true;
 var AUTH="\n        <div class=\"authoring\">\n          <p><strong>Not captured yet.<\/strong> %s<\/p>\n          <p class=\"small\">This note is why <code>publish.py<\/code> will refuse to build\n          <code>publish/<\/code>. Set <code>CAPTURED = True<\/code> in\n          <code>build/module2.py<\/code> once the real output is pasted in.<\/p>\n        <\/div>";
 var DEFAULTS=[{"id": "openai", "n": "ChatGPT / OpenAI"}, {"id": "claude", "n": "Claude / Anthropic"}, {"id": "gemini", "n": "Gemini / Google"}, {"id": "copilot", "n": "Copilot / Microsoft"}, {"id": "other", "n": "Something else"}, {"id": "none", "n": "I don&rsquo;t have a default"}];
-var ARENA=[{"id": "creative", "kind": "A creative brief", "prompt": "Write a two-sentence tagline for a community college course that teaches people to use AI honestly. No exclamation marks.", "why": "There is no correct answer here, which is exactly why it is first. When nothing is checkable, you are rating tone - and tone is where brand expectation does most of its work.", "a": {"model": "mimo-v2.5-pro", "cheap": false, "text": "Learn to harness AI tools with integrity and transparency for your personal and professional projects. Build the skills to use technology responsibly and confidently in today's digital world."}, "b": {"model": "claude-opus-5-low", "cheap": false, "text": "Learn what AI can actually do — and say so out loud. This course teaches you to use the tools well, cite them plainly, and stand behind every word you turn in."}, "note": "The response from mimo-v2.5-pro did not sound as if it was AI generated whereas Claude's definitely was."}, {"id": "factual", "kind": "A factual lookup", "prompt": "How many federal holidays does the United States observe, and which one was added most recently?", "why": "This one has a right answer, and you can check it in about fifteen seconds. Notice whether that changes how you read the two responses - most people get stricter the moment a claim is checkable.", "a": {"model": "claude-opus-4-8-search", "cheap": false, "text": "The United States observes **11 federal holidays**. These are:\n\n1. New Year's Day (January 1)\n2. Birthday of Martin Luther King Jr. (third Monday in January)\n3. Washington's Birthday / Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\n**The most recently added** is **Juneteenth National Independence Day**, which commemorates the emancipation of enslaved African Americans. It was signed into law on June 17, 2021, becoming the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "b": {"model": "claude-sonnet-5-search", "cheap": false, "text": "The United States currently observes **11 federal holidays** per year, as designated by the U.S. Code (5 U.S.C. § 6103):\n\n1. New Year's Day (January 1)\n2. Martin Luther King Jr. Day (third Monday in January)\n3. Washington's Birthday/Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\nThe most recently added federal holiday is **Juneteenth National Independence Day**, which commemorates the end of slavery in the United States. President Biden signed it into law on June 17, 2021, making it the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "note": "They were almost identical. Sonnet offered just a bit more."}, {"id": "code", "kind": "A short code fix", "prompt": "What is wrong with this Python function, and how would you fix it?\n\ndef average(nums):\n    total = 0\n    for n in nums:\n        total += n\n    return total / len(nums)", "why": "A narrow technical task with one obvious fault and several reasonable fixes. This is the round where preferences most often split from the other two.", "a": {"model": "mistral-large-3", "cheap": false, "text": "The provided Python function `average(nums)` has a few potential issues that could lead to errors or unexpected behavior. Here are the problems and how to fix them:\n\n### 1. **No Handling of Empty Input List**\n   - If `nums` is an empty list (`[]`), the function will raise a `ZeroDivisionError` when it tries to divide by `len(nums)` (which is `0`).\n   - **Fix:** Add a check for an empty list and handle it appropriately (e.g., return `0`, `None`, or raise a custom exception).\n\n### 2. **No Type Checking**\n   - The function assumes `nums` is an iterable containing numbers (e.g., `int` or `float`). If `nums` contains non-numeric values (e.g., strings), it will raise a `TypeError`.\n   - **Fix:** Add type checking or error handling if needed (though Python is dynamically typed, so this is optional unless you want strict behavior).\n\n### 3. **No Handling of Non-Iterable Input**\n   - If `nums` is not an iterable (e.g., `nums = 5`), the function will raise a `TypeError` when it tries to iterate over it.\n   - **Fix:** Add a check to ensure `nums` is iterable (e.g., using `hasattr(nums, '__iter__')`).\n\n### Fixed Version\nHere’s an improved version of the function with these fixes:\n\n```python\ndef average(nums):\n    if not hasattr(nums, '__iter__'):\n        raise TypeError(\"Input must be an iterable (e.g., list, tuple)\")\n\n    if len(nums) == 0:\n        raise ValueError(\"Cannot compute average of an empty iterable\")\n\n    total = 0\n    for n in nums:\n        if not isinstance(n, (int, float)):\n            raise TypeError(\"All elements in the iterable must be numbers\")\n        total += n\n\n    return total / len(nums)\n```\n\n### Alternative (Simpler) Fix\nIf you don’t want to add strict type checking, you can just handle the empty list case:\n\n```python\ndef average(nums):\n    if not nums:  # Checks for empty list or None\n        return 0  # or raise ValueError(\"Empty list\")\n    return sum(nums) / len(nums)\n```\n\n### Key Improvements:\n1. Handles empty lists gracefully.\n2. Uses `sum(nums)` for cleaner code (though the original loop is fine).\n3. Optionally adds type checking for robustness.\n\n### Example Usage:\n```python\nprint(average([1, 2, 3, 4]))  # 2.5\nprint(average([]))            # Raises ValueError (or returns 0 in the simpler fix)\nprint(average(\"hello\"))       # Raises TypeError (in the strict version)\n```"}, "b": {"model": "minimax-m3", "cheap": false, "text": "The function has a few issues:\n\n1. **No handling for an empty list** — `len(nums)` would be 0, causing a `ZeroDivisionError`.\n2. **No type checking** — if a non-numeric value is passed, you'll get a `TypeError` at runtime rather than a clear error.\n3. **No documentation** — there's no docstring explaining what the function does, its parameters, or return value.\n\n## Fixed Version\n\n```python\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\n\n    Args:\n        nums (list[int | float]): A non-empty list of numbers.\n\n    Returns:\n        float: The average of the numbers.\n\n    Raises:\n        TypeError: If nums is not a list or contains non-numeric values.\n        ValueError: If nums is empty.\n    \"\"\"\n    if not isinstance(nums, list):\n        raise TypeError(\"Input must be a list.\")\n    if len(nums) == 0:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    if not all(isinstance(n, (int, float)) for n in nums):\n        raise TypeError(\"All elements must be numbers.\")\n\n    total = 0\n    for n in nums:\n        total += n\n    return total / len(nums)\n```\n\n## More Pythonic Alternative\n\nPython has a built-in `sum()` function, so the loop is unnecessary:\n\n```python\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\"\"\"\n    if not nums:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    return sum(nums) / len(nums)\n```\n\nOr even simpler, using `statistics.mean` (from the standard library):\n\n```python\nimport statistics\n\ndef average(nums):\n    \"\"\"Return the arithmetic mean of a list of numbers.\"\"\"\n    if not nums:\n        raise ValueError(\"Cannot compute average of an empty list.\")\n    return statistics.mean(nums)\n```\n\nThe simplest fix is to just add the empty-list check — the rest are quality-of-life improvements."}, "note": "mistrial-large-3 identified each problem and then immediately provided the solution. minimax-m3 stated all three problems at once and then, one-by-one, presented solutions."}];
+var ARENA=[{"id": "creative", "kind": "A creative brief", "prompt": "Write a two-sentence tagline for a community college course that teaches people to use AI honestly. No exclamation marks.", "why": "There is no correct answer here, which is exactly why it is first. When nothing is checkable, you are rating tone - and tone is where brand expectation does most of its work.", "a": {"model": "mimo-v2.5-pro", "cheap": false, "text": "Learn to harness AI tools with integrity and transparency for your personal and professional projects. Build the skills to use technology responsibly and confidently in today's digital world."}, "b": {"model": "claude-opus-5-low", "cheap": false, "text": "Learn what AI can actually do — and say so out loud. This course teaches you to use the tools well, cite them plainly, and stand behind every word you turn in."}, "note": "The response from mimo-v2.5-pro did not sound as if it was AI generated whereas Claude's definitely was."}, {"id": "factual", "kind": "A factual lookup", "prompt": "How many federal holidays does the United States observe, and which one was added most recently?", "why": "This one has a right answer, and you can check it in about fifteen seconds. Notice whether that changes how you read the two responses - most people get stricter the moment a claim is checkable.", "a": {"model": "claude-opus-4-8-search", "cheap": false, "text": "The United States observes **11 federal holidays**. These are:\n\n1. New Year's Day (January 1)\n2. Birthday of Martin Luther King Jr. (third Monday in January)\n3. Washington's Birthday / Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\n**The most recently added** is **Juneteenth National Independence Day**, which commemorates the emancipation of enslaved African Americans. It was signed into law on June 17, 2021, becoming the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "b": {"model": "claude-sonnet-5-search", "cheap": false, "text": "The United States currently observes **11 federal holidays** per year, as designated by the U.S. Code (5 U.S.C. § 6103):\n\n1. New Year's Day (January 1)\n2. Martin Luther King Jr. Day (third Monday in January)\n3. Washington's Birthday/Presidents' Day (third Monday in February)\n4. Memorial Day (last Monday in May)\n5. Juneteenth National Independence Day (June 19)\n6. Independence Day (July 4)\n7. Labor Day (first Monday in September)\n8. Columbus Day (second Monday in October)\n9. Veterans Day (November 11)\n10. Thanksgiving Day (fourth Thursday in November)\n11. Christmas Day (December 25)\n\nThe most recently added federal holiday is **Juneteenth National Independence Day**, which commemorates the end of slavery in the United States. President Biden signed it into law on June 17, 2021, making it the first new federal holiday established since Martin Luther King Jr. Day was created in 1983."}, "note": "They were almost identical. Sonnet offered just a bit more."}, {"id": "procedure", "kind": "A flawed procedure", "prompt": "What is wrong with these instructions, and how would you fix them?\n\nTo work out a student's course average: add up the scores of every assignment they turned in, then divide by the number of assignments they turned in.", "why": "A narrow task with one obvious fault and several reasonable fixes. This is the round where preferences most often split from the other two - the answers here tend to agree about what is wrong and disagree about how to lay the fix out.", "a": {"model": "deepseek-v4.1-flash-max", "cheap": true, "text": "The instructions describe an average of **submitted scores**, but that is not usually a valid **course average**. Problems:\n\n- They ignore assignments not turned in. That means skipping a low-scoring assignment could raise the average instead of counting as a zero or missing.\n- They treat all assignments as equally weighted, ignoring points possible, category weights, or grading policies.\n- They assume scores are comparable. Raw scores like 10/10 and 90/100 should not be averaged as 10 and 90.\n- They don’t handle missing, excused, late, dropped, or extra-credit work.\n- If the student turned in nothing, the instructions divide by zero.\n\nA better version:\n\n> To calculate a student’s course average, follow the course grading policy. For each graded item, compute earned points and possible points, applying rules for missing, late, excused, dropped, or extra-credit work.  \n>   \n> - If grading by total points: divide total earned points by total possible points, then multiply by 100.  \n> - If assignments are equally weighted: average each assignment’s percentage, counting every required assignment; missing required work counts as 0 unless excused.  \n> - If categories are weighted: calculate each category average first, then combine them using the category weights.  \n> - If no graded items count, state how the average is handled.\n\nThe key fix is to average **what was assigned/possible**, not merely **what was turned in**."}, "b": {"model": "claude-haiku-4-5-20251001", "cheap": false, "text": "# Issues with these instructions:\n\n## Main problems:\n\n1. **Doesn't account for missing assignments** — If a student didn't turn in some assignments, should those count as zeros? The instructions are ambiguous. A student who turned in 8 of 10 assignments could be calculated two ways:\n   - Divide by 8 (assignments completed)\n   - Divide by 10 (total assignments given)\n\n2. **Doesn't specify weighting** — All assignments are treated equally, even if some should count more (e.g., final project = 50% of grade, weekly homework = 50%)\n\n3. **Doesn't address extra credit or grade adjustments** — Are there curves, bonus points, or other modifications?\n\n---\n\n## How to fix it:\n\n**To calculate a student's course average:**\n\n1. For each assignment the student turned in, record their score\n2. **Decide how to handle missing assignments** (count as 0, or exclude from calculation)\n3. **Apply any weighting** (if assignments have different importance, multiply each score by its weight)\n4. Add all scores (or weighted scores)\n5. Divide by the total number of assignments (or sum of weights)\n6. **Note any adjustments** (extra credit, curve, etc.)\n\nThe key is being explicit about edge cases and whether all assignments contribute equally to the final grade."}, "note": "The cheaper model found more. deepseek-v4.1-flash-max caught the divide-by-zero and rewrote the procedure four ways; claude-haiku-4-5 missed it entirely and told you to decide for yourself - while looking twice as organized."}];
 var FAULTS=[{"id": "long", "n": "A table, not five scannable lines", "why": "No format was named, so it chose one - and it chose the one that looks thorough."}, {"id": "preamble", "n": "Every row padded out to a sentence", "why": "Nothing said how long a summary should be, so each one grew to the length that felt like a summary."}, {"id": "scores", "n": "A feelings column it cannot possibly know", "why": "You asked how the customer felt. It has no way to find that out, so it produced a confident-looking judgment instead."}];
 var TASK="Summarize each of these five customer complaints in a way my operations manager can scan, and tell me how the customer felt about it.";
 var MOVES=[{"id": "vague", "label": "&ldquo;Shorter, please.&rdquo;", "family": "Vague nudge", "resolves": ["long", "preamble"], "noise": true, "verdict": "It did get shorter, and that is the trap. You asked for &ldquo;shorter&rdquo; and it decided how much shorter - this time it guessed well. Now read the right-hand side of every line. The feelings are still there, and you did not ask for them this turn either."}, {"id": "constraint", "label": "&ldquo;One line each, twelve words maximum. No padding.&rdquo;", "family": "Constraint", "resolves": ["long", "preamble"], "noise": false, "verdict": "Same result as the vague nudge, arrived at deliberately rather than luckily - you named the format and got the format. Which is worth having. It still did not touch the feelings."}, {"id": "example", "label": "Paste one line written exactly the way you want it.", "family": "Worked example", "resolves": ["long", "preamble"], "noise": false, "verdict": "The strongest of the four, and look at <em>why<\/em>: it copied more than the length. Your example ended with what the customer wants, so every line now ends with what the customer wants - a thing you never described in words. It still did not touch the feelings."}, {"id": "negative", "label": "&ldquo;That&rsquo;s not what I asked for. Try again.&rdquo;", "family": "Pure negative", "resolves": ["long", "preamble"], "noise": true, "verdict": "This one is the most interesting failure on the board, because it <em>looks<\/em> like a success. You said nothing about what you wanted and it rerolled onto a tidier format anyway. That is luck, and it is why people believe complaining at a model works. You had no control over what came back, there is now a second wrong output sitting in the thread as an example, and the feelings column did not move."}, {"id": "restart", "label": "Go back and fix the prompt, then start a fresh conversation.", "family": "Restart", "resolves": ["long", "preamble", "scores"], "noise": false, "verdict": "The only move on the board that clears the feelings, and notice it is not a cleverer follow-up - it is a shorter conversation. The feelings were never a fault in the answer. They were a fault in the question: &ldquo;tell me how the customer felt&rdquo; asked for something the model cannot find out, and that instruction was being re-read on every single turn."}];
@@ -4065,6 +4147,90 @@ var BENCH_OUT={"start": {"text": "| # | Operations summary                      
   "use strict";
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function icon(n) { return '<svg class="i"><use href="#i-' + n + '"/></svg>'; }
+
+  /* ---- captured output, rendered ------------------------------------------
+
+     The arena and the bench replay real model responses, and real model
+     responses are Markdown. Shown raw, a learner reads `## Main problems:`
+     and a wall of asterisks - and in the round built to show that the
+     better-organized-LOOKING answer can be the weaker one, the formatting
+     that makes it look organized never appears. The point of the round was
+     invisible in the round.
+
+     Rendering it is a transformation of captured evidence, so two rules keep
+     it honest:
+
+       * The text is ESCAPED FIRST, always. Nothing a capture contains can
+         become markup that was not in it. Everything below runs on the
+         escaped string, which is also why the bench's old
+         `innerHTML = text` had to go: that inserted captured text as HTML.
+       * Only the forms these captures actually contain are converted -
+         headings, bold, italic, inline code, fenced code, bullet and
+         numbered lists, blockquotes and horizontal rules. Nothing is
+         reflowed, reordered, or dropped. What the model wrote is what
+         renders; it renders the way the learner's own chat window would
+         render it.
+
+     Not a general Markdown parser and not trying to be. A half-implemented
+     one that silently mangles a capture would be worse than showing raw. */
+  function md(src) {
+    var t = esc(String(src || ""));
+
+    /* Fenced code first, held aside so nothing below touches its contents. */
+    var held = [];
+    t = t.replace(/```[a-z]*\n([\s\S]*?)```/gi, function (m, body) {
+      held.push('<pre class="mdpre">' + body.replace(/\n$/, "") + "</pre>");
+      return "\u0000" + (held.length - 1) + "\u0000";
+    });
+
+    var out = [], list = null;
+
+    function closeList() {
+      if (list) { out.push("</" + list + ">"); list = null; }
+    }
+    function openList(kind) {
+      if (list !== kind) { closeList(); out.push("<" + kind + ' class="mdlist">'); list = kind; }
+    }
+    function inline(x) {
+      return x
+        .replace(/`([^`]+)`/g, '<code class="mdcode">$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+    }
+
+    t.split("\n").forEach(function (raw) {
+      var line = raw.replace(/\s+$/, "");
+
+      if (/^\u0000\d+\u0000$/.test(line.trim())) {    /* a held code block */
+        closeList(); out.push(line.trim()); return;
+      }
+      if (!line.trim()) { closeList(); return; }
+
+      var m = line.match(/^(#{1,6})\s+(.*)$/);
+      if (m) { closeList(); out.push('<p class="mdh">' + inline(m[2]) + "</p>"); return; }
+
+      if (/^(-{3,}|\*{3,}|_{3,})$/.test(line.trim())) {
+        closeList(); out.push('<hr class="mdhr">'); return;
+      }
+
+      m = line.match(/^\s*>\s?(.*)$/);
+      if (m) { closeList(); out.push('<blockquote class="mdq">' + inline(m[1]) + "</blockquote>"); return; }
+
+      m = line.match(/^\s*[-*]\s+(.*)$/);
+      if (m) { openList("ul"); out.push("<li>" + inline(m[1]) + "</li>"); return; }
+
+      m = line.match(/^\s*\d+[.)]\s+(.*)$/);
+      if (m) { openList("ol"); out.push("<li>" + inline(m[1]) + "</li>"); return; }
+
+      closeList();
+      out.push("<p>" + inline(line) + "</p>");
+    });
+    closeList();
+
+    return out.join("\n").replace(/\u0000(\d+)\u0000/g, function (m, i) {
+      return held[+i];
+    });
+  }
   /* .demo__foot is a flex row, so note text has to arrive as one element -
      otherwise every <strong> starts its own column. */
   function setNote(el, name, html) { el.innerHTML = icon(name) + "<span>" + html + "</span>"; }
@@ -4117,7 +4283,7 @@ var BENCH_OUT={"start": {"text": "| # | Operations summary                      
       var s = r[k];
       return '<div class="acard" data-side="' + k + '">' +
         '<p class="acard__lab">' + k.toUpperCase() + '</p>' +
-        '<div class="acard__body">' + esc(s.text).replace(/\n/g, "<br>") + "</div>" +
+        '<div class="acard__body">' + md(s.text) + "</div>" +
         '<p class="acard__more">' + icon("chevron-down") + "this response scrolls</p>" +
         '<p class="acard__model" hidden></p></div>';
     }
@@ -4381,7 +4547,7 @@ var BENCH_OUT={"start": {"text": "| # | Operations summary                      
       elCtxBar.parentNode.className = "bmeter" + (pct >= 60 ? " is-hot" : "");
       elBad.textContent = bad;
       elWhen.innerHTML = turn === 1 ? "" : "&middot; after " + (turn - 1) + (turn === 2 ? " move" : " moves");
-      elOut.innerHTML = (BENCH_OUT[lastKey] || {}).text || "";
+      elOut.innerHTML = md((BENCH_OUT[lastKey] || {}).text || "");
       elFaults.innerHTML = FAULTS.map(function (f) {
         var live = open.indexOf(f.id) > -1;
         return '<li class="' + (live ? "is-live" : "is-fixed") + '">' +

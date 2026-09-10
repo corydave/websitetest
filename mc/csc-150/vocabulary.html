@@ -1607,6 +1607,23 @@ html[data-theme="dark"] .sidetrip {
 .atable-wrap { overflow-x: auto; }
 .atable-wrap .atable { min-width: 34rem; }
 
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
 /* ============================================================================
    FLCC AI Specialist Microcredential - companion.css
    The Learning Hub. One per course.
@@ -1783,8 +1800,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page vocabulary.html  vaef2051  ·  build 8073a5b  ·  2026-09-09 17:51 -->
-<div data-build="8073a5b" data-page="vocabulary.html" data-version="aef2051" class="lesson" data-course="150">
+<!-- CSC 150  page vocabulary.html  v482c76e  ·  build 7370564  ·  2026-09-10 12:39 -->
+<div data-build="7370564" data-page="vocabulary.html" data-version="482c76e" class="lesson" data-course="150">
 <header class="masthead">
   <div class="wrap">
     <div class="masthead__row">
@@ -2407,6 +2424,33 @@ html[data-theme="dark"] .sidetrip {
   }
 
   window.Steady = Steady;
+})();
+
+</script>
+<script>
+/* One copy button, wherever a page needs one.
+
+   Lives in shared/ because the same control now appears in two places that do
+   not share a stylesheet or a script: the prompt block on a Discussion or Lab
+   page, and the same prompt lifted into a lesson's Apply beat. It was in
+   build/task_js.js and so existed only on the task pages - which is how the
+   lesson version came to render the prompt with a Copy button that did
+   nothing.
+
+   Delegated from the document, so markup added after load still works. */
+(function () {
+  "use strict";
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-copy]");
+    if (!b) return;
+    var el = document.getElementById(b.getAttribute("data-copy"));
+    if (!el || !navigator.clipboard) return;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      var was = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(function () { b.textContent = was; }, 1600);
+    });
+  });
 })();
 
 </script>
