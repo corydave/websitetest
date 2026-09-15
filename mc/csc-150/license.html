@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Module 3 Checkpoint</title>
-<link rel="icon" href="../../favicon.ico">
+<title>CSC 150 Licence and credits</title>
+<link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
@@ -1658,442 +1658,135 @@ html[data-theme="dark"] .sidetrip {
 .tbl a:hover { text-decoration:underline; }
 
 /* ============================================================================
-   FLCC AI Specialist Microcredential - instrument.css
-   Instruments only - inventories, surveys, anything that collects.
+   FLCC AI Specialist Microcredential - companion.css
+   The Learning Hub. One per course.
 
    Load order matters: core.css first, then the genre sheet, then the course
    theme. Nothing here sets a color except through a token.
    ========================================================================= */
-
-
-/* Segmented exposure scale ------------------------------------------------ */
-
-.scalelegend {
-  display: none;
+.hubtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
   position: sticky;
   top: 0;
-  z-index: 2;
-  background: var(--surface);
-  padding-block: .9rem .5rem;
-  box-shadow: 0 1px 0 var(--line);
-  grid-template-columns: 12rem 1fr;
-  gap: 1rem;
-  align-items: end;
-  padding: 0 1.35rem;
+  z-index: 40;
+  background: var(--ground);
+  padding-block: .8rem;
 }
-.scalelegend > div {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: .3rem;
-}
-.scalelegend span {
+.hubtab {
+  font: inherit;
   font-family: var(--display);
   font-weight: 700;
-  font-size: .62rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  text-align: center;
-  line-height: 1.25;
-}
-
-.scale {
-  display: grid;
-  grid-template-columns: 12rem 1fr;
-  gap: 1rem;
-  align-items: center;
-  padding: .75rem 1.35rem;
-  border-bottom: 1px solid var(--line);
-}
-.scale:last-child { border-bottom: 0; }
-.scale__name { font-weight: 700; font-size: .95rem; }
-.scale__name small { display: block; font-weight: 400; font-size: .8rem; color: var(--ink-3); }
-.scale__opts { display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; }
-
-.segbtn {
-  font: inherit;
-  font-size: .74rem;
-  line-height: 1.2;
-  text-align: center;
-  padding: .5rem .3rem;
-  border: 0;
-  border-radius: var(--r-xs);
-  background: var(--surface-2);
-  color: var(--ink-2);
-  cursor: pointer;
-  transition: background-color .16s ease, color .16s ease, box-shadow .16s ease;
-}
-.segbtn:hover { background: var(--accent-wash); color: var(--accent-text); }
-.segbtn[aria-checked="true"] {
-  background: var(--accent-fill);
-  color: var(--accent-on);
-  box-shadow: var(--shadow-1);
-}
-
-@media (min-width: 46rem) {
-  .scalelegend { display: grid; }
-  .segbtn { font-size: 0; padding: .7rem .3rem; }
-  .segbtn::after {
-    content: "";
-    display: block;
-    width: 10px; height: 10px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: .35;
-  }
-  .segbtn[aria-checked="true"]::after { opacity: 1; }
-}
-@media (max-width: 46rem) {
-  .scale { grid-template-columns: 1fr; gap: .5rem; padding: 1rem 1.1rem; }
-}
-
-/* Calibration questions --------------------------------------------------- */
-
-.calq {
-  padding: 1.2rem 1.35rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: .75rem;
-}
-.calq:last-child { border-bottom: 0; }
-.calq__q { font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.4; }
-.calq .answers { flex-direction: column; align-items: stretch; }
-.calq .answer { text-align: left; }
-
-/* Result profile ---------------------------------------------------------- */
-
-.profile {
-  background: var(--surface);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-3);
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-.profile__badge {
+  font-size: .88rem;
   display: inline-flex;
   align-items: center;
-  gap: .6rem;
-  align-self: flex-start;
+  gap: .45rem;
+  padding: .55rem 1rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+}
+.hubtab:hover { color: var(--accent-text); }
+.hubtab[aria-selected="true"] {
   background: var(--accent-fill);
   color: var(--accent-on);
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1rem;
-  padding: .55rem 1rem;
-  border-radius: var(--r-sm);
   box-shadow: var(--shadow-accent);
 }
-.profile h3 { font-size: 1.3rem; }
-.profile__lede { color: var(--ink-2); }
+.panel[hidden] { display: none; }
+.panel, .deck { scroll-margin-top: 5.5rem; }
 
-.readout { display: grid; gap: .8rem; }
-.readout__row {
+/* progress ---------------------------------------------------------------- */
+.pgrid {
   display: grid;
-  grid-template-columns: 11rem 1fr 3.5rem;
-  gap: .8rem;
-  align-items: center;
-  font-size: .92rem;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: .55rem;
 }
-.readout__label { color: var(--ink-2); }
-.readout__bar { height: 9px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; }
-.readout__bar > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: var(--r-pill); transition: width .7s cubic-bezier(.2,.8,.3,1); }
-.readout__num { font-family: var(--display); font-weight: 700; font-size: .82rem; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
-
-.watchlist { display: flex; flex-direction: column; gap: .7rem; }
-.watchitem {
-  display: flex;
-  gap: .85rem;
-  align-items: flex-start;
-  background: var(--surface-2);
-  border-radius: var(--r-sm);
-  padding: .9rem 1rem;
-}
-.watchitem__n {
-  font-family: var(--display); font-weight: 700; font-size: .78rem;
-  display: grid; place-items: center;
-  width: 1.5rem; height: 1.5rem; flex: none; margin-top: .1rem;
-  border-radius: var(--r-xs);
-  background: var(--accent-fill); color: var(--accent-on);
-}
-.watchitem strong { display: block; font-family: var(--display); font-size: .95rem; }
-.watchitem p { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
-
-@media (max-width: 40rem) {
-  .readout__row { grid-template-columns: 1fr; gap: .3rem; }
-  .readout__num { text-align: left; }
-}
-/* ── Name field on the result panel ─────────────────────────────────────── */
-.whorow { display: grid; gap: .3rem; margin: .9rem 0 1rem; max-width: 26rem; }
-.whorow__lab { font-size: .82rem; font-weight: 700; color: var(--ink-2); }
-.whorow__lab span { display: block; font-weight: 400; font-size: .76rem; color: var(--ink-3); }
-.whorow__in {
+.ptile {
   font: inherit;
-  padding: .6rem .8rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--ink);
-}
-.whorow__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
-
-/* ── Print: the fallback route to a PDF ─────────────────────────────────────
-   The PDF button is the primary path; print exists for anyone whose browser
-   or device refuses it, and it is the only route that keeps Comfortaa and
-   Atkinson Hyperlegible. Everything except the result panel is scaffolding
-   for filling the thing in, so none of it belongs on paper. */
-@media print {
-  body { background: #fff; }
-  .masthead, .standfirst,
-  .invsection, .btnrow, .copybox, .whorow,
-  .deck, .demo, .progressbar, .sitefoot, #pdfNote { display: none !important; }
-
-  #result { display: block !important; }
-  #result, #result * { box-shadow: none !important; }
-
-  .band, .readout, .watchlist, .calib {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-  .watchitem { break-inside: avoid; page-break-inside: avoid; }
-
-  /* A printed page has no accent bar at the top of the viewport, so the
-     document needs its own heading - supplied here rather than in the markup
-     so it never shows on screen. */
-  #result::before {
-    content: "CSC 150 · AI Foundations - Where You're Starting From";
-    display: block;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 15pt;
-    color: #000;
-    margin-bottom: 1.2rem;
-    padding-bottom: .6rem;
-    border-bottom: 2px solid #d64214;
-  }
-  a[href]::after { content: ""; }
-}
-
-/* ── Module capstone ────────────────────────────────────────────────────────
-   Five routes to one rubric. The rubric is shown first and at full size,
-   because a student choosing before reading it is choosing on vibes. */
-.crits { display: grid; gap: .7rem; }
-.crit {
-  background: var(--surface);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-1);
-  padding: 1.1rem 1.2rem;
-}
-.crit__top { margin-bottom: .8rem; }
-.crit__n { font-family: var(--display); font-size: 1.05rem; margin: 0 0 .15rem; }
-.crit__q { margin: 0; color: var(--ink-2); font-size: .95rem; }
-.crit__levels { display: grid; gap: .5rem; grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 44rem) { .crit__levels { grid-template-columns: 1fr; } }
-.crit__lvl { background: var(--surface-2); border-radius: 10px; padding: .65rem .75rem; }
-.crit__lvl--top { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
-.crit__lab {
-  display: block;
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em;
-  text-transform: uppercase; color: var(--ink-3); margin-bottom: .25rem;
-}
-.crit__lvl--top .crit__lab { color: var(--accent-text); }
-.crit__lvl p { margin: 0; font-size: .86rem; line-height: 1.45; color: var(--ink-2); }
-.capnote { margin-top: .9rem; }
-
-.capopts { display: grid; gap: .7rem; }
-.capopt { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1); overflow: hidden; }
-.capopt.is-open { box-shadow: var(--shadow-2); }
-.capopt__head {
-  display: grid; gap: .3rem;
-  width: 100%; text-align: left;
-  font: inherit; color: inherit;
-  background: none; border: 0;
-  padding: 1.1rem 1.2rem;
-  cursor: pointer;
-}
-.capopt__head:hover { background: var(--surface-2); }
-.capopt__head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.capopt__meta { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
-.capopt__kind {
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--accent-text);
-}
-.capopt__time { font-size: .72rem; color: var(--ink-3); }
-.capopt__name { font-family: var(--display); font-size: 1.2rem; font-weight: 700; }
-.capopt__premise { color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
-.capopt__fit {
-  display: flex; gap: .4rem; align-items: flex-start;
-  font-size: .88rem; color: var(--ink-3); margin-top: .25rem;
-}
-.capopt__fit .i { width: .95rem; height: .95rem; flex: none; margin-top: .2rem; color: var(--accent); }
-.capopt__more {
-  display: inline-flex; align-items: center; gap: .3rem;
-  font-size: .8rem; font-weight: 700; color: var(--accent-text); margin-top: .45rem;
-}
-.capopt__more .i { width: .9rem; height: .9rem; transition: transform .2s; }
-.capopt.is-open .capopt__more .i { transform: rotate(180deg); }
-.capopt.is-open .capopt__more span::after { content: " (open)"; font-weight: 400; color: var(--ink-3); }
-.capopt__body { padding: 0 1.2rem 1.2rem; display: grid; gap: .9rem; }
-
-.capsteps { margin: 0; padding-left: 1.3rem; display: grid; gap: .55rem; }
-.capsteps li { font-size: .95rem; line-height: 1.55; color: var(--ink-2); }
-.caphand, .caphow { background: var(--surface-2); border-radius: 10px; padding: .8rem .9rem; }
-/* Provenance: which Apply task this route is a longer version of. Tinted
-   rather than plain so it reads as a pointer backwards, not as another
-   instruction. */
-.capfrom {
-  background: var(--accent-wash); border-radius: 10px; padding: .8rem .9rem;
-}
-.capfrom__lab {
-  display: flex; align-items: center; gap: .35rem;
-  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--accent-text); margin-bottom: .35rem;
-}
-.capfrom__lab .i { width: .9rem; height: .9rem; }
-.capfrom p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
-.caphand__lab, .caphow__lab {
-  display: flex; align-items: center; gap: .35rem;
-  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: .35rem;
-}
-.caphand__lab .i { width: .9rem; height: .9rem; }
-.caphand p, .caphow p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
-
-.capcheck { display: grid; gap: .5rem; margin-bottom: 1rem; }
-.capcheck__row {
-  display: grid; grid-template-columns: auto auto 1fr; gap: .6rem; align-items: start;
-  padding: .7rem .8rem; background: var(--surface-2); border-radius: 10px; cursor: pointer;
-}
-.capcheck__row input { margin-top: .25rem; accent-color: var(--accent); }
-.capcheck__n {
-  font-size: .72rem; font-weight: 700; color: var(--accent-text);
-  min-width: 1rem; margin-top: .15rem;
-}
-.capcheck__t { font-size: .92rem; line-height: 1.5; color: var(--ink-2); }
-.capcheck__row:has(input:checked) .capcheck__t { color: var(--ink-3); text-decoration: line-through; }
-
-/* The disclosure gate. Sits above the rubric because it is a precondition for
-   being marked at all, not one criterion among five. */
-.capgate {
-  background: var(--surface);
-  border-radius: var(--r);
-  box-shadow: var(--shadow-2);
-  padding: 1.2rem 1.3rem;
-  margin: 0 0 1.1rem;
-  display: grid;
-  gap: .7rem;
-}
-.capgate__head { display: flex; align-items: center; gap: .7rem; }
-.capgate__head h3 { font-family: var(--display); font-size: 1.1rem; margin: 0; }
-.capgate > p { margin: 0; color: var(--ink-2); font-size: .96rem; line-height: 1.6; }
-.capgate__eg { display: grid; gap: .5rem; grid-template-columns: 1fr 1fr; }
-@media (max-width: 40rem) { .capgate__eg { grid-template-columns: 1fr; } }
-.capgate__ex { background: var(--surface-2); border-radius: 10px; padding: .7rem .8rem; }
-.capgate__ex:last-child { background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
-.capgate__lab {
-  display: block;
-  font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: .3rem;
-}
-.capgate__ex:last-child .capgate__lab { color: var(--accent-text); }
-.capgate__ex p { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink-2); }
-
-/* Rubric criteria as accordions ---------------------------------------------
-   Collapsed by default, and independent of each other: opening one does not
-   shut the rest. That is deliberately the opposite of .capopt above, which is
-   one-at-a-time. The difference is what each list is for - the rubric is
-   something you compare across, and comparing needs two or five panels open
-   at once; the route cards are something you choose between, where five open
-   briefs is a wall of text nobody can choose from. Same page, opposite rule,
-   and worth not "fixing" later into consistency.  */
-.crits--acc .crit { padding: 0; }
-.crits--acc .crit__n { margin: 0; font-size: inherit; font-weight: inherit; }
-.crit__head {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: .1rem .7rem;
-  width: 100%;
   text-align: left;
-  background: none;
   border: 0;
   cursor: pointer;
-  padding: 1rem 1.2rem;
-  font: inherit;
-  color: inherit;
-  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  transition: background-color .18s ease, box-shadow .18s ease, transform .12s ease;
 }
-.crit__head:hover { background: var(--accent-wash); }
-.crit__head:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
-.crit__nm {
-  grid-column: 1;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--ink);
+.ptile:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+.ptile__id { font-family: var(--display); font-weight: 700; font-size: .72rem; letter-spacing: .06em; color: var(--ink-3); }
+.ptile__t { font-size: .78rem; color: var(--ink-2); line-height: 1.3; }
+.ptile__check { margin-top: .25rem; width: 1.1rem; height: 1.1rem; border-radius: var(--r-xs); background: var(--surface-3); display: grid; place-items: center; color: transparent; }
+.ptile[aria-pressed="true"] { background: var(--accent-fill); }
+.ptile[aria-pressed="true"] .ptile__id,
+.ptile[aria-pressed="true"] .ptile__t { color: var(--accent-on); }
+.ptile[aria-pressed="true"] .ptile__t { opacity: .85; }
+.ptile[aria-pressed="true"] .ptile__check { background: rgba(255,255,255,.25); color: var(--accent-on); }
+.ptile__check .i { width: .8rem; height: .8rem; }
+
+/* reflection -------------------------------------------------------------- */
+.promptcard {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
 }
-.crits--acc .crit__q {
-  grid-column: 1;
-  margin: 0;
-  font-size: .92rem;
-  line-height: 1.45;
-  color: var(--ink-2);
+.promptcard__kind {
+  font-family: var(--display); font-weight: 700; font-size: .7rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
 }
-.crit__chev {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  width: 1.1rem; height: 1.1rem;
-  color: var(--ink-3);
-  transition: transform .18s ease;
+.promptcard__q { font-family: var(--display); font-weight: 700; font-size: 1.2rem; line-height: 1.4; }
+.promptcard textarea { min-height: 8rem; }
+
+.jentry {
+  background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: .4rem;
 }
-.crit__head[aria-expanded="true"] .crit__chev { transform: rotate(180deg); }
-.crit__head[aria-expanded="true"] { border-radius: var(--r) var(--r) 0 0; }
-.crits--acc .crit__levels { padding: 0 1.2rem 1.1rem; }
-
-.crits__bar { display: flex; justify-content: flex-end; }
-/* No negative margin here. It saved three pixels and pulled the first
-   criterion up over the bar, which left the expand-all button's bottom edge
-   underneath a full-width header button - a hover tint on Mechanism in a
-   screenshot is how that turned up, and a stolen click is where it ends. */
-.crits__all {
-  display: inline-flex; align-items: center; gap: .35rem;
-  background: none; border: 0; cursor: pointer;
-  font-family: var(--display); font-weight: 700;
-  font-size: .74rem; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--accent-text);
-  padding: .3rem .2rem;
-  border-radius: var(--r-xs);
+.jentry__meta { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+.jentry__date { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.jentry__q { font-size: .9rem; color: var(--accent-text); font-weight: 700; }
+.jentry__a { font-size: .95rem; color: var(--ink-2); white-space: pre-wrap; }
+.linkbtn {
+  font: inherit; font-size: .78rem; background: none; border: 0; padding: 0;
+  color: var(--ink-3); cursor: pointer; text-decoration: underline;
 }
-.crits__all:hover { text-decoration: underline; }
-.crits__all:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.crits__all .i { width: .85rem; height: .85rem; transition: transform .18s ease; }
-.crits__all[aria-expanded="true"] .i { transform: rotate(180deg); }
+.linkbtn:hover { color: var(--bad); }
 
-/* ── Discussions and Labs ─────────────────────────────────────────────────
-   A task prompt is a document rather than a lesson: no beats, no gate, no
-   deck. It borrows core.css's callouts and table, and needs these five.
+/* confidence -------------------------------------------------------------- */
+.deltarow {
+  display: grid;
+  grid-template-columns: 12rem 1fr auto;
+  gap: .9rem;
+  align-items: center;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.deltarow:last-child { border-bottom: 0; }
+.deltarow__label { font-size: .93rem; }
+.track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--surface-2); }
+.track__span { position: absolute; top: 0; bottom: 0; border-radius: var(--r-pill); background: var(--accent); opacity: .3; }
+.track__dot {
+  position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 3px var(--accent);
+}
+.track__dot.is-now { background: var(--accent); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--accent); }
+.delta {
+  font-family: var(--display); font-weight: 700; font-size: .8rem;
+  padding: .2rem .5rem; border-radius: var(--r-xs); white-space: nowrap;
+  background: var(--surface-2); color: var(--ink-3);
+}
+.delta.is-up { background: var(--good-soft); color: var(--good); }
+.delta.is-down { background: var(--warn-soft); color: var(--warn); }
 
-   The genre is "instrument" and not "lesson" on purpose - the lesson sheet's
-   classes would all be dead weight here, and check_sheets.py would say so. */
-
-/* The summary, set slightly larger than body copy: it is the first thing read
-   and it is the only part of a prompt that says why the task exists. */
-.tasksum { font-size: 1.05rem; color: var(--ink-2); display: flex;
-           flex-direction: column; gap: .8rem; margin: 0 0 1.6rem;
-           padding-left: 1rem; border-left: 3px solid var(--accent-wash); }
-
-.taskh { font-family: var(--display); font-weight: 700; font-size: 1.25rem;
-         margin: 2rem 0 .7rem; }
-
-.tasklist { display: flex; flex-direction: column; gap: .7rem;
-            margin: 0 0 1.2rem; padding-left: 1.2rem; }
-.tasklist li { line-height: 1.6; }
-
-.tcap { margin: .5rem 0 0; }
-
+@media (max-width: 40rem) {
+  .deltarow { grid-template-columns: 1fr; gap: .45rem; }
+  .hubtab { font-size: .8rem; padding: .5rem .8rem; }
+}
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -2140,8 +1833,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page 03-module-3-checkpoint.html  va62856a  ·  build 3e3916a  ·  2026-09-15 02:30 -->
-<div data-build="3e3916a" data-page="03-module-3-checkpoint.html" data-version="a62856a" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page license.html  vbb2e315  ·  build 3e3916a  ·  2026-09-15 02:30 -->
+<div data-build="3e3916a" data-page="license.html" data-version="bb2e315" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -2170,292 +1863,81 @@ html[data-theme="dark"] .sidetrip {
 <header class="masthead">
   <div class="wrap">
     <div class="masthead__row">
-      <span class="coursemark"><svg class="i"><use href="#i-cap"/></svg> CSC 150</span>
-      <span class="lessonno">Module 3 &middot; Checkpoint</span>
+      <span class="coursemark"><svg class="i"><use href="#i-book-open"/></svg> CSC 150</span>
+      <span class="lessonno">AI Specialist Microcredential</span>
     </div>
-    <h1>Show Me You Can Check It</h1>
-    <p class="standfirst">One piece of work at the end of Module&nbsp;3, in whichever of five
-    forms suits how you think. They are marked identically - the choice is yours.</p>
+    <h1>Licence and credits</h1>
+    <p class="standfirst">This course is openly licensed. Take it, teach it, change it. The two things you cannot take are somebody else&rsquo;s, and they are named below rather than left for you to guess at.</p>
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap lesson__body">
 
-  <section class="block">
+  <section class="block" id="licence">
     <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Read this first</span>
-      <h2>The Rubric</h2>
-      <p>Whichever option you choose, use this rubric as a guide. These are the criteria that should inform your design. They are written to be format-blind on purpose: a recording, a bug report and an annotated transcript can all satisfy them, and none of them can be satisfied by length.</p>
+      <span class="eyebrow"><svg class="i"><use href="#i-check"/></svg> The licence</span>
+      <h2>Creative Commons Attribution 4.0 International</h2>
+      <p>You may share and adapt this material for any purpose, including commercially, as long as you give credit and say whether you changed anything. You do not need to ask first.</p>
     </div>
-    <div class="capgate">
-      <div class="capgate__head">
-        <div class="icontile"><svg class="i"><use href="#i-lock"/></svg></div>
-        <h3>Every choice needs an AI-use statement</h3>
-      </div>
-      <p>Whichever choice you make, the work must arrive with a short statement of what AI did in making it. <strong>Work submitted without one will not be graded</strong>. You merely have to fix it and resubmit. This is not an integrity trap! Using AI on this work is expected, and on several of these choices it is the point. What is being assessed is whether you can say plainly what it did. That is the skill, and it is the same one Lesson&nbsp;16 calls an <em>AI-use statement</em> and asks you to write for real.</p>
-      <div class="capgate__eg">
-        <div class="capgate__ex"><span class="capgate__lab">Not a statement</span><p>&ldquo;I used AI to help with this assignment.&rdquo;</p></div><div class="capgate__ex"><span class="capgate__lab">A statement</span><p>&ldquo;All six prompts and the ledger rows are mine. I used Claude to check my grammar in the closing paragraph and it rewrote two sentences, which I kept. The diagnosis in row 4 is mine and I checked it against Lesson&nbsp;3 rather than asking a model.&rdquo;</p></div>
+    <div class="card card--quiet">
+      <div class="stack" style="gap:.6rem">
+        <p><strong>Attribution, ready to paste:</strong></p>
+        <p class="small"><em>CSC 150: AI Foundations</em>, by Dave Ghidiu, Finger Lakes Community College, is licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Source: <a href="https://corydave.github.io/websitetest/mc" target="_blank" rel="noopener">corydave.github.io/websitetest/mc</a></p>
+        <p class="small muted">Title, author, source, licence. If you change something, say so - that is the whole of the licence&rsquo;s second condition, and it protects you as much as it does me.</p>
       </div>
     </div>
-    <div class="crits crits--acc">
-      <div class="crits__bar">
-        <button class="crits__all" type="button" id="critsAll" aria-expanded="false">
-          <svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-          <span id="critsAllLab">Expand all</span>
-        </button>
-      </div>
-      <article class="crit">
-            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-3-1">
-              <span class="crit__nm">Mechanism</span>
-              <span class="crit__q">Do you explain what happened using the machinery, rather than the machine&rsquo;s personality?</span>
-              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-            </button></h3>
-            <div class="crit__levels" id="crit-3-1" hidden>
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Explains behavior with intent, memory or effort - <em>it got confused</em>, <em>it was trying to help</em>, <em>it remembered</em>.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Uses next-token prediction, context and training correctly to explain at least one observed behavior.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Reaches for the right level of mechanism without prompting, including where attention or the context window is the actual explanation, and does not over-claim beyond what the mechanism supports.</p></div>
-            </div>
-          </article><article class="crit">
-            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-3-2">
-              <span class="crit__nm">Evidence</span>
-              <span class="crit__q">Is every claim anchored to something you actually ran or found?</span>
-              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-            </button></h3>
-            <div class="crit__levels" id="crit-3-2" hidden>
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Claims are general and unsourced - describes what models &ldquo;tend to&rdquo; do with nothing attached.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Each substantive claim is tied to a specific quoted output, screenshot or link that a reader could check.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Evidence is chosen deliberately, including at least one case that complicates the story rather than confirming it.</p></div>
-            </div>
-          </article><article class="crit">
-            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-3-3">
-              <span class="crit__nm">Calibration</span>
-              <span class="crit__q">Can you tell what you observed from what you are inferring?</span>
-              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-            </button></h3>
-            <div class="crit__levels" id="crit-3-3" hidden>
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>States inferences as observations, or hedges everything equally so nothing is claimed at all.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Marks clearly which parts are observed, which are inferred, and where you are unsure.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Names something you cannot determine from what you have, and says what evidence would settle it.</p></div>
-            </div>
-          </article><article class="crit">
-            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-3-4">
-              <span class="crit__nm">Disclosure</span>
-              <span class="crit__q">Can a reader tell exactly what part AI played in making this?</span>
-              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-            </button></h3>
-            <div class="crit__levels" id="crit-3-4" hidden>
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>No statement, or one so vague it says nothing - <em>I used AI to help</em>. Work arriving with no statement at all is returned unmarked; see the gate above.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>A short statement naming which tools were used, for what, and which parts of the submission are your own words.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>Specific enough to be checked - names the tool and roughly what was asked of it, distinguishes drafting from editing from analysis, and discloses use that nobody would have caught. Reads as a professional note rather than a confession.</p></div>
-            </div>
-          </article><article class="crit">
-            <h3 class="crit__n"><button class="crit__head" type="button" aria-expanded="false" aria-controls="crit-3-5">
-              <span class="crit__nm">Transfer</span>
-              <span class="crit__q">Does it reach past the examples the lessons handed you?</span>
-              <svg class="i crit__chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-            </button></h3>
-            <div class="crit__levels" id="crit-3-5" hidden>
-              <div class="crit__lvl"><span class="crit__lab">Not yet</span><p>Re-uses a lesson example or an activity output with minor changes.</p></div>
-              <div class="crit__lvl"><span class="crit__lab">Meets</span><p>Applies the idea to a case of your own choosing that the lessons did not cover.</p></div>
-              <div class="crit__lvl crit__lvl--top"><span class="crit__lab">Strong</span><p>The case is one where the lesson&rsquo;s account needed adjusting, and you say how.</p></div>
-            </div>
-          </article>
-    </div>
-    <p class="small muted capnote">Five criteria, four points each, twenty total. Length is not a criterion and nothing here rewards it - a tight two pages beats a loose six all day, every day. Disclosure is both a gate and a criterion: without a statement the work is not marked at all, and with one, how well you did it counts like everything else.</p>
   </section>
 
-  <section class="block" id="choose">
+  <section class="block" id="covered">
     <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Five routes</span>
-      <h2>Pick one</h2>
-      <p>Open each one and read what it actually involves before deciding.</p>
-    </div>
-    <div class="capopts" id="capopts"><article class="capopt" id="opt-audit" data-opt="audit">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Annotated evidence table</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Citation Audit</span>
-              <span class="capopt__premise">One question, two tools, every citation checked twice - and a hit rate for each side that you actually computed.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You want a finding you can hand to somebody who does not believe you, and you would rather count than argue.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Pick a question with real, checkable sources, on something you know enough about to notice a wrong answer.</li><li>Run it in a bare chat model and in a tool with live retrieval. Same wording both times.</li><li>Check every citation from both on <em>both</em> axes: does the source exist, and does it say what it was cited for. Sort each into does not exist, exists and supports, exists and does not support.</li><li>Compute the hit rate for each tool. Then the part that carries the marks: quote one citation from the middle pile and show, side by side, what the answer claimed and what the source actually says.</li><li>Close with one paragraph on what your audit does <em>not</em> establish. One question is one question.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 9's Apply - run a question in a bare and a grounded tool and report the hit rate for each. This adds the second axis and one worked middle-pile example.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>A row per citation with both verdicts, a hit rate per tool, one worked middle-pile example with both texts quoted, and the closing paragraph.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is explaining what grounding does and does not change - material in the context, not knowledge in the model. <strong>Evidence</strong> is the table, and it fails if any row is a verdict without a quote. <strong>Calibration</strong> is the closing paragraph and the distinction between a source you could not find and one that does not exist. <strong>Transfer</strong> is choosing a question the lessons never touched.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-probe" data-opt="probe">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Controlled experiment</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Probe</span>
-              <span class="capopt__premise">Design and run a controlled probe, with a control pair, and report the result including the null one.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You liked the part where changing one word was allowed to settle an argument.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Run the control first: the same prompt twice. Record how much moved when nothing changed. Everything after this is measured against that floor.</li><li>Design a pair that changes exactly one variable, in a domain where you would recognize a skewed answer. Say in advance what you expect to move.</li><li>Run both. Diff them. Then run the pair a second time, because a single run of each is one sample and you already know why that matters.</li><li>Report what moved, what did not, and whether it cleared the floor. <em>A probe that found nothing is a full-credit result</em> and is written up the same way.</li><li>Then trace it: which of the three entry points do you think this came from, and what would you run next to distinguish them?</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 10's Apply - run your own pair and say what moved. This adds the control pair and the second run, which is what turns it into evidence.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>The control pair with its diff, your prompt pair, both runs of each, the diffs, and your trace with the follow-up you would run.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is the trace - naming the entry point and saying why, not asserting that a model is biased. <strong>Evidence</strong> is the control pair; without it there is no floor and no finding. <strong>Calibration</strong> is reporting a null result as a null result rather than straining to see something. <strong>Transfer</strong> is a probe of your own design in a domain you know.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-stakes-explainer" data-opt="stakes-explainer">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Audio or video</span>
-                <span class="capopt__time">45&ndash;75 min</span></span>
-              <span class="capopt__name">The 90-Second Explainer</span>
-              <span class="capopt__premise">Explain to one real person how to decide how much to check an AI answer - in ninety seconds, with a rule they could use tomorrow.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You would rather talk for ninety seconds than write for three pages, and somebody in your life needs to hear this one.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Pick your person and name them. A colleague, a parent, a fourteen-year-old. What you say changes depending, and the choice is part of the work.</li><li>Banned words: <em>always check everything, be careful, use common sense, trust but verify</em>. Every one of them is advice nobody can act on. Giving them something they can actually do is the assignment.</li><li>Ninety seconds. Phone audio is fine. Production quality is not assessed.</li><li>Include one concrete case from your own week - a real thing you checked or did not check, and how it went.</li><li>Submit a short note alongside: which square of the grid your person&rsquo;s most common task falls in, and how you know.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 11's Apply - three tasks from your own week placed on the grid with a protocol each. The explainer is one of those, said to the person it applies to.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>A file of at most 90 seconds, a transcript, and a note under 150 words.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is the two questions doing real work rather than being recited. <strong>Evidence</strong> is your concrete case. <strong>Calibration</strong> is saying out loud where your rule does not apply. <strong>Transfer</strong> is the fit to your specific person - a generic explainer scores low here however polished.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-groundteardown" data-opt="groundteardown">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Annotated critique</span>
-                <span class="capopt__time">60&ndash;90 min</span></span>
-              <span class="capopt__name">The Grounding Teardown</span>
-              <span class="capopt__premise">Take one real public claim that a tool is grounded, sourced or citation-backed, and annotate it against what grounding actually does.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You read the product pages anyway, and the phrase &lsquo;with citations&rsquo; has started to annoy you.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Find a real, current, public artifact: a vendor page, a launch post, a review, a library guide, an institutional policy. It must be public and you must link it.</li><li>Annotate at least six specific passages. For each, quote it exactly and say what it would let a reader wrongly conclude about where the answer came from.</li><li>At least one annotation must defend the source. Find something it gets right that a cynical reader would dismiss.</li><li>Then test one claim from it yourself. Run the thing it says the tool does, and report what happened.</li><li>Close with the single sentence you would rewrite, and your rewrite beside it.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>Lesson 9's Apply and Lesson 5's tool comparison. You have already checked what a citation is worth.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>The link, six or more quoted-and-annotated passages including the defending one, your test with its result, and the rewritten sentence.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is knowing what retrieval adds and what it does not. <strong>Evidence</strong> is exact quotation plus your own test - paraphrasing the source costs you here. <strong>Calibration</strong> is the required defense and the line between imprecise and wrong. <strong>Transfer</strong> is that you found the artefact.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
-              </div>
-            </div>
-          </article><article class="capopt" id="opt-change" data-opt="change">
-            <button class="capopt__head" type="button" aria-expanded="false">
-              <span class="capopt__meta"><span class="capopt__kind">Written reflection</span>
-                <span class="capopt__time">45&ndash;75 min</span></span>
-              <span class="capopt__name">The Change of Mind</span>
-              <span class="capopt__premise">One belief this module broke, the exact moment it broke, and the test you would run on what you are still unsure about.</span>
-              <span class="capopt__fit"><svg class="i"><use href="#i-target"/></svg> You think by writing, and something in this module landed harder than you expected it to.</span>
-              <span class="capopt__more"><span>See what it involves</span>
-                <svg class="i"><use href="#i-chevron-down"/></svg></span>
-            </button>
-            <div class="capopt__body" hidden>
-              <ol class="capsteps"><li>Name the belief specifically. &lsquo;I thought a link meant it had checked&rsquo; is a belief; &lsquo;I am more careful now&rsquo; is a feeling.</li><li>Say where it came from. It came from somewhere, and the source is usually more interesting than the belief.</li><li>Quote the exact moment. A citation from your own audit, a diff from your own probe, a scenario you placed and then moved. &lsquo;Somewhere in Module 3&rsquo; scores Not yet on Evidence.</li><li>Correct it in terms of the machinery, and say what the correction commits you to that the old belief did not.</li><li>Design a test for something you are still unsure about, and say what result would change your mind again.</li></ol>
-              <div class="capfrom">
-                <span class="capfrom__lab"><svg class="i"><use href="#i-history"/></svg> Built out of</span>
-                <p>The predictions from Lessons 9, 10 and 11, and the audit or probe that contradicted one.</p>
-              </div>
-              <div class="caphand">
-                <span class="caphand__lab"><svg class="i"><use href="#i-upload"/></svg> What you hand in</span>
-                <p>Five sections, one per step. Nothing is marked for length.</p>
-              </div>
-              <div class="caphow">
-                <span class="caphow__lab">How the five criteria land on this one</span>
-                <p><strong>Mechanism</strong> is step four and nothing else will rescue it. <strong>Evidence</strong> is the quoted moment in step three. <strong>Calibration</strong> is step five naming a real open question rather than a rhetorical one. <strong>Transfer</strong> is a test somebody else could run.</p>
-              </div>
-              <div class="btnrow">
-                <button class="btn btn--primary capopt__pick" type="button">
-                  <svg class="i"><use href="#i-check"/></svg> I&rsquo;m doing this one</button>
-              </div>
-            </div>
-          </article></div>
-  </section>
-
-  <section class="block" id="chosen" hidden>
-    <div class="blockhead">
-      <span class="eyebrow"><svg class="i"><use href="#i-check"/></svg> Your choice</span>
-      <h2 id="chosenName">-</h2>
-      <p id="chosenPremise"></p>
+      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> What the licence covers</span>
+      <h2>The course itself</h2>
     </div>
     <div class="card">
-      <div class="capcheck" id="capcheck"></div>
-      <div class="btnrow">
-        <button class="btn btn--ghost" type="button" id="capBack">
-          <svg class="i"><use href="#i-arrow-right"/></svg> Look at the other four again</button>
+      <div class="stack" style="gap:.7rem">
+        <p>The course design and structure: the outcomes, the module shape, the nine-beat lesson template, the prediction gates, the checkpoint routes and their rubrics.</p>
+        <p>Every word written for this course: lesson prose, activity instructions, answer keys, discussion and lab prompts, the vocabulary definitions, the printed workbooks.</p>
+        <p>The interactive panels and the code behind them: the Tokenizer, Token Roulette, the Attention Spotlight, Prompt Surgery, the Cutoff Wall, the Repair Bench and the rest, along with the build that generates the site.</p>
       </div>
-      <p class="small muted">Ticking these is for your benefit only - nothing here is
-      submitted or seen. Hand the work in through Brightspace.</p>
     </div>
   </section>
 
-  <!-- The hand-in link, hidden until the LMS hands one in.
-
-       A dropbox URL belongs to one section of one course in one term, so it is
-       not in this repository - the Brightspace topic supplies it, either as
-       data-submit on the iframe or as ?submit= on the frame&rsquo;s src. See
-       shared/js/frame.js. A page opened directly on the public site shows no
-       card, which is right: a stranger has nothing to hand in. -->
-  <div class="handin" id="handin" hidden>
-    <div class="icontile"><svg class="i"><use href="#i-upload"/></svg></div>
-    <div class="stack">
-      <span class="eyebrow">When you are ready</span>
-      <!-- target: this page is inside a Brightspace iframe, and a plain link
-           would load Brightspace inside Brightspace. -->
-      <a class="btn btn--primary" href="#" target="_blank"
-         rel="noopener">Hand in your checkpoint</a>
+  <section class="block" id="excluded">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-help"/></svg> What it does not cover</span>
+      <h2>Five things that are not mine to license</h2>
+      <p>Each of these is either somebody else&rsquo;s work or somebody else&rsquo;s mark. They are reproduced here because the teaching needs them, not because they come with the rest.</p>
     </div>
-  </div>
+    <div class="card">
+      <div class="stack" style="gap:.9rem">
+        <p><strong>Captured model output.</strong> Several activities replay real responses from real systems, with the model names as they were given. Those responses are the models' output, reproduced for commentary and criticism in a classroom. They are not licensed for reuse, and re-publishing them elsewhere is your call to make, not mine to grant.</p>
+        <p><strong>The tokenizer vocabulary.</strong> The Tokenizer runs on OpenAI&rsquo;s actual <span class="mono">cl100k_base</span> vocabulary, bundled into the page so the counts are real rather than plausible. That data is OpenAI&rsquo;s and carries its own terms.</p>
+        <p><strong>The typefaces.</strong> Atkinson Hyperlegible, Comfortaa and Architects Daughter are open fonts under their own licences, embedded in the workbooks so they print correctly. Open, but not under this licence.</p>
+        <p><strong>Names, logos and screenshots.</strong> Every product named in this course belongs to whoever made it. Naming a tool is not endorsement, and it does not make their trade marks reusable.</p>
+        <p><strong>The college&rsquo;s marks.</strong> Finger Lakes Community College&rsquo;s name and logo are the college&rsquo;s. Reuse the course without implying the college endorses what you did with it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="ai">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-zap"/></svg> Disclosure</span>
+      <h2>How this course was built, with AI</h2>
+      <p>Every checkpoint in this course asks you to disclose how you used AI, and treats the disclosure as part of what is assessed. It would be a strange course that asked that of you and not of itself.</p>
+    </div>
+    <div class="card">
+      <div class="stack" style="gap:.7rem">
+        <p><strong>AI was used throughout.</strong> It helped shape the course structure, draft and redraft lesson prose, write the code behind the interactive panels and the build that assembles the site, and argue with me about design decisions I had already made.</p>
+        <p><strong>The decisions are mine.</strong> What the course teaches, in what order, and what counts as good work, were chosen by a person and are defended by a person. Where AI proposed something, it was accepted or rejected on the merits.</p>
+        <p><strong>The evidence is real.</strong> Where this course shows you model output, it is captured output, not written to make a point. Where it shows you token counts, they come from the real tokenizer rather than an approximation. A course about not trusting plausible-looking output cannot itself ship plausible-looking output.</p>
+        <p class="small muted">If you find something here that is wrong, or that reads as though nobody checked it, I want to know. That is the same request the workbooks make.</p>
+      </div>
+    </div>
+  </section>
 
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Module 3 checkpoint &middot; <span class="ver" title="page version a62856a, build 3e3916a, 2026-09-15 02:30">va62856a</span></span>
-    <span class="row" style="gap:.4rem">Marked out of 20 &middot; five criteria, four points each</span>
+    <span>CSC 150 &middot; AI Foundations &middot; FLCC Computing Sciences &middot; <span class="ver" title="page version bb2e315, build 3e3916a, 2026-09-15 02:30">vbb2e315</span></span>
+    <span>CC BY 4.0</span>
   </footer>
 </main>
 </div>
@@ -3014,131 +2496,5 @@ html[data-theme="dark"] .sidetrip {
 </script>
 
 <script>
-var CAPOPTS=[{"id": "audit", "name": "The Citation Audit", "premise": "One question, two tools, every citation checked twice - and a hit rate for each side that you actually computed.", "steps": ["Pick a question with real, checkable sources, on something you know enough about to notice a wrong answer.", "Run it in a bare chat model and in a tool with live retrieval. Same wording both times.", "Check every citation from both on <em>both<\/em> axes: does the source exist, and does it say what it was cited for. Sort each into does not exist, exists and supports, exists and does not support.", "Compute the hit rate for each tool. Then the part that carries the marks: quote one citation from the middle pile and show, side by side, what the answer claimed and what the source actually says.", "Close with one paragraph on what your audit does <em>not<\/em> establish. One question is one question."], "hand": "A row per citation with both verdicts, a hit rate per tool, one worked middle-pile example with both texts quoted, and the closing paragraph."}, {"id": "probe", "name": "The Probe", "premise": "Design and run a controlled probe, with a control pair, and report the result including the null one.", "steps": ["Run the control first: the same prompt twice. Record how much moved when nothing changed. Everything after this is measured against that floor.", "Design a pair that changes exactly one variable, in a domain where you would recognize a skewed answer. Say in advance what you expect to move.", "Run both. Diff them. Then run the pair a second time, because a single run of each is one sample and you already know why that matters.", "Report what moved, what did not, and whether it cleared the floor. <em>A probe that found nothing is a full-credit result<\/em> and is written up the same way.", "Then trace it: which of the three entry points do you think this came from, and what would you run next to distinguish them?"], "hand": "The control pair with its diff, your prompt pair, both runs of each, the diffs, and your trace with the follow-up you would run."}, {"id": "stakes-explainer", "name": "The 90-Second Explainer", "premise": "Explain to one real person how to decide how much to check an AI answer - in ninety seconds, with a rule they could use tomorrow.", "steps": ["Pick your person and name them. A colleague, a parent, a fourteen-year-old. What you say changes depending, and the choice is part of the work.", "Banned words: <em>always check everything, be careful, use common sense, trust but verify<\/em>. Every one of them is advice nobody can act on. Giving them something they can actually do is the assignment.", "Ninety seconds. Phone audio is fine. Production quality is not assessed.", "Include one concrete case from your own week - a real thing you checked or did not check, and how it went.", "Submit a short note alongside: which square of the grid your person's most common task falls in, and how you know."], "hand": "A file of at most 90 seconds, a transcript, and a note under 150 words."}, {"id": "groundteardown", "name": "The Grounding Teardown", "premise": "Take one real public claim that a tool is grounded, sourced or citation-backed, and annotate it against what grounding actually does.", "steps": ["Find a real, current, public artifact: a vendor page, a launch post, a review, a library guide, an institutional policy. It must be public and you must link it.", "Annotate at least six specific passages. For each, quote it exactly and say what it would let a reader wrongly conclude about where the answer came from.", "At least one annotation must defend the source. Find something it gets right that a cynical reader would dismiss.", "Then test one claim from it yourself. Run the thing it says the tool does, and report what happened.", "Close with the single sentence you would rewrite, and your rewrite beside it."], "hand": "The link, six or more quoted-and-annotated passages including the defending one, your test with its result, and the rewritten sentence."}, {"id": "change", "name": "The Change of Mind", "premise": "One belief this module broke, the exact moment it broke, and the test you would run on what you are still unsure about.", "steps": ["Name the belief specifically. &lsquo;I thought a link meant it had checked&rsquo; is a belief; &lsquo;I am more careful now&rsquo; is a feeling.", "Say where it came from. It came from somewhere, and the source is usually more interesting than the belief.", "Quote the exact moment. A citation from your own audit, a diff from your own probe, a scenario you placed and then moved. &lsquo;Somewhere in Module 3&rsquo; scores Not yet on Evidence.", "Correct it in terms of the machinery, and say what the correction commits you to that the old belief did not.", "Design a test for something you are still unsure about, and say what result would change your mind again."], "hand": "Five sections, one per step. Nothing is marked for length."}];
-
-/* Module 1 capstone: expand a route to read it, pick one to work from.
-
-   The choice is deliberately not remembered anywhere. Storage on this page
-   would be a promise it cannot keep across a lab machine or a phone, and the
-   real record of what a student chose is the thing they hand in. */
-(function () {
-  "use strict";
-  /* ---- the rubric: five independent accordions -------------------------- */
-  /* Placed above the CAPOPTS guard on purpose. The rubric has to work whether
-     or not the route data loaded, and an early return here would leave five
-     permanently collapsed panels with no way to open them - the one failure
-     mode worse than not having an accordion at all. */
-  var crits = document.querySelector(".crits--acc");
-  if (crits) {
-    var heads = crits.querySelectorAll(".crit__head");
-    var allBtn = document.getElementById("critsAll");
-    var allLab = document.getElementById("critsAllLab");
-
-    function setOne(h, open) {
-      h.setAttribute("aria-expanded", open ? "true" : "false");
-      var panel = h.parentNode.parentNode.querySelector(".crit__levels");
-      if (panel) panel.hidden = !open;
-    }
-
-    /* The all-button reports the state it would produce, not the state it is
-       in, so its label is never a lie after somebody toggles one panel. */
-    function sync() {
-      var open = 0;
-      Array.prototype.forEach.call(heads, function (h) {
-        if (h.getAttribute("aria-expanded") === "true") open++;
-      });
-      var every = heads.length > 0 && open === heads.length;
-      if (allBtn) allBtn.setAttribute("aria-expanded", every ? "true" : "false");
-      if (allLab) allLab.innerHTML = every ? "Collapse all" : "Expand all";
-    }
-
-    crits.addEventListener("click", function (e) {
-      var h = e.target.closest(".crit__head");
-      if (!h) return;
-      setOne(h, h.getAttribute("aria-expanded") !== "true");
-      sync();
-    });
-
-    if (allBtn) allBtn.addEventListener("click", function () {
-      var open = allBtn.getAttribute("aria-expanded") !== "true";
-      Array.prototype.forEach.call(heads, function (h) { setOne(h, open); });
-      sync();
-    });
-
-    sync();
-  }
-
-  var wrap = document.getElementById("capopts");
-  if (!wrap || typeof CAPOPTS === "undefined") return;
-
-  var byId = {};
-  CAPOPTS.forEach(function (o) { byId[o.id] = o; });
-
-  /* ---- expand / collapse ------------------------------------------------ */
-  wrap.addEventListener("click", function (e) {
-    var head = e.target.closest(".capopt__head");
-    if (head) {
-      var card = head.parentNode;
-      var open = head.getAttribute("aria-expanded") === "true";
-      /* One at a time. Five open cards is a wall of text, and the point of the
-         page is comparing them, which needs them closed. */
-      wrap.querySelectorAll(".capopt__head").forEach(function (h) {
-        h.setAttribute("aria-expanded", "false");
-        h.parentNode.classList.remove("is-open");
-        h.parentNode.querySelector(".capopt__body").hidden = true;
-      });
-      if (!open) {
-        head.setAttribute("aria-expanded", "true");
-        card.classList.add("is-open");
-        card.querySelector(".capopt__body").hidden = false;
-      }
-      return;
-    }
-    var pick = e.target.closest(".capopt__pick");
-    if (pick) choose(pick.closest(".capopt").getAttribute("data-opt"));
-  });
-
-  /* ---- the working checklist -------------------------------------------- */
-  function choose(id) {
-    var o = byId[id];
-    if (!o) return;
-    document.getElementById("chosenName").innerHTML = o.name;
-    document.getElementById("chosenPremise").innerHTML = o.premise;
-
-    var box = document.getElementById("capcheck");
-    box.innerHTML = "";
-    /* The disclosure line is appended to every route's checklist rather than
-       written into each brief, so it cannot drift between them and cannot be
-       quietly dropped from one. */
-    var rows = o.steps.concat([
-      "<strong>Write your AI-use statement.</strong> What tools you used, for what, and " +
-      "which parts are your own words. Specific enough that a reader could check it. " +
-      "Without this the work comes back unmarked.",
-      "<strong>Hand in:</strong> " + o.hand
-    ]);
-    rows.forEach(function (s, i) {
-      var id2 = "capstep" + i;
-      var row = document.createElement("label");
-      row.className = "capcheck__row";
-      row.setAttribute("for", id2);
-      row.innerHTML = '<input type="checkbox" id="' + id2 + '">' +
-                      '<span class="capcheck__n">' + (i < o.steps.length ? (i + 1) : "&#10003;") + '</span>' +
-                      '<span class="capcheck__t">' + s + '</span>';
-      box.appendChild(row);
-    });
-
-    document.getElementById("choose").hidden = true;
-    var sec = document.getElementById("chosen");
-    sec.hidden = false;
-    sec.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  document.getElementById("capBack").addEventListener("click", function () {
-    document.getElementById("chosen").hidden = true;
-    var c = document.getElementById("choose");
-    c.hidden = false;
-    c.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-})();
 
 </script>

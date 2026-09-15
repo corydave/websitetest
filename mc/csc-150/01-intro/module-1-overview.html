@@ -12,8 +12,8 @@ html,body{margin:0;padding:0;background:#ffffff;}
 .ovwrap > div{max-width:none;}
 
 </style>
-<!-- CSC 150  page module-1-overview.html  v07dd97f  ·  build c54ad0e  ·  2026-09-02 15:04 -->
-<div data-build="c54ad0e" data-page="module-1-overview.html" data-version="07dd97f" class="lesson" data-course="150">
+<!-- CSC 150  page module-1-overview.html  v043fa3c  ·  build 3e3916a  ·  2026-09-15 02:30 -->
+<div data-build="3e3916a" data-page="module-1-overview.html" data-version="043fa3c" class="lesson" data-course="150">
 <div class="ovwrap">
 <div style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;color:#1c1a18;line-height:1.5;font-size:15px;background:#ffffff;border:1px solid #e3dfd9;border-radius:15px;padding:18px 22px;max-width:640px">
 <h2 style="font-family:ui-rounded, 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;font-weight:700;font-size:18px;color:#1c1a18;margin:0 0 12px">Module 1 &middot; What You&rsquo;re Actually Talking To <span style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;font-weight:400;font-size:13px;color:#8b837a;white-space:nowrap">5 lessons, about 170&ndash;220 min</span></h2>
@@ -98,6 +98,44 @@ html,body{margin:0;padding:0;background:#ffffff;}
     } else { applyLmsMode(); }
   }
 
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
   if (window.parent === window) return;          /* not embedded; nothing more */
 
   var TAG = "csc150";
@@ -163,6 +201,7 @@ html,body{margin:0;padding:0;background:#ffffff;}
     if (host.chrome) r.setAttribute("data-host-chrome", "1");
     if (host.course) r.setAttribute("data-course-id", host.course);
     applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
     if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
       var el = document.getElementById(String(d.hash).replace(/^#/, ""));
       if (el) el.scrollIntoView({ block: "start" });
@@ -212,9 +251,27 @@ html,body{margin:0;padding:0;background:#ffffff;}
     document.addEventListener(ev, function () { touched = true; }, true);
   });
 
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
   var native = Element.prototype.scrollIntoView;
   Element.prototype.scrollIntoView = function (arg) {
-    if (!touched) return native.apply(this, arguments);
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
     try {
       var r = this.getBoundingClientRect();
       var top = r.top + (window.scrollY || 0);
