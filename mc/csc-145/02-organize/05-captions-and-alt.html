@@ -1,0 +1,143 @@
+<!--
+title:   Captions and alt text, from one list
+chapter: organize
+time:    About 25 minutes
+id:      vibe-lab-captions
+lede:    Every card gets words, and all the words move to one place at the top.
+done:    Every card shows a caption under its picture, every picture has a real description, and all of it lives in a single list at the top of the script.
+demo:
+video:
+video-length:
+transcript:
+guide:   blank
+guide-label: Blank page?
+report:  no
+-->
+
+<section data-beat="picture">
+<p>Your slider works and the pictures are yours. Two things are missing: nobody can tell what they are looking at, and anybody who cannot see the pictures gets nothing at all.</p>
+<p>So every card gets a <strong>caption</strong> - words under the picture - and every picture gets a real <strong>description</strong> in its <code>alt</code>.</p>
+<p>But you counted five file names scattered through five separate blocks in the last lab, and adding a sixth picture meant copying a whole block and editing it carefully. Adding captions and descriptions the same way would mean fifteen scattered things instead of five.</p>
+<p>So they are not going to be scattered. <strong>All the words about all the pictures are going to sit in one list at the very top of the script</strong>, where you can find them, and the code underneath will read from that list.</p>
+<p>That split - the content up top where a human can reach it, the code below getting on with its job - turns out to be one of the most useful shapes in software. You are going to keep meeting it.</p>
+</section>
+
+<section data-beat="ask">
+<p>Go back to the same chat as the slider and ask for the change. Make sure it says:</p>
+<ul>
+  <li>Each card gets a <strong>caption</strong> under the picture</li>
+  <li>Each picture gets a proper <strong>description</strong> for people who cannot see it</li>
+  <li><strong>Put the file name, the caption and the description for every picture together in one list at the very top of the script</strong>, so I can change them all in one place without touching anything else</li>
+  <li>Adding a picture should mean adding one entry to that list and one file to the folder - nothing else</li>
+  <li>Keep everything else exactly the same</li>
+</ul>
+<p>That third line is the whole lab. Say it in your own words if you like, but say all of it: <em>one list, at the top, so I can change it without touching anything else.</em> An AI asked vaguely will sprinkle the captions through the page and technically satisfy you.</p>
+{{spec}}
+</section>
+
+<section data-beat="run">
+<ol>
+  <li>One code block this time. Copy it, paste over everything in <code>pictures/index.html</code>, save.</li>
+  <li>Refresh. Captions under every picture.</li>
+  <li>Open the file in your editor and scroll to the top of the <code>&lt;script&gt;</code> section. Your list should be sitting right there, before anything else.</li>
+</ol>
+<p>If the captions are on the page but there is no list at the top, the AI did the easy half. Ask again, pointing at it: <em>“move the file names, captions and descriptions into a single list at the top of the script, and make the rest of the code read from that list.”</em> It is worth insisting. The list is the point of the lab; the captions are just what it holds.</p>
+</section>
+
+<section data-beat="read">
+<div class="q">
+  <p><strong>Find the list.</strong> What three things does each picture have in it?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+  <div class="answer" id="ans-1" hidden>A file name, a caption, and a description - something like <code>{ file: "photo-1.jpg", caption: "Sunrise over the lake", alt: "An orange sky above a flat grey lake" }</code>. The names on the left may differ; the three things will be there. Each set of curly braces is one picture. The whole list sits inside square brackets.</div>
+</div>
+
+<div class="q">
+  <p><strong>What separates one picture’s entry from the next?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+  <div class="answer" id="ans-2" hidden>A comma. One at the end of every entry except, usually, the last. That small comma is about to be the most important punctuation mark in your week - see the Grow step, and the first Troubleshooting card.</div>
+</div>
+
+<div class="q">
+  <p><strong>If you changed a caption in that list, how many other places would you have to change to match?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+  <div class="answer" id="ans-3" hidden>None. That is the entire reason for doing it this way. One place to look, one place to change, and no way to leave the page half-updated.</div>
+</div>
+</section>
+
+<section data-beat="yours">
+<p>Write one real caption and one real description.</p>
+<p>Pick a picture. In the list, replace whatever the AI guessed for its caption with something true - where it was, who is in it, why you kept it. Then replace its description with what you would say if you were describing the photo to someone on the phone.</p>
+<p>Save, refresh. The caption changes on the page. The description does not appear anywhere, and that is correct - it is there for screen readers and for the day the file goes missing.</p>
+<p>Change only the words inside the quotes. Leave the quotes, the commas and the braces exactly where they are.</p>
+</section>
+
+<section data-beat="grow">
+<p><em>First, save a copy:</em> <code>index-v1.html</code>.</p>
+
+<p><strong>One - add a sixth picture, without asking the AI anything.</strong></p>
+<p>This is the payoff, and you are going to do it by hand in about ninety seconds:</p>
+<ol>
+  <li>Put another picture in the <code>pictures</code> folder and name it <code>photo-6.jpg</code>.</li>
+  <li>In the list at the top, find the second-to-last entry. Put your cursor at the end of it, after the closing brace and its comma.</li>
+  <li>Add a new entry on its own line, in the same shape as its neighbours, with your new file name, a caption and a description.</li>
+  <li>Save. Refresh. Six pictures.</li>
+</ol>
+<p class="aside"><strong>Add it in the middle, not at the end.</strong> The last entry in a list usually has no comma after it, so adding after it is where people get caught. Adding between two existing entries means you are copying a line that already has its comma in the right place, and the trap never fires. Same trick works in every list you will ever edit.</p>
+<p>Stop and notice what just happened. You changed what the app shows without reading a single line of the code that shows it. Last lab that took a careful copy-and-paste of a whole block; this lab it took one line. That is what the list bought you.</p>
+
+<p><strong>Two - one thing from the AI.</strong> Same chat, your pick:</p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-caption-extra">Copy prompt</button>
+  <pre id="prompt-caption-extra">Show the captions as a list under the slider as well, so someone can see all of them at once. Keep everything else the same.</pre>
+</div>
+</section>
+
+<section data-beat="keep">
+<ul>
+  <li>Your app is <code>vibe-coding/pictures/index.html</code>, with six pictures beside it and <code>index-v1.html</code> from before the Grow step.</li>
+  <li>You added content to a working app by editing one list. Remember that this was easy; in a few chapters you will meet an app where it isn’t, and you will know exactly what is wrong with it.</li>
+  <li><strong>Did anything surprise you?</strong> The blank page after you added an entry. The apostrophe that broke everything. <strong>Write it down</strong> - what happened, and what fixed it.</li>
+</ul>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>I added an entry and the whole page went blank</summary>
+  <div class="flag-body">
+    <p>This is the one. It is almost always a missing comma, and it will happen to nearly everybody once.</p>
+    <p>Open the Developer Console. You will see a red line saying something like <code>SyntaxError: Unexpected token</code> with a line number after the file name. Go to that line in your editor and look at the line <em>above</em> it - a list entry that should end with a comma and doesn’t.</p>
+    <p>Why blank, rather than just a missing picture? Because the browser reads the whole list before it runs anything, and a list it cannot make sense of stops it dead. One comma, one blank page. It feels wildly out of proportion, and it is, and every programmer alive has lost an evening to it.</p>
+    <p>Add the comma. Save. Refresh.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My caption has an apostrophe in it and now the page is blank</summary>
+  <div class="flag-body">
+    <p><em>Grandma’s kitchen</em> inside single quotes ends the text early at the apostrophe, and everything after it becomes nonsense. Two fixes: wrap the caption in double quotes instead - <code>"Grandma's kitchen"</code> - or leave a backslash before the apostrophe. Double quotes are easier to remember. Same console error as the comma, same way of finding it.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I added an entry and now one card is empty</summary>
+  <div class="flag-body">
+    <p>The list is fine - the file isn’t there, or isn’t named what the entry says. Check the folder for <code>photo-6.jpg</code>, spelled exactly as you typed it in the list. This is the good failure: the app read your new entry perfectly and told you the picture is missing.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The captions are on the page but there is no list at the top</summary>
+  <div class="flag-body">
+    <p>The AI wrote the captions straight into the cards. It works, and it is not what you asked for. Say: <em>“move every file name, caption and description into one list at the top of the script, and make the cards read from it - I want to add a picture by adding one line.”</em> Being able to say what shape you want the code to be, not just what the app should do, is a real skill and this is the first time you have needed it.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My descriptions don’t show up anywhere</summary>
+  <div class="flag-body">
+    <p>Correct. <code>alt</code> is not meant to be seen when the picture is fine. To prove yours is working, misspell one file name in the list, save and refresh - your description appears where the picture was. Put it back afterwards.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The order of the pictures changed</summary>
+  <div class="flag-body">
+    <p>The slider shows them in list order now, not in the order they were written into the page before. Move the entries around in the list until you like it - that is the list doing its job, and rearranging your slider is now a matter of cutting and pasting lines.</p>
+  </div>
+</details>
+</section>

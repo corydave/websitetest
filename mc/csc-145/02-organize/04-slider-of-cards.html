@@ -1,0 +1,163 @@
+<!--
+title:   A page of your pictures
+chapter: organize
+time:    About 25 minutes
+id:      vibe-lab-slider
+lede:    Five of your own photos, each on a card, one at a time, with buttons to move between them.
+done:    <code>pictures/index.html</code> shows your own photos one card at a time, and the next and previous buttons both work.
+demo:
+video:
+video-length:
+transcript:
+guide:   filenames
+guide-label: Exact filenames
+report:  no
+-->
+
+<section data-beat="picture">
+<p>Before the build, two words. They are worth more to you than most of the code in this course.</p>
+<p>A <strong>card</strong> is a box that holds one thing. A picture, a heading, a couple of lines, maybe a button. Rounded corners, a bit of shadow, a bit of space around the edge. You have looked at ten thousand of them without ever needing the word.</p>
+<p>A <strong>slider</strong> shows one card at a time, with a way to move to the next one. Some people call it a carousel. Same thing.</p>
+<p>Here is why that matters. Ask an AI to <em>“make the pictures go sideways”</em> and it will guess, and you will get something. Ask it for <em>“a slider of cards”</em> and it knows exactly what you mean, because those are the words the people who build these things use. Learning the name of a thing is most of the work of asking for it.</p>
+<p>Today: five of your pictures, five cards, one slider.</p>
+</section>
+
+<section data-beat="ask">
+<p>Start a new chat. Describe it in your own words, and make sure it says:</p>
+<ul>
+  <li>A <strong>slider</strong> of five <strong>cards</strong>, showing one card at a time</li>
+  <li>Each card holds one picture</li>
+  <li><strong>Next</strong> and <strong>Previous</strong> buttons to move between them</li>
+  <li>It should wrap around, so Next on the last card goes back to the first</li>
+  <li><strong>The pictures will be files called <code>photo-1.jpg</code> through <code>photo-5.jpg</code>, in the same folder as the page</strong></li>
+  <li>All the pictures should appear at the same size, however big the files are</li>
+</ul>
+<p>That last line saves you a lot of grief. Five photos off a phone will be five different shapes, and without it your slider will jump about as it moves between them.</p>
+{{spec}}
+</section>
+
+<section data-beat="run">
+<ol>
+  <li>Make a new folder: <code>vibe-coding/pictures</code>.</li>
+  <li>Copy the code, paste, <strong>Save as</strong> <code>index.html</code> inside it.</li>
+  <li>Put five pictures in that folder. Anything you like - the same subject or five unrelated things.</li>
+  <li>Rename them <code>photo-1.jpg</code>, <code>photo-2.jpg</code>, <code>photo-3.jpg</code>, <code>photo-4.jpg</code>, <code>photo-5.jpg</code>. Lowercase, hyphen, and type the <code>.jpg</code> yourself.</li>
+  <li>Open <code>index.html</code> and click Next four times.</li>
+</ol>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The vibe-coding folder now also contains a pictures folder holding index.html and five files named photo-1.jpg through photo-5.jpg.">vibe-coding/
+├── recipe/
+│   ├── index.html
+│   ├── notes.html
+│   └── photo.jpg
+└── pictures/
+    ├── index.html   <span class="here">← this lab</span>
+    ├── photo-1.jpg
+    ├── photo-2.jpg
+    ├── photo-3.jpg
+    ├── photo-4.jpg
+    └── photo-5.jpg</pre>
+  <figcaption>Six files at one address. Five of them are pictures, and the page knows every one of them by name.</figcaption>
+</figure>
+
+<p class="aside">That is five renames, which is five chances to typo. If one card comes up blank, you have not failed the lab - you have found the one file whose name doesn’t match, and the Troubleshooting tells you which. This is the lab where the naming habit stops being advice and starts being muscle memory.</p>
+</section>
+
+<section data-beat="read">
+<p>Open <code>index.html</code> in your editor and look at the <code>&lt;body&gt;</code>.</p>
+
+<div class="q">
+  <p><strong>Find the card holding <code>photo-3.jpg</code>.</strong> What is wrapped around that <code>&lt;img&gt;</code>?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+  <div class="answer" id="ans-1" hidden>A <code>&lt;div&gt;</code>, almost certainly with <code>class="card"</code> or something close. A <code>&lt;div&gt;</code> is a plain box with no meaning of its own - it exists so the styling has something to grab. The word <code>card</code> in that line is the same word you used in your prompt, which is a nice thing to notice: you asked for a card and got a thing literally called a card.</div>
+</div>
+
+<div class="q">
+  <p><strong>Count how many times a file name appears in this file.</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+  <div class="answer" id="ans-2" hidden>Five - one per card, each in its own <code>src</code>, scattered down the page in five separate blocks. That works, and it is about to become annoying. Hold that thought.</div>
+</div>
+
+<div class="q">
+  <p><strong>What would you have to do to add a sixth picture?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+  <div class="answer" id="ans-3" hidden>Put <code>photo-6.jpg</code> in the folder, then find a card block, copy the whole thing, paste it in the right place, and change the file name inside it - being careful not to break anything on the way. Doable. Tedious. Easy to get wrong. Remember this answer; the next lab makes it a great deal shorter.</div>
+</div>
+</section>
+
+<section data-beat="yours">
+<p>Swap one of the pictures, without touching the code.</p>
+<p>Pick a different picture from your phone or your computer. Put it in the <code>pictures</code> folder. Rename the current <code>photo-2.jpg</code> to something else - <code>photo-2-old.jpg</code> will do - and then rename your new picture to <code>photo-2.jpg</code>.</p>
+<p>Save nothing, edit nothing. Just refresh the page.</p>
+<p>Card two is now a different picture. The code never mentioned any particular photograph; it only ever asked for a name. Whatever is sitting at that name is what shows up. That is a bigger idea than it looks, and the whole next lab leans on it.</p>
+</section>
+
+<section data-beat="grow">
+<p><em>First, save a copy:</em> <code>index-v1.html</code>.</p>
+<p>Two iterations, same chat, one at a time.</p>
+<p><strong>One - where am I?</strong></p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-counter">Copy prompt</button>
+  <pre id="prompt-counter">Show a small counter under the card saying which picture I am on, like "3 of 5". Keep everything else the same.</pre>
+</div>
+<p><strong>Two - the arrow keys.</strong></p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-keys">Copy prompt</button>
+  <pre id="prompt-keys">Let the left and right arrow keys move between pictures as well as the buttons. Keep everything else the same.</pre>
+</div>
+<p>That second one is worth more than it looks. Plenty of people cannot use a mouse, and a slider that only works by clicking shuts them out. There is a whole chapter on this later; for now, just notice that it took one sentence.</p>
+</section>
+
+<section data-beat="keep">
+<ul>
+  <li>Your app is <code>vibe-coding/pictures/index.html</code>, with five or six photos beside it and <code>index-v1.html</code> from before the Grow step.</li>
+  <li>You have two new words - <strong>card</strong> and <strong>slider</strong> - and both of them work on an AI.</li>
+  <li><strong>Did anything surprise you?</strong> The blank card. The picture that turned out to be <code>.HEIC</code>. The slider that jumped size every time. <strong>Write it down.</strong></li>
+</ul>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>One card is blank, or shows a broken picture</summary>
+  <div class="flag-body">
+    <p>One file name out of five does not match. Right-click the blank spot, choose <strong>Inspect</strong>, and read the <code>src</code> on the highlighted line - that is the name the page wants. Now look in the folder for the file that isn’t named that. It is usually a capital, a missing hyphen (<code>photo1.jpg</code> instead of <code>photo-1.jpg</code>), or <code>.jpeg</code> where the code says <code>.jpg</code>.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>All five pictures show at once, stacked down the page</summary>
+  <div class="flag-body">
+    <p>You got five cards but not a slider. Tell the AI: <em>“show only one card at a time, with Next and Previous moving between them.”</em> If the buttons are there but everything is still visible, the part that hides the other cards is missing or broken - open the Developer Console and see if there is a red line, and paste it back if there is.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The buttons do nothing</summary>
+  <div class="flag-body">
+    <p>Open the Developer Console before anything else. A red line when you click means the button’s code broke, and the message is the fix - copy it exactly and paste it back to the AI. No red line at all usually means the buttons were never wired up: <em>“the Next and Previous buttons don’t do anything when I click them.”</em></p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The page jumps around as I move between pictures</summary>
+  <div class="flag-body">
+    <p>Your photos are different shapes, so each card is a different height. Ask for: <em>“give every card the same fixed size, and crop the pictures to fit rather than squashing them.”</em> The word you want is <em>crop</em> - squashing makes everybody look strange.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>Next on the last picture does nothing</summary>
+  <div class="flag-body">
+    <p>The wrap-around got left out. <em>“When I press Next on the last picture it should go back to the first, and Previous on the first should go to the last.”</em> Going off the end of a list is one of the classic places code breaks, and you just found one in the wild.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>Some of my photos are <code>.HEIC</code></summary>
+  <div class="flag-body">
+    <p>Same as the recipe card: browsers mostly cannot read that format, and renaming will not help. Convert each one to JPG first - Preview on a Mac, Photos on Windows - and name the result <code>photo-2.jpg</code> or whichever it is.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The page takes a long time to appear</summary>
+  <div class="flag-body">
+    <p>Five phone photos is easily fifty megabytes, and the browser loads them all. It still works; it just sighs first. Export them smaller if it bothers you. It is a good thing to have felt, because everyone who visits a slow page feels exactly this and most of them leave.</p>
+  </div>
+</details>
+</section>

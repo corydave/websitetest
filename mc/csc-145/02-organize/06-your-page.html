@@ -1,0 +1,148 @@
+<!--
+title:   Your page, via the interview prompt
+chapter: organize
+time:    About 40 minutes
+id:      vibe-lab-your-page
+lede:    A page about you - or a persona you choose - built by an AI that interviews you first.
+done:    Your page opens from <code>my-page/index.html</code> and at least one of your own photos loads.
+demo:
+video:
+video-length:
+transcript:
+guide:   missing
+guide-label: Missing picture?
+report:  yes
+q1:      What did the AI tell you to name your images, and did they show up the first time? If not, what was the mismatch?
+q2:      What’s one thing you’d add to your page if you had another twenty minutes?
+-->
+
+<section data-beat="picture">
+<p>This time the AI interviews <em>you</em>. It asks questions one at a time - who you are, what you want the page to do, what a visitor should walk away knowing - and then, before it builds anything, it stops and tells you exactly which photos it needs and what to name them. Then it builds your page.</p>
+<p>You can make this page about you, or about a persona, a pet, a made-up person. Later in the course these pages go on the internet; decide now what you want there, and nobody will ask you to explain the choice.</p>
+<p>Everything this chapter has taught you arrives here at once: a folder of its own, an <code>index.html</code>, photos beside it with names that have to match. The difference is that this time <em>the AI tells you the names</em>, about your own photographs, in the middle of a conversation about you.</p>
+<p>This is the chapter’s <strong>anchor</strong> - the one lab this week that gets a lab report and a closer look.</p>
+</section>
+
+<section data-beat="ask">
+<p>For once, the prompt is written for you - because this one is a tool, and its exact wording does a job. Copy it as it is, start a new chat, and paste it in.</p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-interview">Copy the interview prompt</button>
+  <pre id="prompt-interview">Ask me questions, one at a time, until you have enough to build a
+personal webpage for me. Ask only one thing at a time, and wait for
+my answer before moving to the next.
+
+Make sure you understand: who I am, what I want this page to do for
+me, what a visitor should walk away knowing, and what I want to
+link to.
+
+Before you build anything, stop and tell me:
+  - what you understood
+  - exactly which images you'll need, what to name them, and
+    which folder to put them in
+
+Then wait for me to say I'm ready.
+
+When I say go, build it to this specification:</pre>
+</div>
+<p>Paste the specification right after it, in the same message:</p>
+{{spec}}
+<p>Now answer the questions. Take your time; short answers are fine. When the AI stops and lists the images it needs, <strong>write the filenames down exactly.</strong> Then say <em>go</em>.</p>
+<p class="aside">Some AIs ask three questions and some ask twelve; both are fine. If yours tries to skip the image list and build right away, say <em>“stop - tell me the images first.”</em> Telling the AI to slow down is a normal part of working with it.</p>
+</section>
+
+<section data-beat="run">
+<ol>
+  <li>Make the folder: <code>vibe-coding/my-page</code>. Save the code there as <code>index.html</code>.</li>
+  <li>Put your photos in the <strong>same folder</strong>, named <strong>exactly</strong> what the AI said. <code>me.jpg</code> is not <code>Me.jpg</code> is not <code>me.JPG</code> is not <code>me .jpg</code>. Rename the files on your computer to match.</li>
+  <li>Open <code>index.html</code>. Photos showing? Good. A broken-image icon? Filename mismatch - see Troubleshooting.</li>
+</ol>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains the qr-code, hello, pomodoro, countdown, recipe and pictures folders, and a new my-page folder containing index.html and two image files, me.jpg and dog.jpg.">vibe-coding/
+├── qr-code/
+├── hello/
+├── pomodoro/
+├── countdown/
+├── recipe/
+├── pictures/
+└── my-page/
+    ├── index.html   <span class="here">← this lab</span>
+    ├── me.jpg
+    └── dog.jpg</pre>
+  <figcaption>Seven addresses, and the last one is yours. The photos sit <em>beside</em> <code>index.html</code>, not in a subfolder of their own, and their names match what the code expects character for character. The folders above are collapsed here to save space; each still holds its own <code>index.html</code>.</figcaption>
+</figure>
+</section>
+
+<section data-beat="read">
+<div class="q">
+  <p><strong>Find every <code>&lt;img&gt;</code>.</strong> How many are there? Does each one’s <code>src="…"</code> match a file in your folder, exactly?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+  <div class="answer" id="ans-1" hidden>The <code>src</code> is the filename the code is looking for. If the picture shows, they match. If it doesn’t, one character somewhere is different - a capital letter, a space, <code>.jpeg</code> instead of <code>.jpg</code>.</div>
+</div>
+
+<div class="q">
+  <p><strong>Find the first <code>&lt;a href="…"&gt;</code>.</strong> Where does it go?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+  <div class="answer" id="ans-2" hidden>Whatever is inside the quotes after <code>href=</code> is where it goes; the words between the tags are what gets clicked. The same two parts as the recipe notes page. If yours points at another website the quotes will hold a full address starting with <code>https://</code>; if it points at a page of your own it will just be a file name, because that file is beside this one.</div>
+</div>
+
+<div class="q">
+  <p><strong>Find <code>&lt;style&gt;</code>.</strong> Roughly how long is it compared to everything else?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+  <div class="answer" id="ans-3" hidden>Usually longer than the rest of the file put together. Looks are most of the code. You’ll almost never write it and you’ll rarely need to touch it - the AI is good at this part.</div>
+</div>
+</section>
+
+<section data-beat="yours">
+<p>Change one heading - the words between an <code>&lt;h1&gt;</code> or <code>&lt;h2&gt;</code> pair. Save, refresh. Then change the tab title in <code>&lt;title&gt;</code>. Two edits you trust.</p>
+<p>If your page has a list - hobbies, links, anything in <code>&lt;li&gt;</code> tags - add one more item by copying an existing <code>&lt;li&gt;…&lt;/li&gt;</code> line and changing the words. Same move as adding a picture to the captions list, in HTML this time instead of JavaScript.</p>
+</section>
+
+<section data-beat="grow">
+<p><strong>Save a copy first:</strong> <code>index-v1.html</code>.</p>
+<p>One iteration of your choice, in the same chat:</p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-grow">Copy prompt</button>
+  <pre id="prompt-grow">Add a section about [a hobby, a project, a thing I love] with a heading and a short paragraph. Match the style of the rest of the page.</pre>
+</div>
+<p>Or, if you skipped photos the first time: <em>“Add a photo of [x] - tell me what to name the file.”</em> Watch it tell you. Name it right the first time.</p>
+<p>Copy, paste over everything, save, refresh.</p>
+</section>
+
+<section data-beat="keep">
+<ul>
+  <li><code>vibe-coding/my-page/index.html</code>, with your images beside it and <code>index-v1.html</code> from before the Grow step.</li>
+  <!-- BOARD (parked until the Lessons Learned board opens - restore this line, drop the one below):
+  <li><strong>Board:</strong> this lab produces the best posts of the week. The filename that didn’t match. The photo that was <code>.HEIC</code> and wouldn’t show. The AI that built before asking. Post them.</li>
+  -->
+  <li><strong>Write down what went sideways.</strong> The filename that didn’t match. The photo that was <code>.HEIC</code> and wouldn’t show. The AI that built before asking. Two of the report questions below are about exactly this.</li>
+  <li>Then fill in the <strong>lab report</strong> below and save it as a PDF. This is the one lab this chapter that has one.</li>
+</ul>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>A photo shows a broken-image icon</summary>
+  <div class="flag-body">
+    <p>It’s the filename, ninety-nine times in a hundred. Right-click the broken image → <strong>Inspect</strong>. The highlighted line has <code>src="…"</code> - that’s what the code expects. Compare it to the actual file on disk, character by character: capital letters, spaces, <code>.jpg</code> versus <code>.jpeg</code> versus <code>.JPG</code>. Fix whichever one is wrong. Also check the photo is in <code>my-page</code>, not still in Downloads or Photos.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My photo is a .HEIC file and won’t show</summary>
+  <div class="flag-body">
+    <p>iPhones save photos as HEIC, and browsers mostly can’t show that format. Export or convert it to JPG first (on a Mac, open it in Preview → File → Export → JPEG; on iPhone, Settings → Camera → Formats → Most Compatible for future photos). Then name the JPG exactly what the code expects.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The AI built the page without asking about images</summary>
+  <div class="flag-body">
+    <p>Tell it: <em>“Stop. Before the page, list exactly which images you need, what to name them, and where to put them.”</em> Then continue. Making the AI slow down is a skill, not a failure.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The page looks nothing like I imagined</summary>
+  <div class="flag-body">
+    <p>That’s normal for a first build, and it’s what Grow it is for. Describe what’s off in plain words - <em>“the photo is too big,” “make the colors calmer,” “put the links at the top”</em> - one change at a time. Each one is an iteration, and iterations are the normal mode.</p>
+  </div>
+</details>
+</section>

@@ -1,0 +1,136 @@
+<!--
+title:   A second page, linked both ways
+chapter: organize
+time:    About 25 minutes
+id:      vibe-lab-second-page
+lede:    Your recipe gets a page of notes beside it, and a link in each direction.
+done:    <code>recipe/index.html</code> has a link to <code>notes.html</code>, <code>notes.html</code> has a link back, and both work when you click them.
+demo:
+video:
+video-length:
+transcript:
+guide:   links
+guide-label: Links and href
+report:  no
+-->
+
+<section data-beat="picture">
+<p>Your recipe card is one page. Some things don’t belong on it: where the recipe came from, what you changed, the time you doubled the salt by accident. That is a second page.</p>
+<p>This lab is short, and it contains one genuinely new move: <strong>the AI is going to hand you two code blocks, and you are going to make two files.</strong> Every build until now has been one block, one file, paste over everything. Today that habit is a trap, and the Run it step tells you exactly where.</p>
+</section>
+
+<section data-beat="ask">
+<p>Go back to <em>the same chat</em> you built the recipe card in - it still knows what your page looks like. Ask for:</p>
+<ul>
+  <li>A link on the recipe page to a second page called <code>notes.html</code></li>
+  <li>The second page built too, in the same style, with room for a few paragraphs about the recipe</li>
+  <li>A link on that page going back to <code>index.html</code></li>
+  <li><strong>Both files as two separate code blocks, each one labelled with its file name</strong></li>
+  <li>Everything else kept exactly as it is</li>
+</ul>
+<p>That fourth line matters. Ask for one block and you will get two pages glued into one file, or one page and a description of the other. Ask for two labelled blocks and you get two things you can copy one at a time.</p>
+<p>You do not need the specification again - the AI is still working inside it from the last build. If you started a fresh chat, paste it back in.</p>
+{{spec}}
+</section>
+
+<section data-beat="run">
+<p><strong>Read this whole step before you touch anything.</strong> This is the one place in the chapter where a wrong move costs you work.</p>
+<ol>
+  <li><strong>The first block is <code>index.html</code>.</strong> Copy it, open your existing <code>recipe/index.html</code> in TXTEDTR, paste over everything, save. Same as always.</li>
+  <li><strong>The second block is a new file.</strong> Copy it, and in TXTEDTR make a <em>new, empty</em> document first. Paste. Then <strong>Save as</strong> <code>notes.html</code>, in the <code>recipe</code> folder.</li>
+  <li>Open <code>index.html</code> in your browser. Click the link. You should land on the notes page. Click the link there. You should come back.</li>
+</ol>
+<p class="aside"><strong>The trap:</strong> pasting the second block over the file you still have open. Then <code>index.html</code> contains the notes page, your recipe card is gone, and the link goes nowhere. It happens to plenty of people the first time. If it happened to you, the first Troubleshooting card gets it back.</p>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The recipe folder now contains index.html, notes.html and photo.jpg.">vibe-coding/
+└── recipe/
+    ├── index.html
+    ├── notes.html   <span class="here">← this lab</span>
+    └── photo.jpg</pre>
+  <figcaption>Three files at the same address. The page, its second page, and the picture - all of them finding each other by name alone.</figcaption>
+</figure>
+</section>
+
+<section data-beat="read">
+<div class="q">
+  <p><strong>In <code>index.html</code>, find the link.</strong> It starts with <code>&lt;a</code>. What is inside the quotes, and what is between the tags?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+  <div class="answer" id="ans-1" hidden>Something like <code>&lt;a href="notes.html"&gt;My notes on this&lt;/a&gt;</code>. Inside the quotes is <strong>where it goes</strong>, and that is for the browser. Between the tags is <strong>what you click</strong>, and that is for the person. Two separate things that have nothing to do with each other.</div>
+</div>
+
+<div class="q">
+  <p><strong>Now look at the link on <code>notes.html</code>.</strong> What is in its <code>href</code>?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+  <div class="answer" id="ans-2" hidden><code>index.html</code>. The front door, by name. Two pages, each holding the other’s name, and that is all a link between pages has ever been.</div>
+</div>
+
+<div class="q">
+  <p><strong>Why doesn’t either link mention the <code>recipe</code> folder?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+  <div class="answer" id="ans-3" hidden>Because they are already in it. A page looks for a name in its own folder first, exactly the way <code>photo.jpg</code> was found. Same address, so a name is enough. Pointing at a file in a <em>different</em> folder needs more, and that is a later chapter.</div>
+</div>
+</section>
+
+<section data-beat="yours">
+<p>Change what the link <em>says</em> without changing where it <em>goes</em>.</p>
+<p>In <code>index.html</code>, find the link and edit only the words between <code>&lt;a ...&gt;</code> and <code>&lt;/a&gt;</code>. Make it sound like you: <em>Why mine has more garlic</em>, <em>The story</em>, <em>Read this before you make it</em>. Leave everything inside the quotes alone.</p>
+<p>Save, refresh, click it. It still goes to the same place. You changed the label on the door, not the door.</p>
+</section>
+
+<section data-beat="grow">
+<p><em>Save copies first:</em> <code>index-v1.html</code> and <code>notes-v1.html</code>.</p>
+<p>One iteration, in the same chat:</p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-nav">Copy prompt</button>
+  <pre id="prompt-nav">Put the same small row of links at the top of both pages, so I can get to either page from either page. Give me both files as two separate code blocks, labelled with their file names. Keep everything else the same.</pre>
+</div>
+<p>Two blocks again, two files again, same care as before.</p>
+<p>If you want a third page - variations, a shopping list, a photo of the disaster version - ask for it the same way. The pattern does not change no matter how many pages you add, which is the useful thing about it.</p>
+</section>
+
+<section data-beat="keep">
+<ul>
+  <li>Your app is <code>vibe-coding/recipe/</code>, and it now contains <code>index.html</code>, <code>notes.html</code> and <code>photo.jpg</code>.</li>
+  <li><strong>Did anything surprise you?</strong> The second block that overwrote the first. The link that went nowhere. The page that came back looking nothing like its twin. <strong>Write it down.</strong></li>
+</ul>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>I pasted the second block over my recipe card and lost it</summary>
+  <div class="flag-body">
+    <p>Fixable, and you have two routes. If you made <code>index-v1.html</code> in the last lab, open it, copy everything, and paste it back into <code>index.html</code> - you lose only the link. Otherwise go back to the chat: the recipe card is still sitting there in the AI’s earlier reply, and you can say <em>“show me index.html again as a code block.”</em> Nothing you have made is ever only in one place, as long as the chat is still open.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I click the link and get a page-not-found error</summary>
+  <div class="flag-body">
+    <p>Look at the address bar. The end of it is the name the browser went looking for. Now look at the file in your folder. One of them is wrong - usually a capital letter, or <code>note.html</code> against <code>notes.html</code>, or the file is sitting somewhere other than the <code>recipe</code> folder. Make them match.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The link goes one way but not back</summary>
+  <div class="flag-body">
+    <p>The return link is missing or points at the wrong name. Open <code>notes.html</code> and look for <code>&lt;a</code>. If there is no link at all, ask the AI: <em>“add a link at the top of notes.html going back to index.html.”</em> If it is there, check what is inside the quotes.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I only got one code block</summary>
+  <div class="flag-body">
+    <p>Ask again, specifically: <em>“give me two separate code blocks, one for index.html and one for notes.html, each labelled with its file name.”</em> If it put both pages inside one file instead, say: <em>“these need to be two separate files that link to each other.”</em> Being precise about what shape you want back is a skill, and this is a good place to practise it.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The two pages don’t match each other</summary>
+  <div class="flag-body">
+    <p>The AI rebuilt the styling from memory rather than copying it. Tell it: <em>“make notes.html use exactly the same styles as index.html - same fonts, same colors, same card.”</em> If they still drift apart, that is a real limitation of one file per page, and it is one of the reasons the course eventually stops doing everything this way.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My photo disappeared from the recipe page</summary>
+  <div class="flag-body">
+    <p>When the AI rewrote <code>index.html</code> it may have changed the <code>src</code> or dropped the <code>&lt;img&gt;</code> tag. Check that <code>src</code> still says <code>photo.jpg</code>. This is worth noticing: asking for one change can quietly alter something else, which is why <em>keep everything else the same</em> is in every prompt you write.</p>
+  </div>
+</details>
+</section>

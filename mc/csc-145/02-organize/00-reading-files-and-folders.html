@@ -1,0 +1,259 @@
+<!--
+title:   The field guide to files and folders
+chapter: organize
+kind:    reading
+time:    Reference · dip in when you are stuck
+id:      vibe-reading-files-folders
+lede:    Not homework. The one idea is at the top, and everything under it is here for the moment a picture will not show up or a link goes nowhere.
+-->
+
+<div class="contents">
+  <p>In this guide</p>
+  <ol>
+    <li><a href="#address">A folder is an address</a></li>
+    <li><a href="#front-door"><code>index.html</code> is the front door</a></li>
+    <li><a href="#attributes">Attributes: extra information on a tag</a></li>
+    <li><a href="#pictures">Pictures: <code>src</code> and <code>alt</code></a></li>
+    <li><a href="#slash">The slash on the end</a></li>
+    <li><a href="#links">Links: <code>href</code></a></li>
+    <li><a href="#filenames">Filenames are exact</a></li>
+    <li><a href="#missing">When the picture doesn’t show</a></li>
+    <li><a href="#blank">When the whole page goes blank</a></li>
+    <li><a href="#check">Check yourself</a></li>
+    <li><a href="#cheat">Cheat sheet</a></li>
+  </ol>
+</div>
+
+<p><strong>You do not have to read this before you start building, and you do not have to read it in order.</strong> Sections 1 and 2 are the one idea this chapter turns on - about five minutes, and worth having before you open a lab. Everything after them is lookup: it is here for the moment a photo will not appear, or a link goes nowhere, or your computer starts arguing with you about a file name. Build first. Come back when something surprises you.</p>
+
+<p class="aside">The gray boxes with a pretend browser beside them are <strong>live</strong>. Change the code and the page changes. One thing to know up front: the pretend browser has no folder around it, so every picture on this page will come up missing and every link will go nowhere. That turns out to be useful - it is exactly what a wrong filename looks like on your own computer, and you are about to meet it for real.</p>
+
+<!-- ============================================================ -->
+<section id="address">
+<h2>1. A folder is an address</h2>
+<p>Last chapter everything went into one folder, <code>vibe-coding</code>, side by side. That worked, and it worked for a reason you probably didn’t notice: every app was a single file that needed nothing else. Nothing had to find anything.</p>
+<p>That stops this week. A recipe card needs a photo. A page of pictures needs pictures. A page with a second page needs to know where the second page is. The moment a page needs another file, the question <em>where is it?</em> has to have an answer.</p>
+<p>The answer, almost always, is: <strong>right here, beside me.</strong></p>
+<p>A folder is an address. Everything at the same address can find everything else by name alone. Your page asks for <code>photo.jpg</code>, and the browser looks in the folder the page is in, finds it, and draws it. It does not search your computer. It looks in exactly one place.</p>
+<p>That is the <strong>same-folder rule</strong>, and it is the whole idea of this chapter. One app, one folder, everything the app needs inside it.</p>
+
+<figure class="tree">
+  <pre role="img" aria-label="Two folder diagrams side by side. Before: the vibe-coding folder holds five loose files. After: the vibe-coding folder holds one loose file and four folders, each containing a file called index dot html.">Before                          After
+
+vibe-coding/                    vibe-coding/
+├── setup-check.html            ├── setup-check.html
+├── qr-code.html                ├── qr-code/
+├── hello.html                  │   └── index.html
+├── pomodoro.html               ├── hello/
+└── countdown.html              │   └── index.html
+                                ├── pomodoro/
+                                │   └── index.html
+                                └── countdown/
+                                    └── index.html</pre>
+  <figcaption>The same five things, given addresses. <code>setup-check.html</code> stays loose on purpose - it isn’t an app, it’s a scrap of paper from week one.</figcaption>
+</figure>
+</section>
+
+<!-- ============================================================ -->
+<section id="front-door">
+<h2>2. <code>index.html</code> is the front door</h2>
+<p>Every app folder gets one file called <code>index.html</code>.</p>
+<p>Not because the file has to be called that. Because everything that goes looking inside a folder has agreed to open <code>index.html</code> first, without being told to. Browsers do it. The computers that serve websites do it. Near the end of this course you will write a program that walks through all of your folders, and it will do it too.</p>
+<p>One predictable name, so that nothing has to guess.</p>
+<p>You are about to have four folders and four files called <code>index.html</code>, and they will not get confused with each other, because <strong>the folder is the name now</strong>. <code>qr-code/index.html</code> and <code>countdown/index.html</code> are as different as two houses with the same color front door.</p>
+<p>Only the front door gets the standard name. Everything else in the folder is called what it is: <code>photo.jpg</code>, <code>notes.html</code>, <code>index-v1.html</code>.</p>
+<p class="aside">There is a second half to this that you can’t see yet. When these folders go up on the internet in a few weeks, you will be able to hand someone an address with no file name on the end at all - just the folder - and the right page will open anyway. That is this convention paying you back. Today it is tidiness; later it is your web address.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="attributes">
+<h2>3. Attributes: extra information on a tag</h2>
+<p>You know tags. <code>&lt;h1&gt;Hello&lt;/h1&gt;</code> - two bookends with content between them, and the tags say what the content is.</p>
+<p>Some tags need to know more than that. A picture tag needs to know <em>which picture</em>. A link tag needs to know <em>where it goes</em>. That extra information rides inside the opening tag, and it is called an <strong>attribute</strong>.</p>
+<p>An attribute is always the same shape:</p>
+<pre class="sample">name="value"</pre>
+<p>A name, an equals sign, and a value in quotes. The quotes are part of it, not decoration - they are how the browser knows where the value starts and stops. A tag can carry more than one, separated by spaces:</p>
+<pre class="sample">&lt;img src="photo.jpg" alt="A bowl of soup" /&gt;</pre>
+<p>One tag, two attributes. You have actually seen this already: the QR code app had a <code>&lt;script src="..."&gt;</code> line near the top, and <code>src</code> there means the same thing it is about to mean for pictures - <em>go and fetch this</em>.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="pictures">
+<h2>4. Pictures: <code>src</code> and <code>alt</code></h2>
+<pre class="sample">&lt;img src="photo.jpg" alt="A bowl of tomato soup with basil on top" /&gt;</pre>
+<p><strong><code>src</code></strong> is short for <em>source</em>. It is the file name the browser goes looking for, in the same folder as the page.</p>
+<p><strong><code>alt</code></strong> is short for <em>alternative</em>. It is words that stand in for the picture.</p>
+<p><code>alt</code> does three jobs, and it is the most undervalued attribute in HTML:</p>
+<ul>
+  <li>It is what a screen reader says out loud to someone who cannot see the picture.</li>
+  <li>It is what appears on the page when the file is missing.</li>
+  <li>It is what a search engine reads, because a search engine cannot look at a photo either.</li>
+</ul>
+<p>Write it as though you were describing the picture to someone over the phone. Not <code>alt="photo"</code>, not <code>alt="image1"</code> - those say nothing to anybody. <code>alt="A bowl of tomato soup with basil on top"</code>.</p>
+<p>Here it is with a file that isn’t there, which is what you get on this page and what you will get the first time you try it for real. Change the words in <code>alt</code> and watch the page change.</p>
+
+<div class="demo" data-file="index.html">
+<textarea>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Tomato soup&lt;/h1&gt;
+    &lt;img src="photo.jpg" alt="A bowl of tomato soup with basil on top" /&gt;
+    &lt;p&gt;The picture is missing, so the browser shows the alt words instead.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+</div>
+
+<p>That is not an error message. The browser is telling you, politely, <em>I looked for a file with that name and there wasn’t one.</em> When <code>photo.jpg</code> really is sitting beside your page, the photo appears and the <code>alt</code> words go quiet.</p>
+<p class="aside">We come back to <code>alt</code> in a few chapters and check whether the AI wrote good ones across everything you have built. Spoiler: sometimes it does. Write yours properly now and you will have less to fix then.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="slash">
+<h2>5. The slash on the end</h2>
+<p>Look at that tag again: <code>&lt;img src="photo.jpg" alt="..." /&gt;</code>. There is a slash before the closing bracket, and there is no <code>&lt;/img&gt;</code> anywhere.</p>
+<p>Some tags have nothing to wrap. There is no “content of a picture” to sit between bookends - the picture <em>is</em> the content, and it is named by <code>src</code>. So the tag opens and closes in one move, and the slash is how it says so. You met this last chapter with <code>&lt;br /&gt;</code>; it is the same idea with more to carry.</p>
+<p>You will also see <code>&lt;img&gt;</code> written with no slash at all, including by the AI. Both work, and browsers have never cared. The slash is a habit worth having anyway, because when you are skimming a file it tells your eye immediately that nothing is coming.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="links">
+<h2>6. Links: <code>href</code></h2>
+<pre class="sample">&lt;a href="notes.html"&gt;Read my notes&lt;/a&gt;</pre>
+<p><code>&lt;a&gt;</code> is a link. It has two parts, and keeping them separate in your head makes links easy forever:</p>
+<ul>
+  <li><strong><code>href</code></strong> is where it goes. A file name, when the file is beside this one. That part is for the browser.</li>
+  <li><strong>The words between the tags</strong> are what the person sees and clicks. That part is for the human.</li>
+</ul>
+<p>They are completely independent. You can change the words without touching the destination, and the other way round.</p>
+
+<div class="demo" data-file="index.html">
+<textarea>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;My recipe&lt;/h1&gt;
+    &lt;p&gt;&lt;a href="notes.html"&gt;Read my notes&lt;/a&gt;&lt;/p&gt;
+    &lt;p&gt;Change the words between the tags. The link still points at notes.html.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</textarea>
+</div>
+
+<p>Clicking it here does nothing, because there is no second file in this pretend browser. On your computer there will be, and it will work.</p>
+<p>This chapter keeps every link as simple as the one above: a file name, and the file sits beside the page. Links can also point into other folders and out at other websites, and those get a chapter of their own once you have a site big enough to need them.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="filenames">
+<h2>7. Filenames are exact</h2>
+<p>This is the section that saves you an evening.</p>
+<p><code>src="photo.jpg"</code> means a file called <code>photo.jpg</code>. It does not mean:</p>
+<ul>
+  <li><code>Photo.jpg</code> - a capital letter is a different character</li>
+  <li><code>photo.JPG</code> - so is a capital extension</li>
+  <li><code>photo.jpeg</code> - same kind of picture, different name</li>
+  <li><code>photo .jpg</code> - there is a space in there</li>
+  <li><code>photo copy.jpg</code> - what your computer named it when you duplicated it</li>
+</ul>
+<p>Here is the trap. On your own computer you will often get away with the wrong capital letters, because Mac and Windows are usually relaxed about it. That is not a kindness, it is a delayed problem. The internet is not relaxed about it, and in a few chapters the exact file that worked on your desk all semester will stop working, with no error message and no clue why.</p>
+<p>So build the habit now, while nothing is at stake: <strong>lowercase, hyphens instead of spaces, and type the extension yourself.</strong> Then make the code and the file match character for character.</p>
+<p>One more that catches people every single time: photos taken on an iPhone are often saved as <code>.HEIC</code>, and browsers mostly cannot show that format at all. It is not a naming problem and renaming it will not help - the file has to be converted to a JPG first.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="missing">
+<h2>8. When the picture doesn’t show</h2>
+<p>You get a broken icon, or an empty box with your <code>alt</code> words in it. The message is always the same: <em>I looked in this folder for that name, and it wasn’t there.</em></p>
+<p>Three things to check, in this order:</p>
+<ol>
+  <li><strong>Is the file actually in the folder?</strong> Not in Downloads. Not still in Photos. In the same folder as the page.</li>
+  <li><strong>Does the name match exactly?</strong> Right-click the broken picture and choose <strong>Inspect</strong>. The line it highlights has the <code>src</code> in it - that is what the code is asking for. Compare it to the real file, one character at a time.</li>
+  <li><strong>Can a browser show that format?</strong> JPG and PNG, yes. HEIC, no.</li>
+</ol>
+<p>Notice what is not on that list: your code. A missing picture is almost never a code problem, which is good news, because it means you can fix it without understanding a single line.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="blank">
+<h2>9. When the whole page goes blank</h2>
+<p>A missing picture is a small failure - one thing is gone and the rest of the page carries on. This one is not small. You change something, refresh, and get a completely white page. No app, no error, nothing.</p>
+<p>It is almost always <strong>punctuation in a list</strong>, and it is almost always a comma.</p>
+
+<h3>Why one comma takes out the whole page</h3>
+<p>When an app keeps its content in a list - the pictures in a slider, the cards in a deck, the questions in a quiz - that list is read by the browser <em>before anything runs</em>. The browser reads it top to bottom and needs every item separated by a comma. If it hits an item where it expected a comma and finds something else, it cannot tell where one item ends and the next begins, so it gives up on the whole file.</p>
+<p>Not just that line. The whole file. The page goes white because nothing ever got to run.</p>
+<p>It feels wildly out of proportion to a missing comma, and it is. Every person who writes code has lost an evening to this.</p>
+
+<h3>How to find it in thirty seconds</h3>
+<ol>
+  <li><strong>Open the Developer Console.</strong> This is what it is for, and it is the difference between thirty seconds and an hour.</li>
+  <li><strong>Read the red line.</strong> You are looking for the words <code>SyntaxError</code> and, usually, <code>Unexpected token</code>. Something is in a place the browser did not expect.</li>
+  <li><strong>Read the number.</strong> After the file name there is something like <code>index.html:38</code>. That is the line.</li>
+  <li><strong>Go to that line - then look at the line above it.</strong> The browser reports where it noticed the problem, which is usually one line after where the problem actually is. The line above is the one missing its comma.</li>
+</ol>
+
+<h3>The three that cause it</h3>
+<p><strong>A missing comma.</strong> You added an item to the end of a list and the item before it did not have a comma after it, because it used to be last.</p>
+<pre class="sample">{ file: "photo-5.jpg", caption: "The lake" }     &lt;- needs a comma now
+{ file: "photo-6.jpg", caption: "The dock" }</pre>
+
+<p><strong>An apostrophe inside single quotes.</strong> Text wrapped in <code>'single quotes'</code> ends at the next single quote - and an apostrophe <em>is</em> a single quote. So <code>'Grandma's kitchen'</code> ends after <code>Grandma</code>, and everything after it is nonsense.</p>
+<pre class="sample">caption: 'Grandma's kitchen'     &lt;- breaks
+caption: "Grandma's kitchen"     &lt;- fine</pre>
+<p>Use double quotes whenever your text has an apostrophe in it, which in English is constantly.</p>
+
+<p><strong>A bracket that lost its partner.</strong> Deleting an item and catching one bracket too many, or too few. Brackets come in pairs the same way tags do.</p>
+
+<h3>The habit that makes it stop happening</h3>
+<p><strong>Add new items in the middle of a list, not at the end.</strong></p>
+<p>The last item in a list usually has no comma after it, because nothing follows it. So the end of the list is the one place where copying a neighbouring line gives you the wrong punctuation. Add between two existing items instead and you copy a line that already has its comma in exactly the right place, and the trap cannot fire.</p>
+<p>It is a small trick and it will save you this failure for the rest of your life.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="check">
+<h2>10. Check yourself</h2>
+
+<div class="q">
+  <p><strong>Your page says <code>&lt;img src="cat.jpg" /&gt;</code> and your file is called <code>Cat.jpg</code>. Does it work?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="chk-a1">Show answer</button>
+  <div class="answer" id="chk-a1" hidden>On your own computer, probably. On the internet, no. Fix it now by renaming the file to <code>cat.jpg</code>, and you will never think about it again.</div>
+</div>
+
+<div class="q">
+  <p><strong>What are the two parts of <code>&lt;a href="notes.html"&gt;Read my notes&lt;/a&gt;</code>, and who is each one for?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="chk-a2">Show answer</button>
+  <div class="answer" id="chk-a2" hidden><code>href="notes.html"</code> is the destination, for the browser. <em>Read my notes</em> is the label, for the person. Change either without touching the other.</div>
+</div>
+
+<div class="q">
+  <p><strong>Why does every app folder have a file with the same name in it?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="chk-a3">Show answer</button>
+  <div class="answer" id="chk-a3" hidden>Because <code>index.html</code> is the agreed front door. Anything that opens a folder opens that file first without being told to. The folder around it is what keeps the four of them apart.</div>
+</div>
+
+<div class="q">
+  <p><strong>A picture is missing. What is the least likely cause?</strong></p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="chk-a4">Show answer</button>
+  <div class="answer" id="chk-a4" hidden>The code. It is the file name or the file’s location nearly every time. Check those two before you change a single line.</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cheat">
+<h2>11. Cheat sheet</h2>
+
+<div class="table-scroll">
+<table class="tags">
+  <thead><tr><th>This</th><th>Means</th></tr></thead>
+  <tbody>
+    <tr><td><code>index.html</code></td><td>The front door of a folder. Opened first, automatically.</td></tr>
+    <tr><td><code>name="value"</code></td><td>An attribute. Extra information carried inside an opening tag.</td></tr>
+    <tr><td><code>&lt;img src="photo.jpg" alt="..." /&gt;</code></td><td>Show the picture called <code>photo.jpg</code> from this folder. Say the <code>alt</code> words if you can’t.</td></tr>
+    <tr><td><code>&lt;a href="notes.html"&gt;words&lt;/a&gt;</code></td><td>Link to <code>notes.html</code> in this folder. Show <em>words</em> to click on.</td></tr>
+    <tr><td>The <code>/</code> in <code>&lt;img /&gt;</code></td><td>Nothing goes inside this tag, so it closes itself.</td></tr>
+    <tr><td>White page, nothing at all</td><td>Punctuation in a list. Open the console, find <code>SyntaxError</code>, look at the line above the one it names.</td></tr>
+    <tr><td>Broken picture icon</td><td>Wrong name, wrong folder, or a format the browser can’t show.</td></tr>
+    <tr><td>Lowercase, hyphens, no spaces</td><td>The file-naming habit that stops mattering never.</td></tr>
+  </tbody>
+</table>
+</div>
+</section>

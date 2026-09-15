@@ -1,0 +1,134 @@
+<!--
+title:   The great tidy-up
+chapter: organize
+time:    About 25 minutes
+id:      vibe-lab-tidyup
+lede:    Four loose files become four apps with addresses of their own.
+done:    Every app from last chapter sits in its own folder inside <code>vibe-coding</code>, its main file is called <code>index.html</code>, and all four still open when you double-click them.
+demo:
+video:
+video-length:
+transcript:
+guide:   front-door
+guide-label: Why index.html?
+kind:    setup
+report:  no
+-->
+
+<section data-step="Look at what you have">
+<p>Open your <code>vibe-coding</code> folder and just look at it for a second. You should see something close to this:</p>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains seven loose files: setup-check.html, qr-code.html, hello.html, pomodoro.html, pomodoro-v1.html, countdown.html and countdown-v1.html.">vibe-coding/
+├── setup-check.html
+├── qr-code.html
+├── hello.html
+├── pomodoro.html
+├── pomodoro-v1.html
+├── countdown.html
+└── countdown-v1.html</pre>
+  <figcaption>Yours may have more or fewer, and the names may differ. The shape is what matters: everything loose, in one pile.</figcaption>
+</figure>
+
+<p>Now answer two questions from that list alone. <strong>Which of these are apps?</strong> And <strong>which version of the Pomodoro is the good one?</strong></p>
+<p>You know the answers because you made them last week. In three weeks you won’t, and neither will anybody else. A name in a list is not an address.</p>
+<p>Today you give each app an address: a folder of its own, with the app’s main file inside it called <code>index.html</code>. That name is the front door - the one every browser opens first without being told to. The field guide has the why if you want it; this lab is the doing.</p>
+<p>It takes about fifteen minutes and there is no code in it at all. It is the last quiet lab for a while.</p>
+</section>
+
+<section data-step="Make a folder for each app">
+<p>Inside <code>vibe-coding</code>, make four new folders. Name them exactly like this - <strong>all lowercase, hyphens instead of spaces</strong>:</p>
+<ul>
+  <li><code>qr-code</code></li>
+  <li><code>hello</code></li>
+  <li><code>pomodoro</code></li>
+  <li><code>countdown</code></li>
+</ul>
+<p>If you named your apps something else last week, name the folders after your files instead. The rule is one folder per app, not these four words.</p>
+<p class="aside">Why lowercase with hyphens? Because a folder name becomes part of a web address later, and addresses are fussy about capitals and hate spaces. You are building the habit now, while it costs nothing.</p>
+</section>
+
+<section data-step="Move each app in, and rename it">
+<p>One app at a time. For the QR code generator:</p>
+<ol>
+  <li>Drag <code>qr-code.html</code> into the <code>qr-code</code> folder.</li>
+  <li>Open the folder. Rename the file to <code>index.html</code>. On a Mac, click the name once, then press Return. On Windows, right-click and choose <strong>Rename</strong>.</li>
+  <li>Keep the <code>.html</code> on the end. If your computer asks whether you are sure you want to change the extension, you are not changing it - it was <code>.html</code> before and it is <code>.html</code> now. Say keep.</li>
+</ol>
+<p>Then do the same for the other three. Three minutes, once you have the rhythm.</p>
+<p>When you are done you will have four files called <code>index.html</code> on your computer, and that is correct. They do not collide, because each one lives at a different address. <code>qr-code/index.html</code> and <code>countdown/index.html</code> are as different as two houses with the same color front door.</p>
+</section>
+
+<section data-step="Bring the versions along">
+<p>Some of your apps have a <code>-v1</code> file beside them - the copy you made before letting the AI change something that worked. Those belong with their app.</p>
+<p>Move <code>pomodoro-v1.html</code> into the <code>pomodoro</code> folder and rename it <code>index-v1.html</code>. Same for <code>countdown-v1.html</code>.</p>
+<p>The pattern from here on: the app you are using is always <code>index.html</code>, and its history sits beside it with a version number on the end.</p>
+<p><strong>Leave <code>setup-check.html</code> where it is</strong>, loose in <code>vibe-coding</code>. It isn’t an app - it was a scrap of paper that proved your editor worked. Not everything needs a folder.</p>
+</section>
+
+<section data-step="Open all four">
+<p>Double-click each <code>index.html</code> in turn. All four should open and work exactly as they did last week: the QR code generates, the timer counts, the countdown counts.</p>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains setup-check.html and four folders: qr-code, hello, pomodoro and countdown. Each folder contains index.html, and pomodoro and countdown also contain index-v1.html.">vibe-coding/
+├── setup-check.html
+├── qr-code/
+│   └── index.html
+├── hello/
+│   └── index.html
+├── pomodoro/
+│   ├── index.html
+│   └── index-v1.html
+└── countdown/
+    ├── index.html
+    └── index-v1.html</pre>
+  <figcaption>Four apps, four addresses. This is the shape every app you build from now on will have.</figcaption>
+</figure>
+
+<p><strong>Notice that nothing broke.</strong> You moved every file on your computer and all four apps still work perfectly. That is worth a moment, because it is about to stop being true.</p>
+<p>Each of those apps is one file that needs nothing else. It can go anywhere. In the very next lab you build a page that needs a photo sitting beside it, and from then on <em>where a file lives</em> is something your apps care about.</p>
+</section>
+
+<section data-step="Take a screenshot">
+<p>Take one screenshot showing your <code>vibe-coding</code> folder with the four app folders in it. Same trick as the setup lab: <strong>Shift + Command + 4</strong> on a Mac, <strong>Windows key + Shift + S</strong> on Windows.</p>
+<p>Hand it in below. Graded complete or incomplete - it is proof the tidy-up happened, not a test of anything.</p>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>My browser says the file can’t be found</summary>
+  <div class="flag-body">
+    <p>You have a tab open from last week that still points at the old location, and the file isn’t there any more. That is the tab being out of date, not the file being broken. Close the tab and double-click the new <code>index.html</code> instead. From now on, open apps from the folder.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>It asked if I really want to change the extension</summary>
+  <div class="flag-body">
+    <p>Say keep <code>.html</code>. The file was <code>qr-code.html</code> and it is becoming <code>index.html</code> - the extension is not changing at all, your computer is just being careful because you retyped the whole name. If you accidentally ended up with a file called <code>index</code> with nothing on the end, rename it again and type <code>index.html</code> in full.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I can’t see the <code>.html</code> part of any name</summary>
+  <div class="flag-body">
+    <p>Extensions are hidden again, which makes this lab nearly impossible to do correctly. Turn them back on the way you did in the setup lab: on a Mac, Finder → Settings → Advanced → <em>Show all filename extensions</em>. On Windows, File Explorer → View → <em>File name extensions</em>. Then come back.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>Now I have four files called index.html and I’m lost</summary>
+  <div class="flag-body">
+    <p>That is the right answer, oddly enough. The file name stopped being the app’s name the moment it got a folder - the <em>folder</em> is the name now. When you are looking at an open file and can’t tell which app it is, look at the folder it is in, or look at the tab title in the browser.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I dragged something into the wrong folder</summary>
+  <div class="flag-body">
+    <p><strong>Command + Z</strong> on a Mac, <strong>Control + Z</strong> on Windows, right there in the folder window. Undo works on file moves, and almost nobody knows it. If the undo has gone stale, just drag it back - nothing is damaged by being in the wrong place.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>Which <code>-v1</code> is the good one?</summary>
+  <div class="flag-body">
+    <p><code>index.html</code> is always the one you are using. <code>index-v1.html</code> is the older version you kept as a safety net before an iteration. If you open both and the <code>-v1</code> is the one you like better, rename them the other way round - that is exactly what the safety net is for.</p>
+  </div>
+</details>
+</section>

@@ -1,0 +1,159 @@
+<!--
+title:   Recipe card, with a photo
+chapter: organize
+time:    About 30 minutes
+id:      vibe-lab-recipe
+lede:    A card for something you actually make, with a picture of it sitting beside the page.
+done:    <code>recipe/index.html</code> opens from your <code>recipe</code> folder and shows your own photo, with the ingredients and the steps underneath.
+demo:
+video:
+video-length:
+transcript:
+guide:   pictures
+guide-label: src and alt
+report:  no
+-->
+
+<section data-beat="picture">
+<p>Pick something you actually make. A real recipe, a sandwich you are unreasonably proud of, a drink, a thing you feed the dog. Today it becomes a card: a title, a photo, the ingredients, the steps.</p>
+<p>Every app you have built so far has been one file that needed nothing else. You just proved it in the tidy-up - you moved all of them and nothing broke. <strong>This one is different.</strong> This one needs a photo, and a photo is a second file, and the page has to be able to find it.</p>
+<p>That is the whole chapter in one build. Everything after this is practice.</p>
+</section>
+
+<section data-beat="ask">
+<p>Start a new chat and describe the card in your own words. Make sure it says:</p>
+<ul>
+  <li>One recipe, on a single card in the middle of the page</li>
+  <li>A title at the top, then a photo, then the ingredients as a bulleted list, then the steps as a numbered list</li>
+  <li><strong>The photo will be a file called <code>photo.jpg</code>, sitting in the same folder as the page</strong></li>
+  <li>The photo should not be enormous - a few hundred pixels wide is plenty</li>
+</ul>
+<p>That third line is the new piece of prompt craft, and it is worth saying out loud: <em>you</em> decided the file name and told the AI to use it. Left to itself the AI will invent a name, or reach out to the internet for a stock picture of soup. Naming the file first means the code and the folder agree before either one exists.</p>
+<p>Then paste the specification at the end of your prompt, exactly as it is.</p>
+{{spec}}
+</section>
+
+<section data-beat="run">
+<ol>
+  <li>Make a new folder: <code>vibe-coding/recipe</code>.</li>
+  <li>Copy the code, paste it into TXTEDTR, and <strong>Save as</strong> <code>index.html</code> inside that folder.</li>
+  <li><strong>Now get your photo.</strong> Take one with your phone and send it to yourself, or use any picture you have. Put it in the <code>recipe</code> folder, beside <code>index.html</code>.</li>
+  <li><strong>Rename it to <code>photo.jpg</code></strong> - all lowercase, and typed exactly. This is the step that decides whether the next one works.</li>
+  <li>Double-click <code>index.html</code>.</li>
+</ol>
+
+<figure class="tree">
+  <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains the qr-code, hello, pomodoro and countdown folders, and a new recipe folder holding index.html and photo.jpg.">vibe-coding/
+├── qr-code/
+│   └── index.html
+├── hello/
+│   └── index.html
+├── pomodoro/
+│   └── index.html
+├── countdown/
+│   └── index.html
+└── recipe/
+    ├── index.html   <span class="here">← this lab</span>
+    └── photo.jpg</pre>
+  <figcaption>Your first folder with two files in it. They sit side by side - the photo is not in a folder of its own, it is right there next to the page that wants it.</figcaption>
+</figure>
+
+<p class="aside"><strong>Got a broken picture icon instead of your photo?</strong> Good. Genuinely - you have just met the most common problem in this entire chapter, in the safest possible place, and the first Troubleshooting card below fixes it in about a minute. Nearly everybody hits this once.</p>
+</section>
+
+<section data-beat="read">
+<p>Open <code>index.html</code> in your editor and find three things.</p>
+
+<div class="q">
+  <p><strong>Find the <code>&lt;img&gt;</code> tag.</strong> What is written inside <code>src="…"</code>?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+  <div class="answer" id="ans-1" hidden><code>photo.jpg</code>, if the AI did what you asked. That is the entire instruction: <em>look in this folder for a file with this name.</em> No path, no folder, no address - just a name, because the file is right there.</div>
+</div>
+
+<div class="q">
+  <p><strong>Find <code>alt="…"</code> on the same tag.</strong> What did the AI write in it?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+  <div class="answer" id="ans-2" hidden>Probably something vague, like <em>Recipe photo</em> or the name of the dish. It could not see your picture, so it guessed. Those words are what a blind visitor hears instead of the photo, so a guess is not good enough. You are about to fix it.</div>
+</div>
+
+<div class="q">
+  <p><strong>Find the ingredients.</strong> What tag is each single ingredient wrapped in?</p>
+  <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+  <div class="answer" id="ans-3" hidden><code>&lt;li&gt;</code>, one per ingredient, all sitting inside a <code>&lt;ul&gt;</code>. The steps are the same shape inside an <code>&lt;ol&gt;</code>. To add an ingredient you copy one <code>&lt;li&gt;</code> line and change the words, which is exactly what you will do in a moment.</div>
+</div>
+</section>
+
+<section data-beat="yours">
+<p><strong>Write a real <code>alt</code>.</strong> Replace whatever the AI guessed with a description of your actual photo, as if you were describing it to someone over the phone. <em>A cast iron pan of cornbread, still in the pan, with one slice cut out.</em> Save, refresh. Nothing on the page changes, which is the point - it is there for people who cannot see it.</p>
+<p><strong>Then prove it works.</strong> Change <code>src="photo.jpg"</code> to <code>src="photoo.jpg"</code>, with the extra letter. Save, refresh. Your photo vanishes and your own words appear in its place. That is <code>alt</code> doing its second job, and it is also exactly what a misspelled file name looks like.</p>
+<p>Put the spelling back. Save, refresh. Photo returns.</p>
+<p>You just caused the broken picture on purpose, which means it will never scare you again.</p>
+</section>
+
+<section data-beat="grow">
+<p><em>First, save a copy.</em> Duplicate <code>index.html</code> and name the copy <code>index-v1.html</code>. Same habit as last chapter, now inside the app’s own folder.</p>
+<p>Two iterations, in the same chat, one at a time.</p>
+<p><strong>One - the facts nobody writes down.</strong></p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-serves">Copy prompt</button>
+  <pre id="prompt-serves">Under the title, add how many it serves and how long it takes. Keep everything else exactly the same.</pre>
+</div>
+<p><strong>Two - a second photo.</strong> Watch what it does with the file name:</p>
+<div class="prompt">
+  <button class="btn copy" data-copy="prompt-second-photo">Copy prompt</button>
+  <pre id="prompt-second-photo">Add a second photo at the bottom, of the finished dish. Tell me exactly what to name the file and where to put it before you show me the code.</pre>
+</div>
+<p>It should stop and tell you a file name. Use that name exactly, or change the code to match whatever you actually called it. Either way round is fine - what matters is that the two agree.</p>
+</section>
+
+<section data-beat="keep">
+<ul>
+  <li>Your app is <code>vibe-coding/recipe/index.html</code>, with <code>photo.jpg</code> beside it and <code>index-v1.html</code> from before the Grow step.</li>
+  <li><strong>Did anything surprise you?</strong> The photo that wouldn’t show. The picture that came out sideways. The AI reaching for a stock image instead of yours. <strong>Write it down</strong> - one sentence for what happened, one for what fixed it.</li>
+</ul>
+</section>
+
+<section data-part="trouble">
+<details class="flag">
+  <summary>I get a broken picture icon, or my alt words instead of the photo</summary>
+  <div class="flag-body">
+    <p>The page looked in its folder for that exact name and did not find it. Check three things in this order:</p>
+    <ol>
+      <li><strong>Is the photo in the <code>recipe</code> folder?</strong> Not in Downloads, not in Photos, not on the Desktop.</li>
+      <li><strong>Does the name match exactly?</strong> Right-click the broken picture, choose <strong>Inspect</strong>, and read the <code>src</code> in the highlighted line. Compare it to the real file character by character. <code>Photo.jpg</code>, <code>photo.JPG</code>, <code>photo.jpeg</code> and <code>photo copy.jpg</code> are four different names.</li>
+      <li><strong>Is the extension actually showing?</strong> If you cannot see <code>.jpg</code> on the end of the file, turn extensions back on (setup lab) - you may have named it <code>photo.jpg.jpg</code> without knowing.</li>
+    </ol>
+    <p>It is almost never the code.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My photo is a <code>.HEIC</code> file and nothing shows</summary>
+  <div class="flag-body">
+    <p>iPhones save photos in a format browsers mostly cannot read. Renaming it to <code>.jpg</code> will not work - the inside of the file has to change, not just the name. On a Mac, open it in Preview → File → Export → choose JPEG. On Windows, open it in Photos → Save as → JPG. Then name the result <code>photo.jpg</code>. To stop it happening again: iPhone Settings → Camera → Formats → <em>Most Compatible</em>.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The AI used a picture from the internet instead of mine</summary>
+  <div class="flag-body">
+    <p>Common, and it looks like success until you notice the photo isn’t yours. Look at the <code>src</code> - if it starts with <code>http</code>, it is pointing at somebody else’s server. Tell the AI: <em>“use a local file called photo.jpg in the same folder, not a picture from the internet.”</em> A page that depends on a stranger’s website breaks the day they delete it.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>My photo is sideways or upside down</summary>
+  <div class="flag-body">
+    <p>Phone cameras store the picture one way and tuck a note inside the file saying which way up it should be, and not everything reads that note. Easiest fix: open the photo on your computer, rotate it, save it, and let the file itself be the right way round. There is a whole hidden world of notes tucked inside photo files, and it gets a lab of its own later in the course.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>The photo is gigantic, or the page takes a moment to appear</summary>
+  <div class="flag-body">
+    <p>A photo straight off a phone can be several thousand pixels wide and many megabytes. The browser shrinks it to fit but still has to load the whole thing. Ask the AI: <em>“limit the photo to 400 pixels wide.”</em> That fixes how it looks. To fix the size of the file itself, open it in Preview or Photos and export it smaller.</p>
+  </div>
+</details>
+<details class="flag">
+  <summary>I don’t have a photo of it</summary>
+  <div class="flag-body">
+    <p>Use any picture at all - your shoes, the sky, the dog. The lesson is the file name, not the subject. You can swap in a real photo the next time you cook it, and by then changing it will take you ten seconds.</p>
+  </div>
+</details>
+</section>
