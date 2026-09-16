@@ -3,8 +3,8 @@
   Lab: The great tidy-up
   Chapter: A page is never alone
 
-  GENERATED FILE - do not edit. Built 2026-09-15 by build/build.py from
-  chapters/02-organize/01-tidy-up.html. Edit the source, or shared/lab.css and shared/lab.js,
+  GENERATED FILE - do not edit. Built 2026-09-16 by build/build.py from
+  chapters/02-organize/01-tidy-up.md. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
   This handout is one HTML file: the page, its styles, and its behavior all
@@ -742,19 +742,14 @@
       </div>
     </div>
 
-    <!-- WATCH PANEL - a video tutorial for this lab. Sits above the steps, is not a step,
-         and does not count toward progress. To turn it on: put the embed URL on the
-         video: line in the lab source (and video-length:, transcript: if you have them)
-         and rebuild - or replace the example URL below and remove this comment's markers.
     <details class="watch" open>
-      <summary><span>Watch first</span><span class="len"></span></summary>
+      <summary><span>Watch first</span><span class="len">2:22</span></summary>
       <div class="watch-body">
         <div class="embed">
-          <iframe src="https://example.com/your-video-embed" title="Video tutorial for this lab" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
+          <iframe src="https://www.youtube-nocookie.com/embed/3KHkTB-TQWs?rel=0" title="Video tutorial for this lab" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
         </div>
       </div>
     </details>
-    -->
 
     <main id="main">
       <!-- ============ 1 - LOOK AT WHAT YOU HAVE ============ -->
@@ -769,7 +764,6 @@
         </div>
         <div class="step-body" id="body-1">
           <p>Open your <code>vibe-coding</code> folder and just look at it for a second. You should see something close to this:</p>
-
           <figure class="tree">
             <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains seven loose files: setup-check.html, qr-code.html, hello.html, pomodoro.html, pomodoro-v1.html, countdown.html and countdown-v1.html.">vibe-coding/
           ├── setup-check.html
@@ -781,7 +775,6 @@
           └── countdown-v1.html</pre>
             <figcaption>Yours may have more or fewer, and the names may differ. The shape is what matters: everything loose, in one pile.</figcaption>
           </figure>
-
           <p>Now answer two questions from that list alone. <strong>Which of these are apps?</strong> And <strong>which version of the Pomodoro is the good one?</strong></p>
           <p>You know the answers because you made them last week. In three weeks you won’t, and neither will anybody else. A name in a list is not an address.</p>
           <p>Today you give each app an address: a folder of its own, with the app’s main file inside it called <code>index.html</code>. That name is the front door - the one every browser opens first without being told to. The field guide has the why if you want it; this lab is the doing.</p>
@@ -861,7 +854,6 @@
         </div>
         <div class="step-body" id="body-5" hidden>
           <p>Double-click each <code>index.html</code> in turn. All four should open and work exactly as they did last week: the QR code generates, the timer counts, the countdown counts.</p>
-
           <figure class="tree">
             <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains setup-check.html and four folders: qr-code, hello, pomodoro and countdown. Each folder contains index.html, and pomodoro and countdown also contain index-v1.html.">vibe-coding/
           ├── setup-check.html
@@ -877,7 +869,6 @@
               └── index-v1.html</pre>
             <figcaption>Four apps, four addresses. This is the shape every app you build from now on will have.</figcaption>
           </figure>
-
           <p><strong>Notice that nothing broke.</strong> You moved every file on your computer and all four apps still work perfectly. That is worth a moment, because it is about to stop being true.</p>
           <p>Each of those apps is one file that needs nothing else. It can go anywhere. In the very next lab you build a page that needs a photo sitting beside it, and from then on <em>where a file lives</em> is something your apps care about.</p>
         </div>
