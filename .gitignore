@@ -1,0 +1,12 @@
+# Finder junk only. This repository serves ~20 separate projects, so nothing
+# here may match real content - these four patterns match macOS droppings and
+# nothing else.
+#
+# "Icon?" is not a typo. Finder's custom-folder-icon file is literally named
+# "Icon" followed by a carriage return, and in gitignore "?" matches any single
+# character. Without this line, `git add -A` commits one every time Finder
+# looks at a folder - 17 of them had accumulated under mc/ by 2026-09-22.
+.DS_Store
+._*
+Icon
+Icon?
