@@ -1,10 +1,12 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Start Here</title>
+<link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
-html,body{margin:0;padding:0;background:#f7f6f4;}
+html,body{margin:0;padding:0;background:#ffffff;}
 @media (prefers-color-scheme: dark){html:not([data-theme="light"]){background:#121110;}}
 html[data-theme="dark"]{background:#121110;}
 /* ============================================================================
@@ -17,7 +19,13 @@ html[data-theme="dark"]{background:#121110;}
 :root {
   /* Neutrals - very slightly warm, so they sit under orange, blue and olive
      without any of the three reading as a clash. */
-  --ground:      #f7f6f4;
+  /* The page ground is white, and so are the cards on it. That is deliberate
+     and it is the reason --shadow-1 below carries a hairline ring: with a warm
+     grey ground the cards were defined by the contrast between #f7f6f4 and
+     white, and taking the grey away removes exactly that. Readers said the
+     grey read as busy rather than calm, which is fair - but a card has to be
+     bounded by something, so the boundary moved from the ground to the edge. */
+  --ground:      #ffffff;
   --surface:     #ffffff;
   --surface-2:   #f0eeea;   /* inset wells, quiet fills */
   --surface-3:   #e7e4df;   /* pressed / track */
@@ -37,8 +45,15 @@ html[data-theme="dark"]{background:#121110;}
   --bad-soft:  #fbe9e7;
 
   /* Elevation */
-  --shadow-1: 0 1px 2px rgba(28,26,24,.05), 0 2px 6px rgba(28,26,24,.05);
-  --shadow-2: 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.08);
+  /* Both of these open with a 1px spread ring, which draws a hairline on every
+     card without touching layout the way a real border would - no box-sizing
+     surprise, no rule to add to a dozen separate card selectors. It is also
+     the crisper of the two ways to bound a white card on white: a blur alone
+     goes muddy at this contrast, and the feedback asked for crisp.
+     The dark palette redefines these further down and gets no ring, because
+     there the surface is already lighter than the ground. */
+  --shadow-1: 0 0 0 1px #e6e2dc, 0 1px 2px rgba(28,26,24,.04), 0 2px 6px rgba(28,26,24,.04);
+  --shadow-2: 0 0 0 1px #e0dbd4, 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.07);
   --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
   --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
 
@@ -118,6 +133,23 @@ p { margin: 0; }
 p + p { margin-top: .9em; }
 
 a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==text== in the markdown. The browser default for <mark> is a flat yellow
+   that fights every surface on this site, so it is restyled to the same accent
+   wash the Brightspace converter at md.flccarcade.com uses - one highlight,
+   the same one, whether a sentence is read on a lesson page or in Brightspace.
+   Colour comes from the theme, so each course gets its own. */
+mark { background: var(--accent-wash); color: var(--accent-text);
+       padding: .05em .25em; border-radius: 4px; }
+
+/* The hand-in card on a checkpoint. Ships hidden; the LMS supplies the link.
+   [hidden] is respected explicitly because this element is display:flex, and a
+   display rule beats the browser's default hidden{display:none} every time -
+   which is how a card meant to be invisible shows up with a dead link in it. */
+.handin { display: flex; gap: .9rem; align-items: center; margin: 1.5rem 0 0;
+          padding: 1.1rem 1.3rem; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 15px; }
+.handin[hidden] { display: none; }
 
 :where(button, a, input, textarea, [tabindex]):focus-visible {
   outline: 3px solid var(--accent);
@@ -403,7 +435,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -413,6 +451,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1085,6 +1124,108 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
 .ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
 
+/* -- Vocabulary: the A-Z index -------------------------------------------- */
+/* A second view of the same terms. Both views are in the DOM and one is always
+   hidden, so nothing here can be reached while the lesson-order list shows. */
+.vviews { margin: 0 0 1.1rem; }
+
+.vaz { display: flex; flex-direction: column; gap: .3rem; }
+.vaz__intro { margin: 0 0 .6rem; }
+.vaz__block { display: block; }
+.vaz__letter {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent-text);
+  margin: .9rem 0 .35rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--line);
+}
+.vaz__block:first-of-type .vaz__letter { margin-top: 0; }
+
+/* Multi-column so 68 words fit on a screen, which is the entire point of this
+   view. Columns rather than a grid: a word and its module tag must not be
+   split across a column break. */
+.vaz__list {
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: var(--gap-m);
+}
+@media (min-width: 900px) { .vaz__list { columns: 3; } }
+@media (max-width: 520px) { .vaz__list { columns: 1; } }
+
+.vaz__item {
+  break-inside: avoid;
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .2rem 0;
+  font-size: .94rem;
+  line-height: 1.45;
+}
+.vaz__link { color: var(--ink); text-decoration-color: var(--line-strong); }
+.vaz__link:hover { color: var(--accent-text); text-decoration-color: currentColor; }
+/* The tag follows the word directly rather than being flushed to the column
+   edge. Flushed right, it aligned neatly and left a canyon between a short word
+   and its module - and the whole job of this tag is to be read as part of the
+   word it belongs to. Proximity beats alignment here. */
+.vaz__mod {
+  flex: none;
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.vaz__none { margin: .6rem 0 0; }
+
+/* The reset does not cover flex and grid children, the same reason .ventry
+   needed this. Without it a hidden item still takes a row. */
+.vaz[hidden], .vlist[hidden], .vaz__block[hidden], .vaz__item[hidden],
+.vaz__none[hidden], .vlistnone[hidden], .vdraftnote[hidden] { display: none; }
+.vlistnone, .vaz__none { margin: .8rem 0 0; }
+
+/* -- Vocabulary: the course filter ---------------------------------------- */
+.vchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .9rem; }
+.vchip {
+  font: inherit; font-size: .8rem; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.vchip:hover { border-color: var(--accent); color: var(--ink); }
+.vchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vchip.is-on {
+  background: var(--accent-fill); border-color: var(--accent-fill);
+  color: var(--accent-on); font-weight: 700;
+}
+.vchip__n { font-variant-numeric: tabular-nums; opacity: .75; }
+/* Dashed, the same language the draft entries use, so "provisional" reads the
+   same way wherever it appears on this page. */
+.vchip--draft { border-style: dashed; }
+.vchip--draft.is-on { border-style: solid; }
+/* The draft marker rides on the chip so the count is never read as a finished
+   glossary. It is the same word the group heading and every entry carry. */
+.vchip__tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--warn);
+}
+.vchip.is-on .vchip__tag { color: var(--accent-on); opacity: .85; }
+
+/* -- Vocabulary: draft entries -------------------------------------------- */
+.vgroup--draft { color: var(--warn); }
+.vdraftnote {
+  margin: 0 0 .3rem; padding: .75rem .85rem;
+  background: var(--warn-soft); border-radius: var(--r-sm);
+  line-height: 1.55;
+}
+/* A dashed edge, not a colored fill: these are real entries to read, they are
+   just not finished. The border says provisional without shouting. */
+.ventry--draft {
+  box-shadow: none;
+  border: 1px dashed var(--line-strong);
+}
+.ventry--draft .ventry__from { color: var(--warn); }
+.vaz__mod--draft { color: var(--warn); }
+
 /* Embedded in an LMS that already shows the page title above the frame.
    Hide ONLY the duplicated heading. The first version hid the whole masthead,
    which also threw away the standfirst and the metarow - how long the lesson
@@ -1094,6 +1235,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    The module and lesson number stay too: Brightspace shows the topic title but
    not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
 :root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
 :root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
 :root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
@@ -1143,6 +1288,375 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .preset:hover { color: var(--accent-text); background: var(--accent-wash); }
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
 
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
+/* ── moved out of faculty.css when map.css was split off ──────────────────────
+   The only two rules the course map and the marking view ever shared, and
+   neither is specific to either: a horizontally scrolling table wrapper, and
+   tabular numerals for a figure that must not reflow. Generic enough that a
+   third page wanting one should not have to load a whole genre sheet. */
+.tblwrap { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow-1);
+  padding:.4rem 1.1rem; overflow-x:auto; }
+.mono { font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+/* The base table, which followed .tblwrap out of faculty.css once a second
+   genre wanted one. */
+.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th { text-align:left; font-family:var(--display); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); padding:.75rem .55rem; border-bottom:1.5px solid var(--line-strong); white-space:nowrap; }
+.tbl td { padding:.6rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+.tbl tbody tr:last-child td { border-bottom:0; }
+.tbl tr.is-dimmed { opacity:.25; }
+.tbl a { font-weight:700; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
+
 /* ============================================================================
    FLCC AI Specialist Microcredential - onboarding.css
    Week 1 pages - orientation, setup, intro.
@@ -1188,6 +1702,105 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .checkitem__t { font-family: var(--display); font-weight: 700; font-size: .98rem; }
 .checkitem__d { font-size: .9rem; color: var(--ink-2); margin-top: .2rem; }
 .checkitem__time { font-size: .74rem; color: var(--ink-3); margin-top: .3rem; display: block; }
+
+
+/* ---- Two taxonomies over the outcomes (0A) --------------------------------
+   Written by build/taxonomy.py. A honeycomb for Fink's six kinds and a pyramid
+   for Bloom's six levels; clicking a shape swaps the panel beneath it, the same
+   idiom as the beat picker above. No modal on purpose: this page runs inside a
+   Brightspace frame the listener stretches to full height, and a centered
+   dialog would land wherever the middle of that frame happens to be. */
+/* Three rows - head, figure, panel - shared across both columns through
+   subgrid, so the two panels start on the same line however long the intro
+   text runs. The figure row is a fixed height with the diagram centered in it;
+   each diagram keeps its own aspect ratio inside, so nothing distorts. */
+.taxgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); grid-auto-rows: auto; gap: 1.5rem 2.5rem; align-items: start; }
+.taxlens { display: grid; grid-template-rows: subgrid; grid-row: span 3; gap: 1rem; min-width: 0; }
+.taxfig { height: 24rem; display: grid; place-items: center; }
+@media (max-width: 48rem) { .taxfig { height: auto; } }
+.taxlens__head h3 { font-size: 1.15rem; }
+.taxlens__head p { color: var(--ink-2); font-size: .95rem; margin-top: .4rem; }
+
+/* honeycomb: hub hex plus six around it. Pointy-top hexes, width one third of
+   the wheel, height width * 2/sqrt3; neighbors at (+-w/2, +-3h/4) and (+-w, 0).
+   All percentages, so it scales with its column. */
+.taxwheel { position: relative; width: min(100%, calc(24rem * 1.039)); aspect-ratio: 3 / 2.887; margin: 0 auto; }
+.taxhex {
+  position: absolute; width: 33.333%; height: 40%; padding: 0; border: 0; background: transparent;
+  cursor: pointer; display: grid; place-items: center; text-align: center; font: inherit; color: inherit;
+}
+.taxhex svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.taxhex polygon { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; transition: stroke .16s ease; }
+.taxhex:hover polygon { stroke: var(--accent); stroke-width: 2.5; }
+.taxhex[aria-pressed="true"] polygon { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 2.5; }
+.taxhex:focus-visible { outline: none; }
+.taxhex:focus-visible polygon { stroke: var(--accent); stroke-width: 3; }
+.taxhex__in { position: relative; z-index: 1; width: 78%; display: flex; flex-direction: column; align-items: center; gap: .1rem; pointer-events: none; }
+.taxhex__name { font-family: var(--display); font-weight: 700; font-size: clamp(.6rem, .4rem + .5vw, .8rem); line-height: 1.2; color: var(--ink); }
+.taxhex__alt { font-size: clamp(.52rem, .38rem + .35vw, .66rem); line-height: 1.25; color: var(--ink-3); }
+.taxhex--hub { cursor: default; }
+.taxhex--hub polygon { fill: var(--ink); stroke: var(--ink); }
+.taxhex--hub .taxhex__name { color: var(--ground); font-size: clamp(.62rem, .4rem + .55vw, .86rem); }
+.taxhex--hub .taxhex__alt { color: var(--ground); opacity: .7; }
+.tax-ul { left: 16.667%; top: 0; }     .tax-ur { left: 50%; top: 0; }
+.tax-l  { left: 0; top: 30%; }         .tax-c  { left: 33.333%; top: 30%; }   .tax-r { left: 66.667%; top: 30%; }
+.tax-ll { left: 16.667%; top: 60%; }   .tax-lr { left: 50%; top: 60%; }
+
+/* pyramid: a decorative point, then six layers, Create at the top. */
+.taxpyramid { position: relative; width: min(100%, calc(24rem / 1.2)); aspect-ratio: 1 / 1.2; margin: 0 auto; display: flex; flex-direction: column; }
+.taxcap { position: relative; flex: var(--cap) 1 0; pointer-events: none; }
+.taxcap svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.taxcap polygon { fill: var(--accent-fill); stroke: var(--accent-fill); stroke-width: 1.5; stroke-linejoin: round; }
+.taxlayer {
+  position: relative; flex: 1 1 0; padding: 0; border: 0; background: transparent;
+  cursor: pointer; display: grid; place-items: center; text-align: center; font: inherit; color: inherit;
+}
+.taxlayer svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.taxlayer__edge { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; transition: stroke .16s ease; }
+.taxlayer__tint { fill: var(--accent); opacity: var(--t); }
+.taxlayer:hover .taxlayer__edge { stroke: var(--accent); stroke-width: 2.5; }
+.taxlayer[aria-pressed="true"] .taxlayer__edge { stroke: var(--accent); stroke-width: 2.5; }
+.taxlayer:focus-visible { outline: none; }
+.taxlayer:focus-visible .taxlayer__edge { stroke: var(--accent); stroke-width: 3; }
+.taxlayer__in { position: relative; z-index: 1; display: flex; align-items: baseline; justify-content: center; gap: .45rem; pointer-events: none; white-space: nowrap; }
+.taxlayer__lvl { font-family: var(--display); font-weight: 700; font-size: clamp(.52rem, .38rem + .35vw, .66rem); letter-spacing: .1em; color: var(--ink-3); }
+.taxlayer__name { font-family: var(--display); font-weight: 700; font-size: clamp(.68rem, .48rem + .55vw, .92rem); color: var(--ink); }
+.taxlayer__n { font-family: var(--display); font-weight: 700; font-size: clamp(.78rem, .52rem + .75vw, 1.1rem); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+/* the panel beneath either diagram */
+/* The panel fills its shared grid row, so the two columns end level as well as
+   start level. Height is capped: most kinds fit outright and never scroll; the
+   two or three long lists scroll inside the card, with a fade at the foot so
+   the overflow is visible. Scroll is the exception here, not the rule - a
+   scroll region inside a Brightspace frame is already two scrolls deep. */
+.taxpanel { position: relative; align-self: stretch; max-height: 56rem; overflow-y: auto; background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2); padding: 1.35rem 1.4rem 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; scrollbar-width: thin; }
+.taxpanel.is-scrolly { padding-bottom: 2.5rem; }
+.taxpanel.is-scrolly::after { content: ""; position: sticky; bottom: -1.5rem; left: 0; right: 0; height: 3rem; margin: -3rem -1.4rem -1.5rem; flex: none; background: linear-gradient(to bottom, transparent, var(--surface)); pointer-events: none; }
+.taxpanel:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.taxpanel__head h3 { font-size: 1.2rem; margin-top: .25rem; }
+.taxpanel__alt { font-size: .88rem; color: var(--ink-3); margin-top: .1rem; }
+.taxdef { font-size: .95rem; color: var(--ink-2); border-left: 3px solid var(--accent); padding-left: .9rem; }
+.taxdef__verbs { display: block; margin-top: .35rem; font-size: .82rem; color: var(--ink-3); }
+.taxpanel .beatlabel { margin-bottom: -.5rem; }
+.taxhow { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
+.taxhow li { font-size: .92rem; color: var(--ink-2); padding-left: 1rem; position: relative; }
+.taxhow li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.taxhow strong { color: var(--ink); }
+.taxbylesson { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .7rem; }
+.taxbylesson > li { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: start; }
+.taxbylesson ul { list-style: none; margin: .25rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .25rem; }
+.taxbylesson ul li { font-size: .9rem; color: var(--ink-2); display: grid; grid-template-columns: 2.6rem 1fr; gap: .4rem; }
+.taxbylesson code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: .76rem; color: var(--ink-3); background: none; padding: 0; }
+.taxlesson__t { font-family: var(--display); font-weight: 700; font-size: .93rem; }
+.taxlesson__t a { color: inherit; text-decoration: none; }
+.taxlesson__t a:hover { color: var(--accent-text); text-decoration: underline; }
+.taxchip {
+  display: inline-flex; align-items: center; font-family: var(--display); font-weight: 700; font-size: .72rem; letter-spacing: .04em;
+  padding: .28rem .6rem; border-radius: var(--r-pill); background: var(--accent-wash); color: var(--accent-text);
+  text-decoration: none; white-space: nowrap; margin-top: .1rem;
+}
+.taxchip:hover { background: var(--accent-fill); color: var(--accent-on); }
+@media (prefers-reduced-motion: reduce) { .taxhex polygon, .taxlayer__edge { transition: none; } }
 
 /* ============================================================================
    Course theme - CSC 150
@@ -1235,8 +1848,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page 00a-how-this-course-works.html  va3b7284  ·  build 6cfe995  ·  2026-09-22 00:42 -->
+<div data-build="6cfe995" data-page="00a-how-this-course-works.html" data-version="a3b7284" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1294,7 +1907,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> Anatomy of a lesson</span>
-      <h2>Ten beats, every time</h2>
+      <h2>Ten beats, in this order</h2>
       <p>Tap any of them to find out why it is there. Most of these are doing something specific and slightly unusual, and it is fairer to tell you than to let you guess.</p>
     </div>
     <div class="beatpicker" id="beatpicker"><button class="beatchip" type="button" aria-pressed="true" data-b="0"><span class="beatchip__n">1</span> A one-paragraph summary</button><button class="beatchip" type="button" aria-pressed="false" data-b="1"><span class="beatchip__n">2</span> A guess before you start</button><button class="beatchip" type="button" aria-pressed="false" data-b="2"><span class="beatchip__n">3</span> What you&rsquo;ll be able to do</button><button class="beatchip" type="button" aria-pressed="false" data-b="3"><span class="beatchip__n">4</span> Three cards from earlier</button><button class="beatchip" type="button" aria-pressed="false" data-b="4"><span class="beatchip__n">5</span> The content, in pieces</button><button class="beatchip" type="button" aria-pressed="false" data-b="5"><span class="beatchip__n">6</span> A short video</button><button class="beatchip" type="button" aria-pressed="false" data-b="6"><span class="beatchip__n">7</span> More content, more doing</button><button class="beatchip" type="button" aria-pressed="false" data-b="7"><span class="beatchip__n">8</span> Back to your guess</button><button class="beatchip" type="button" aria-pressed="false" data-b="8"><span class="beatchip__n">9</span> Something real to do</button><button class="beatchip" type="button" aria-pressed="false" data-b="9"><span class="beatchip__n">10</span> Two questions on the way out</button></div>
@@ -1303,11 +1916,40 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       <p id="beatText">-</p>
     </div>
 
+
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-target"/></svg> Every promise, and where it is kept</span>
+      <h2>52 things you will be able to do</h2>
+      <p>Each lesson names what you will be able to do by the end of it. Here are all of them, sorted two ways educators think about learning. Click a shape to see which outcomes sit there and which lessons carry them. You do not need either framework to take this course - they are here because a course that explains its own design ought to show its work.</p>
+    </div>
+
+    <div class="taxgrid">
+      <div class="taxlens">
+        <div class="taxlens__head">
+          <h3>Six kinds of significant learning</h3>
+          <p>L. Dee Fink argued that a course worth taking changes a learner in six ways, and that none sits above the others - each one strengthens the rest. This course was designed with all six in view.</p>
+        </div>
+        <div class="taxfig"><div class="taxwheel" role="group" aria-label="Fink&rsquo;s six kinds of significant learning"><div class="taxhex taxhex--hub tax-c" aria-hidden="true"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Significant Learning</span><span class="taxhex__alt">Fink, 2003</span></div></div><button class="taxhex tax-ul" type="button" data-tax="fink" data-k="L" aria-pressed="true"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Learning How to Learn</span><span class="taxhex__alt">Learn how to learn</span></div></button><button class="taxhex tax-ur" type="button" data-tax="fink" data-k="I" aria-pressed="false"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Integration</span><span class="taxhex__alt">Integrate skills and ideas</span></div></button><button class="taxhex tax-r" type="button" data-tax="fink" data-k="F" aria-pressed="false"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Foundational Knowledge</span><span class="taxhex__alt">Develop foundational knowledge</span></div></button><button class="taxhex tax-lr" type="button" data-tax="fink" data-k="A" aria-pressed="false"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Application</span><span class="taxhex__alt">Build and apply skills</span></div></button><button class="taxhex tax-ll" type="button" data-tax="fink" data-k="C" aria-pressed="false"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Caring</span><span class="taxhex__alt">Care about learning</span></div></button><button class="taxhex tax-l" type="button" data-tax="fink" data-k="H" aria-pressed="false"><svg viewBox="0 0 100 115.47" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,3.5 96.5,30.4 96.5,84 50,110.9 3.5,84 3.5,30.4"/></svg><div class="taxhex__in"><span class="taxhex__name">Human Dimension</span><span class="taxhex__alt">Learn about yourself and others</span></div></button></div></div>
+        <div class="taxpanel" id="tax-fink-L"><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Learning How to Learn</h3><p class="taxpanel__alt">Learn how to learn</p></div><p class="taxdef">Becoming a better student and a self-directed learner - picking up how to keep learning a subject after the course is over.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong>Every lesson opens with a guess</strong> you commit to before you are allowed to read on, and closes by replaying it. You find out what you actually thought.</li><li><strong>A retrieval deck at the start of each lesson</strong> pulls three questions from earlier lessons - never today&rsquo;s - because remembering is a skill that improves with practice, and this page says so out loud.</li><li><strong>The exit check tells you where each question will come back.</strong> The spacing is not hidden machinery; you can watch it work.</li><li><strong><a href="../learning-hub.html">The Learning Hub</a></strong> re-asks the four confidence questions from Week 1 whenever you like, and shows you the change.</li></ul><span class="beatlabel">Outcomes that live here &middot; 1</span><ul class="taxbylesson"><li><a class="taxchip" href="../05-responsibly/17-your-ai-practice.html">Lesson 17</a><div><div class="taxlesson__t"><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a></div><ul><li><code>17.3</code><span>Present evidence of critical evaluation from your own work</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-fink-I" hidden><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Integration</h3><p class="taxpanel__alt">Integrate skills and ideas</p></div><p class="taxdef">Connecting ideas to each other, and connecting what is learned here to the rest of your life and work.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong>The Apply task in most lessons uses your own week</strong> - a prompt you actually wrote (<a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a>), a repair you actually made (<a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a>), three tasks from your own work (<a href="../03-checking/11-the-verification-habit.html">The Verification Habit</a>), the tool you use most (<a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a>).</li><li><strong><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a></strong> assembles every module&rsquo;s decisions into one page you keep: what you use these tools for, what you never paste, how you check, how you disclose.</li><li><strong><a href="../01-intro/01-what-this-even-is.html">What This Even Is</a></strong> starts by placing twelve systems you already use into four rings - so the course connects to things you did not think of as AI.</li></ul><span class="beatlabel">Outcomes that live here &middot; 2</span><ul class="taxbylesson"><li><a class="taxchip" href="../05-responsibly/17-your-ai-practice.html">Lesson 17</a><div><div class="taxlesson__t"><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a></div><ul><li><code>17.1</code><span>Assemble a personal AI-use policy</span></li><li><code>17.2</code><span>Justify tool choices for three recurring tasks</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-fink-F" hidden><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Foundational Knowledge</h3><p class="taxpanel__alt">Develop foundational knowledge</p></div><p class="taxdef">Understanding and remembering the information and ideas the rest of the learning is built on.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong>A full vocabulary</strong> in <a href="../learning-hub.html">the Learning Hub</a>, each term with a plain definition, a why-it-matters line and the lesson it arrives in. Nothing is hidden - a glossary you cannot look ahead in is not a glossary.</li><li><strong>Module 1 builds the mental model first</strong> - what these tools are (<a href="../01-intro/01-what-this-even-is.html">What This Even Is</a>), how they produce a word (<a href="../01-intro/02-the-next-word-machine.html">The Next Word Machine</a>), why they lose the thread (<a href="../01-intro/03-why-it-wanders.html">Why It Wanders</a>) - before asking you to do anything with them.</li><li><strong><a href="../tokenizer.html">The Tokenizer</a></strong> shows you the real tokens a model reads, running in your own browser, so the idea is something you have seen rather than been told.</li></ul><span class="beatlabel">Outcomes that live here &middot; 21</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/01-what-this-even-is.html">Lesson 1</a><div><div class="taxlesson__t"><a href="../01-intro/01-what-this-even-is.html">What This Even Is</a></div><ul><li><code>1.1</code><span>Place AI, machine learning, deep learning and large language models in their correct nesting order</span></li><li><code>1.2</code><span>Distinguish narrow from general AI and say which one every tool in this course is</span></li><li><code>1.3</code><span>Explain in one sentence why a seventy-year-old field produced tools that felt new in the 2020s</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/02-the-next-word-machine.html">Lesson 2</a><div><div class="taxlesson__t"><a href="../01-intro/02-the-next-word-machine.html">The Next Word Machine</a></div><ul><li><code>2.1</code><span>Describe a language model as a next-token predictor rather than a knowledge store</span></li><li><code>2.2</code><span>Distinguish what happens during training from what happens when you press enter</span></li><li><code>2.3</code><span>Explain why the same prompt can produce different output on different runs</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/03-why-it-wanders.html">Lesson 3</a><div><div class="taxlesson__t"><a href="../01-intro/03-why-it-wanders.html">Why It Wanders</a></div><ul><li><code>3.1</code><span>Explain why a model that looks back only a word or two loses coherence over distance</span></li><li><code>3.2</code><span>Describe attention as weighing every position at once rather than the nearest few</span></li><li><code>3.3</code><span>Place the 2017 transformer paper as the hinge between older language models and current ones</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/04-anatomy-of-a-prompt.html">Lesson 4</a><div><div class="taxlesson__t"><a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a></div><ul><li><code>4.1</code><span>Identify the five working components of a prompt: task, audience, format, constraints, examples</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/05-the-landscape.html">Lesson 5</a><div><div class="taxlesson__t"><a href="../01-intro/05-the-landscape.html">The Landscape</a></div><ul><li><code>5.1</code><span>Name the major model families and who makes them</span></li><li><code>5.2</code><span>Distinguish chat, reasoning, and multimodal models by what they are for</span></li><li><code>5.3</code><span>Explain context window and knowledge cutoff in practical terms</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.1</code><span>Explain why fabricated answers come from the same process as correct ones</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/09-models-that-can-actually-look-things-up.html">Lesson 9</a><div><div class="taxlesson__t"><a href="../03-checking/09-models-that-can-actually-look-things-up.html">Models That Can Actually Look Things Up</a></div><ul><li><code>9.1</code><span>Distinguish a bare chat model from a retrieval-grounded one</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/10-where-bias-comes-from.html">Lesson 10</a><div><div class="taxlesson__t"><a href="../03-checking/10-where-bias-comes-from.html">Where Bias Comes From</a></div><ul><li><code>10.1</code><span>Trace output bias to training data, human feedback, and prompt framing</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/12-making-images.html">Lesson 12</a><div><div class="taxlesson__t"><a href="../04-beyond-text/12-making-images.html">Making Images</a></div><ul><li><code>12.2</code><span>Explain why negation and counting fail in image generation</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.2</code><span>Identify where transcription reliably fails: accents, proper nouns, crosstalk, jargon</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/14-working-across-modalities.html">Lesson 14</a><div><div class="taxlesson__t"><a href="../04-beyond-text/14-working-across-modalities.html">Working Across Modalities</a></div><ul><li><code>14.2</code><span>Predict where vision input degrades: handwriting, dense tables, low contrast, skew</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/15-your-data-their-servers.html">Lesson 15</a><div><div class="taxlesson__t"><a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a></div><ul><li><code>15.1</code><span>Describe what happens to submitted text, by vendor and by tier</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Lesson 16</a><div><div class="taxlesson__t"><a href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Attribution, Copyright and Honest Work</a></div><ul><li><code>16.3</code><span>Summarize the unsettled state of copyright in AI output</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-fink-A" hidden><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Application</h3><p class="taxpanel__alt">Build and apply skills</p></div><p class="taxdef">Learning to do something new - a skill, a way of thinking critically, creatively or practically, or how to manage a piece of work.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong>Seventeen Apply tasks, each in a real tool with a named deliverable.</strong> Not one is a worksheet.</li><li><strong>Seventeen interactives</strong> - Prompt Surgery in <a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a>, the Repair Bench in <a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a>, the Probe Kit in <a href="../03-checking/10-where-bias-comes-from.html">Where Bias Comes From</a>, the Stakes Dial in <a href="../03-checking/11-the-verification-habit.html">The Verification Habit</a> - each built so you act before the lesson tells you the answer.</li><li><strong>Five module checkpoints, six routes each.</strong> Routes differ by temperament and medium, never by difficulty, and one rubric of five criteria marks them all.</li></ul><span class="beatlabel">Outcomes that live here &middot; 25</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/04-anatomy-of-a-prompt.html">Lesson 4</a><div><div class="taxlesson__t"><a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a></div><ul><li><code>4.2</code><span>Rewrite a vague prompt into a specified one</span></li><li><code>4.3</code><span>Predict how adding or removing each component changes the output</span></li></ul></div></li><li><a class="taxchip" href="../02-output/06-choosing-a-model-blind.html">Lesson 6</a><div><div class="taxlesson__t"><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></div><ul><li><code>6.1</code><span>Run a blind comparison in LM Arena</span></li><li><code>6.3</code><span>Interpret a leaderboard and name two things it does not measure</span></li></ul></div></li><li><a class="taxchip" href="../02-output/07-iteration-and-repair.html">Lesson 7</a><div><div class="taxlesson__t"><a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a></div><ul><li><code>7.1</code><span>Choose between steering a thread and restarting it</span></li><li><code>7.2</code><span>Use worked examples to lock output format</span></li><li><code>7.3</code><span>Diagnose which prompt component caused a bad output</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.2</code><span>Identify the three conditions that make fabrication most likely in a prompt</span></li><li><code>8.3</code><span>Apply a three-step verification routine to any AI claim before using it</span></li><li><code>8.4</code><span>Decide when a task needs a model with live retrieval instead of a bare chat model</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/09-models-that-can-actually-look-things-up.html">Lesson 9</a><div><div class="taxlesson__t"><a href="../03-checking/09-models-that-can-actually-look-things-up.html">Models That Can Actually Look Things Up</a></div><ul><li><code>9.2</code><span>Check a citation on two axes: does it exist, and does it say that</span></li><li><code>9.3</code><span>Choose the grounded tool when the task demands it</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/10-where-bias-comes-from.html">Lesson 10</a><div><div class="taxlesson__t"><a href="../03-checking/10-where-bias-comes-from.html">Where Bias Comes From</a></div><ul><li><code>10.2</code><span>Design a controlled probe that surfaces a bias</span></li><li><code>10.3</code><span>Distinguish a biased output from a simply wrong one</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/11-the-verification-habit.html">Lesson 11</a><div><div class="taxlesson__t"><a href="../03-checking/11-the-verification-habit.html">The Verification Habit</a></div><ul><li><code>11.1</code><span>Apply a three-step verification routine under time pressure</span></li><li><code>11.2</code><span>Match verification effort to the stakes of the task</span></li><li><code>11.3</code><span>Identify tasks where AI output should not be used at all</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/12-making-images.html">Lesson 12</a><div><div class="taxlesson__t"><a href="../04-beyond-text/12-making-images.html">Making Images</a></div><ul><li><code>12.1</code><span>Prompt an image model using subject, style, composition, and lighting</span></li><li><code>12.3</code><span>Compare two image tools against the same brief</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.1</code><span>Use speech-to-text and text-to-speech for a practical task</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/14-working-across-modalities.html">Lesson 14</a><div><div class="taxlesson__t"><a href="../04-beyond-text/14-working-across-modalities.html">Working Across Modalities</a></div><ul><li><code>14.1</code><span>Use image and document input effectively</span></li><li><code>14.3</code><span>Choose the right input format for the task</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/15-your-data-their-servers.html">Lesson 15</a><div><div class="taxlesson__t"><a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a></div><ul><li><code>15.2</code><span>Locate and set the training opt-out on two tools</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Lesson 16</a><div><div class="taxlesson__t"><a href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Attribution, Copyright and Honest Work</a></div><ul><li><code>16.1</code><span>Apply FLCC&rsquo;s AI-use disclosure expectations to concrete cases</span></li><li><code>16.2</code><span>Cite AI assistance in a standard citation format</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-fink-C" hidden><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Caring</h3><p class="taxpanel__alt">Care about learning</p></div><p class="taxdef">Coming to care about the subject - developing new interests, feelings or values that make you want to keep going.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong>A reflection journal in <a href="../learning-hub.html">the Learning Hub</a></strong> with prompts about specific moments - &ldquo;where did you catch yourself trusting an output you shouldn&rsquo;t have?&rdquo; - rather than general impressions. Entries are dated, kept, and yours to export.</li><li><strong><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a> asks a values question first:</strong> of everything in this course, which single habit will you still be doing in six months?</li><li><strong>Honesty is the price of entry, not a deduction.</strong> Work without an AI-use statement is handed back to finish rather than marked down, and the course holds itself to the same rule: its illustrations say when they are stylized, and captured model output is never tidied.</li></ul></div><div class="taxpanel" id="tax-fink-H" hidden><div class="taxpanel__head"><span class="eyebrow">Fink &middot; significant learning</span><h3>Human Dimension</h3><p class="taxpanel__alt">Learn about yourself and others</p></div><p class="taxdef">Learning something important about yourself and about other people - how the subject changes how you see both.</p><span class="beatlabel">How this course builds it</span><ul class="taxhow"><li><strong><a href="00b-where-youre-starting-from.html">Where You’re Starting From</a></strong> asks where you stand before the course begins, and <a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a> asks again. The difference is yours to read.</li><li><strong><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></strong> asks you to name your favorite tool, then hides the names and lets you vote blind. The reveal is about you, not about the models.</li><li><strong>Two lessons turn to the other person:</strong> whose voice it is (<a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a>) and who deserves to know AI was involved (<a href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Attribution, Copyright and Honest Work</a>).</li><li><strong>Checkpoint routes vary by temperament</strong> - a written brief, a recorded walkthrough, a built artifact - so choosing one is an act of knowing how you work best.</li></ul><span class="beatlabel">Outcomes that live here &middot; 3</span><ul class="taxbylesson"><li><a class="taxchip" href="../02-output/06-choosing-a-model-blind.html">Lesson 6</a><div><div class="taxlesson__t"><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></div><ul><li><code>6.2</code><span>Explain why hiding the model name changes the rating</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.3</code><span>State the consent standard for using another person&rsquo;s voice</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/15-your-data-their-servers.html">Lesson 15</a><div><div class="taxlesson__t"><a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a></div><ul><li><code>15.3</code><span>Apply a personal rule for what never gets pasted</span></li></ul></div></li></ul></div>
+      </div>
+      <div class="taxlens">
+        <div class="taxlens__head">
+          <h3>Bloom&rsquo;s taxonomy, revised</h3>
+          <p>The familiar ladder of thinking, from remembering a fact to creating something new. This course&rsquo;s outcomes climb it: 33 of the 52 sit at Apply or above.</p>
+        </div>
+        <div class="taxfig"><div class="taxpyramid" role="group" aria-label="Bloom&rsquo;s taxonomy, six levels"><div class="taxcap" aria-hidden="true" style="--cap:1.895"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="50,1 60.80,98 39.20,98"/></svg></div><button class="taxlayer" type="button" data-tax="bloom" data-k="C" aria-pressed="false" style="--t:0.170"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="39.20,2 60.80,2 67.13,98 32.87,98"/><polygon class="taxlayer__tint" points="39.20,2 60.80,2 67.13,98 32.87,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">6</span><span class="taxlayer__name">Create</span><span class="taxlayer__n">3</span></div></button><button class="taxlayer" type="button" data-tax="bloom" data-k="E" aria-pressed="false" style="--t:0.144"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="32.87,2 67.13,2 73.47,98 26.53,98"/><polygon class="taxlayer__tint" points="32.87,2 67.13,2 73.47,98 26.53,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">5</span><span class="taxlayer__name">Evaluate</span><span class="taxlayer__n">10</span></div></button><button class="taxlayer" type="button" data-tax="bloom" data-k="An" aria-pressed="false" style="--t:0.118"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="26.53,2 73.47,2 79.80,98 20.20,98"/><polygon class="taxlayer__tint" points="26.53,2 73.47,2 79.80,98 20.20,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">4</span><span class="taxlayer__name">Analyze</span><span class="taxlayer__n">8</span></div></button><button class="taxlayer" type="button" data-tax="bloom" data-k="Ap" aria-pressed="false" style="--t:0.092"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="20.20,2 79.80,2 86.13,98 13.87,98"/><polygon class="taxlayer__tint" points="20.20,2 79.80,2 86.13,98 13.87,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">3</span><span class="taxlayer__name">Apply</span><span class="taxlayer__n">12</span></div></button><button class="taxlayer" type="button" data-tax="bloom" data-k="U" aria-pressed="false" style="--t:0.066"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="13.87,2 86.13,2 92.47,98 7.53,98"/><polygon class="taxlayer__tint" points="13.87,2 86.13,2 92.47,98 7.53,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">2</span><span class="taxlayer__name">Understand</span><span class="taxlayer__n">15</span></div></button><button class="taxlayer" type="button" data-tax="bloom" data-k="R" aria-pressed="true" style="--t:0.040"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon class="taxlayer__edge" points="7.53,2 92.47,2 98.80,98 1.20,98"/><polygon class="taxlayer__tint" points="7.53,2 92.47,2 98.80,98 1.20,98"/></svg><div class="taxlayer__in"><span class="taxlayer__lvl">1</span><span class="taxlayer__name">Remember</span><span class="taxlayer__n">4</span></div></button></div></div>
+        <div class="taxpanel" id="tax-bloom-C" hidden><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 6 of 6</span><h3>Create</h3><p class="taxpanel__alt">3 of 52 outcomes</p></div><p class="taxdef">Produce new or original work. <span class="taxdef__verbs">Verbs you will see: design, assemble, present.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../03-checking/10-where-bias-comes-from.html">Lesson 10</a><div><div class="taxlesson__t"><a href="../03-checking/10-where-bias-comes-from.html">Where Bias Comes From</a></div><ul><li><code>10.2</code><span>Design a controlled probe that surfaces a bias</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/17-your-ai-practice.html">Lesson 17</a><div><div class="taxlesson__t"><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a></div><ul><li><code>17.1</code><span>Assemble a personal AI-use policy</span></li><li><code>17.3</code><span>Present evidence of critical evaluation from your own work</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-bloom-E" hidden><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 5 of 6</span><h3>Evaluate</h3><p class="taxpanel__alt">10 of 52 outcomes</p></div><p class="taxdef">Justify a decision or judge a result against a standard. <span class="taxdef__verbs">Verbs you will see: choose, decide, compare, interpret, match.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../02-output/06-choosing-a-model-blind.html">Lesson 6</a><div><div class="taxlesson__t"><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></div><ul><li><code>6.3</code><span>Interpret a leaderboard and name two things it does not measure</span></li></ul></div></li><li><a class="taxchip" href="../02-output/07-iteration-and-repair.html">Lesson 7</a><div><div class="taxlesson__t"><a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a></div><ul><li><code>7.1</code><span>Choose between steering a thread and restarting it</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.4</code><span>Decide when a task needs a model with live retrieval instead of a bare chat model</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/09-models-that-can-actually-look-things-up.html">Lesson 9</a><div><div class="taxlesson__t"><a href="../03-checking/09-models-that-can-actually-look-things-up.html">Models That Can Actually Look Things Up</a></div><ul><li><code>9.2</code><span>Check a citation on two axes: does it exist, and does it say that</span></li><li><code>9.3</code><span>Choose the grounded tool when the task demands it</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/11-the-verification-habit.html">Lesson 11</a><div><div class="taxlesson__t"><a href="../03-checking/11-the-verification-habit.html">The Verification Habit</a></div><ul><li><code>11.2</code><span>Match verification effort to the stakes of the task</span></li><li><code>11.3</code><span>Identify tasks where AI output should not be used at all</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/12-making-images.html">Lesson 12</a><div><div class="taxlesson__t"><a href="../04-beyond-text/12-making-images.html">Making Images</a></div><ul><li><code>12.3</code><span>Compare two image tools against the same brief</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/14-working-across-modalities.html">Lesson 14</a><div><div class="taxlesson__t"><a href="../04-beyond-text/14-working-across-modalities.html">Working Across Modalities</a></div><ul><li><code>14.3</code><span>Choose the right input format for the task</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/17-your-ai-practice.html">Lesson 17</a><div><div class="taxlesson__t"><a href="../05-responsibly/17-your-ai-practice.html">Your AI Practice</a></div><ul><li><code>17.2</code><span>Justify tool choices for three recurring tasks</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-bloom-An" hidden><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 4 of 6</span><h3>Analyze</h3><p class="taxpanel__alt">8 of 52 outcomes</p></div><p class="taxdef">Draw connections among ideas; take something apart to see how it works. <span class="taxdef__verbs">Verbs you will see: diagnose, trace, predict, identify conditions.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/04-anatomy-of-a-prompt.html">Lesson 4</a><div><div class="taxlesson__t"><a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a></div><ul><li><code>4.3</code><span>Predict how adding or removing each component changes the output</span></li></ul></div></li><li><a class="taxchip" href="../02-output/06-choosing-a-model-blind.html">Lesson 6</a><div><div class="taxlesson__t"><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></div><ul><li><code>6.2</code><span>Explain why hiding the model name changes the rating</span></li></ul></div></li><li><a class="taxchip" href="../02-output/07-iteration-and-repair.html">Lesson 7</a><div><div class="taxlesson__t"><a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a></div><ul><li><code>7.3</code><span>Diagnose which prompt component caused a bad output</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.2</code><span>Identify the three conditions that make fabrication most likely in a prompt</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/10-where-bias-comes-from.html">Lesson 10</a><div><div class="taxlesson__t"><a href="../03-checking/10-where-bias-comes-from.html">Where Bias Comes From</a></div><ul><li><code>10.1</code><span>Trace output bias to training data, human feedback, and prompt framing</span></li><li><code>10.3</code><span>Distinguish a biased output from a simply wrong one</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.2</code><span>Identify where transcription reliably fails: accents, proper nouns, crosstalk, jargon</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/14-working-across-modalities.html">Lesson 14</a><div><div class="taxlesson__t"><a href="../04-beyond-text/14-working-across-modalities.html">Working Across Modalities</a></div><ul><li><code>14.2</code><span>Predict where vision input degrades: handwriting, dense tables, low contrast, skew</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-bloom-Ap" hidden><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 3 of 6</span><h3>Apply</h3><p class="taxpanel__alt">12 of 52 outcomes</p></div><p class="taxdef">Use information in a new situation. <span class="taxdef__verbs">Verbs you will see: use, run, rewrite, apply, locate.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/04-anatomy-of-a-prompt.html">Lesson 4</a><div><div class="taxlesson__t"><a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a></div><ul><li><code>4.2</code><span>Rewrite a vague prompt into a specified one</span></li></ul></div></li><li><a class="taxchip" href="../02-output/06-choosing-a-model-blind.html">Lesson 6</a><div><div class="taxlesson__t"><a href="../02-output/06-choosing-a-model-blind.html">Choosing a Model, Blind</a></div><ul><li><code>6.1</code><span>Run a blind comparison in LM Arena</span></li></ul></div></li><li><a class="taxchip" href="../02-output/07-iteration-and-repair.html">Lesson 7</a><div><div class="taxlesson__t"><a href="../02-output/07-iteration-and-repair.html">Iteration and Repair</a></div><ul><li><code>7.2</code><span>Use worked examples to lock output format</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.3</code><span>Apply a three-step verification routine to any AI claim before using it</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/11-the-verification-habit.html">Lesson 11</a><div><div class="taxlesson__t"><a href="../03-checking/11-the-verification-habit.html">The Verification Habit</a></div><ul><li><code>11.1</code><span>Apply a three-step verification routine under time pressure</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/12-making-images.html">Lesson 12</a><div><div class="taxlesson__t"><a href="../04-beyond-text/12-making-images.html">Making Images</a></div><ul><li><code>12.1</code><span>Prompt an image model using subject, style, composition, and lighting</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.1</code><span>Use speech-to-text and text-to-speech for a practical task</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/14-working-across-modalities.html">Lesson 14</a><div><div class="taxlesson__t"><a href="../04-beyond-text/14-working-across-modalities.html">Working Across Modalities</a></div><ul><li><code>14.1</code><span>Use image and document input effectively</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/15-your-data-their-servers.html">Lesson 15</a><div><div class="taxlesson__t"><a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a></div><ul><li><code>15.2</code><span>Locate and set the training opt-out on two tools</span></li><li><code>15.3</code><span>Apply a personal rule for what never gets pasted</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Lesson 16</a><div><div class="taxlesson__t"><a href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Attribution, Copyright and Honest Work</a></div><ul><li><code>16.1</code><span>Apply FLCC&rsquo;s AI-use disclosure expectations to concrete cases</span></li><li><code>16.2</code><span>Cite AI assistance in a standard citation format</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-bloom-U" hidden><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 2 of 6</span><h3>Understand</h3><p class="taxpanel__alt">15 of 52 outcomes</p></div><p class="taxdef">Explain ideas and concepts in your own words. <span class="taxdef__verbs">Verbs you will see: explain, describe, distinguish, summarize.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/01-what-this-even-is.html">Lesson 1</a><div><div class="taxlesson__t"><a href="../01-intro/01-what-this-even-is.html">What This Even Is</a></div><ul><li><code>1.1</code><span>Place AI, machine learning, deep learning and large language models in their correct nesting order</span></li><li><code>1.2</code><span>Distinguish narrow from general AI and say which one every tool in this course is</span></li><li><code>1.3</code><span>Explain in one sentence why a seventy-year-old field produced tools that felt new in the 2020s</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/02-the-next-word-machine.html">Lesson 2</a><div><div class="taxlesson__t"><a href="../01-intro/02-the-next-word-machine.html">The Next Word Machine</a></div><ul><li><code>2.1</code><span>Describe a language model as a next-token predictor rather than a knowledge store</span></li><li><code>2.2</code><span>Distinguish what happens during training from what happens when you press enter</span></li><li><code>2.3</code><span>Explain why the same prompt can produce different output on different runs</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/03-why-it-wanders.html">Lesson 3</a><div><div class="taxlesson__t"><a href="../01-intro/03-why-it-wanders.html">Why It Wanders</a></div><ul><li><code>3.1</code><span>Explain why a model that looks back only a word or two loses coherence over distance</span></li><li><code>3.2</code><span>Describe attention as weighing every position at once rather than the nearest few</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/05-the-landscape.html">Lesson 5</a><div><div class="taxlesson__t"><a href="../01-intro/05-the-landscape.html">The Landscape</a></div><ul><li><code>5.2</code><span>Distinguish chat, reasoning, and multimodal models by what they are for</span></li><li><code>5.3</code><span>Explain context window and knowledge cutoff in practical terms</span></li></ul></div></li><li><a class="taxchip" href="../02-output/08-why-ai-makes-things-up.html">Lesson 8</a><div><div class="taxlesson__t"><a href="../02-output/08-why-ai-makes-things-up.html">Why AI Makes Things Up</a></div><ul><li><code>8.1</code><span>Explain why fabricated answers come from the same process as correct ones</span></li></ul></div></li><li><a class="taxchip" href="../03-checking/09-models-that-can-actually-look-things-up.html">Lesson 9</a><div><div class="taxlesson__t"><a href="../03-checking/09-models-that-can-actually-look-things-up.html">Models That Can Actually Look Things Up</a></div><ul><li><code>9.1</code><span>Distinguish a bare chat model from a retrieval-grounded one</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/12-making-images.html">Lesson 12</a><div><div class="taxlesson__t"><a href="../04-beyond-text/12-making-images.html">Making Images</a></div><ul><li><code>12.2</code><span>Explain why negation and counting fail in image generation</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/15-your-data-their-servers.html">Lesson 15</a><div><div class="taxlesson__t"><a href="../05-responsibly/15-your-data-their-servers.html">Your Data, Their Servers</a></div><ul><li><code>15.1</code><span>Describe what happens to submitted text, by vendor and by tier</span></li></ul></div></li><li><a class="taxchip" href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Lesson 16</a><div><div class="taxlesson__t"><a href="../05-responsibly/16-attribution-copyright-and-honest-work.html">Attribution, Copyright and Honest Work</a></div><ul><li><code>16.3</code><span>Summarize the unsettled state of copyright in AI output</span></li></ul></div></li></ul></div><div class="taxpanel" id="tax-bloom-R"><div class="taxpanel__head"><span class="eyebrow">Bloom &middot; level 1 of 6</span><h3>Remember</h3><p class="taxpanel__alt">4 of 52 outcomes</p></div><p class="taxdef">Recall facts and basic concepts. <span class="taxdef__verbs">Verbs you will see: name, identify, state, place.</span></p><span class="beatlabel">Outcomes at this level, by lesson</span><ul class="taxbylesson"><li><a class="taxchip" href="../01-intro/03-why-it-wanders.html">Lesson 3</a><div><div class="taxlesson__t"><a href="../01-intro/03-why-it-wanders.html">Why It Wanders</a></div><ul><li><code>3.3</code><span>Place the 2017 transformer paper as the hinge between older language models and current ones</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/04-anatomy-of-a-prompt.html">Lesson 4</a><div><div class="taxlesson__t"><a href="../01-intro/04-anatomy-of-a-prompt.html">Anatomy of a Prompt</a></div><ul><li><code>4.1</code><span>Identify the five working components of a prompt: task, audience, format, constraints, examples</span></li></ul></div></li><li><a class="taxchip" href="../01-intro/05-the-landscape.html">Lesson 5</a><div><div class="taxlesson__t"><a href="../01-intro/05-the-landscape.html">The Landscape</a></div><ul><li><code>5.1</code><span>Name the major model families and who makes them</span></li></ul></div></li><li><a class="taxchip" href="../04-beyond-text/13-voice-and-audio.html">Lesson 13</a><div><div class="taxlesson__t"><a href="../04-beyond-text/13-voice-and-audio.html">Voice and Audio</a></div><ul><li><code>13.3</code><span>State the consent standard for using another person&rsquo;s voice</span></li></ul></div></li></ul></div>
+      </div>
+    </div>
+    <p class="hint">Fink, L. D. (2003, rev. 2013). <em>Creating Significant Learning Experiences.</em> Anderson and Krathwohl, eds. (2001). <em>A Taxonomy for Learning, Teaching, and Assessing.</em> Each outcome is placed once, by its verb and its object.</p>
+
+
     <div class="callout">
       <div class="icontile"><svg class="i"><use href="#i-target"/></svg></div>
       <div class="callout__body">
         <p class="callout__label">What is actually graded</p>
-        <p><strong>Graded:</strong> the fifteen Apply deliverables and the final portfolio. <strong>Not graded:</strong> the opening predictions, the warm-up decks, the exit questions, the Week 1 inventory, and everything in the Learning Hub. Roughly four fifths of what you do in this course is ungraded on purpose - low-stakes practice is where the learning happens, and grading it would only teach you to guess safely.</p>
+        <p><strong>Graded:</strong> five module checkpoints, a handful of discussions and labs along the way, and the final capstone. <strong>Not graded:</strong> the Apply tasks, the opening predictions, the warm-up decks, the exit questions, the Week 1 inventory, and everything in the Learning Hub.</p>
+        <p>Roughly four fifths of what you do in this course is ungraded on purpose - low-stakes practice is where the learning happens, and grading it would only teach you to guess safely. The Apply tasks are the clearest case: nobody collects them, and the checkpoints are built out of them. Skip the practice and the checkpoint is where you find out. There is an optional workbook for each module if you would rather do that thinking on paper - also not collected, also not graded.</p>
       </div>
     </div>
 
@@ -1481,7 +2123,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   </section>
 
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; Week 1</span>
+    <span>CSC 150 &middot; AI Foundations &middot; Week 1 &middot; <span class="ver" title="page version a3b7284, build 6cfe995, 2026-09-22 00:42">va3b7284</span></span>
     <span class="row" style="gap:.4rem">Next: <a href="../01-intro/01-what-this-even-is.html">Lesson 1 - What This Even Is</a> <svg class="i"><use href="#i-arrow-right"/></svg></span>
   </footer>
 </main>
@@ -1496,7 +2138,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
  *
  * Markup it expects:
  *   <div class="embed embed--facade"
- *        data-video="VIDEO_ID"
+ *        data-video="VIDEO_ID"              (YouTube) OR
+ *        data-embed="https://..."           (any other player's embed URL)
  *        data-title="What the video is"
  *        data-sub="Demo · 2:40"            (optional)
  *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
@@ -1518,7 +2161,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     var b = document.createElement("button");
     b.type = "button";
     b.className = "facade" + (poster ? "" : " facade--noposter");
-    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.setAttribute("aria-label", "Play: " + title +
+      (el.getAttribute("data-video")
+        ? ". The video loads from YouTube only after this."
+        : ". The video loads only after this."));
     b.innerHTML =
       (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
       '<span class="facade__scrim"></span>' +
@@ -1537,11 +2183,25 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   function play(el) {
+    /* Two sources, one behavior. data-video is a YouTube id and gets the
+       nocookie host built for it; data-embed is any other player's own embed
+       URL and is used exactly as given, because Kaltura, YuJa, Panopto and
+       Brightspace all sign their URLs differently and none of that is ours to
+       reconstruct.
+
+       The click-to-load part is the point either way: no request leaves the
+       page for anybody's server until the learner asks for the video. */
     var id = el.getAttribute("data-video");
-    if (!id) return;
+    var url = el.getAttribute("data-embed");
+    if (!id && !url) return;
     var start = el.getAttribute("data-start");
-    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var src;
+    if (url) {
+      src = url + (url.indexOf("?") === -1 ? "?" : "&") + "autoplay=1";
+    } else {
+      src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+            "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    }
     var f = document.createElement("iframe");
     f.setAttribute("src", src);
     f.setAttribute("title", el.getAttribute("data-title") || "Video");
@@ -1626,6 +2286,44 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     } else { applyLmsMode(); }
   }
 
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
   if (window.parent === window) return;          /* not embedded; nothing more */
 
   var TAG = "csc150";
@@ -1691,6 +2389,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     if (host.chrome) r.setAttribute("data-host-chrome", "1");
     if (host.course) r.setAttribute("data-course-id", host.course);
     applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
     if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
       var el = document.getElementById(String(d.hash).replace(/^#/, ""));
       if (el) el.scrollIntoView({ block: "start" });
@@ -1740,9 +2439,27 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     document.addEventListener(ev, function () { touched = true; }, true);
   });
 
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
   var native = Element.prototype.scrollIntoView;
   Element.prototype.scrollIntoView = function (arg) {
-    if (!touched) return native.apply(this, arguments);
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
     try {
       var r = this.getBoundingClientRect();
       var top = r.top + (window.scrollY || 0);
@@ -1815,6 +2532,18 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     return max;
   }
 
+  /* Applying the reservation is its own step because it is not always wanted.
+     A panel can have a one-way entry state - Class Arena's default picker,
+     which the learner leaves once and never comes back to - and holding that
+     state inside the height its later states need leaves a screen of white
+     under three rows of chips. prime's `active` predicate answers "is the
+     reservation wanted right now"; call Steady.refresh(el) when the answer
+     changes. No predicate means always, which is what every other panel wants. */
+  function applyReserve(rec) {
+    var on = rec.max > 0 && (!rec.active || rec.active());
+    rec.el.style.minHeight = on ? rec.max + "px" : "";
+  }
+
   var Steady = {
     /* render(i) paints state i into el. measureAll leaves el in the LAST state
        it rendered, so somebody has to put it back.
@@ -1838,12 +2567,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
        measurement pass has already trampled. That is how Class Arena came to
        open on round three - the picker was visible, but ix had been left at 2
        by the last state measured. */
-    prime: function (el, n, render, save, restore) {
+    prime: function (el, n, render, save, restore, active) {
       if (!el || !n) return 0;
       var rec = null;
       for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
-      if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
+      if (!rec) { rec = { el: el, n: n, render: render, w: 0, max: 0 }; primed.push(rec); }
       rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
+      rec.active = active;
 
       /* A demo inside an unopened prediction gate is display:none, so every
          state measures zero. Reserving 0px would be harmless but misleading;
@@ -1851,8 +2581,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
          moment the gate opens. */
       var snap = save ? save() : null;
       var max = measureAll(el, n, render);
-      if (max > 0) el.style.minHeight = max + "px";
+      rec.max = max;
       if (restore) restore(snap);
+      applyReserve(rec);
       rec.w = el.getBoundingClientRect().width;
 
       /* A height measured at the wrong width is the wrong height, and these
@@ -1869,14 +2600,22 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           rec.w = w;
           el.style.minHeight = "";
           var sn = rec.save ? rec.save() : null;
-          var m = measureAll(el, rec.n, rec.render);
-          if (m > 0) el.style.minHeight = m + "px";
+          rec.max = measureAll(el, rec.n, rec.render);
           if (rec.restore) rec.restore(sn);
+          applyReserve(rec);
           rec.w = el.getBoundingClientRect().width;
         });
         rec.ro.observe(el);
       }
       return max;
+    },
+
+    /* Re-ask a primed element's `active` predicate. Cheap: no re-measuring,
+       just the reservation going on or off. */
+    refresh: function (el) {
+      for (var i = 0; i < primed.length; i++) {
+        if (primed[i].el === el) { applyReserve(primed[i]); return; }
+      }
     },
 
     hold: function (el) {
@@ -1891,8 +2630,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       primed.forEach(function (p) {
         var sn = p.save ? p.save() : null;
         p.el.style.minHeight = "";
-        p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
+        p.max = measureAll(p.el, p.n, p.render);
         if (p.restore) p.restore(sn);
+        applyReserve(p);
       });
     },
 
@@ -1914,9 +2654,36 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 })();
 
 </script>
+<script>
+/* One copy button, wherever a page needs one.
+
+   Lives in shared/ because the same control now appears in two places that do
+   not share a stylesheet or a script: the prompt block on a Discussion or Lab
+   page, and the same prompt lifted into a lesson's Apply beat. It was in
+   build/task_js.js and so existed only on the task pages - which is how the
+   lesson version came to render the prompt with a Copy button that did
+   nothing.
+
+   Delegated from the document, so markup added after load still works. */
+(function () {
+  "use strict";
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-copy]");
+    if (!b) return;
+    var el = document.getElementById(b.getAttribute("data-copy"));
+    if (!el || !navigator.clipboard) return;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      var was = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(function () { b.textContent = was; }, 1600);
+    });
+  });
+})();
+
+</script>
 
 <script>
-var BEATS=[["A one-paragraph summary", "Every lesson opens with a short paragraph saying what it is about, before anything else - including the question that gates the page. It tells you the territory, never the verdict: if it gave away the answer to the question underneath it, the question would be pointless. Use it to decide whether you have time for this now, and to find your way back to something weeks later."], ["A guess before you start", "Every lesson opens with one question you are not expected to know the answer to, and the rest of the page will not open until you commit to a guess and a one-line reason. This is not a hazing ritual. Guessing wrong <em>before<\/em> you are taught something makes the correct answer stick measurably harder than reading it cold - it is one of the better-replicated findings in learning research. There is always a skip link. Using it costs you nothing but the effect."], ["What you&rsquo;ll be able to do", "Four or five specific, checkable things, each tied to one of the four course outcomes. They are written as verbs on purpose. If you cannot do them by the end of the lesson, the lesson failed - tell me, because that is useful information."], ["Three cards from earlier", "A small deck of questions from previous lessons, some recent, some from weeks ago. They are drawn from a pool rather than written fresh for the day. Students find this mildly irritating in week three and are glad of it in week twelve, which is roughly the point. A card will not swipe away until you have attempted it or tapped &ldquo;not sure yet&rdquo; - the attempt is what does the work, not the score."], ["The content, in pieces", "Never more than a few minutes of reading before something asks you to click, drag, sort or predict. If you find yourself scrolling through a wall of text, that is a bug and I want to hear about it."], ["A short video", "Two to three minutes, landscape, captioned, with a full transcript underneath. Every video has a declared job - a demonstration, a concept, or just me talking to you. <strong>You can finish any lesson without ever pressing play.<\/strong> The video supports the page; it never carries it."], ["More content, more doing", "The second half, usually with the harder interactive in it. This is where the lesson earns its keep."], ["Back to your guess", "At the moment the content answers the opening question, you get shown what you predicted and the reason you typed. This is the beat that makes the guess worth making; without it the opening question is just a quiz."], ["Something real to do", "One task in an actual tool, with an actual deliverable. Usually ten to twenty minutes. These are the graded part of the course."], ["Two questions on the way out", "Ungraded. They go into the pool and come back at you weeks later without warning, in a lesson you would not have connected them to. That is the design, not an accident, and the page tells you which lessons they will resurface in."]];
+var BEATS=[["A one-paragraph summary", "Every lesson opens with a short paragraph saying what it is about, before anything else - including the question that gates the page. It tells you the territory, never the verdict: if it gave away the answer to the question underneath it, the question would be pointless. Use it to decide whether you have time for this now, and to find your way back to something weeks later."], ["A guess before you start", "Every lesson opens with one question you are not expected to know the answer to, and the rest of the page will not open until you commit to a guess and a one-line reason. This is not a hazing ritual. Guessing wrong <em>before<\/em> you are taught something makes the correct answer stick measurably harder than reading it cold - it is one of the better-replicated findings in learning research. There is always a skip link. Using it costs you nothing but the effect."], ["What you&rsquo;ll be able to do", "Four or five specific, checkable things, each tied to one of the four course outcomes. They are written as verbs on purpose. If you cannot do them by the end of the lesson, the lesson failed - tell me, because that is useful information."], ["Three cards from earlier", "A small deck of questions from previous lessons, some from the lesson just behind you, some from much further back. They are drawn from a pool rather than written fresh for the day. Students find this mildly irritating in week three and are glad of it in week twelve, which is roughly the point. A card will not swipe away until you have attempted it or tapped &ldquo;not sure yet&rdquo; - the attempt is what does the work, not the score."], ["The content, in pieces", "Never more than a few minutes of reading before something asks you to click, drag, sort or predict. If you find yourself scrolling through a wall of text, that is a bug and I want to hear about it."], ["A short video", "Two to three minutes, landscape, captioned, with a full transcript underneath. Every video has a declared job - a demonstration, a concept, or just me talking to you. <strong>You can finish any lesson without ever pressing play.<\/strong> The video supports the page; it never carries it. Not every lesson has one, and where there is none this beat is absent rather than sitting there empty - so some lessons run nine."], ["More content, more doing", "The second half, usually with the harder interactive in it. This is where the lesson earns its keep."], ["Back to your guess", "At the moment the content answers the opening question, you get shown what you predicted and the reason you typed. This is the beat that makes the guess worth making; without it the opening question is just a quiz."], ["Something real to do", "One task in an actual tool, with an actual deliverable. Usually ten to twenty minutes. These are the graded part of the course."], ["Two questions on the way out", "Ungraded. They go into the pool and come back at you weeks later without warning, in a lesson you would not have connected them to. That is the design, not an accident, and the page tells you which lessons they will resurface in."]];
 
 (function () {
   "use strict";
@@ -2018,6 +2785,32 @@ var BEATS=[["A one-paragraph summary", "Every lesson opens with a short paragrap
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   onScroll();
+
+  /* ---- two taxonomies over the outcomes ----
+     Each shape is a button carrying data-tax (which diagram) and data-k (which
+     kind or level). The panels are already in the page, written by
+     build/taxonomy.py, one per key, all but the first hidden. Clicking swaps
+     which one shows - nothing is fetched or built here. */
+  Array.prototype.slice.call(document.querySelectorAll("[data-tax]")).forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var tax = btn.getAttribute("data-tax"), k = btn.getAttribute("data-k");
+      Array.prototype.slice.call(document.querySelectorAll('[data-tax="' + tax + '"]')).forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b === btn));
+      });
+      Array.prototype.slice.call(document.querySelectorAll('[id^="tax-' + tax + '-"]')).forEach(function (p) {
+        p.hidden = (p.id !== "tax-" + tax + "-" + k);
+        if (!p.hidden) taxScrolly(p);
+      });
+    });
+  });
+  // A panel only becomes a keyboard scroll stop when it actually overflows;
+  // the ones that fit stay out of the tab order.
+  function taxScrolly(p) {
+    var over = p.scrollHeight > p.clientHeight + 2;
+    p.classList.toggle("is-scrolly", over);
+    if (over) p.setAttribute("tabindex", "0"); else p.removeAttribute("tabindex");
+  }
+  Array.prototype.slice.call(document.querySelectorAll(".taxpanel:not([hidden])")).forEach(taxScrolly);
 })();
 
 </script>
