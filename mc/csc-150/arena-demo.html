@@ -2914,6 +2914,86 @@ html[data-theme="dark"] .sidetrip {
   text-align: center;
 }
 
+/* L12 . Developing out of static
+   Two canvases, a scene picker, two seed pickers and one slider. Everything
+   on the panel is drawn and noised in JavaScript, so there is no image file
+   here and nothing to keep true as the tools change. `image-rendering:
+   pixelated` is deliberate: scaled up smoothly, the noise reads as blur, and
+   the individual grains are the thing worth seeing. */
+.stpick   { display: flex; flex-direction: column; gap: .35rem; }
+.stbtns   { display: flex; flex-wrap: wrap; gap: .4rem; }
+.stbtn {
+  font: inherit; font-size: .82rem; line-height: 1.2; cursor: pointer;
+  padding: .4rem .7rem; border-radius: var(--r-pill);
+  border: 1px solid var(--line-strong); background: var(--surface);
+  color: var(--ink-2);
+}
+.stbtn:hover { border-color: var(--accent); color: var(--ink); }
+.stbtn[aria-pressed="true"] {
+  background: var(--accent-wash); border-color: var(--accent);
+  color: var(--accent-text); font-weight: 700;
+}
+.stseeds { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .5rem; }
+.stseed  { display: flex; flex-direction: column; gap: .3rem; }
+.stpanes { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin: .8rem 0 .5rem; }
+.stpane  { margin: 0; display: flex; flex-direction: column; gap: .35rem; }
+.stpane canvas {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--surface-2); image-rendering: pixelated;
+}
+.stslider { display: flex; align-items: center; gap: .7rem; }
+.stslider .blab { margin: 0; flex: none; }
+.stslider input[type="range"] { flex: 1; accent-color: var(--accent); min-width: 0; }
+.stread {
+  margin: .6rem 0 0; font-size: .88rem; line-height: 1.6; color: var(--ink-2);
+}
+.stback {
+  margin-top: .8rem; padding: .8rem .95rem;
+  background: var(--surface-2); border-radius: var(--r-sm);
+  border-left: 3px solid var(--accent);
+}
+.stback p { margin: 0; font-size: .9rem; line-height: 1.6; }
+.stback p + p { margin-top: .45rem; }
+@media (max-width: 34rem) {
+  .stseeds, .stpanes { grid-template-columns: 1fr; }
+}
+
+/* L14 . Format Triage - drag and drop, and a debrief that does not rely on
+   colour.
+
+   Every drag rule is scoped to #triage on purpose. .sdchip, .sdplaced and
+   .ftpool are shared with Module 3's Probe Kit and Module 5's Paste Test,
+   which are click-only, and a grab cursor on a chip nobody can drag is a
+   promise the panel does not keep. */
+#triage .sdchip, #triage .sdplaced { cursor: grab; }
+#triage .sdchip:active, #triage .sdplaced:active { cursor: grabbing; }
+#triage .is-drag { opacity: .4; }
+#triage .ftbin.is-over {
+  border-color: var(--accent); background: var(--accent-wash);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+#triage .ftpool {
+  border: 1px dashed transparent; border-radius: var(--r-sm); padding: .35rem;
+}
+#triage .ftpool.is-armed { border-color: var(--line-strong); }
+#triage .ftpool.is-over { border-color: var(--accent); background: var(--accent-wash); }
+
+/* The debrief badge. Icon plus word plus colour - three cues, and the row is
+   still readable with any one of them missing. is-diff and is-open are new
+   states that Module 5's reuse of .ftrow never sets, so nothing there moves. */
+.ftrow__s {
+  display: flex; align-items: center; gap: .4rem; margin: 0 0 .35rem;
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase;
+}
+.ftrow__s .i { flex: none; width: 1.05em; height: 1.05em; }
+.ftrow.is-same .ftrow__s { color: var(--good); }
+.ftrow.is-diff { border-left-color: var(--bad); }
+.ftrow.is-diff .ftrow__s { color: var(--bad); }
+.ftrow.is-open { border-left-color: var(--warn); }
+.ftrow.is-open .ftrow__s { color: var(--warn); }
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -2960,8 +3040,8 @@ html[data-theme="dark"] .sidetrip {
 }
 
 </style>
-<!-- CSC 150  page arena-demo.html  va6dcafd  ·  build 3e3916a  ·  2026-09-15 02:30 -->
-<div data-build="3e3916a" data-page="arena-demo.html" data-version="a6dcafd" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page arena-demo.html  v8503090  ·  build 6cfe995  ·  2026-09-22 00:42 -->
+<div data-build="6cfe995" data-page="arena-demo.html" data-version="8503090" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -3057,7 +3137,7 @@ html[data-theme="dark"] .sidetrip {
   </section>
 
   <footer class="lessonfoot">
-    <span>CSC 150 &middot; AI Foundations &middot; FLCC Computing Sciences &middot; <span class="ver" title="page version a6dcafd, build 3e3916a, 2026-09-15 02:30">va6dcafd</span></span>
+    <span>CSC 150 &middot; AI Foundations &middot; FLCC Computing Sciences &middot; <span class="ver" title="page version 8503090, build 6cfe995, 2026-09-22 00:42">v8503090</span></span>
     <span>A demonstration, with written examples</span>
   </footer>
 </main></div>

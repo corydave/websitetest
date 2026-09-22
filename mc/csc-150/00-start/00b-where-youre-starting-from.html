@@ -1,10 +1,12 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Where You’re Starting From</title>
+<link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
-html,body{margin:0;padding:0;background:#f7f6f4;}
+html,body{margin:0;padding:0;background:#ffffff;}
 @media (prefers-color-scheme: dark){html:not([data-theme="light"]){background:#121110;}}
 html[data-theme="dark"]{background:#121110;}
 /* ============================================================================
@@ -17,7 +19,13 @@ html[data-theme="dark"]{background:#121110;}
 :root {
   /* Neutrals - very slightly warm, so they sit under orange, blue and olive
      without any of the three reading as a clash. */
-  --ground:      #f7f6f4;
+  /* The page ground is white, and so are the cards on it. That is deliberate
+     and it is the reason --shadow-1 below carries a hairline ring: with a warm
+     grey ground the cards were defined by the contrast between #f7f6f4 and
+     white, and taking the grey away removes exactly that. Readers said the
+     grey read as busy rather than calm, which is fair - but a card has to be
+     bounded by something, so the boundary moved from the ground to the edge. */
+  --ground:      #ffffff;
   --surface:     #ffffff;
   --surface-2:   #f0eeea;   /* inset wells, quiet fills */
   --surface-3:   #e7e4df;   /* pressed / track */
@@ -37,8 +45,15 @@ html[data-theme="dark"]{background:#121110;}
   --bad-soft:  #fbe9e7;
 
   /* Elevation */
-  --shadow-1: 0 1px 2px rgba(28,26,24,.05), 0 2px 6px rgba(28,26,24,.05);
-  --shadow-2: 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.08);
+  /* Both of these open with a 1px spread ring, which draws a hairline on every
+     card without touching layout the way a real border would - no box-sizing
+     surprise, no rule to add to a dozen separate card selectors. It is also
+     the crisper of the two ways to bound a white card on white: a blur alone
+     goes muddy at this contrast, and the feedback asked for crisp.
+     The dark palette redefines these further down and gets no ring, because
+     there the surface is already lighter than the ground. */
+  --shadow-1: 0 0 0 1px #e6e2dc, 0 1px 2px rgba(28,26,24,.04), 0 2px 6px rgba(28,26,24,.04);
+  --shadow-2: 0 0 0 1px #e0dbd4, 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.07);
   --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
   --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
 
@@ -118,6 +133,23 @@ p { margin: 0; }
 p + p { margin-top: .9em; }
 
 a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==text== in the markdown. The browser default for <mark> is a flat yellow
+   that fights every surface on this site, so it is restyled to the same accent
+   wash the Brightspace converter at md.flccarcade.com uses - one highlight,
+   the same one, whether a sentence is read on a lesson page or in Brightspace.
+   Colour comes from the theme, so each course gets its own. */
+mark { background: var(--accent-wash); color: var(--accent-text);
+       padding: .05em .25em; border-radius: 4px; }
+
+/* The hand-in card on a checkpoint. Ships hidden; the LMS supplies the link.
+   [hidden] is respected explicitly because this element is display:flex, and a
+   display rule beats the browser's default hidden{display:none} every time -
+   which is how a card meant to be invisible shows up with a dead link in it. */
+.handin { display: flex; gap: .9rem; align-items: center; margin: 1.5rem 0 0;
+          padding: 1.1rem 1.3rem; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 15px; }
+.handin[hidden] { display: none; }
 
 :where(button, a, input, textarea, [tabindex]):focus-visible {
   outline: 3px solid var(--accent);
@@ -403,7 +435,13 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   line-height: 1.4;
 }
 
-.answers { display: flex; flex-wrap: wrap; gap: .5rem; }
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
 .answer {
   font: inherit;
   font-size: .92rem;
@@ -413,6 +451,7 @@ a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-
   border-radius: var(--r-sm);
   padding: .55rem .95rem;
   cursor: pointer;
+  text-align: left;
   transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
 }
 .answer:hover:not([disabled]) { background: var(--accent-wash); }
@@ -1085,6 +1124,108 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
 .ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
 
+/* -- Vocabulary: the A-Z index -------------------------------------------- */
+/* A second view of the same terms. Both views are in the DOM and one is always
+   hidden, so nothing here can be reached while the lesson-order list shows. */
+.vviews { margin: 0 0 1.1rem; }
+
+.vaz { display: flex; flex-direction: column; gap: .3rem; }
+.vaz__intro { margin: 0 0 .6rem; }
+.vaz__block { display: block; }
+.vaz__letter {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent-text);
+  margin: .9rem 0 .35rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--line);
+}
+.vaz__block:first-of-type .vaz__letter { margin-top: 0; }
+
+/* Multi-column so 68 words fit on a screen, which is the entire point of this
+   view. Columns rather than a grid: a word and its module tag must not be
+   split across a column break. */
+.vaz__list {
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: var(--gap-m);
+}
+@media (min-width: 900px) { .vaz__list { columns: 3; } }
+@media (max-width: 520px) { .vaz__list { columns: 1; } }
+
+.vaz__item {
+  break-inside: avoid;
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .2rem 0;
+  font-size: .94rem;
+  line-height: 1.45;
+}
+.vaz__link { color: var(--ink); text-decoration-color: var(--line-strong); }
+.vaz__link:hover { color: var(--accent-text); text-decoration-color: currentColor; }
+/* The tag follows the word directly rather than being flushed to the column
+   edge. Flushed right, it aligned neatly and left a canyon between a short word
+   and its module - and the whole job of this tag is to be read as part of the
+   word it belongs to. Proximity beats alignment here. */
+.vaz__mod {
+  flex: none;
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.vaz__none { margin: .6rem 0 0; }
+
+/* The reset does not cover flex and grid children, the same reason .ventry
+   needed this. Without it a hidden item still takes a row. */
+.vaz[hidden], .vlist[hidden], .vaz__block[hidden], .vaz__item[hidden],
+.vaz__none[hidden], .vlistnone[hidden], .vdraftnote[hidden] { display: none; }
+.vlistnone, .vaz__none { margin: .8rem 0 0; }
+
+/* -- Vocabulary: the course filter ---------------------------------------- */
+.vchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .9rem; }
+.vchip {
+  font: inherit; font-size: .8rem; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.vchip:hover { border-color: var(--accent); color: var(--ink); }
+.vchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vchip.is-on {
+  background: var(--accent-fill); border-color: var(--accent-fill);
+  color: var(--accent-on); font-weight: 700;
+}
+.vchip__n { font-variant-numeric: tabular-nums; opacity: .75; }
+/* Dashed, the same language the draft entries use, so "provisional" reads the
+   same way wherever it appears on this page. */
+.vchip--draft { border-style: dashed; }
+.vchip--draft.is-on { border-style: solid; }
+/* The draft marker rides on the chip so the count is never read as a finished
+   glossary. It is the same word the group heading and every entry carry. */
+.vchip__tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--warn);
+}
+.vchip.is-on .vchip__tag { color: var(--accent-on); opacity: .85; }
+
+/* -- Vocabulary: draft entries -------------------------------------------- */
+.vgroup--draft { color: var(--warn); }
+.vdraftnote {
+  margin: 0 0 .3rem; padding: .75rem .85rem;
+  background: var(--warn-soft); border-radius: var(--r-sm);
+  line-height: 1.55;
+}
+/* A dashed edge, not a colored fill: these are real entries to read, they are
+   just not finished. The border says provisional without shouting. */
+.ventry--draft {
+  box-shadow: none;
+  border: 1px dashed var(--line-strong);
+}
+.ventry--draft .ventry__from { color: var(--warn); }
+.vaz__mod--draft { color: var(--warn); }
+
 /* Embedded in an LMS that already shows the page title above the frame.
    Hide ONLY the duplicated heading. The first version hid the whole masthead,
    which also threw away the standfirst and the metarow - how long the lesson
@@ -1094,6 +1235,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 
    The module and lesson number stay too: Brightspace shows the topic title but
    not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
 :root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
 :root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
 :root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
@@ -1142,6 +1287,375 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 .preset:hover { color: var(--accent-text); background: var(--accent-wash); }
 .preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
+/* ── moved out of faculty.css when map.css was split off ──────────────────────
+   The only two rules the course map and the marking view ever shared, and
+   neither is specific to either: a horizontally scrolling table wrapper, and
+   tabular numerals for a figure that must not reflow. Generic enough that a
+   third page wanting one should not have to load a whole genre sheet. */
+.tblwrap { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow-1);
+  padding:.4rem 1.1rem; overflow-x:auto; }
+.mono { font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+/* The base table, which followed .tblwrap out of faculty.css once a second
+   genre wanted one. */
+.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th { text-align:left; font-family:var(--display); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); padding:.75rem .55rem; border-bottom:1.5px solid var(--line-strong); white-space:nowrap; }
+.tbl td { padding:.6rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+.tbl tbody tr:last-child td { border-bottom:0; }
+.tbl tr.is-dimmed { opacity:.25; }
+.tbl a { font-weight:700; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
 
 /* ============================================================================
    FLCC AI Specialist Microcredential - instrument.css
@@ -1427,6 +1941,19 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .capsteps { margin: 0; padding-left: 1.3rem; display: grid; gap: .55rem; }
 .capsteps li { font-size: .95rem; line-height: 1.55; color: var(--ink-2); }
 .caphand, .caphow { background: var(--surface-2); border-radius: 10px; padding: .8rem .9rem; }
+/* Provenance: which Apply task this route is a longer version of. Tinted
+   rather than plain so it reads as a pointer backwards, not as another
+   instruction. */
+.capfrom {
+  background: var(--accent-wash); border-radius: 10px; padding: .8rem .9rem;
+}
+.capfrom__lab {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--accent-text); margin-bottom: .35rem;
+}
+.capfrom__lab .i { width: .9rem; height: .9rem; }
+.capfrom p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-2); }
 .caphand__lab, .caphow__lab {
   display: flex; align-items: center; gap: .35rem;
   font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
@@ -1474,6 +2001,99 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 .capgate__ex:last-child .capgate__lab { color: var(--accent-text); }
 .capgate__ex p { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink-2); }
 
+/* Rubric criteria as accordions ---------------------------------------------
+   Collapsed by default, and independent of each other: opening one does not
+   shut the rest. That is deliberately the opposite of .capopt above, which is
+   one-at-a-time. The difference is what each list is for - the rubric is
+   something you compare across, and comparing needs two or five panels open
+   at once; the route cards are something you choose between, where five open
+   briefs is a wall of text nobody can choose from. Same page, opposite rule,
+   and worth not "fixing" later into consistency.  */
+.crits--acc .crit { padding: 0; }
+.crits--acc .crit__n { margin: 0; font-size: inherit; font-weight: inherit; }
+.crit__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .1rem .7rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 1rem 1.2rem;
+  font: inherit;
+  color: inherit;
+  border-radius: var(--r);
+}
+.crit__head:hover { background: var(--accent-wash); }
+.crit__head:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.crit__nm {
+  grid-column: 1;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.crits--acc .crit__q {
+  grid-column: 1;
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.crit__chev {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 1.1rem; height: 1.1rem;
+  color: var(--ink-3);
+  transition: transform .18s ease;
+}
+.crit__head[aria-expanded="true"] .crit__chev { transform: rotate(180deg); }
+.crit__head[aria-expanded="true"] { border-radius: var(--r) var(--r) 0 0; }
+.crits--acc .crit__levels { padding: 0 1.2rem 1.1rem; }
+
+.crits__bar { display: flex; justify-content: flex-end; }
+/* No negative margin here. It saved three pixels and pulled the first
+   criterion up over the bar, which left the expand-all button's bottom edge
+   underneath a full-width header button - a hover tint on Mechanism in a
+   screenshot is how that turned up, and a stolen click is where it ends. */
+.crits__all {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--display); font-weight: 700;
+  font-size: .74rem; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--accent-text);
+  padding: .3rem .2rem;
+  border-radius: var(--r-xs);
+}
+.crits__all:hover { text-decoration: underline; }
+.crits__all:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.crits__all .i { width: .85rem; height: .85rem; transition: transform .18s ease; }
+.crits__all[aria-expanded="true"] .i { transform: rotate(180deg); }
+
+/* ── Discussions and Labs ─────────────────────────────────────────────────
+   A task prompt is a document rather than a lesson: no beats, no gate, no
+   deck. It borrows core.css's callouts and table, and needs these five.
+
+   The genre is "instrument" and not "lesson" on purpose - the lesson sheet's
+   classes would all be dead weight here, and check_sheets.py would say so. */
+
+/* The summary, set slightly larger than body copy: it is the first thing read
+   and it is the only part of a prompt that says why the task exists. */
+.tasksum { font-size: 1.05rem; color: var(--ink-2); display: flex;
+           flex-direction: column; gap: .8rem; margin: 0 0 1.6rem;
+           padding-left: 1rem; border-left: 3px solid var(--accent-wash); }
+
+.taskh { font-family: var(--display); font-weight: 700; font-size: 1.25rem;
+         margin: 2rem 0 .7rem; }
+
+.tasklist { display: flex; flex-direction: column; gap: .7rem;
+            margin: 0 0 1.2rem; padding-left: 1.2rem; }
+.tasklist li { line-height: 1.6; }
+
+.tcap { margin: .5rem 0 0; }
+
 /* ============================================================================
    Course theme - CSC 150
    Brand color: #f45922
@@ -1520,8 +2140,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
 }
 
 </style>
-<!-- CSC 150 build 29846e9 · 2026-09-01 01:25 -->
-<div data-build="29846e9" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<!-- CSC 150  page 00b-where-youre-starting-from.html  vec5d119  ·  build 6cfe995  ·  2026-09-22 00:42 -->
+<div data-build="6cfe995" data-page="00b-where-youre-starting-from.html" data-version="ec5d119" class="lesson" data-course="150"><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -1915,7 +2535,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     </div>
   </section>
 
-  <!-- Hidden by Dave: inside Brightspace the Next link competes with the LMS's
+  <!-- Hidden by Dave: inside Brightspace the Next link competes with the LMS&rsquo;s
        own navigation. Drop the inline style to bring it back. -->
   <footer class="lessonfoot" style="display: none;">
     <span>CSC 150 &middot; AI Foundations &middot; Lesson 0 of 17</span>
@@ -1933,7 +2553,8 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
  *
  * Markup it expects:
  *   <div class="embed embed--facade"
- *        data-video="VIDEO_ID"
+ *        data-video="VIDEO_ID"              (YouTube) OR
+ *        data-embed="https://..."           (any other player's embed URL)
  *        data-title="What the video is"
  *        data-sub="Demo · 2:40"            (optional)
  *        data-poster="../media/posters/ID.jpg"   (optional, self-hosted)
@@ -1955,7 +2576,10 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     var b = document.createElement("button");
     b.type = "button";
     b.className = "facade" + (poster ? "" : " facade--noposter");
-    b.setAttribute("aria-label", "Play: " + title + ". The video loads from YouTube only after this.");
+    b.setAttribute("aria-label", "Play: " + title +
+      (el.getAttribute("data-video")
+        ? ". The video loads from YouTube only after this."
+        : ". The video loads only after this."));
     b.innerHTML =
       (poster ? '<img class="facade__poster" src="' + poster + '" alt="" loading="lazy">' : "") +
       '<span class="facade__scrim"></span>' +
@@ -1974,11 +2598,25 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   function play(el) {
+    /* Two sources, one behavior. data-video is a YouTube id and gets the
+       nocookie host built for it; data-embed is any other player's own embed
+       URL and is used exactly as given, because Kaltura, YuJa, Panopto and
+       Brightspace all sign their URLs differently and none of that is ours to
+       reconstruct.
+
+       The click-to-load part is the point either way: no request leaves the
+       page for anybody's server until the learner asks for the video. */
     var id = el.getAttribute("data-video");
-    if (!id) return;
+    var url = el.getAttribute("data-embed");
+    if (!id && !url) return;
     var start = el.getAttribute("data-start");
-    var src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    var src;
+    if (url) {
+      src = url + (url.indexOf("?") === -1 ? "?" : "&") + "autoplay=1";
+    } else {
+      src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+            "?autoplay=1&rel=0&modestbranding=1" + (start ? "&start=" + encodeURIComponent(start) : "");
+    }
     var f = document.createElement("iframe");
     f.setAttribute("src", src);
     f.setAttribute("title", el.getAttribute("data-title") || "Video");
@@ -2063,6 +2701,44 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     } else { applyLmsMode(); }
   }
 
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
   if (window.parent === window) return;          /* not embedded; nothing more */
 
   var TAG = "csc150";
@@ -2128,6 +2804,7 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     if (host.chrome) r.setAttribute("data-host-chrome", "1");
     if (host.course) r.setAttribute("data-course-id", host.course);
     applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
     if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
       var el = document.getElementById(String(d.hash).replace(/^#/, ""));
       if (el) el.scrollIntoView({ block: "start" });
@@ -2177,9 +2854,27 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     document.addEventListener(ev, function () { touched = true; }, true);
   });
 
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
   var native = Element.prototype.scrollIntoView;
   Element.prototype.scrollIntoView = function (arg) {
-    if (!touched) return native.apply(this, arguments);
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
     try {
       var r = this.getBoundingClientRect();
       var top = r.top + (window.scrollY || 0);
@@ -2252,6 +2947,18 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
     return max;
   }
 
+  /* Applying the reservation is its own step because it is not always wanted.
+     A panel can have a one-way entry state - Class Arena's default picker,
+     which the learner leaves once and never comes back to - and holding that
+     state inside the height its later states need leaves a screen of white
+     under three rows of chips. prime's `active` predicate answers "is the
+     reservation wanted right now"; call Steady.refresh(el) when the answer
+     changes. No predicate means always, which is what every other panel wants. */
+  function applyReserve(rec) {
+    var on = rec.max > 0 && (!rec.active || rec.active());
+    rec.el.style.minHeight = on ? rec.max + "px" : "";
+  }
+
   var Steady = {
     /* render(i) paints state i into el. measureAll leaves el in the LAST state
        it rendered, so somebody has to put it back.
@@ -2275,12 +2982,13 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
        measurement pass has already trampled. That is how Class Arena came to
        open on round three - the picker was visible, but ix had been left at 2
        by the last state measured. */
-    prime: function (el, n, render, save, restore) {
+    prime: function (el, n, render, save, restore, active) {
       if (!el || !n) return 0;
       var rec = null;
       for (var i = 0; i < primed.length; i++) if (primed[i].el === el) rec = primed[i];
-      if (!rec) { rec = { el: el, n: n, render: render, w: 0 }; primed.push(rec); }
+      if (!rec) { rec = { el: el, n: n, render: render, w: 0, max: 0 }; primed.push(rec); }
       rec.n = n; rec.render = render; rec.save = save; rec.restore = restore;
+      rec.active = active;
 
       /* A demo inside an unopened prediction gate is display:none, so every
          state measures zero. Reserving 0px would be harmless but misleading;
@@ -2288,8 +2996,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
          moment the gate opens. */
       var snap = save ? save() : null;
       var max = measureAll(el, n, render);
-      if (max > 0) el.style.minHeight = max + "px";
+      rec.max = max;
       if (restore) restore(snap);
+      applyReserve(rec);
       rec.w = el.getBoundingClientRect().width;
 
       /* A height measured at the wrong width is the wrong height, and these
@@ -2306,14 +3015,22 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
           rec.w = w;
           el.style.minHeight = "";
           var sn = rec.save ? rec.save() : null;
-          var m = measureAll(el, rec.n, rec.render);
-          if (m > 0) el.style.minHeight = m + "px";
+          rec.max = measureAll(el, rec.n, rec.render);
           if (rec.restore) rec.restore(sn);
+          applyReserve(rec);
           rec.w = el.getBoundingClientRect().width;
         });
         rec.ro.observe(el);
       }
       return max;
+    },
+
+    /* Re-ask a primed element's `active` predicate. Cheap: no re-measuring,
+       just the reservation going on or off. */
+    refresh: function (el) {
+      for (var i = 0; i < primed.length; i++) {
+        if (primed[i].el === el) { applyReserve(primed[i]); return; }
+      }
     },
 
     hold: function (el) {
@@ -2328,8 +3045,9 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
       primed.forEach(function (p) {
         var sn = p.save ? p.save() : null;
         p.el.style.minHeight = "";
-        p.el.style.minHeight = measureAll(p.el, p.n, p.render) + "px";
+        p.max = measureAll(p.el, p.n, p.render);
         if (p.restore) p.restore(sn);
+        applyReserve(p);
       });
     },
 
@@ -2348,6 +3066,33 @@ ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); al
   }
 
   window.Steady = Steady;
+})();
+
+</script>
+<script>
+/* One copy button, wherever a page needs one.
+
+   Lives in shared/ because the same control now appears in two places that do
+   not share a stylesheet or a script: the prompt block on a Discussion or Lab
+   page, and the same prompt lifted into a lesson's Apply beat. It was in
+   build/task_js.js and so existed only on the task pages - which is how the
+   lesson version came to render the prompt with a Copy button that did
+   nothing.
+
+   Delegated from the document, so markup added after load still works. */
+(function () {
+  "use strict";
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-copy]");
+    if (!b) return;
+    var el = document.getElementById(b.getAttribute("data-copy"));
+    if (!el || !navigator.clipboard) return;
+    navigator.clipboard.writeText(el.textContent).then(function () {
+      var was = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(function () { b.textContent = was; }, 1600);
+    });
+  });
 })();
 
 </script>
