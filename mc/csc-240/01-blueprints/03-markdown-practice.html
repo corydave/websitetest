@@ -1,0 +1,3168 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<!-- data-theme="light" on purpose: see the note in 01-big-picture.html. -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Markdown Practice</title>
+<!--
+  CSC 240 - Module 1 (Blueprints), page 3: Markdown Practice
+  Version: 1.0 (2026-10-05) - recreated from Dave's Markdown Fundamentals
+           (inlineteaching.com/flcc/153/md/) for CSC 240: tables added,
+           images/blockquotes/task lists dropped, progress saved, and a
+           certificate whose page 2 is the learner's own instruction file.
+
+  PAGE TEMPLATE: layout and behavior only. Every word a student reads -
+  including all ten steps, their tasks and their checks - is in
+  courses/csc-240/01-blueprints/03-markdown-practice.md. Then run:
+      python3 csc-240/build/assemble.py
+
+  Assembled 2026-10-05 23:24
+-->
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* ===== Shared design system (inlined by the assembler) ===================== */
+/* ============================================================================
+   FLCC AI Specialist Microcredential - core.css
+   Shared by every page in every course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+:root {
+  /* Neutrals - very slightly warm, so they sit under orange, blue and olive
+     without any of the three reading as a clash. */
+  /* The page ground is white, and so are the cards on it. That is deliberate
+     and it is the reason --shadow-1 below carries a hairline ring: with a warm
+     grey ground the cards were defined by the contrast between #f7f6f4 and
+     white, and taking the grey away removes exactly that. Readers said the
+     grey read as busy rather than calm, which is fair - but a card has to be
+     bounded by something, so the boundary moved from the ground to the edge. */
+  --ground:      #ffffff;
+  --surface:     #ffffff;
+  --surface-2:   #f0eeea;   /* inset wells, quiet fills */
+  --surface-3:   #e7e4df;   /* pressed / track */
+  --line:        #e3dfd9;
+  --line-strong: #cfc9c1;
+
+  --ink:   #1c1a18;
+  --ink-2: #57524c;
+  --ink-3: #8b837a;
+
+  /* Semantic - independent of the course accent */
+  --good:      #1f7a4d;
+  --good-soft: #e6f2eb;
+  --warn:      #9a5b00;
+  --warn-soft: #f8eede;
+  --bad:       #b3261e;
+  --bad-soft:  #fbe9e7;
+
+  /* Elevation */
+  /* Both of these open with a 1px spread ring, which draws a hairline on every
+     card without touching layout the way a real border would - no box-sizing
+     surprise, no rule to add to a dozen separate card selectors. It is also
+     the crisper of the two ways to bound a white card on white: a blur alone
+     goes muddy at this contrast, and the feedback asked for crisp.
+     The dark palette redefines these further down and gets no ring, because
+     there the surface is already lighter than the ground. */
+  --shadow-1: 0 0 0 1px #e6e2dc, 0 1px 2px rgba(28,26,24,.04), 0 2px 6px rgba(28,26,24,.04);
+  --shadow-2: 0 0 0 1px #e0dbd4, 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.07);
+  --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
+  --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
+
+  /* Geometry */
+  --r:    15px;
+  --r-sm: 10px;
+  --r-xs: 7px;
+  --r-pill: 999px;
+
+  /* Type */
+  --display: "Comfortaa", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --measure: 66ch;
+
+  /* Rhythm */
+  --gap-xs: .4rem;
+  --gap-s:  .75rem;
+  --gap-m:  1.25rem;
+  --gap-l:  2rem;
+  --gap-xl: 3.5rem;
+
+  /* Default accent (overridden per course below) */
+  --accent:      #f45922;
+  --accent-text: #c4400f;
+  --accent-fill: #c4400f;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+:root[data-theme="dark"] {
+  --ground:      #121110;
+  --surface:     #1d1b19;
+  --surface-2:   #262320;
+  --surface-3:   #322e2a;
+  --line:        #332f2b;
+  --line-strong: #4a443e;
+
+  --ink:   #ece8e2;
+  --ink-2: #a9a29a;
+  --ink-3: #7e766d;
+
+  --good:      #6ec294;
+  --good-soft: #1a2b22;
+  --warn:      #e0a75a;
+  --warn-soft: #2c241a;
+  --bad:       #f2938b;
+  --bad-soft:  #2e1c1a;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.42);
+  --shadow-3: 0 4px 8px rgba(0,0,0,.45), 0 24px 56px rgba(0,0,0,.55);
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.lesson {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; }
+p + p { margin-top: .9em; }
+
+a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==text== in the markdown. The browser default for <mark> is a flat yellow
+   that fights every surface on this site, so it is restyled to the same accent
+   wash the Brightspace converter at md.flccarcade.com uses - one highlight,
+   the same one, whether a sentence is read on a lesson page or in Brightspace.
+   Colour comes from the theme, so each course gets its own. */
+mark { background: var(--accent-wash); color: var(--accent-text);
+       padding: .05em .25em; border-radius: 4px; }
+
+/* The hand-in card on a checkpoint. Ships hidden; the LMS supplies the link.
+   [hidden] is respected explicitly because this element is display:flex, and a
+   display rule beats the browser's default hidden{display:none} every time -
+   which is how a card meant to be invisible shows up with a dead link in it. */
+.handin { display: flex; gap: .9rem; align-items: center; margin: 1.5rem 0 0;
+          padding: 1.1rem 1.3rem; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 15px; }
+.handin[hidden] { display: none; }
+
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+::selection { background: var(--accent); color: var(--accent-on); }.wrap {
+  width: min(100% - 2.5rem, 50rem);
+  margin-inline: auto;
+}
+
+.lesson__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-xl) 5rem;
+}
+
+/* A block = one beat of the lesson template. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1em; }
+
+/* Reading-width helper for anything that should not run full bleed */
+.narrow { max-width: var(--measure); }.railtrack {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: transparent;
+  z-index: 60;
+}
+.railtrack__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s linear;
+}.masthead {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-block: 1.6rem 1.9rem;
+}
+
+.masthead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-bottom: 1.1rem;
+}
+
+/* The `hidden` attribute only sets `display: none` in the UA sheet, so any
+   author `display` rule beats it - and a component with `display: grid` then
+   stays visible while its own JS believes it is hidden. This has been patched
+   three times in this codebase already (.term, .vgroup, .panel). Once, here,
+   instead. `hidden` is semantic: it should always win. */
+[hidden] { display: none !important; }
+
+.coursemark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .4rem .8rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.lessonno {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 2.9rem);
+  max-width: 18ch;
+}
+
+.standfirst {
+  margin-top: .9rem;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.metarow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+.metarow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.blockhead {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.blockhead h2 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+.blockhead p {
+  color: var(--ink-2);
+  max-width: var(--measure);
+}.i {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -.125em;
+}
+.i--lg { width: 1.35em; height: 1.35em; }
+
+.icontile {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  flex: none;
+}
+.icontile .i { width: 1.2rem; height: 1.2rem; }
+.icontile--quiet { background: var(--surface-2); color: var(--ink-2); }.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+}
+.card--flush { padding: 0; overflow: hidden; }
+.card--quiet { box-shadow: var(--shadow-1); }
+
+.well {
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.25rem;
+}.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .3rem .65rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip--accent { background: var(--accent-wash); color: var(--accent-text); }
+.chip--good   { background: var(--good-soft);  color: var(--good); }
+.chip--warn   { background: var(--warn-soft);  color: var(--warn); }
+.chip--outline{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink-3); }
+
+.chiprow { display: flex; flex-wrap: wrap; gap: .4rem; }.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.btn--ghost:hover { background: var(--accent-wash); color: var(--accent-text); }
+
+.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.field label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.field textarea {
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .8rem .9rem;
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.field textarea::placeholder { color: var(--ink-3); }
+
+.hint { font-size: .82rem; color: var(--ink-3); }.recall {
+  display: grid;
+  gap: var(--gap-s);
+}
+.recallcard {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: box-shadow .25s ease;
+}
+.recallcard.is-open { box-shadow: var(--shadow-2); }
+
+.provenance {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.provenance .i { width: .9rem; height: .9rem; }
+.provenance em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.recallcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
+.answer {
+  font: inherit;
+  font-size: .92rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .55rem .95rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+.answer:hover:not([disabled]) { background: var(--accent-wash); }
+.answer[disabled] { cursor: default; }
+.answer.is-right { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+.answer.is-wrong { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.answer.is-dim   { opacity: .45; }
+
+.feedback {
+  display: none;
+  gap: .7rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-2);
+}
+.feedback.is-shown { display: flex; }
+.feedback .i { margin-top: .25rem; color: var(--accent-text); }
+.feedback strong { color: var(--ink); }.deck { display: flex; flex-direction: column; gap: 1rem; max-width: 36rem; }
+
+.deck__stack {
+  display: grid;
+  touch-action: pan-y;
+  perspective: 1200px;
+  position: relative;
+  /* reserve room for the fanned + rotated cards behind the top one */
+  padding-bottom: 2.6rem;
+  transition: height .3s ease;
+}
+
+.fcard {
+  grid-area: 1 / 1;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  transform-origin: 50% 130%;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1),
+              opacity .3s ease,
+              box-shadow .3s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.fcard[data-pos="0"] { z-index: 4; transform: rotate(-1.1deg);                          box-shadow: var(--shadow-3); cursor: grab; }
+.fcard[data-pos="1"] { z-index: 3; transform: rotate(2.6deg)  translateY(13px) scale(.968); box-shadow: var(--shadow-2); }
+.fcard[data-pos="2"] { z-index: 2; transform: rotate(-3.4deg) translateY(24px) scale(.936); box-shadow: var(--shadow-1); }
+.fcard[data-pos="3"] { z-index: 1; transform: rotate(1.8deg)  translateY(33px) scale(.91);  opacity: 0; }
+
+.fcard:not([data-pos="0"]) { pointer-events: none; }
+.fcard[data-pos="0"].is-dragging { transition: none; cursor: grabbing; }
+/* A card that has left the deck is taken out of grid sizing, so the stack
+   collapses back to the height of the cards that remain. */
+.fcard.is-leaving { z-index: 9; }
+.fcard.is-gone {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.fcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+.fcard__grip {
+  display: flex;
+  gap: 3px;
+  opacity: .5;
+  flex: none;
+}
+.fcard__grip span {
+  width: 3px; height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.answer--pass {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--ink-3);
+}
+
+/* Bottom bar: dots, counter, advance */
+.deck__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  flex-wrap: wrap;
+}
+.deck__left { display: flex; align-items: center; gap: .7rem; }
+.deck__dots { display: flex; gap: .3rem; }
+.deck__dot {
+  width: 7px; height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  transition: background-color .25s ease, transform .25s ease;
+}
+.deck__dot.is-done   { background: var(--accent); opacity: .4; }
+.deck__dot.is-active { background: var(--accent); transform: scale(1.5); }
+.deck__count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.deck__hint {
+  font-size: .82rem;
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.deck__hint.is-nudging { color: var(--accent-text); font-weight: 700; }
+
+.deck__done {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+}
+.deck.is-finished .deck__stack,
+.deck.is-finished .deck__bar { display: none; }
+.deck.is-finished .deck__done { display: flex; }
+.deck__done strong { font-family: var(--display); font-size: 1.05rem; }
+.deck__done p { color: var(--ink-2); font-size: .93rem; max-width: 38ch; }
+
+/* The askew stack rotates up to 3.4deg, and a rotated rectangle is wider than
+   an upright one. On a wide page the deck's max-width absorbs that; on a phone
+   the corners push past the viewport and the whole page scrolls sideways, which
+   is the one thing an LMS embed must never do. Inset the stack so the rotation
+   has somewhere to go. */
+@media (max-width: 32rem) {
+  .deck__stack { margin-inline: .5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard[data-pos="0"],
+  .fcard[data-pos="1"],
+  .fcard[data-pos="2"],
+  .fcard[data-pos="3"] { transform: none; }
+  .fcard:not([data-pos="0"]) { opacity: 0; }
+}
+
+/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+.callout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.15rem 1.3rem;
+}
+.callout__body { display: flex; flex-direction: column; gap: .3rem; }
+.callout__label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.callout__body p { font-size: .97rem; color: var(--ink-2); }
+.callout__body p strong { color: var(--ink); }
+.callout--warn .icontile { background: var(--warn); color: var(--surface); }
+.callout--good .icontile { background: var(--good); color: var(--surface); }
+
+/* Interactive demo shells */
+.demo {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.demo__title .i { color: var(--accent-text); }
+.demo__body { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; }
+.demo__foot {
+  padding: .9rem 1.25rem;
+  background: var(--surface-2);
+  font-size: .88rem;
+  color: var(--ink-2);
+  min-height: 3.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.demo__foot > .i { margin-top: .35rem; flex: none; }details.disclosure {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+details.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .85rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+details.disclosure > summary::-webkit-details-marker { display: none; }
+details.disclosure > summary .i { transition: transform .2s ease; color: var(--ink-3); }
+details.disclosure[open] > summary .i { transform: rotate(180deg); }
+.disclosure__body { padding: 0 1.1rem 1.1rem; font-size: .95rem; color: var(--ink-2); }
+
+.lessonfoot {
+  border-top: 1px solid var(--line);
+  padding-block: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-s);
+  color: var(--ink-3);
+  font-size: .85rem;
+}.stepblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.stepblock__head { display: flex; gap: .9rem; align-items: flex-start; }
+.stepblock__n {
+  display: grid;
+  place-items: center;
+  width: 2rem; height: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: none;
+}
+.stepblock__head h2 { font-size: 1.35rem; }
+.stepblock__head p { color: var(--ink-2); margin-top: .35rem; max-width: var(--measure); }
+
+/* Confidence sliders ------------------------------------------------------ */
+
+.slrow {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+.slrow:last-child { border-bottom: 0; }
+.slrow__q { font-weight: 700; font-size: .97rem; }
+.slrow__q span { display: block; font-weight: 400; font-size: .82rem; color: var(--ink-3); margin-top: .15rem; }
+.slrow__val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--accent-text);
+  min-height: 1.2em;
+}
+
+input[type="range"].sl {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].sl::-webkit-slider-runnable-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-moz-range-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+input[type="range"].sl::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+.slticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+/* Multi-select chips ------------------------------------------------------ */
+
+.chipset { display: flex; flex-wrap: wrap; gap: .5rem; }
+.togchip {
+  font: inherit;
+  font-size: .9rem;
+  padding: .5rem .95rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .16s ease, color .16s ease;
+}
+.togchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.togchip[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.togchip .i { width: .85rem; height: .85rem; opacity: 0; }
+.togchip[aria-pressed="true"] .i { opacity: 1; }
+
+.copybox {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* vocabulary -------------------------------------------------------------- */
+.searchrow { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.search {
+  flex: 1 1 14rem;
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1); padding: .55rem 1rem;
+}
+.search .i { color: var(--ink-3); flex: none; }
+.search input {
+  font: inherit; font-size: .95rem; border: 0; background: transparent;
+  color: var(--ink); width: 100%; outline: none;
+}
+.search input::placeholder { color: var(--ink-3); }
+
+.termlist { display: flex; flex-direction: column; gap: .55rem; }
+.term {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.term[hidden] { display: none; }
+.term.is-locked { opacity: .55; }
+.term__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.term__name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.term__from { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.term.is-unlocked .term__from { color: var(--accent-text); }
+.term__def { font-size: .95rem; color: var(--ink-2); }
+.term__why { font-size: .88rem; color: var(--ink-3); font-style: italic; }
+
+.emptystate {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1);
+  padding: 2.25rem 1.5rem; text-align: center; color: var(--ink-2); font-size: .95rem;
+}
+
+.linkcard {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.3rem 1.5rem; text-decoration: none; color: inherit;
+  transition: transform .14s ease, box-shadow .2s ease;
+}
+.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.linkcard__t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.linkcard__d { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.linkcard__go { margin-left: auto; color: var(--accent-text); flex: none; }.statrow { display: flex; flex-wrap: wrap; gap: 1.75rem; }
+.stat { display: flex; flex-direction: column; }
+.stat b {
+  font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat--accent b { color: var(--accent-text); }.stack   { display: flex; flex-direction: column; gap: var(--gap-s); }
+.row     { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+.muted   { color: var(--ink-2); }
+.small   { font-size: .88rem; }
+.scrollx { overflow-x: auto; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 34rem) {
+  .card, .gate, .apply { padding: 1.2rem; }
+  .token { grid-template-columns: minmax(5rem, auto) 1fr 3rem; gap: .55rem; }
+}
+/* -------------------------------------------- shared with the curriculum docs
+   Small label, filter pill, and plain list - first written for the course
+   map, then wanted by learner pages too. They live here so neither side
+   has to load the other's sheet.
+   ------------------------------------------------------------------------ */
+
+.fbtn { font:inherit; font-family:var(--display); font-weight:700; font-size:.82rem; cursor:pointer;
+  border:0; background:var(--surface-2); color:var(--ink-2); padding:.45rem .85rem;
+  border-radius:var(--r-pill); transition:background-color .18s ease,color .18s ease; }
+.fbtn:hover { background:var(--accent-wash); color:var(--accent-text); }
+.fbtn[aria-pressed="true"] { background:var(--accent-fill); color:var(--accent-on); }
+.beatlabel { display:block; font-family:var(--display); font-weight:700; font-size:.7rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.3rem; }
+
+ul.plain, ul.lolist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+ul.plain li { font-size:.95rem; color:var(--ink-2); padding-left:1rem; position:relative; }
+ul.plain li::before { content:""; position:absolute; left:0; top:.65em; width:5px; height:5px;
+  border-radius:50%; background:var(--line-strong); }
+ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); align-items:flex-start; }
+.actbox__top .beatlabel { margin:0; color:var(--accent-text); }
+/* Whitespace and newline markers. Written for the Tokenizer, then wanted by
+   the Lesson 1 token demo - any page that shows text as discrete pieces
+   needs a way to make a space visible. */
+.tok__ws { color: var(--ink-3); opacity: .45; }
+.tok__nl {
+  color: var(--accent-text); font-weight: 700; opacity: .8;
+}
+
+/* -------------------------------------------------------------- 21. EMBEDS
+   Responsive 16:9 video frame. The rounded corners live on the WRAPPER with
+   overflow:hidden, not on the iframe - an iframe will not reliably clip its own
+   content to a border-radius, so styling the iframe alone leaves square corners
+   showing through in several browsers.
+   ------------------------------------------------------------------------ */
+
+.embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+}
+.embed iframe,
+.embed video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.embed--flat { box-shadow: none; }
+
+/* Optional caption underneath, matching the video block used in lessons. */
+.embed-cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  margin-top: .7rem; font-size: .85rem; color: var(--ink-3);
+}
+.embed-cap b {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+
+/* --- Two-click facade -----------------------------------------------------
+   Nothing reaches Google until the learner asks for the video. The frame you
+   see before the click is ours: our markup, our styles, and either a poster
+   image served from this site or no image at all. The iframe is created on
+   click and not a moment before.
+
+   A poster pulled from i.ytimg.com would still hand Google the visitor's IP on
+   page load, which is most of what the facade exists to prevent - so the
+   default is a self-hosted poster, and the fallback when there is none is a
+   designed placeholder rather than a third-party request.
+   ------------------------------------------------------------------------ */
+
+.embed--facade { position: relative; }
+
+.facade {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; cursor: pointer;
+  background: var(--surface-3);
+  font: inherit; color: var(--ink);
+  overflow: hidden;
+}
+.facade__poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.facade__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.55) 100%);
+}
+.facade--noposter { background: var(--surface-2); }
+.facade--noposter .facade__scrim { background: linear-gradient(150deg, var(--accent-wash), transparent 60%); }
+
+.facade__play {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill); color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.facade__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; margin-left: .18rem; }
+.facade:hover .facade__play, .facade:focus-visible .facade__play { transform: scale(1.07); }
+
+.facade__meta {
+  position: absolute; left: 1.1rem; right: 1.1rem; bottom: .95rem; z-index: 1;
+  display: flex; flex-direction: column; gap: .15rem; text-align: left;
+}
+.facade__title {
+  font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.3;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.facade--noposter .facade__title { color: var(--ink); text-shadow: none; }
+.facade__sub { font-size: .8rem; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.facade--noposter .facade__sub { color: var(--ink-3); text-shadow: none; }
+
+.embed-privacy {
+  display: flex; align-items: flex-start; gap: .45rem;
+  margin-top: .55rem; font-size: .8rem; color: var(--ink-3);
+}
+.embed-privacy .i { margin-top: .2rem; flex: none; }
+
+/* ── Inline vocabulary ──────────────────────────────────────────────────────
+   A term in the prose is bold + italic, per Dave's spec, with a dotted rule
+   under it so it reads as pressable rather than merely emphasised. The panel
+   is a child of the term so it needs no positioning library and no scroll
+   listener; the only correction it needs is a nudge off the right edge. */
+.vt {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--accent-text);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  border-radius: 2px;
+}
+.vt > i { font-style: italic; }
+.vt:hover { background: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.vt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vt[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.vt-demo { font-weight: 700; color: var(--accent-text); border-bottom: 1px dotted var(--accent); }
+
+.vpop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + .5rem);
+  left: 0;
+  width: min(23rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--ink);
+  text-align: left;
+  cursor: auto;
+  white-space: normal;
+}
+.vpop__top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.vpop__name { font-family: var(--display); font-size: .98rem; }
+.vpop__from { font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.vpop__def { font-size: .9rem; color: var(--ink-2); line-height: 1.5; }
+.vpop__why { font-size: .84rem; color: var(--ink-3); font-style: italic; line-height: 1.5; }
+.vpop__eg {
+  font-size: .84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+}
+.vpop__foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .15rem; }
+.vpop__more { font-size: .8rem; font-weight: 700; color: var(--accent-text); text-decoration: none; display: inline-flex; align-items: center; gap: .3rem; }
+.vpop__more:hover { text-decoration: underline; }
+.vpop__more .i { width: .85rem; height: .85rem; }
+.vpop__x { background: none; border: 0; padding: .2rem; color: var(--ink-3); cursor: pointer; display: inline-flex; border-radius: 6px; }
+.vpop__x:hover { color: var(--ink); background: var(--surface-2); }
+.vpop__x .i { width: 1rem; height: 1rem; }
+
+/* ── The standalone vocabulary page ─────────────────────────────────────── */
+.vsearch { display: grid; gap: .35rem; margin: 1.5rem 0 1.1rem; }
+.vsearch__lab { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.vsearch__in {
+  font: inherit;
+  padding: .7rem .9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--ink);
+}
+.vsearch__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.vsearch__count { margin: 0; }
+
+.vlist { display: flex; flex-direction: column; gap: .7rem; }
+.vgroup {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 1.4rem 0 .1rem;
+}
+.vgroup[hidden], .ventry[hidden] { display: none; }
+.ventry {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: .4rem;
+  scroll-margin-top: 1.5rem;
+}
+.ventry.is-target { box-shadow: 0 0 0 2px var(--accent), var(--shadow-2); }
+.ventry__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.ventry__name { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+.ventry__from { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ventry__def { font-size: .96rem; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.ventry__why { font-size: .88rem; color: var(--ink-3); font-style: italic; margin: 0; line-height: 1.5; }
+.ventry__eg { margin: .25rem 0 0; padding: .6rem .8rem .6rem 1.9rem; background: var(--surface-2); border-radius: 10px; display: grid; gap: .35rem; }
+.ventry__eg li { font-size: .89rem; color: var(--ink-2); line-height: 1.5; }
+.ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
+.ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
+
+/* -- Vocabulary: the A-Z index -------------------------------------------- */
+/* A second view of the same terms. Both views are in the DOM and one is always
+   hidden, so nothing here can be reached while the lesson-order list shows. */
+.vviews { margin: 0 0 1.1rem; }
+
+.vaz { display: flex; flex-direction: column; gap: .3rem; }
+.vaz__intro { margin: 0 0 .6rem; }
+.vaz__block { display: block; }
+.vaz__letter {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent-text);
+  margin: .9rem 0 .35rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--line);
+}
+.vaz__block:first-of-type .vaz__letter { margin-top: 0; }
+
+/* Multi-column so 68 words fit on a screen, which is the entire point of this
+   view. Columns rather than a grid: a word and its module tag must not be
+   split across a column break. */
+.vaz__list {
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: var(--gap-m);
+}
+@media (min-width: 900px) { .vaz__list { columns: 3; } }
+@media (max-width: 520px) { .vaz__list { columns: 1; } }
+
+.vaz__item {
+  break-inside: avoid;
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .2rem 0;
+  font-size: .94rem;
+  line-height: 1.45;
+}
+.vaz__link { color: var(--ink); text-decoration-color: var(--line-strong); }
+.vaz__link:hover { color: var(--accent-text); text-decoration-color: currentColor; }
+/* The tag follows the word directly rather than being flushed to the column
+   edge. Flushed right, it aligned neatly and left a canyon between a short word
+   and its module - and the whole job of this tag is to be read as part of the
+   word it belongs to. Proximity beats alignment here. */
+.vaz__mod {
+  flex: none;
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.vaz__none { margin: .6rem 0 0; }
+
+/* The reset does not cover flex and grid children, the same reason .ventry
+   needed this. Without it a hidden item still takes a row. */
+.vaz[hidden], .vlist[hidden], .vaz__block[hidden], .vaz__item[hidden],
+.vaz__none[hidden], .vlistnone[hidden], .vdraftnote[hidden] { display: none; }
+.vlistnone, .vaz__none { margin: .8rem 0 0; }
+
+/* -- Vocabulary: the course filter ---------------------------------------- */
+.vchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .9rem; }
+.vchip {
+  font: inherit; font-size: .8rem; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.vchip:hover { border-color: var(--accent); color: var(--ink); }
+.vchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vchip.is-on {
+  background: var(--accent-fill); border-color: var(--accent-fill);
+  color: var(--accent-on); font-weight: 700;
+}
+.vchip__n { font-variant-numeric: tabular-nums; opacity: .75; }
+/* Dashed, the same language the draft entries use, so "provisional" reads the
+   same way wherever it appears on this page. */
+.vchip--draft { border-style: dashed; }
+.vchip--draft.is-on { border-style: solid; }
+/* The draft marker rides on the chip so the count is never read as a finished
+   glossary. It is the same word the group heading and every entry carry. */
+.vchip__tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--warn);
+}
+.vchip.is-on .vchip__tag { color: var(--accent-on); opacity: .85; }
+
+/* -- Vocabulary: draft entries -------------------------------------------- */
+.vgroup--draft { color: var(--warn); }
+.vdraftnote {
+  margin: 0 0 .3rem; padding: .75rem .85rem;
+  background: var(--warn-soft); border-radius: var(--r-sm);
+  line-height: 1.55;
+}
+/* A dashed edge, not a colored fill: these are real entries to read, they are
+   just not finished. The border says provisional without shouting. */
+.ventry--draft {
+  box-shadow: none;
+  border: 1px dashed var(--line-strong);
+}
+.ventry--draft .ventry__from { color: var(--warn); }
+.vaz__mod--draft { color: var(--warn); }
+
+/* Embedded in an LMS that already shows the page title above the frame.
+   Hide ONLY the duplicated heading. The first version hid the whole masthead,
+   which also threw away the standfirst and the metarow - how long the lesson
+   takes, whether it has a video, whether it has a deliverable. None of that is
+   duplicated by the LMS, and losing it reads to the learner as the top of the
+   page being missing. It was.
+
+   The module and lesson number stay too: Brightspace shows the topic title but
+   not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
+:root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
+:root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
+:root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
+:root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* LMS mode. Set by ?lmsembed=true, or automatically when the host identifies
+   itself in the handshake. One rule does the hiding; frame.js decides what
+   carries the attribute, so adding an element later is a one-line change there
+   or a data-lms-hide in the markup, never a change here. */
+:root[data-lms="1"] [data-lms-hide] { display: none !important; }
+
+/* With the forward link gone the footer is a single line, so it should not keep
+   the spacing of a two-column row. */
+:root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
+
+/* -- Authoring notes ------------------------------------------------------
+   Hazard stripes, so a note addressed to whoever is building the course can
+   never be mistaken for something addressed to a student. publish.py refuses
+   to build publish/ while one is still visible.
+
+   This lived in onboarding.css until Module 2's uncaptured panels needed it on
+   a lesson page. Third genre to reach for it, so it moves here - the same call
+   the step block and the callout got. */
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
+
+/* -- Preset chips ---------------------------------------------------------
+   Small pill buttons that pick one of a fixed set of inputs. Written for the
+   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
+   question buttons with className = "preset" - so on a lesson page they were
+   rendering as bare unstyled <button>s. check_sheets.py could not see it until
+   it learned to read className assignments as well as class attributes.
+   Second genre to want it, so it lives here now. */
+.preset {
+  font: inherit; font-size: .85rem;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
+  padding: .4rem .85rem; cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
+.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
+/* ── moved out of faculty.css when map.css was split off ──────────────────────
+   The only two rules the course map and the marking view ever shared, and
+   neither is specific to either: a horizontally scrolling table wrapper, and
+   tabular numerals for a figure that must not reflow. Generic enough that a
+   third page wanting one should not have to load a whole genre sheet. */
+.tblwrap { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow-1);
+  padding:.4rem 1.1rem; overflow-x:auto; }
+.mono { font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+/* The base table, which followed .tblwrap out of faculty.css once a second
+   genre wanted one. */
+.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th { text-align:left; font-family:var(--display); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); padding:.75rem .55rem; border-bottom:1.5px solid var(--line-strong); white-space:nowrap; }
+.tbl td { padding:.6rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+.tbl tbody tr:last-child td { border-bottom:0; }
+.tbl tr.is-dimmed { opacity:.25; }
+.tbl a { font-weight:700; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
+
+/* ===== CSC 240 theme ======================================================== */
+/* ============================================================================
+   Course theme - CSC 240
+   Brand color: #0046ad
+
+   Derived, not hand-picked. Regenerate with:
+       python3 build/course_color.py 240 "#0046ad" --write
+
+   Contrast (WCAG AA needs 4.5:1 for body text):
+     brand on white ............. 8.47:1  PASS
+     --accent-text on white ..... 8.47:1  PASS
+     --accent on dark surface ... 4.55:1  PASS
+     --accent-on over the fill .. 4.92:1  PASS
+   ========================================================================= */
+
+[data-course="240"] {
+  --accent:      #0046ad;
+  --accent-text: #0046ad;
+  --accent-fill: #0046ad;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(0, 70, 173, .09);
+  --accent-glow: rgba(0, 70, 173, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-course="240"],
+  :root:not([data-theme="light"]) [data-course="240"] {
+    --accent:      #4783de;
+    --accent-text: #6194e3;
+    --accent-fill: #4783de;
+    --accent-on:   #051329;
+    --accent-wash: rgba(71, 131, 222, .13);
+    --accent-glow: rgba(71, 131, 222, .16);
+  }
+}
+
+:root[data-theme="dark"][data-course="240"],
+:root[data-theme="dark"] [data-course="240"] {
+  --accent:      #4783de;
+  --accent-text: #6194e3;
+  --accent-fill: #4783de;
+  --accent-on:   #051329;
+  --accent-wash: rgba(71, 131, 222, .13);
+  --accent-glow: rgba(71, 131, 222, .16);
+}
+
+
+/* ===== This page only ======================================================= */
+/* A link styled as a button should not also be underlined like a link.
+   (core.css's .btn does not reset it; found 2026-10-05.) */
+a.btn { text-decoration: none; }
+/* core.css gives buttons and callouts their own display, which would beat
+   the browser's built-in rule for the hidden attribute. This puts it back. */
+[hidden] { display: none !important; }
+.lesson__body > .block + .block { margin-top: var(--gap-l); }
+.block > * + * { margin-top: var(--gap-m); }
+.small { font-size: .85rem; }
+.muted { color: var(--ink-3); }
+.intro h2 { font-family: var(--display); font-size: 1.15rem; }
+.intro p { color: var(--ink-2); margin-top: .4rem; max-width: var(--measure); }
+.intro strong { color: var(--ink); }
+.storagenote { margin-top: .8rem; }
+
+/* --- Progress: one numbered dot per step, plus the certificate ----------- */
+.steps-bar { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.dot {
+  width: 2.3rem; height: 2.3rem; border-radius: 50%; border: 0; cursor: pointer;
+  font: 700 .85rem/1 var(--display);
+  background: transparent; color: var(--ink-3);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  display: inline-grid; place-items: center;
+}
+.dot.is-done { background: var(--accent-wash); color: var(--accent-text); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.dot[aria-current="step"] { background: var(--accent-fill); color: var(--accent-on); box-shadow: var(--shadow-accent); }
+.dot:disabled { cursor: not-allowed; opacity: .5; }
+.dot .i { width: 1rem; height: 1rem; }
+.bar-label { font: 700 .85rem/1 var(--display); color: var(--ink-2); margin-left: .4rem; }
+
+/* --- Every step's words sit in ONE grid cell, stacked, and only the current
+       one is visible. The cell is as tall as the tallest step, so moving
+       between steps never moves the editor or the buttons below it. ------- */
+.stack { display: grid; }
+.stack > * { grid-area: 1 / 1; min-width: 0; }
+.stack > *:not(.is-active) { visibility: hidden; }
+
+.stepcopy > * + * { margin-top: .75rem; }
+.stepcopy h2 { font-family: var(--display); font-size: 1.35rem; }
+.stepcopy .eyebrow { display: inline-flex; }
+.explain { max-width: var(--measure); }
+
+/* Rendered markdown (explanations, tasks and the live preview). */
+.md > * + * { margin-top: .7rem; }
+.md .md-h1 { font: 700 1.3rem/1.25 var(--display); color: var(--ink); }
+.md .md-h2 { font: 700 1.08rem/1.3 var(--display); color: var(--ink); }
+.md .md-h3 { font: 700 .98rem/1.3 var(--display); color: var(--ink-2); }
+.md p, .md li { color: var(--ink-2); font-size: .95rem; }
+.md strong { color: var(--ink); }
+.md ul, .md ol { padding-left: 1.3rem; }
+.md li + li { margin-top: .25rem; }
+.md a { color: var(--accent-text); text-decoration: underline; }
+.md code { font: .85em ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--surface-2); padding: .1em .35em; border-radius: 5px; color: var(--ink); }
+.md pre { background: var(--surface-2); border-radius: var(--r-xs); padding: .8rem .9rem; overflow-x: auto; }
+.md pre code { background: none; padding: 0; white-space: pre; }
+.md table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.md th, .md td { text-align: left; padding: .45rem .55rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.md th { font-weight: 700; color: var(--ink); }
+.md hr { border: 0; border-top: 1px solid var(--line); margin: 1rem 0; }
+.md .md-empty { color: var(--ink-3); font-style: italic; }
+
+/* The task: what to do, and a checklist that ticks itself. */
+.task { background: var(--accent-wash); border-radius: var(--r); padding: 1.1rem 1.2rem; }
+.task__label { font: 700 .74rem/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); }
+.task .md { margin-top: .5rem; }
+.checks { list-style: none; padding: 0; margin-top: .8rem; display: flex; flex-direction: column; gap: .4rem; }
+.checks li { display: flex; gap: .5rem; align-items: flex-start; font-size: .92rem; color: var(--ink-2); }
+.checks .box { flex: none; width: 1.25rem; height: 1.25rem; border-radius: 6px; margin-top: .05rem;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong); background: var(--surface); display: inline-grid; place-items: center; }
+.checks .box .i { width: .9rem; height: .9rem; visibility: hidden; }
+.checks li.is-met { color: var(--ink); }
+.checks li.is-met .box { background: var(--good); box-shadow: none; color: var(--surface); }
+.checks li.is-met .box .i { visibility: visible; }
+
+/* The editor and the live preview: fixed heights, so typing never makes
+   the page jump. Both scroll inside themselves when they fill up. */
+.bench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap-m); }
+.bench__pane { display: flex; flex-direction: column; min-width: 0; }
+.bench__label { font: 700 .74rem/1 var(--display); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .5rem; display: flex; align-items: center; gap: .4rem; }
+.bench textarea {
+  width: 100%; height: 20rem; resize: none; padding: 1rem; border: 0; border-radius: var(--r-sm);
+  background: var(--surface-2); color: var(--ink);
+  font: .9rem/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+.bench textarea:focus { outline: none; box-shadow: inset 0 0 0 2px var(--accent); }
+.bench__out { height: 20rem; overflow: auto; padding: 1rem 1.1rem; border-radius: var(--r-sm); background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line); overflow-wrap: anywhere; }
+
+/* The certificate form, which takes the editor's place on the last step. */
+.certform { display: flex; flex-direction: column; gap: 1rem; padding: 1.2rem; border-radius: var(--r); background: var(--surface-2); }
+.certform label { font: 700 .85rem/1 var(--display); color: var(--ink); }
+.certform input {
+  font: 1.05rem/1.3 var(--body); padding: .75rem .9rem; border: 0; border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line-strong); width: 100%; max-width: 30rem;
+}
+.certform input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--accent); }
+
+.navrow { display: flex; flex-wrap: wrap; gap: var(--gap-s); justify-content: space-between; align-items: center; }
+.navrow .btnrow { margin: 0; }
+
+.nextup { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-m); flex-wrap: wrap; }
+.nextup h3 { font-family: var(--display); font-size: 1.15rem; }
+.nextup p { color: var(--ink-2); margin-top: .3rem; max-width: 52ch; }
+
+.btn:focus-visible, a:focus-visible, .dot:focus-visible, .bench__out:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .bench { grid-template-columns: 1fr; }
+  .bench textarea, .bench__out { height: 14rem; }
+  .bar-label { width: 100%; margin: .3rem 0 0; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+  <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><path d="M12 3v12"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></symbol>
+</svg>
+
+<div class="lesson" data-course="240" data-page="03-markdown-practice.html">
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__row">
+      <span class="coursemark"><svg class="i"><use href="#i-layers"/></svg> CSC 240</span>
+      <span class="lessonno">Week 1 &middot; Module 1 &middot; 3 of 4</span>
+    </div>
+    <h1>Markdown Practice</h1>
+    <p class="standfirst">Ten short steps. In each one you write a little markdown, the page checks it as you type, and the next step unlocks. It saves your place, so you can stop and come back. At the end you download a certificate - that is what you hand in for this module.</p>
+    <div class="metarow">
+      <span><svg class="i"><use href="#i-clock"/></svg> ~30 minutes</span>
+      <span><svg class="i"><use href="#i-list-checks"/></svg> 10 checked steps</span>
+      <span><svg class="i"><use href="#i-award"/></svg> 1 certificate to upload</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap lesson__body">
+
+  <!-- Every {{md:...}} below is filled from courses/csc-240/01-blueprints/03-markdown-practice.md -->
+
+  <section class="block">
+    <div class="card intro">
+      <h2>How this works</h2>
+<p>Read the step, then type in the box on the left. The right side shows what your markdown turns into. The checklist ticks itself off as you go, and <strong>Next step</strong> unlocks when every box is ticked. Stuck? Look at the example in the step - it is always enough.</p>
+      <div class="callout callout--warn storagenote" id="storageNote" hidden>
+        <span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span>
+        <div class="callout__body"><p>This browser is not letting the page save your place. Everything still works - just finish in one sitting, or open the page in its own tab, where saving usually works.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-label="Practice">
+    <!-- One dot per step, then the certificate. Built by the script. -->
+    <nav class="steps-bar" id="dots" aria-label="Steps"></nav>
+
+    <div class="card" style="margin-top:1rem">
+      <!-- The words for every step, stacked. Built by the script from the
+           steps written in the markdown (they arrive in #steps-src). -->
+      <div class="stack" id="copyStack"></div>
+
+      <!-- The editor and preview, or - on the last step - the certificate form. -->
+      <div class="stack" id="workStack" style="margin-top:1.2rem">
+        <div class="bench is-active" id="bench">
+          <div class="bench__pane">
+            <label class="bench__label" for="editor"><svg class="i"><use href="#i-pencil"/></svg> Your markdown</label>
+            <textarea id="editor" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+          </div>
+          <div class="bench__pane">
+            <span class="bench__label" id="previewLabel"><svg class="i"><use href="#i-eye"/></svg> Live preview</span>
+            <div class="bench__out md" id="preview" role="region" aria-labelledby="previewLabel" tabindex="0"></div>
+          </div>
+        </div>
+        <div class="certform" id="certForm">
+          <label for="certName">Your name, the way it appears in Brightspace</label>
+          <input id="certName" type="text" maxlength="60" autocomplete="name">
+          <div class="btnrow">
+            <button class="btn btn--primary" type="button" id="certDownload"><svg class="i"><use href="#i-award"/></svg> Download my certificate (PDF)</button>
+            <button class="btn btn--ghost" type="button" id="fileDownload"><svg class="i"><use href="#i-download"/></svg> Download instructions.md</button>
+            <button class="btn btn--ghost" type="button" id="fileCopy"><svg class="i"><use href="#i-copy"/></svg> Copy my file</button>
+          </div>
+          <p class="small muted" id="certStatus" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <!-- Announces checklist progress to screen readers. -->
+      <p class="small muted" id="say" aria-live="polite" style="margin-top:.8rem;min-height:1.3em"></p>
+
+      <div class="navrow" style="margin-top:.6rem">
+        <div class="btnrow">
+          <button class="btn btn--ghost" type="button" id="back"><svg class="i" style="transform:scaleX(-1)"><use href="#i-arrow-right"/></svg> Back</button>
+          <button class="btn btn--ghost" type="button" id="resetStep">Start this step over</button>
+        </div>
+        <button class="btn btn--primary" type="button" id="next">Next step <svg class="i"><use href="#i-arrow-right"/></svg></button>
+      </div>
+    </div>
+
+    <p class="small muted" style="margin-top:.8rem"><button class="btn btn--ghost" type="button" id="resetAll" style="padding:.4rem .8rem;font-size:.8rem">Start the whole practice over</button></p>
+  </section>
+
+  <section class="block">
+    <div class="card nextup">
+      <div>
+        <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> Next &middot; page 4</span>
+        <h3>Next: Make Your Own</h3>
+<p>Four real instruction files to compare with yours, then five minutes handing yours to a real AI to see if it holds.</p>
+      </div>
+      <div class="btnrow">
+        <a class="btn btn--ghost" href="02-meet-markdown.html"><svg class="i" style="transform:scaleX(-1)"><use href="#i-arrow-right"/></svg> Back to Meet Markdown</a>
+        <a class="btn btn--primary" href="04-make-your-own.html">Go to Make Your Own <svg class="i"><use href="#i-arrow-right"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- The steps, exactly as written in the markdown. Read by the script below;
+     never shown as-is. -->
+<pre id="steps-src" hidden>=== headings | Headings
+A heading names a section. Put `#` at the start of a line, then a **space**, then the words. More `#` signs make a smaller heading:
+
+```
+# The biggest - the title of the whole file
+## A section
+### A smaller part of a section
+```
+
+Instruction files use one `#` for the assistant's name and `##` for each section. Watch the space: `#Trip Helper` stays plain text, `# Trip Helper` becomes a heading.
+--- task
+Write a level-1 heading that says **Trip Helper**. Under it, write a level-2 heading that says **What you are for**.
+--- start
+--- checks
+A level-1 heading that says &quot;Trip Helper&quot;        @ heading1 is Trip Helper
+A level-2 heading that says &quot;What you are for&quot;   @ heading2 is What you are for
+
+=== paragraphs | Paragraphs
+Lines that sit next to each other run together into one paragraph. To start a new paragraph, leave a **blank line**:
+
+```
+This is the first paragraph.
+It is still the first paragraph.
+
+This is a second paragraph, because of the blank line above it.
+```
+
+An AI reads your file either way, but people read it too - including you, in three weeks, trying to remember what you meant.
+--- task
+Under the heading, write **two short paragraphs** about what Trip Helper does, with a blank line between them.
+--- start
+# Trip Helper
+
+## What you are for
+--- checks
+Two separate paragraphs                     @ paragraphs at least 2
+The &quot;Trip Helper&quot; heading is still there    @ heading1 is Trip Helper
+
+=== emphasis | Bold and italic
+Two stars on each side make **bold**. One star on each side makes *italic*.
+
+```
+**This rule matters most.**
+*This is a gentle suggestion.*
+```
+
+In an instruction file, bold marks the rule that must not be missed. Use it sparingly - if everything is bold, nothing is.
+--- task
+Under the **Tone** heading, write one sentence with a **bold** phrase and another with an *italic* phrase.
+--- start
+## Tone
+--- checks
+Something in bold      @ bold at least 1
+Something in italic    @ italic at least 1
+
+=== bullets | Bullet lists
+Start a line with a dash and a space to make a bullet. Each bullet is one rule:
+
+```
+- Keep every answer under 150 words.
+- Ask before booking anything.
+```
+
+Short, separate rules are easier for an AI to follow - and easier for you to check - than one long paragraph that hides three rules inside it.
+--- task
+Under **Never**, write at least **three bullets** - things Trip Helper must never do.
+--- start
+## Never
+--- checks
+A level-2 heading that says &quot;Never&quot;    @ heading2 is Never
+At least three bullets                 @ bullets at least 3
+
+=== numbers | Numbered lists
+A number and a period make a numbered list. Numbers mean *order* - this happens first, then this:
+
+```
+1. Ask where they are going.
+2. Ask how many days.
+3. Suggest a plan for each day.
+```
+
+Bullets are for rules. Numbers are for steps. That difference is the start of turning a prompt into a workflow, which is Module 2.
+--- task
+Under **Steps**, write at least **three numbered steps** Trip Helper follows to plan a day out.
+--- start
+## Steps
+--- checks
+A level-2 heading that says &quot;Steps&quot;    @ heading2 is Steps
+At least three numbered steps          @ numbers at least 3
+
+=== links | Links
+Square brackets hold the words people see. Round brackets right after hold the web address:
+
+```
+Check the [park hours](https://www.nps.gov) before you go.
+```
+
+In an instruction file, a link points the AI at a source you trust, instead of whatever it happens to remember.
+--- task
+Write a sentence that links the words **park hours** to `https://www.nps.gov`.
+--- start
+--- checks
+A link to https://www.nps.gov    @ link to https://www.nps.gov
+The words &quot;park hours&quot;           @ text has park hours
+
+=== exact | Exact words
+Backticks - the key usually under Esc, top left - mark text that must be used **exactly**, letter for letter:
+
+```
+Start every plan with `PLAN:` on its own line.
+```
+
+This is how you tell an AI &quot;these exact characters, please&quot;, which matters the moment another tool has to read what it writes.
+--- task
+Write a rule telling Trip Helper to start every answer with the exact word `PLAN:`. Put `PLAN:` in backticks.
+--- start
+--- checks
+PLAN: inside backticks    @ code is PLAN:
+
+=== codeblocks | Exact layouts
+Three backticks on a line of their own start a block. Three more end it. Everything in between is kept exactly as typed - spacing, line breaks, all of it:
+
+````
+```
+Day 1:
+Day 2:
+```
+````
+
+Use this to give an AI a layout to fill in. It copies the shape, and anything downstream knows where to look.
+--- task
+Write a code block holding a three-line layout: **Morning:**, **Afternoon:** and **Evening:**, one per line.
+--- start
+--- checks
+A code block                  @ code blocks at least 1
+It has a line for Morning:    @ text has Morning:
+It has a line for Evening:    @ text has Evening:
+
+=== tables | Tables
+Pipes `|` make columns. The first row is the header. The row of dashes underneath it tells markdown the header has ended:
+
+```
+| Weather | Plan |
+|---|---|
+| Sunny | The lake trail |
+| Rain | The museum |
+```
+
+Tables are the quickest way to give an AI a decision rule - *if this, then that* - in a form you can check at a glance.
+--- task
+The header row is started for you. Add the row of dashes, then **at least two rows** of your own.
+--- start
+| Weather | Plan |
+--- checks
+Two columns               @ table columns at least 2
+At least two rows         @ table rows at least 2
+
+=== together | Put it together
+Now write a whole instruction file, for an assistant of **your own** - anything you like. It does not have to be your course project.
+
+Use the shape you have been building: a `#` name, a few `##` sections, bullets for rules, numbers for steps, and at least one table. This file goes on **page 2 of your certificate**, and on the next page you will hand it to a real AI and try to make it break its own rules.
+--- task
+Write your own instruction file. Tick every box on the checklist.
+--- start
+--- checks
+A level-1 heading naming your assistant      @ heading1 at least 1
+At least three sections with ## headings     @ heading2 at least 3
+A section called &quot;Never&quot;                     @ heading2 is Never
+Bullets for rules                            @ bullets at least 2
+Numbered steps                               @ numbers at least 2
+One rule in bold                             @ bold at least 1
+Some exact words in backticks                @ code at least 1
+A table                                      @ table rows at least 1</pre>
+<!-- The certificate step's words, rendered from the markdown. -->
+<template id="cert-copy"><h2>Your certificate</h2>
+<p>You finished all ten steps. Type your name the way it appears in Brightspace, then download the certificate.</p>
+<p><strong>Upload the PDF to the Markdown Practice assignment in Brightspace.</strong> That is the whole assignment. Page 1 is the certificate; page 2 is the instruction file you wrote in step 10.</p>
+<p>Keep your <code>instructions.md</code> too - you will use it on the next page.</p></template>
+</div>
+
+<script>
+/* ==========================================================================
+   The markdown renderer  (csc-240/build/md-render.js - ONE copy, inlined into
+   every CSC 240 page that needs it by assemble.py - its RENDER_JS slot)
+   --------------------------------------------------------------------------
+   SAFETY FIRST. Whatever a student types is turned into HTML and shown on the
+   page, so the order of operations here is the security model:
+
+     1. ESCAPE EVERYTHING. Every <, >, &, " and ' the student typed becomes
+        harmless text (&lt; and so on) before anything else happens. After
+        this step there is no way for typed text to become a real tag.
+     2. Only then add tags - and only the handful this file knows about.
+     3. Links are allowed only for addresses starting with http:// or
+        https://, so "javascript:" and similar tricks never become links.
+     4. No images, ever. An image in markdown fetches a file from somewhere
+        else, and a preview has no business doing that.
+
+   It handles only what this page teaches: headings (#, ##, ###), bold,
+   italic, bullet and numbered lists, links, inline code, code blocks,
+   tables, and --- dividers. Anything else simply shows as the text you typed.
+
+   render(text) returns { html: "...", used: { heading: true, ... } } so the
+   page knows which marks are working.
+   ========================================================================== */
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+}
+
+// Formatting inside one line: code, links, bold, italic.
+// `text` has ALREADY been escaped by the time it gets here.
+function renderInline(text, used) {
+  var stash = [];   // finished pieces we must not format any further
+
+  // Put a finished piece aside and leave a marker where it goes. The marker
+  // uses a character nobody types, so it cannot clash with real text.
+  function keep(html) {
+    stash.push(html);
+    return "\u0000" + (stash.length - 1) + "\u0000";
+  }
+
+  // 1. `code` first, so nothing inside backticks gets turned bold or into a link.
+  text = text.replace(/`([^`]+)`/g, function (_, inside) {
+    used.code = true;
+    return keep("<code>" + inside + "</code>");
+  });
+
+  // 2. [words](address) - only web addresses. Anything else is left as typed.
+  text = text.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (whole, words, url) {
+    if (!/^https?:\/\//i.test(url)) return whole;
+    used.link = true;
+    // url was escaped in step 1 of the safety model, so it cannot close the
+    // quotes around it and add attributes of its own.
+    return keep('<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + words + "</a>");
+  });
+
+  // 3. **bold**, then *italic* or _italic_.
+  text = text.replace(/\*\*([^*\n]+?)\*\*/g, function (_, inside) {
+    used.emphasis = true;
+    return "<strong>" + inside + "</strong>";
+  });
+  text = text.replace(/(^|[^*\w])\*([^*\s][^*\n]*?)\*(?!\*)/g, function (_, before, inside) {
+    used.emphasis = true;
+    return before + "<em>" + inside + "</em>";
+  });
+  text = text.replace(/(^|[^\w])_([^_\s][^_\n]*?)_(?![\w])/g, function (_, before, inside) {
+    used.emphasis = true;
+    return before + "<em>" + inside + "</em>";
+  });
+
+  // 4. Put the code and links back where their markers are.
+  return text.replace(/\u0000(\d+)\u0000/g, function (_, i) { return stash[Number(i)]; });
+}
+
+// Split one table row "| a | b |" into its cells.
+function tableCells(line) {
+  var t = line.trim();
+  if (t.charAt(0) === "|") t = t.slice(1);
+  if (t.charAt(t.length - 1) === "|") t = t.slice(0, -1);
+  return t.split("|").map(function (c) { return c.trim(); });
+}
+
+function render(source) {
+  var used = { heading: false, emphasis: false, list: false, link: false, code: false, table: false };
+  var lines = source.replace(/\r\n?/g, "\n").split("\n");
+  var out = [];
+  var i = 0;
+
+  // Tests for "does this line start a new kind of block?"
+  var isFence   = function (l) { return /^\s*(`{3,}|~{3,})/.test(l); };
+  var isHeading = function (l) { return /^#{1,3}\s+\S/.test(l); };
+  var isBullet  = function (l) { return /^\s*[-*+]\s+\S/.test(l); };
+  var isNumber  = function (l) { return /^\s*\d+[.)]\s+\S/.test(l); };
+  var isDivider = function (l) { return /^[\s|:\-]+$/.test(l) && /-{3,}/.test(l) && l.indexOf("|") !== -1; };
+  var isTable   = function (n) { return /^\s*\|/.test(lines[n]) && n + 1 < lines.length && isDivider(lines[n + 1]); };
+  var isBlank   = function (l) { return /^\s*$/.test(l); };
+  var isRule    = function (l) { return /^\s*-{3,}\s*$/.test(l); };   // a line of dashes alone
+
+  while (i < lines.length) {
+    var line = lines[i];
+
+    if (isBlank(line)) { i++; continue; }
+
+    // A divider: three or more dashes on a line by themselves.
+    if (isRule(line)) { out.push("<hr>"); i++; continue; }
+
+    // A code block: everything up to the closing ``` is shown exactly as typed.
+    if (isFence(line)) {
+      // The fence that opens the block - say ``` or ```` - and the only kind
+      // of line that may close it: the same character, at least as many of
+      // them, and nothing else on the line. So a block fenced with ````
+      // can show a ``` block inside it, as plain text.
+      var open = /^\s*(`{3,}|~{3,})/.exec(line)[1];
+      var closes = new RegExp("^\\s*" + (open.charAt(0) === "`" ? "`" : "~") + "{" + open.length + ",}\\s*$");
+      var body = [];
+      i++;
+      while (i < lines.length && !closes.test(lines[i])) { body.push(lines[i]); i++; }
+      i++;   // skip the closing fence (or run off the end if there was none)
+      used.code = true;
+      out.push("<pre><code>" + escapeHtml(body.join("\n")) + "</code></pre>");
+      continue;
+    }
+
+    // A heading. # becomes h3, ## h4, ### h5 - see the CSS note on why.
+    if (isHeading(line)) {
+      var m = /^(#{1,3})\s+(.*)$/.exec(line);
+      var level = m[1].length;
+      used.heading = true;
+      out.push("<h" + (level + 2) + ' class="md-h' + level + '">' +
+               renderInline(escapeHtml(m[2].replace(/\s+#+\s*$/, "")), used) +
+               "</h" + (level + 2) + ">");
+      i++;
+      continue;
+    }
+
+    // A table: a row of pipes with a row of dashes underneath it.
+    if (isTable(i)) {
+      var head = tableCells(lines[i]);
+      i += 2;   // the header row and the dashes
+      var rows = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) { rows.push(tableCells(lines[i])); i++; }
+      used.table = true;
+      var t = "<table><thead><tr>";
+      head.forEach(function (c) { t += '<th scope="col">' + renderInline(escapeHtml(c), used) + "</th>"; });
+      t += "</tr></thead><tbody>";
+      rows.forEach(function (r) {
+        t += "<tr>";
+        // Pad short rows so every row has as many cells as the header.
+        for (var c = 0; c < head.length; c++) {
+          t += "<td>" + renderInline(escapeHtml(r[c] || ""), used) + "</td>";
+        }
+        t += "</tr>";
+      });
+      out.push(t + "</tbody></table>");
+      continue;
+    }
+
+    // A list. Bullets and numbers work the same way; only the tag differs.
+    if (isBullet(line) || isNumber(line)) {
+      var numbered = isNumber(line);
+      var test = numbered ? isNumber : isBullet;
+      var items = [];
+      while (i < lines.length) {
+        if (test(lines[i])) {
+          items.push(lines[i].replace(/^\s*([-*+]|\d+[.)])\s+/, ""));
+          i++;
+        } else if (items.length && /^\s{2,}\S/.test(lines[i]) && !isBullet(lines[i]) && !isNumber(lines[i])) {
+          // An indented line straight after an item carries that item on.
+          items[items.length - 1] += " " + lines[i].trim();
+          i++;
+        } else {
+          break;
+        }
+      }
+      used.list = true;
+      var tag = numbered ? "ol" : "ul";
+      out.push("<" + tag + ">" + items.map(function (it) {
+        return "<li>" + renderInline(escapeHtml(it), used) + "</li>";
+      }).join("") + "</" + tag + ">");
+      continue;
+    }
+
+    // Anything else is a paragraph: lines run together until a blank line
+    // or the start of some other block.
+    var para = [];
+    while (i < lines.length && !isBlank(lines[i]) && !isFence(lines[i]) && !isRule(lines[i]) &&
+           !isHeading(lines[i]) && !isBullet(lines[i]) && !isNumber(lines[i]) && !isTable(i)) {
+      para.push(lines[i].trim());
+      i++;
+    }
+    out.push("<p>" + renderInline(escapeHtml(para.join(" ")), used) + "</p>");
+  }
+
+  if (!out.length) out.push('<p class="md-empty">Nothing yet. Start typing on the left.</p>');
+  return { html: out.join("\n"), used: used };
+}
+
+</script>
+<script>
+/* ==========================================================================
+   pdf-lite.js - a tiny PDF maker for the certificate   (one copy, inlined by
+   assemble.py, through its PDF_JS slot, into any page that needs it)
+   --------------------------------------------------------------------------
+   WHY NOT A LIBRARY. jsPDF would work, but it is 360KB from a CDN, and if
+   the CDN is blocked or changes, the one thing students MUST produce - the
+   certificate - silently fails. A certificate only needs text, lines and
+   colored boxes, and a PDF that does only that is small enough to write by
+   hand. It uses the fonts every PDF reader already has (Helvetica,
+   Helvetica-Bold and Courier), so nothing is embedded or downloaded.
+
+   HOW A PDF IS PUT TOGETHER, in one paragraph. A PDF is a list of numbered
+   "objects" (the catalog, the page list, each page, each font, and each
+   page's drawing instructions), followed by a table saying exactly how many
+   bytes into the file each object starts. Drawing instructions are short
+   commands: "BT /F1 12 Tf 72 700 Td (Hello) Tj ET" means begin text, use
+   font F1 at 12 points, move to (72, 700), show "Hello", end text.
+   Coordinates are in points (72 to an inch) measured from the BOTTOM left.
+
+   USE
+     var doc = PdfLite.create();
+     var page = doc.page(792, 612);            // width, height in points
+     page.text("Hello", 72, 500, { size: 24, font: "bold", color: [0, .27, .68] });
+     page.textCentered("Middle", 306, { size: 12 });
+     page.rect(30, 30, 732, 552, { stroke: [0, .27, .68], width: 3 });
+     var bytes = doc.bytes();                   // a Uint8Array, ready to download
+
+   CHARACTERS. Text is written in the Windows-1252 character set, which
+   covers English and most Western European names (Jose with an accent, Zoe
+   with dots). Anything outside it - for example Chinese characters or
+   emoji - is shown as "?" rather than breaking the file.
+   ========================================================================== */
+var PdfLite = (function () {
+  "use strict";
+
+  // Character widths for Helvetica and Helvetica-Bold, from the standard
+  // Adobe font metrics, for character codes 32 to 255, in 1/1000ths of the
+  // font size. Used to center text. Courier is always 600 per character.
+  var W_REG  = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,350,556,350,222,556,333,1000,556,556,333,1000,667,333,1000,350,611,350,350,222,222,333,333,350,556,1000,333,1000,500,333,944,350,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500];
+  var W_BOLD = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,350,556,350,278,556,500,1000,556,556,333,1000,667,333,1000,350,611,350,350,278,278,500,500,350,556,1000,333,1000,556,333,944,350,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+
+  // Windows-1252 has 27 characters in the range 128-159 that are not where
+  // Unicode puts them (curly quotes, the euro sign, long dashes...).
+  var CP1252 = { 0x20AC:128, 0x201A:130, 0x0192:131, 0x201E:132, 0x2026:133, 0x2020:134, 0x2021:135,
+    0x02C6:136, 0x2030:137, 0x0160:138, 0x2039:139, 0x0152:140, 0x017D:142, 0x2018:145, 0x2019:146,
+    0x201C:147, 0x201D:148, 0x2022:149, 0x2013:150, 0x2014:151, 0x02DC:152, 0x2122:153, 0x0161:154,
+    0x203A:155, 0x0153:156, 0x017E:158, 0x0178:159 };
+
+  // Turn ordinary text into a string of single-byte character codes.
+  function encode(text) {
+    var out = "";
+    for (var i = 0; i < text.length; i++) {
+      var c = text.charCodeAt(i);
+      if (c === 9) c = 32;                                    // a tab becomes a space
+      if (c >= 32 && c <= 126) out += String.fromCharCode(c);
+      else if (c >= 160 && c <= 255) out += String.fromCharCode(c);
+      else if (CP1252[c]) out += String.fromCharCode(CP1252[c]);
+      else out += "?";                                        // not in the font
+    }
+    return out;
+  }
+
+  // Inside a PDF string, ( ) and \ are special and must be escaped.
+  function pdfString(encoded) {
+    return "(" + encoded.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)") + ")";
+  }
+
+  var FONTS = { regular: "F1", bold: "F2", mono: "F3" };
+
+  function widthOf(text, size, font) {
+    var s = encode(text), total = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      if (font === "mono") total += 600;
+      else total += ((font === "bold" ? W_BOLD : W_REG)[c - 32] || 556);
+    }
+    return total * size / 1000;
+  }
+
+  function rgb(c) { return c[0].toFixed(3) + " " + c[1].toFixed(3) + " " + c[2].toFixed(3); }
+
+  function create() {
+    var pages = [];
+
+    function page(width, height) {
+      var ops = [];
+      var p = {
+        width: width, height: height, ops: ops,
+        // Draw text with its left edge at x and its baseline at y.
+        text: function (text, x, y, o) {
+          o = o || {};
+          ops.push("BT /" + FONTS[o.font || "regular"] + " " + (o.size || 12) + " Tf " +
+                   rgb(o.color || [0, 0, 0]) + " rg " + x.toFixed(2) + " " + y.toFixed(2) + " Td " +
+                   pdfString(encode(text)) + " Tj ET");
+        },
+        // Draw text centered on the page, at baseline y.
+        textCentered: function (text, y, o) {
+          o = o || {};
+          var w = widthOf(text, o.size || 12, o.font || "regular");
+          p.text(text, (width - w) / 2, y, o);
+        },
+        // A rectangle: outlined (stroke), filled (fill), or both.
+        rect: function (x, y, w, h, o) {
+          o = o || {};
+          if (o.fill) ops.push(rgb(o.fill) + " rg " + [x, y, w, h].map(function (n) { return n.toFixed(2); }).join(" ") + " re f");
+          if (o.stroke) ops.push(rgb(o.stroke) + " RG " + (o.width || 1) + " w " + [x, y, w, h].map(function (n) { return n.toFixed(2); }).join(" ") + " re S");
+        },
+        // A straight line.
+        line: function (x1, y1, x2, y2, o) {
+          o = o || {};
+          ops.push(rgb(o.color || [0, 0, 0]) + " RG " + (o.width || 1) + " w " + x1 + " " + y1 + " m " + x2 + " " + y2 + " l S");
+        }
+      };
+      pages.push(p);
+      return p;
+    }
+
+    // Assemble every object, then the table of where each one starts.
+    function bytes() {
+      var objects = [];
+      objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+      var kids = [];
+      objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+      objects[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+      objects[5] = "<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>";
+      var next = 6;
+      pages.forEach(function (p) {
+        var pageNum = next++, contentNum = next++;
+        var stream = p.ops.join("\n");
+        objects[contentNum] = "<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream";
+        objects[pageNum] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + p.width + " " + p.height + "] " +
+                           "/Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents " + contentNum + " 0 R >>";
+        kids.push(pageNum + " 0 R");
+      });
+      objects[2] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + kids.length + " >>";
+
+      var out = "%PDF-1.4\n%âãÏÓ\n";   // the second line marks the file as binary
+      var offsets = [];
+      for (var n = 1; n < objects.length; n++) {
+        offsets[n] = out.length;                            // every character is one byte
+        out += n + " 0 obj\n" + objects[n] + "\nendobj\n";
+      }
+      var xref = out.length;
+      out += "xref\n0 " + objects.length + "\n0000000000 65535 f \n";
+      for (n = 1; n < objects.length; n++) out += ("0000000000" + offsets[n]).slice(-10) + " 00000 n \n";
+      out += "trailer\n<< /Size " + objects.length + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n";
+
+      var arr = new Uint8Array(out.length);
+      for (var k = 0; k < out.length; k++) arr[k] = out.charCodeAt(k) & 255;
+      return arr;
+    }
+
+    return { page: page, bytes: bytes };
+  }
+
+  return { create: create, widthOf: widthOf };
+})();
+
+</script>
+
+<script>
+/* ==========================================================================
+   EDIT HERE: the certificate
+   --------------------------------------------------------------------------
+   The words printed on the PDF. The steps themselves are in the markdown.
+   ========================================================================== */
+var CERT = {
+  heading:  "Certificate of Completion",
+  title:    "Markdown Practice",
+  line1:    "This certifies that",
+  line2:    "completed all ten checked steps of Markdown Practice,",
+  line3:    "including an original instruction file, shown on the next page.",
+  course:   "CSC 240 \u00b7 AI Workflows & Automation \u00b7 Finger Lakes Community College",
+  fileHead: "Instruction file written in step 10 by"
+};
+var STORE_KEY = "csc240.markdown-practice.v1";   // where progress is kept in this browser
+var BLUE = [0, 0.275, 0.678];        // CSC 240 blue, #0046ad, for the PDF
+
+
+/* ==========================================================================
+   1. Read the steps out of the markdown
+   --------------------------------------------------------------------------
+   The format is described at the top of 03-markdown-practice.md. The build
+   has already checked every step and every rule, so here we only split it up.
+   ========================================================================== */
+function parseSteps(src) {
+  var steps = [], cur = null, part = null;
+  src.replace(/\r\n?/g, "\n").split("\n").forEach(function (line) {
+    var head = /^=== ([a-z0-9-]+) \| (.+)$/.exec(line);
+    var sect = /^--- (task|start|checks)\s*$/.exec(line);
+    if (head) {
+      cur = { id: head[1], title: head[2].trim(), explain: [], task: [], start: [], checks: [] };
+      steps.push(cur); part = "explain";
+    } else if (sect && cur) {
+      part = sect[1];
+    } else if (cur) {
+      if (part === "checks") {
+        var m = /^(.*?)\s+@\s+(.+)$/.exec(line);
+        if (m) cur.checks.push({ label: m[1].trim(), rule: m[2].trim() });
+      } else {
+        cur[part].push(line);
+      }
+    }
+  });
+  steps.forEach(function (s) {
+    s.explain = s.explain.join("\n").trim();
+    s.task = s.task.join("\n").trim();
+    s.start = s.start.join("\n").replace(/^\n+|\n+$/g, "");
+    if (s.start) s.start += "\n";
+  });
+  return steps;
+}
+
+
+/* ==========================================================================
+   2. The checks
+   --------------------------------------------------------------------------
+   Each rule looks at the PREVIEW - what the markdown actually turned into -
+   not at the typing. So "#Trip Helper" (no space) fails the heading check,
+   exactly as it fails to become a heading.
+   ========================================================================== */
+function norm(s) { return String(s).toLowerCase().replace(/\s+/g, " ").trim(); }
+
+// How many things of each kind are in the preview.
+var COUNT = {
+  "bold":          function (r) { return r.querySelectorAll("strong").length; },
+  "italic":        function (r) { return r.querySelectorAll("em").length; },
+  "bullets":       function (r) { return r.querySelectorAll("ul > li").length; },
+  "numbers":       function (r) { return r.querySelectorAll("ol > li").length; },
+  "links":         function (r) { return r.querySelectorAll('a[href^="http"]').length; },
+  "code":          function (r) { return Array.prototype.filter.call(r.querySelectorAll("code"), function (c) { return !c.closest("pre"); }).length; },
+  "code blocks":   function (r) { return r.querySelectorAll("pre").length; },
+  "table rows":    function (r) { return r.querySelectorAll("tbody tr").length; },
+  "table columns": function (r) { return Math.max.apply(null, [0].concat(Array.prototype.map.call(r.querySelectorAll("table"), function (t) { return t.querySelectorAll("thead th").length; }))); },
+  "paragraphs":    function (r) { return r.querySelectorAll(":scope > p").length; }
+};
+
+function passes(rule, root) {
+  var m;
+  if ((m = /^heading([123]) is (.+)$/.exec(rule)))
+    return Array.prototype.some.call(root.querySelectorAll(".md-h" + m[1]), function (h) { return norm(h.textContent) === norm(m[2]); });
+  if ((m = /^heading([123]) at least (\d+)$/.exec(rule)))
+    return root.querySelectorAll(".md-h" + m[1]).length >= Number(m[2]);
+  if ((m = /^(bold|italic|bullets|numbers|links|code blocks|code|table rows|table columns|paragraphs) at least (\d+)$/.exec(rule)))
+    return COUNT[m[1]](root) >= Number(m[2]);
+  if ((m = /^link to (\S+)$/.exec(rule))) {
+    var want = norm(m[1]).replace(/\/+$/, "");
+    return Array.prototype.some.call(root.querySelectorAll("a"), function (a) { return norm(a.getAttribute("href")).replace(/\/+$/, "").indexOf(want) === 0; });
+  }
+  if ((m = /^code is (.+)$/.exec(rule)))
+    return Array.prototype.some.call(root.querySelectorAll("code"), function (c) { return !c.closest("pre") && norm(c.textContent) === norm(m[1]); });
+  if ((m = /^text has (.+)$/.exec(rule)))
+    return norm(root.textContent).indexOf(norm(m[1])) !== -1;
+  return false;   // never reached: the build refuses rules it does not know
+}
+
+// Render markdown into a scratch element and test every check against it.
+function evaluate(step, text) {
+  var root = document.createElement("div");
+  root.innerHTML = render(text).html;
+  var empty = root.querySelector(".md-empty");
+  if (empty) empty.remove();
+  return step.checks.map(function (c) { return passes(c.rule, root); });
+}
+
+
+/* ==========================================================================
+   3. Saving progress
+   --------------------------------------------------------------------------
+   Kept in this browser only (nothing is sent anywhere). Every read and write
+   is wrapped, because storage can be switched off or blocked inside
+   Brightspace's frame - in which case the page still works, and says so.
+   ========================================================================== */
+var canSave = (function () {
+  try { var k = "__csc240_test"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return true; }
+  catch (e) { return false; }
+})();
+function load() {
+  try { var s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && s.v === 1) return s; } catch (e) {}
+  return { v: 1, step: 0, done: {}, text: {}, name: "" };
+}
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+
+/* ==========================================================================
+   4. The page
+   ========================================================================== */
+var STEPS = parseSteps(document.getElementById("steps-src").textContent);
+var CERT_INDEX = STEPS.length;              // the certificate comes after the last step
+var state = load();
+if (state.step > CERT_INDEX) state.step = 0;
+
+var el = {
+  dots: document.getElementById("dots"), copy: document.getElementById("copyStack"),
+  bench: document.getElementById("bench"), certForm: document.getElementById("certForm"),
+  editor: document.getElementById("editor"), preview: document.getElementById("preview"),
+  say: document.getElementById("say"), back: document.getElementById("back"),
+  next: document.getElementById("next"), resetStep: document.getElementById("resetStep"),
+  resetAll: document.getElementById("resetAll"), name: document.getElementById("certName"),
+  certBtn: document.getElementById("certDownload"), certStatus: document.getElementById("certStatus")
+};
+if (!canSave) document.getElementById("storageNote").hidden = false;
+
+// Is every step before this one done? Only then may the learner open it.
+function reachable(i) {
+  for (var k = 0; k < i; k++) if (!state.done[STEPS[k].id]) return false;
+  return true;
+}
+function allDone() { return reachable(CERT_INDEX); }
+function textFor(step) { return Object.prototype.hasOwnProperty.call(state.text, step.id) ? state.text[step.id] : step.start; }
+
+// Build one block of words per step, plus the certificate's, all stacked.
+var panels = [];
+STEPS.forEach(function (step, i) {
+  var p = document.createElement("div");
+  p.className = "stepcopy";
+  p.innerHTML =
+    '<span class="eyebrow"></span><h2></h2>' +
+    '<div class="md explain"></div>' +
+    '<div class="task"><span class="task__label">Your turn</span><div class="md"></div><ul class="checks"></ul></div>';
+  p.querySelector(".eyebrow").textContent = "Step " + (i + 1) + " of " + STEPS.length;
+  p.querySelector("h2").textContent = step.title;
+  p.querySelector(".explain").innerHTML = render(step.explain).html;     // the same safe renderer
+  p.querySelector(".task .md").innerHTML = render(step.task).html;
+  var ul = p.querySelector(".checks");
+  step.checks.forEach(function (c) {
+    var li = document.createElement("li");
+    li.innerHTML = '<span class="box" aria-hidden="true"><svg class="i"><use href="#i-check"/></svg></span><span class="lbl"></span>';
+    li.querySelector(".lbl").textContent = c.label;
+    ul.appendChild(li);
+  });
+  el.copy.appendChild(p);
+  panels.push(p);
+});
+var certPanel = document.createElement("div");
+certPanel.className = "stepcopy md";
+certPanel.innerHTML = document.getElementById("cert-copy").innerHTML;
+el.copy.appendChild(certPanel);
+panels.push(certPanel);
+
+// One dot per step, and a last one for the certificate.
+var dots = [];
+for (var d = 0; d <= CERT_INDEX; d++) {
+  (function (i) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "dot";
+    if (i === CERT_INDEX) { b.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-award"/></svg>'; b.setAttribute("aria-label", "Certificate"); }
+    else { b.textContent = i + 1; b.setAttribute("aria-label", "Step " + (i + 1) + ": " + STEPS[i].title); }
+    b.addEventListener("click", function () { go(i); });
+    el.dots.appendChild(b);
+    dots.push(b);
+  })(d);
+}
+var barLabel = document.createElement("span");
+barLabel.className = "bar-label";
+el.dots.appendChild(barLabel);
+
+// Show one panel in a stack; the others keep their space but are invisible
+// and inert, so Tab and screen readers skip them.
+function showIn(list, active) {
+  list.forEach(function (p) {
+    var on = (p === active);
+    p.classList.toggle("is-active", on);
+    if (on) { p.removeAttribute("inert"); p.removeAttribute("aria-hidden"); }
+    else { p.setAttribute("inert", ""); p.setAttribute("aria-hidden", "true"); }
+  });
+}
+
+var lastMet = null;     // for announcing only what changed
+
+// Re-check the current step against what is in the editor.
+function check(announce) {
+  var i = state.step;
+  if (i >= CERT_INDEX) return;
+  var step = STEPS[i];
+  el.preview.innerHTML = render(el.editor.value).html;
+  var met = evaluate(step, el.editor.value);
+  var items = panels[i].querySelectorAll(".checks li");
+  met.forEach(function (ok, k) {
+    items[k].classList.toggle("is-met", ok);
+    items[k].setAttribute("aria-label", step.checks[k].label + (ok ? ", done" : ", not yet"));
+  });
+  var count = met.filter(Boolean).length;
+  if (count === met.length && !state.done[step.id]) { state.done[step.id] = true; save(); paintDots(); }
+  el.next.disabled = !state.done[step.id];
+  if (announce && lastMet !== null && count !== lastMet) {
+    el.say.textContent = count === met.length ? "All " + met.length + " done. Next step is unlocked."
+                                              : count + " of " + met.length + " done.";
+  }
+  lastMet = count;
+}
+
+function paintDots() {
+  dots.forEach(function (b, i) {
+    b.disabled = !reachable(i);
+    b.classList.toggle("is-done", i < CERT_INDEX && !!state.done[STEPS[i].id]);
+    if (i === state.step) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+  });
+  barLabel.textContent = state.step < CERT_INDEX ? "Step " + (state.step + 1) + " of " + STEPS.length + " - " + STEPS[state.step].title
+                                                 : "Certificate";
+}
+
+// Move to step i (or the certificate).
+function go(i) {
+  if (i < 0 || i > CERT_INDEX || !reachable(i)) return;
+  state.step = i; save();
+  showIn(panels, panels[i]);
+  var onCert = (i === CERT_INDEX);
+  showIn([el.bench, el.certForm], onCert ? el.certForm : el.bench);
+  el.back.disabled = (i === 0);
+  el.resetStep.disabled = onCert;
+  // visibility, not hidden: the button keeps its space, so nothing shifts.
+  el.next.style.visibility = onCert ? "hidden" : "visible";
+  el.say.textContent = "";
+  lastMet = null;
+  if (!onCert) {
+    el.editor.value = textFor(STEPS[i]);
+    el.editor.setAttribute("aria-label", "Your markdown for step " + (i + 1) + ", " + STEPS[i].title);
+    check(false);
+  } else {
+    el.name.value = state.name || "";
+    paintCert();
+  }
+  paintDots();
+}
+
+el.editor.addEventListener("input", function () {
+  state.text[STEPS[state.step].id] = el.editor.value;
+  save();
+  check(true);
+});
+el.next.addEventListener("click", function () { go(state.step + 1); });
+el.back.addEventListener("click", function () { go(state.step - 1); });
+
+// Buttons that need a second press before they erase anything.
+function twoPress(btn, armedLabel, action) {
+  var label = btn.innerHTML, armed = false, timer = null;
+  btn.addEventListener("click", function () {
+    if (!armed) {
+      armed = true; btn.textContent = armedLabel;
+      timer = setTimeout(function () { armed = false; btn.innerHTML = label; }, 4000);
+      return;
+    }
+    clearTimeout(timer); armed = false; btn.innerHTML = label;
+    action();
+  });
+}
+twoPress(el.resetStep, "Press again to clear this step", function () {
+  var step = STEPS[state.step];
+  delete state.text[step.id];
+  save();
+  el.editor.value = step.start;
+  check(false);
+  el.editor.focus();
+});
+twoPress(el.resetAll, "Press again to erase all progress", function () {
+  state = { v: 1, step: 0, done: {}, text: {}, name: "" };
+  save();
+  go(0);
+});
+
+
+/* ==========================================================================
+   5. The certificate
+   ========================================================================== */
+function myFile() { return textFor(STEPS[CERT_INDEX - 1]); }   // the "put it together" step
+
+function paintCert() {
+  var ok = allDone(), named = el.name.value.trim().length > 0;
+  el.certBtn.disabled = !(ok && named);
+  el.certStatus.textContent = !ok ? "Finish all ten steps first." : (!named ? "Type your name to download the certificate." : "");
+}
+el.name.addEventListener("input", function () { state.name = el.name.value; save(); paintCert(); });
+
+// Save bytes as a file the learner downloads.
+function download(bytes, name, type) {
+  var url = URL.createObjectURL(new Blob([bytes], { type: type }));
+  var a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+}
+
+// Break a line of the file into pieces that fit the page, at spaces where possible.
+function wrap(line, max) {
+  var out = [];
+  while (line.length > max) {
+    var cut = line.lastIndexOf(" ", max);
+    if (cut < max * 0.5) cut = max;
+    out.push(line.slice(0, cut));
+    line = line.slice(cut).replace(/^ /, "");
+  }
+  out.push(line);
+  return out;
+}
+
+function makeCertificate(name, fileText, when) {
+  var doc = PdfLite.create();
+
+  // Page 1: the certificate, landscape.
+  var p = doc.page(792, 612);
+  p.rect(28, 28, 736, 556, { stroke: BLUE, width: 4 });
+  p.rect(42, 42, 708, 528, { stroke: BLUE, width: 1 });
+  p.textCentered(CERT.heading.toUpperCase(), 500, { size: 13, font: "bold", color: [0.35, 0.33, 0.31] });
+  p.textCentered(CERT.title, 450, { size: 34, font: "bold", color: [0.11, 0.1, 0.09] });
+  p.textCentered(CERT.line1, 395, { size: 15, color: [0.35, 0.33, 0.31] });
+  var size = 34;   // shrink a long name until it fits between the borders
+  while (size > 16 && PdfLite.widthOf(name, size, "bold") > 640) size -= 2;
+  p.textCentered(name, 345, { size: size, font: "bold", color: BLUE });
+  p.line(196, 330, 596, 330, { color: [0.81, 0.79, 0.76], width: 1 });
+  p.textCentered(CERT.line2, 300, { size: 14, color: [0.35, 0.33, 0.31] });
+  p.textCentered(CERT.line3, 280, { size: 14, color: [0.35, 0.33, 0.31] });
+  p.textCentered(when, 200, { size: 14, font: "bold", color: [0.11, 0.1, 0.09] });
+  p.textCentered(CERT.course, 110, { size: 11, color: [0.35, 0.33, 0.31] });
+
+  // Page 2 onward: the learner's own instruction file, exactly as typed.
+  var lines = [];
+  fileText.replace(/\r\n?/g, "\n").replace(/\n+$/, "").split("\n").forEach(function (ln) { lines = lines.concat(wrap(ln, 86)); });
+  var page = null, y = 0, pageNo = 1;
+  function newPage() {
+    page = doc.page(612, 792); pageNo++;
+    page.rect(0, 762, 612, 30, { fill: BLUE });
+    page.text(CERT.fileHead + " " + name, 54, 772, { size: 11, font: "bold", color: [1, 1, 1] });
+    page.text(CERT.title + " \u00b7 " + when + " \u00b7 page " + pageNo, 54, 34, { size: 9, color: [0.55, 0.51, 0.48] });
+    y = 730;
+  }
+  newPage();
+  lines.forEach(function (ln) {
+    if (y < 60) newPage();
+    page.text(ln, 54, y, { size: 9.5, font: "mono", color: [0.11, 0.1, 0.09] });
+    y -= 12.5;
+  });
+  return doc.bytes();
+}
+
+el.certBtn.addEventListener("click", function () {
+  if (!allDone()) return;
+  var name = el.name.value.trim().slice(0, 60);
+  if (!name) return;
+  var when = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "student";
+  download(makeCertificate(name, myFile(), when), "markdown-practice-" + slug + ".pdf", "application/pdf");
+  el.certStatus.textContent = "Downloaded. Upload that PDF to the Markdown Practice assignment in Brightspace.";
+});
+document.getElementById("fileDownload").addEventListener("click", function () {
+  download(myFile(), "instructions.md", "text/markdown;charset=utf-8");
+});
+document.getElementById("fileCopy").addEventListener("click", function () {
+  var btn = this, label = btn.innerHTML, text = myFile();
+  function done(ok) { btn.textContent = ok ? "Copied" : "Select it in step 10 and copy by hand"; setTimeout(function () { btn.innerHTML = label; }, 1800); }
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+  else done(false);
+});
+
+// Start where the learner left off - but never past a step they have not earned.
+var start = state.step;
+while (start > 0 && !reachable(start)) start--;
+go(start);
+</script>
+
+<script>
+/* ===== Brightspace frame sizing (shared; inlined by the assembler) ======== */
+/* Talks to a host page when this lesson is embedded in one.
+
+   The point is to kill the double scrollbar: the page reports how tall it
+   actually is, the host resizes the iframe to match, and the inner scrollbar
+   never appears. Everything scrolls once, in the outer page, the way a reader
+   expects.
+
+   Loaded on every page. When the page is not in a frame, the whole thing is a
+   no-op - there is nobody to talk to. */
+/* ---- LMS mode -------------------------------------------------------------
+   Two ways in, on purpose:
+
+     ?lmsembed=true   forced. Lets Dave open any page and see exactly what a
+                      student in Brightspace sees, without an LMS.
+     the handshake    automatic. The host says it is an LMS, so nothing has to
+                      be added to a URL and there is nothing to mistype.
+
+   What it hides is a list of ids, below. Anything carrying data-lms-hide is
+   hidden too, so a new element can opt in where it is authored rather than by
+   editing this file. */
+(function () {
+  "use strict";
+
+  /* Elements that make sense on a standalone page and get in the way inside an
+     LMS. Add ids here, or put data-lms-hide on the element itself.
+
+     lessonNext - the "next lesson" link. In Brightspace the learner should use
+     the LMS's own navigation: it records progress, and it does not leave them
+     staring at blank space when the next lesson is shorter than this one and
+     the frame has not shrunk yet. */
+  /* scaffoldBtn is the Template view toggle: an authoring aid, meaningless to a
+     student, and doubly wrong in a frame - it is position:fixed, which inside an
+     iframe sized to its full content anchors it to the bottom of the whole
+     document rather than the visible area, so it floats in the middle of the
+     page. Hidden in the LMS, kept when a page is opened directly. */
+  var LMS_HIDE = ["lessonNext", "scaffoldBtn"];
+
+  function applyLmsMode() {
+    var r = document.documentElement;
+    if (r.getAttribute("data-lms") === "1") return;
+    r.setAttribute("data-lms", "1");
+    LMS_HIDE.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("data-lms-hide", "");
+    });
+  }
+  window.applyLmsMode = applyLmsMode;
+
+  if (/[?&]lmsembed=true\b/i.test(location.search)) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLmsMode);
+    } else { applyLmsMode(); }
+  }
+
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
+  if (window.parent === window) return;          /* not embedded; nothing more */
+
+  var TAG = "csc150";
+  var last = 0;
+  var host = null;                 /* what the embedding page told us about itself */
+
+  /* Measure the content wrapper, not the document.
+
+     Both documentElement and body stretch to fill the iframe's viewport, so
+     once the host has made the frame tall neither of them can report a smaller
+     number - the frame ratchets upward and never comes back down. Measured on
+     the vocabulary page: filter 67 terms to 1 and the content is 679px while
+     html and body both still report 13,469. scrollHeight has this problem and
+     so does getBoundingClientRect; it is not a difference between them.
+
+     The wrapper is content-sized, so it tells the truth in both directions. */
+  function contentEl() {
+    return document.querySelector(".lesson") ||
+           document.querySelector("main.wrap") ||
+           document.body;
+  }
+
+  function height() {
+    var el = contentEl();
+    var h = Math.ceil(el.getBoundingClientRect().height);
+    /* Margins on the wrapper's children can escape its box; add whatever sits
+       below it so the last line is never clipped. */
+    var cs = window.getComputedStyle(el);
+    return h + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0) + 8;
+  }
+
+  function send() {
+    var h = height();
+    if (Math.abs(h - last) < 2) return;          /* sub-pixel churn is not news */
+    last = h;
+    /* Target the host's origin once the handshake has told us what it is.
+       Before that it is unknown, so "*" is the only option - and height is not
+       sensitive, which is why sending it before the handshake is acceptable. */
+    window.parent.postMessage({ tag: TAG, type: "height", height: h },
+                              (host && host.origin) || "*");
+  }
+
+  /* ---- handshake ---------------------------------------------------------
+     The page announces itself; a host that understands the protocol answers
+     with what it knows about the surrounding context. Everything in that reply
+     is untrusted - it arrives from a window we did not write - so it is used
+     only for cosmetics and for ids that are sanitised before use. */
+  window.addEventListener("message", function (e) {
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || d.tag !== TAG || d.type !== "host") return;
+    host = {
+      name: String(d.host || "").slice(0, 32).replace(/[^a-z0-9-]/gi, ""),
+      course: String(d.course || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      topic: String(d.topic || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      chrome: !!d.chrome,
+      origin: e.origin && e.origin !== "null" ? e.origin : null
+    };
+    var r = document.documentElement;
+    r.setAttribute("data-embedded", host.name || "1");
+    /* The host already shows a title above this frame, so showing ours too
+       gives the learner the same heading twice. */
+    if (host.chrome) r.setAttribute("data-host-chrome", "1");
+    if (host.course) r.setAttribute("data-course-id", host.course);
+    applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
+    if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
+      var el = document.getElementById(String(d.hash).replace(/^#/, ""));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    send();
+  });
+
+  /* Announce, then a few more times, then stop. The host's listener may be a
+     separate file that has not finished loading when this runs, and a single
+     announcement that arrives before anyone is listening is simply lost. The
+     host also greets on first contact, so this is the belt to that braces. */
+  (function announce(n) {
+    if (host) return;                       /* greeted; nothing more to say */
+    window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+    if (n > 0) setTimeout(function () { announce(n - 1); }, 250);
+  })(8);
+
+  /* The interactives change height constantly - the gate unlocks, a deck card
+     leaves, a candidate list redraws - so polling on load is not enough. */
+  if (window.ResizeObserver) {
+    /* Observing documentElement is useless for the same reason measuring it is:
+       it does not change when the content shrinks inside a tall frame. */
+    new ResizeObserver(send).observe(contentEl());
+  } else {
+    setInterval(send, 400);
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  document.addEventListener("DOMContentLoaded", send);
+
+  /* A full-height iframe has nothing to scroll, so scrollIntoView inside it
+     does nothing - the element the page wanted to show is still off-screen,
+     because the *frame* is off-screen. Redirect those calls to the host, which
+     is the only window that can actually move.
+
+     Patching a DOM prototype is worth a wince. It is done here rather than at
+     the call sites because the call sites are spread across generated pages and
+     will keep being added, and because this is precisely the boundary where
+     the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  /* Only forward a scroll once the learner has actually done something. A page
+     that moves the host window while it is still loading takes the reader
+     somewhere they did not ask to go - and the LMS header and the lesson's own
+     title scroll out of view, which looks like the top of the page vanishing.
+     Anything a page does to itself on load stays inside the frame. */
+  var touched = false;
+  ["pointerdown", "keydown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, function () { touched = true; }, true);
+  });
+
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
+  var native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (arg) {
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
+    try {
+      var r = this.getBoundingClientRect();
+      var top = r.top + (window.scrollY || 0);
+      var block = (arg && typeof arg === "object" && arg.block) || "start";
+      /* Already in view: leave the host alone. Scrolling to something the
+         reader can see is pure disruption. */
+      if (r.top >= 0 && r.bottom <= (window.innerHeight || 0)) return;
+      window.parent.postMessage({
+        tag: TAG, type: "scroll", top: top, height: r.height, block: block,
+        smooth: !(arg && arg.behavior === "auto")
+      }, "*");
+    } catch (e) {
+      native.apply(this, arguments);
+    }
+  };
+})();
+
+</script>
+</body>
+</html>

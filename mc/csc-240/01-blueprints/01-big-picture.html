@@ -1,0 +1,2582 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<!-- data-theme="light" on purpose. core.css only has a dark palette under
+     data-theme="dark", and nothing on the site sets that, but the course
+     theme swaps to its lighter dark-mode blue whenever the computer is in
+     dark mode. Without this, a dark-mode viewer gets that lighter blue as
+     text on a white page, which fails contrast. Remove it once the site
+     has a real dark mode. -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Big Picture</title>
+<!--
+  CSC 240 - Module 1 (Blueprints), page 1: The Big Picture
+  Version: 1.2 (2026-10-05) - Week 1 on top; panel and chooser hold a fixed height.
+  Version: 1.1 (2026-10-05) - prose moved to markdown; no wording change
+           except as noted in claude/csc-240-modules.md.
+  Version: 1.0 (2026-10-05) - first release, course opening day.
+
+  PAGE TEMPLATE: layout, interactives and short labels only. The words a
+  student reads are in courses/csc-240/01-blueprints/01-big-picture.md - edit
+  those there. Then run:  python3 csc-240/build/assemble.py
+  The md slots are filled from that markdown; the capitalized placeholders
+  are filled with the shared design system, icons and Brightspace frame
+  script, so there is one copy of each.
+
+  Assembled 2026-10-05 23:24
+-->
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* ===== Shared design system (inlined by the assembler) ===================== */
+/* ============================================================================
+   FLCC AI Specialist Microcredential - core.css
+   Shared by every page in every course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+:root {
+  /* Neutrals - very slightly warm, so they sit under orange, blue and olive
+     without any of the three reading as a clash. */
+  /* The page ground is white, and so are the cards on it. That is deliberate
+     and it is the reason --shadow-1 below carries a hairline ring: with a warm
+     grey ground the cards were defined by the contrast between #f7f6f4 and
+     white, and taking the grey away removes exactly that. Readers said the
+     grey read as busy rather than calm, which is fair - but a card has to be
+     bounded by something, so the boundary moved from the ground to the edge. */
+  --ground:      #ffffff;
+  --surface:     #ffffff;
+  --surface-2:   #f0eeea;   /* inset wells, quiet fills */
+  --surface-3:   #e7e4df;   /* pressed / track */
+  --line:        #e3dfd9;
+  --line-strong: #cfc9c1;
+
+  --ink:   #1c1a18;
+  --ink-2: #57524c;
+  --ink-3: #8b837a;
+
+  /* Semantic - independent of the course accent */
+  --good:      #1f7a4d;
+  --good-soft: #e6f2eb;
+  --warn:      #9a5b00;
+  --warn-soft: #f8eede;
+  --bad:       #b3261e;
+  --bad-soft:  #fbe9e7;
+
+  /* Elevation */
+  /* Both of these open with a 1px spread ring, which draws a hairline on every
+     card without touching layout the way a real border would - no box-sizing
+     surprise, no rule to add to a dozen separate card selectors. It is also
+     the crisper of the two ways to bound a white card on white: a blur alone
+     goes muddy at this contrast, and the feedback asked for crisp.
+     The dark palette redefines these further down and gets no ring, because
+     there the surface is already lighter than the ground. */
+  --shadow-1: 0 0 0 1px #e6e2dc, 0 1px 2px rgba(28,26,24,.04), 0 2px 6px rgba(28,26,24,.04);
+  --shadow-2: 0 0 0 1px #e0dbd4, 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.07);
+  --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
+  --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
+
+  /* Geometry */
+  --r:    15px;
+  --r-sm: 10px;
+  --r-xs: 7px;
+  --r-pill: 999px;
+
+  /* Type */
+  --display: "Comfortaa", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --measure: 66ch;
+
+  /* Rhythm */
+  --gap-xs: .4rem;
+  --gap-s:  .75rem;
+  --gap-m:  1.25rem;
+  --gap-l:  2rem;
+  --gap-xl: 3.5rem;
+
+  /* Default accent (overridden per course below) */
+  --accent:      #f45922;
+  --accent-text: #c4400f;
+  --accent-fill: #c4400f;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+:root[data-theme="dark"] {
+  --ground:      #121110;
+  --surface:     #1d1b19;
+  --surface-2:   #262320;
+  --surface-3:   #322e2a;
+  --line:        #332f2b;
+  --line-strong: #4a443e;
+
+  --ink:   #ece8e2;
+  --ink-2: #a9a29a;
+  --ink-3: #7e766d;
+
+  --good:      #6ec294;
+  --good-soft: #1a2b22;
+  --warn:      #e0a75a;
+  --warn-soft: #2c241a;
+  --bad:       #f2938b;
+  --bad-soft:  #2e1c1a;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.42);
+  --shadow-3: 0 4px 8px rgba(0,0,0,.45), 0 24px 56px rgba(0,0,0,.55);
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.lesson {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; }
+p + p { margin-top: .9em; }
+
+a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==text== in the markdown. The browser default for <mark> is a flat yellow
+   that fights every surface on this site, so it is restyled to the same accent
+   wash the Brightspace converter at md.flccarcade.com uses - one highlight,
+   the same one, whether a sentence is read on a lesson page or in Brightspace.
+   Colour comes from the theme, so each course gets its own. */
+mark { background: var(--accent-wash); color: var(--accent-text);
+       padding: .05em .25em; border-radius: 4px; }
+
+/* The hand-in card on a checkpoint. Ships hidden; the LMS supplies the link.
+   [hidden] is respected explicitly because this element is display:flex, and a
+   display rule beats the browser's default hidden{display:none} every time -
+   which is how a card meant to be invisible shows up with a dead link in it. */
+.handin { display: flex; gap: .9rem; align-items: center; margin: 1.5rem 0 0;
+          padding: 1.1rem 1.3rem; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 15px; }
+.handin[hidden] { display: none; }
+
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+::selection { background: var(--accent); color: var(--accent-on); }.wrap {
+  width: min(100% - 2.5rem, 50rem);
+  margin-inline: auto;
+}
+
+.lesson__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-xl) 5rem;
+}
+
+/* A block = one beat of the lesson template. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1em; }
+
+/* Reading-width helper for anything that should not run full bleed */
+.narrow { max-width: var(--measure); }.railtrack {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: transparent;
+  z-index: 60;
+}
+.railtrack__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s linear;
+}.masthead {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-block: 1.6rem 1.9rem;
+}
+
+.masthead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-bottom: 1.1rem;
+}
+
+/* The `hidden` attribute only sets `display: none` in the UA sheet, so any
+   author `display` rule beats it - and a component with `display: grid` then
+   stays visible while its own JS believes it is hidden. This has been patched
+   three times in this codebase already (.term, .vgroup, .panel). Once, here,
+   instead. `hidden` is semantic: it should always win. */
+[hidden] { display: none !important; }
+
+.coursemark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .4rem .8rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.lessonno {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 2.9rem);
+  max-width: 18ch;
+}
+
+.standfirst {
+  margin-top: .9rem;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.metarow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+.metarow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.blockhead {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.blockhead h2 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+.blockhead p {
+  color: var(--ink-2);
+  max-width: var(--measure);
+}.i {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -.125em;
+}
+.i--lg { width: 1.35em; height: 1.35em; }
+
+.icontile {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  flex: none;
+}
+.icontile .i { width: 1.2rem; height: 1.2rem; }
+.icontile--quiet { background: var(--surface-2); color: var(--ink-2); }.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+}
+.card--flush { padding: 0; overflow: hidden; }
+.card--quiet { box-shadow: var(--shadow-1); }
+
+.well {
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.25rem;
+}.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .3rem .65rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip--accent { background: var(--accent-wash); color: var(--accent-text); }
+.chip--good   { background: var(--good-soft);  color: var(--good); }
+.chip--warn   { background: var(--warn-soft);  color: var(--warn); }
+.chip--outline{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink-3); }
+
+.chiprow { display: flex; flex-wrap: wrap; gap: .4rem; }.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.btn--ghost:hover { background: var(--accent-wash); color: var(--accent-text); }
+
+.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.field label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.field textarea {
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .8rem .9rem;
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.field textarea::placeholder { color: var(--ink-3); }
+
+.hint { font-size: .82rem; color: var(--ink-3); }.recall {
+  display: grid;
+  gap: var(--gap-s);
+}
+.recallcard {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: box-shadow .25s ease;
+}
+.recallcard.is-open { box-shadow: var(--shadow-2); }
+
+.provenance {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.provenance .i { width: .9rem; height: .9rem; }
+.provenance em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.recallcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
+.answer {
+  font: inherit;
+  font-size: .92rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .55rem .95rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+.answer:hover:not([disabled]) { background: var(--accent-wash); }
+.answer[disabled] { cursor: default; }
+.answer.is-right { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+.answer.is-wrong { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.answer.is-dim   { opacity: .45; }
+
+.feedback {
+  display: none;
+  gap: .7rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-2);
+}
+.feedback.is-shown { display: flex; }
+.feedback .i { margin-top: .25rem; color: var(--accent-text); }
+.feedback strong { color: var(--ink); }.deck { display: flex; flex-direction: column; gap: 1rem; max-width: 36rem; }
+
+.deck__stack {
+  display: grid;
+  touch-action: pan-y;
+  perspective: 1200px;
+  position: relative;
+  /* reserve room for the fanned + rotated cards behind the top one */
+  padding-bottom: 2.6rem;
+  transition: height .3s ease;
+}
+
+.fcard {
+  grid-area: 1 / 1;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  transform-origin: 50% 130%;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1),
+              opacity .3s ease,
+              box-shadow .3s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.fcard[data-pos="0"] { z-index: 4; transform: rotate(-1.1deg);                          box-shadow: var(--shadow-3); cursor: grab; }
+.fcard[data-pos="1"] { z-index: 3; transform: rotate(2.6deg)  translateY(13px) scale(.968); box-shadow: var(--shadow-2); }
+.fcard[data-pos="2"] { z-index: 2; transform: rotate(-3.4deg) translateY(24px) scale(.936); box-shadow: var(--shadow-1); }
+.fcard[data-pos="3"] { z-index: 1; transform: rotate(1.8deg)  translateY(33px) scale(.91);  opacity: 0; }
+
+.fcard:not([data-pos="0"]) { pointer-events: none; }
+.fcard[data-pos="0"].is-dragging { transition: none; cursor: grabbing; }
+/* A card that has left the deck is taken out of grid sizing, so the stack
+   collapses back to the height of the cards that remain. */
+.fcard.is-leaving { z-index: 9; }
+.fcard.is-gone {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.fcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+.fcard__grip {
+  display: flex;
+  gap: 3px;
+  opacity: .5;
+  flex: none;
+}
+.fcard__grip span {
+  width: 3px; height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.answer--pass {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--ink-3);
+}
+
+/* Bottom bar: dots, counter, advance */
+.deck__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  flex-wrap: wrap;
+}
+.deck__left { display: flex; align-items: center; gap: .7rem; }
+.deck__dots { display: flex; gap: .3rem; }
+.deck__dot {
+  width: 7px; height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  transition: background-color .25s ease, transform .25s ease;
+}
+.deck__dot.is-done   { background: var(--accent); opacity: .4; }
+.deck__dot.is-active { background: var(--accent); transform: scale(1.5); }
+.deck__count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.deck__hint {
+  font-size: .82rem;
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.deck__hint.is-nudging { color: var(--accent-text); font-weight: 700; }
+
+.deck__done {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+}
+.deck.is-finished .deck__stack,
+.deck.is-finished .deck__bar { display: none; }
+.deck.is-finished .deck__done { display: flex; }
+.deck__done strong { font-family: var(--display); font-size: 1.05rem; }
+.deck__done p { color: var(--ink-2); font-size: .93rem; max-width: 38ch; }
+
+/* The askew stack rotates up to 3.4deg, and a rotated rectangle is wider than
+   an upright one. On a wide page the deck's max-width absorbs that; on a phone
+   the corners push past the viewport and the whole page scrolls sideways, which
+   is the one thing an LMS embed must never do. Inset the stack so the rotation
+   has somewhere to go. */
+@media (max-width: 32rem) {
+  .deck__stack { margin-inline: .5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard[data-pos="0"],
+  .fcard[data-pos="1"],
+  .fcard[data-pos="2"],
+  .fcard[data-pos="3"] { transform: none; }
+  .fcard:not([data-pos="0"]) { opacity: 0; }
+}
+
+/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+.callout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.15rem 1.3rem;
+}
+.callout__body { display: flex; flex-direction: column; gap: .3rem; }
+.callout__label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.callout__body p { font-size: .97rem; color: var(--ink-2); }
+.callout__body p strong { color: var(--ink); }
+.callout--warn .icontile { background: var(--warn); color: var(--surface); }
+.callout--good .icontile { background: var(--good); color: var(--surface); }
+
+/* Interactive demo shells */
+.demo {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.demo__title .i { color: var(--accent-text); }
+.demo__body { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; }
+.demo__foot {
+  padding: .9rem 1.25rem;
+  background: var(--surface-2);
+  font-size: .88rem;
+  color: var(--ink-2);
+  min-height: 3.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.demo__foot > .i { margin-top: .35rem; flex: none; }details.disclosure {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+details.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .85rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+details.disclosure > summary::-webkit-details-marker { display: none; }
+details.disclosure > summary .i { transition: transform .2s ease; color: var(--ink-3); }
+details.disclosure[open] > summary .i { transform: rotate(180deg); }
+.disclosure__body { padding: 0 1.1rem 1.1rem; font-size: .95rem; color: var(--ink-2); }
+
+.lessonfoot {
+  border-top: 1px solid var(--line);
+  padding-block: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-s);
+  color: var(--ink-3);
+  font-size: .85rem;
+}.stepblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.stepblock__head { display: flex; gap: .9rem; align-items: flex-start; }
+.stepblock__n {
+  display: grid;
+  place-items: center;
+  width: 2rem; height: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: none;
+}
+.stepblock__head h2 { font-size: 1.35rem; }
+.stepblock__head p { color: var(--ink-2); margin-top: .35rem; max-width: var(--measure); }
+
+/* Confidence sliders ------------------------------------------------------ */
+
+.slrow {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+.slrow:last-child { border-bottom: 0; }
+.slrow__q { font-weight: 700; font-size: .97rem; }
+.slrow__q span { display: block; font-weight: 400; font-size: .82rem; color: var(--ink-3); margin-top: .15rem; }
+.slrow__val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--accent-text);
+  min-height: 1.2em;
+}
+
+input[type="range"].sl {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].sl::-webkit-slider-runnable-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-moz-range-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+input[type="range"].sl::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+.slticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+/* Multi-select chips ------------------------------------------------------ */
+
+.chipset { display: flex; flex-wrap: wrap; gap: .5rem; }
+.togchip {
+  font: inherit;
+  font-size: .9rem;
+  padding: .5rem .95rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .16s ease, color .16s ease;
+}
+.togchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.togchip[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.togchip .i { width: .85rem; height: .85rem; opacity: 0; }
+.togchip[aria-pressed="true"] .i { opacity: 1; }
+
+.copybox {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* vocabulary -------------------------------------------------------------- */
+.searchrow { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.search {
+  flex: 1 1 14rem;
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1); padding: .55rem 1rem;
+}
+.search .i { color: var(--ink-3); flex: none; }
+.search input {
+  font: inherit; font-size: .95rem; border: 0; background: transparent;
+  color: var(--ink); width: 100%; outline: none;
+}
+.search input::placeholder { color: var(--ink-3); }
+
+.termlist { display: flex; flex-direction: column; gap: .55rem; }
+.term {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.term[hidden] { display: none; }
+.term.is-locked { opacity: .55; }
+.term__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.term__name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.term__from { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.term.is-unlocked .term__from { color: var(--accent-text); }
+.term__def { font-size: .95rem; color: var(--ink-2); }
+.term__why { font-size: .88rem; color: var(--ink-3); font-style: italic; }
+
+.emptystate {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1);
+  padding: 2.25rem 1.5rem; text-align: center; color: var(--ink-2); font-size: .95rem;
+}
+
+.linkcard {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.3rem 1.5rem; text-decoration: none; color: inherit;
+  transition: transform .14s ease, box-shadow .2s ease;
+}
+.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.linkcard__t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.linkcard__d { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.linkcard__go { margin-left: auto; color: var(--accent-text); flex: none; }.statrow { display: flex; flex-wrap: wrap; gap: 1.75rem; }
+.stat { display: flex; flex-direction: column; }
+.stat b {
+  font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat--accent b { color: var(--accent-text); }.stack   { display: flex; flex-direction: column; gap: var(--gap-s); }
+.row     { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+.muted   { color: var(--ink-2); }
+.small   { font-size: .88rem; }
+.scrollx { overflow-x: auto; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 34rem) {
+  .card, .gate, .apply { padding: 1.2rem; }
+  .token { grid-template-columns: minmax(5rem, auto) 1fr 3rem; gap: .55rem; }
+}
+/* -------------------------------------------- shared with the curriculum docs
+   Small label, filter pill, and plain list - first written for the course
+   map, then wanted by learner pages too. They live here so neither side
+   has to load the other's sheet.
+   ------------------------------------------------------------------------ */
+
+.fbtn { font:inherit; font-family:var(--display); font-weight:700; font-size:.82rem; cursor:pointer;
+  border:0; background:var(--surface-2); color:var(--ink-2); padding:.45rem .85rem;
+  border-radius:var(--r-pill); transition:background-color .18s ease,color .18s ease; }
+.fbtn:hover { background:var(--accent-wash); color:var(--accent-text); }
+.fbtn[aria-pressed="true"] { background:var(--accent-fill); color:var(--accent-on); }
+.beatlabel { display:block; font-family:var(--display); font-weight:700; font-size:.7rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.3rem; }
+
+ul.plain, ul.lolist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+ul.plain li { font-size:.95rem; color:var(--ink-2); padding-left:1rem; position:relative; }
+ul.plain li::before { content:""; position:absolute; left:0; top:.65em; width:5px; height:5px;
+  border-radius:50%; background:var(--line-strong); }
+ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); align-items:flex-start; }
+.actbox__top .beatlabel { margin:0; color:var(--accent-text); }
+/* Whitespace and newline markers. Written for the Tokenizer, then wanted by
+   the Lesson 1 token demo - any page that shows text as discrete pieces
+   needs a way to make a space visible. */
+.tok__ws { color: var(--ink-3); opacity: .45; }
+.tok__nl {
+  color: var(--accent-text); font-weight: 700; opacity: .8;
+}
+
+/* -------------------------------------------------------------- 21. EMBEDS
+   Responsive 16:9 video frame. The rounded corners live on the WRAPPER with
+   overflow:hidden, not on the iframe - an iframe will not reliably clip its own
+   content to a border-radius, so styling the iframe alone leaves square corners
+   showing through in several browsers.
+   ------------------------------------------------------------------------ */
+
+.embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+}
+.embed iframe,
+.embed video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.embed--flat { box-shadow: none; }
+
+/* Optional caption underneath, matching the video block used in lessons. */
+.embed-cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  margin-top: .7rem; font-size: .85rem; color: var(--ink-3);
+}
+.embed-cap b {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+
+/* --- Two-click facade -----------------------------------------------------
+   Nothing reaches Google until the learner asks for the video. The frame you
+   see before the click is ours: our markup, our styles, and either a poster
+   image served from this site or no image at all. The iframe is created on
+   click and not a moment before.
+
+   A poster pulled from i.ytimg.com would still hand Google the visitor's IP on
+   page load, which is most of what the facade exists to prevent - so the
+   default is a self-hosted poster, and the fallback when there is none is a
+   designed placeholder rather than a third-party request.
+   ------------------------------------------------------------------------ */
+
+.embed--facade { position: relative; }
+
+.facade {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; cursor: pointer;
+  background: var(--surface-3);
+  font: inherit; color: var(--ink);
+  overflow: hidden;
+}
+.facade__poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.facade__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.55) 100%);
+}
+.facade--noposter { background: var(--surface-2); }
+.facade--noposter .facade__scrim { background: linear-gradient(150deg, var(--accent-wash), transparent 60%); }
+
+.facade__play {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill); color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.facade__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; margin-left: .18rem; }
+.facade:hover .facade__play, .facade:focus-visible .facade__play { transform: scale(1.07); }
+
+.facade__meta {
+  position: absolute; left: 1.1rem; right: 1.1rem; bottom: .95rem; z-index: 1;
+  display: flex; flex-direction: column; gap: .15rem; text-align: left;
+}
+.facade__title {
+  font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.3;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.facade--noposter .facade__title { color: var(--ink); text-shadow: none; }
+.facade__sub { font-size: .8rem; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.facade--noposter .facade__sub { color: var(--ink-3); text-shadow: none; }
+
+.embed-privacy {
+  display: flex; align-items: flex-start; gap: .45rem;
+  margin-top: .55rem; font-size: .8rem; color: var(--ink-3);
+}
+.embed-privacy .i { margin-top: .2rem; flex: none; }
+
+/* ── Inline vocabulary ──────────────────────────────────────────────────────
+   A term in the prose is bold + italic, per Dave's spec, with a dotted rule
+   under it so it reads as pressable rather than merely emphasised. The panel
+   is a child of the term so it needs no positioning library and no scroll
+   listener; the only correction it needs is a nudge off the right edge. */
+.vt {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--accent-text);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  border-radius: 2px;
+}
+.vt > i { font-style: italic; }
+.vt:hover { background: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.vt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vt[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.vt-demo { font-weight: 700; color: var(--accent-text); border-bottom: 1px dotted var(--accent); }
+
+.vpop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + .5rem);
+  left: 0;
+  width: min(23rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--ink);
+  text-align: left;
+  cursor: auto;
+  white-space: normal;
+}
+.vpop__top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.vpop__name { font-family: var(--display); font-size: .98rem; }
+.vpop__from { font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.vpop__def { font-size: .9rem; color: var(--ink-2); line-height: 1.5; }
+.vpop__why { font-size: .84rem; color: var(--ink-3); font-style: italic; line-height: 1.5; }
+.vpop__eg {
+  font-size: .84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+}
+.vpop__foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .15rem; }
+.vpop__more { font-size: .8rem; font-weight: 700; color: var(--accent-text); text-decoration: none; display: inline-flex; align-items: center; gap: .3rem; }
+.vpop__more:hover { text-decoration: underline; }
+.vpop__more .i { width: .85rem; height: .85rem; }
+.vpop__x { background: none; border: 0; padding: .2rem; color: var(--ink-3); cursor: pointer; display: inline-flex; border-radius: 6px; }
+.vpop__x:hover { color: var(--ink); background: var(--surface-2); }
+.vpop__x .i { width: 1rem; height: 1rem; }
+
+/* ── The standalone vocabulary page ─────────────────────────────────────── */
+.vsearch { display: grid; gap: .35rem; margin: 1.5rem 0 1.1rem; }
+.vsearch__lab { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.vsearch__in {
+  font: inherit;
+  padding: .7rem .9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--ink);
+}
+.vsearch__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.vsearch__count { margin: 0; }
+
+.vlist { display: flex; flex-direction: column; gap: .7rem; }
+.vgroup {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 1.4rem 0 .1rem;
+}
+.vgroup[hidden], .ventry[hidden] { display: none; }
+.ventry {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: .4rem;
+  scroll-margin-top: 1.5rem;
+}
+.ventry.is-target { box-shadow: 0 0 0 2px var(--accent), var(--shadow-2); }
+.ventry__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.ventry__name { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+.ventry__from { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ventry__def { font-size: .96rem; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.ventry__why { font-size: .88rem; color: var(--ink-3); font-style: italic; margin: 0; line-height: 1.5; }
+.ventry__eg { margin: .25rem 0 0; padding: .6rem .8rem .6rem 1.9rem; background: var(--surface-2); border-radius: 10px; display: grid; gap: .35rem; }
+.ventry__eg li { font-size: .89rem; color: var(--ink-2); line-height: 1.5; }
+.ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
+.ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
+
+/* -- Vocabulary: the A-Z index -------------------------------------------- */
+/* A second view of the same terms. Both views are in the DOM and one is always
+   hidden, so nothing here can be reached while the lesson-order list shows. */
+.vviews { margin: 0 0 1.1rem; }
+
+.vaz { display: flex; flex-direction: column; gap: .3rem; }
+.vaz__intro { margin: 0 0 .6rem; }
+.vaz__block { display: block; }
+.vaz__letter {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent-text);
+  margin: .9rem 0 .35rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--line);
+}
+.vaz__block:first-of-type .vaz__letter { margin-top: 0; }
+
+/* Multi-column so 68 words fit on a screen, which is the entire point of this
+   view. Columns rather than a grid: a word and its module tag must not be
+   split across a column break. */
+.vaz__list {
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: var(--gap-m);
+}
+@media (min-width: 900px) { .vaz__list { columns: 3; } }
+@media (max-width: 520px) { .vaz__list { columns: 1; } }
+
+.vaz__item {
+  break-inside: avoid;
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .2rem 0;
+  font-size: .94rem;
+  line-height: 1.45;
+}
+.vaz__link { color: var(--ink); text-decoration-color: var(--line-strong); }
+.vaz__link:hover { color: var(--accent-text); text-decoration-color: currentColor; }
+/* The tag follows the word directly rather than being flushed to the column
+   edge. Flushed right, it aligned neatly and left a canyon between a short word
+   and its module - and the whole job of this tag is to be read as part of the
+   word it belongs to. Proximity beats alignment here. */
+.vaz__mod {
+  flex: none;
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.vaz__none { margin: .6rem 0 0; }
+
+/* The reset does not cover flex and grid children, the same reason .ventry
+   needed this. Without it a hidden item still takes a row. */
+.vaz[hidden], .vlist[hidden], .vaz__block[hidden], .vaz__item[hidden],
+.vaz__none[hidden], .vlistnone[hidden], .vdraftnote[hidden] { display: none; }
+.vlistnone, .vaz__none { margin: .8rem 0 0; }
+
+/* -- Vocabulary: the course filter ---------------------------------------- */
+.vchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .9rem; }
+.vchip {
+  font: inherit; font-size: .8rem; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.vchip:hover { border-color: var(--accent); color: var(--ink); }
+.vchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vchip.is-on {
+  background: var(--accent-fill); border-color: var(--accent-fill);
+  color: var(--accent-on); font-weight: 700;
+}
+.vchip__n { font-variant-numeric: tabular-nums; opacity: .75; }
+/* Dashed, the same language the draft entries use, so "provisional" reads the
+   same way wherever it appears on this page. */
+.vchip--draft { border-style: dashed; }
+.vchip--draft.is-on { border-style: solid; }
+/* The draft marker rides on the chip so the count is never read as a finished
+   glossary. It is the same word the group heading and every entry carry. */
+.vchip__tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--warn);
+}
+.vchip.is-on .vchip__tag { color: var(--accent-on); opacity: .85; }
+
+/* -- Vocabulary: draft entries -------------------------------------------- */
+.vgroup--draft { color: var(--warn); }
+.vdraftnote {
+  margin: 0 0 .3rem; padding: .75rem .85rem;
+  background: var(--warn-soft); border-radius: var(--r-sm);
+  line-height: 1.55;
+}
+/* A dashed edge, not a colored fill: these are real entries to read, they are
+   just not finished. The border says provisional without shouting. */
+.ventry--draft {
+  box-shadow: none;
+  border: 1px dashed var(--line-strong);
+}
+.ventry--draft .ventry__from { color: var(--warn); }
+.vaz__mod--draft { color: var(--warn); }
+
+/* Embedded in an LMS that already shows the page title above the frame.
+   Hide ONLY the duplicated heading. The first version hid the whole masthead,
+   which also threw away the standfirst and the metarow - how long the lesson
+   takes, whether it has a video, whether it has a deliverable. None of that is
+   duplicated by the LMS, and losing it reads to the learner as the top of the
+   page being missing. It was.
+
+   The module and lesson number stay too: Brightspace shows the topic title but
+   not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
+:root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
+:root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
+:root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
+:root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* LMS mode. Set by ?lmsembed=true, or automatically when the host identifies
+   itself in the handshake. One rule does the hiding; frame.js decides what
+   carries the attribute, so adding an element later is a one-line change there
+   or a data-lms-hide in the markup, never a change here. */
+:root[data-lms="1"] [data-lms-hide] { display: none !important; }
+
+/* With the forward link gone the footer is a single line, so it should not keep
+   the spacing of a two-column row. */
+:root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
+
+/* -- Authoring notes ------------------------------------------------------
+   Hazard stripes, so a note addressed to whoever is building the course can
+   never be mistaken for something addressed to a student. publish.py refuses
+   to build publish/ while one is still visible.
+
+   This lived in onboarding.css until Module 2's uncaptured panels needed it on
+   a lesson page. Third genre to reach for it, so it moves here - the same call
+   the step block and the callout got. */
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
+
+/* -- Preset chips ---------------------------------------------------------
+   Small pill buttons that pick one of a fixed set of inputs. Written for the
+   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
+   question buttons with className = "preset" - so on a lesson page they were
+   rendering as bare unstyled <button>s. check_sheets.py could not see it until
+   it learned to read className assignments as well as class attributes.
+   Second genre to want it, so it lives here now. */
+.preset {
+  font: inherit; font-size: .85rem;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
+  padding: .4rem .85rem; cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
+.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
+/* ── moved out of faculty.css when map.css was split off ──────────────────────
+   The only two rules the course map and the marking view ever shared, and
+   neither is specific to either: a horizontally scrolling table wrapper, and
+   tabular numerals for a figure that must not reflow. Generic enough that a
+   third page wanting one should not have to load a whole genre sheet. */
+.tblwrap { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow-1);
+  padding:.4rem 1.1rem; overflow-x:auto; }
+.mono { font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+/* The base table, which followed .tblwrap out of faculty.css once a second
+   genre wanted one. */
+.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th { text-align:left; font-family:var(--display); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); padding:.75rem .55rem; border-bottom:1.5px solid var(--line-strong); white-space:nowrap; }
+.tbl td { padding:.6rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+.tbl tbody tr:last-child td { border-bottom:0; }
+.tbl tr.is-dimmed { opacity:.25; }
+.tbl a { font-weight:700; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
+
+/* ===== CSC 240 theme ======================================================== */
+/* ============================================================================
+   Course theme - CSC 240
+   Brand color: #0046ad
+
+   Derived, not hand-picked. Regenerate with:
+       python3 build/course_color.py 240 "#0046ad" --write
+
+   Contrast (WCAG AA needs 4.5:1 for body text):
+     brand on white ............. 8.47:1  PASS
+     --accent-text on white ..... 8.47:1  PASS
+     --accent on dark surface ... 4.55:1  PASS
+     --accent-on over the fill .. 4.92:1  PASS
+   ========================================================================= */
+
+[data-course="240"] {
+  --accent:      #0046ad;
+  --accent-text: #0046ad;
+  --accent-fill: #0046ad;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(0, 70, 173, .09);
+  --accent-glow: rgba(0, 70, 173, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-course="240"],
+  :root:not([data-theme="light"]) [data-course="240"] {
+    --accent:      #4783de;
+    --accent-text: #6194e3;
+    --accent-fill: #4783de;
+    --accent-on:   #051329;
+    --accent-wash: rgba(71, 131, 222, .13);
+    --accent-glow: rgba(71, 131, 222, .16);
+  }
+}
+
+:root[data-theme="dark"][data-course="240"],
+:root[data-theme="dark"] [data-course="240"] {
+  --accent:      #4783de;
+  --accent-text: #6194e3;
+  --accent-fill: #4783de;
+  --accent-on:   #051329;
+  --accent-wash: rgba(71, 131, 222, .13);
+  --accent-glow: rgba(71, 131, 222, .16);
+}
+
+
+/* ===== This page only ======================================================= */
+/* A link styled as a button should not also be underlined like a link.
+   (core.css's .btn does not reset it; found 2026-10-05.) */
+a.btn { text-decoration: none; }
+/* Everything below uses the core tokens (--accent, --surface, --r ...), so it
+   follows the course color and dark mode automatically. */
+
+.lesson__body > .block + .block { margin-top: var(--gap-xl); }
+.block > * + * { margin-top: var(--gap-m); }
+.prose p { max-width: var(--measure); color: var(--ink-2); }
+.prose p + p { margin-top: .8rem; }
+.prose strong { color: var(--ink); }
+
+/* --- The finished Build: layer buttons on the left, the artifact on the right */
+.endstate {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  gap: var(--gap-m);
+  align-items: start;
+}
+/* Week 1 at the top, in reading order, matching Previous and Next. */
+.layers {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.layer {
+  font: 700 .9rem/1.25 var(--display);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  width: 100%;
+  padding: .75rem .9rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink-3);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  transition: background-color .2s ease, color .2s ease, box-shadow .2s ease;
+}
+.layer__n {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.7rem; height: 1.7rem;
+  border-radius: 50%;
+  font-size: .8rem;
+  background: var(--surface-2);
+  color: var(--ink-3);
+}
+.layer__sub { display: block; font: 400 .8rem/1.3 var(--body); margin-top: .1rem; }
+/* "Built" = this week or any earlier week is part of what you are looking at. */
+.layer.is-built {
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.layer.is-built .layer__n { background: var(--accent-fill); color: var(--accent-on); }
+/* The one you selected gets a solid fill. */
+.layer[aria-pressed="true"] {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.layer[aria-pressed="true"] .layer__n { background: var(--accent-on); color: var(--accent-fill); }
+.layer[aria-pressed="true"] .layer__sub { color: var(--accent-on); opacity: .9; }
+
+.artifact h3 { font-family: var(--display); font-size: 1.15rem; }
+/* All five weeks sit in the SAME grid cell, stacked on top of each other, and
+   only the chosen one is visible. The cell is therefore always as tall as the
+   tallest week, so switching weeks never changes the card's height and the
+   Previous/Next buttons stay put. Hidden weeks are also made inert, so the
+   keyboard and screen readers skip them exactly as if they were not there. */
+.artstack { display: grid; }
+.artstack > .artifact { grid-area: 1 / 1; }
+.artstack > .artifact:not(.is-active) { visibility: hidden; }
+.artifact > * + * { margin-top: .9rem; }
+.artifact > p { color: var(--ink-2); max-width: var(--measure); }
+.artnav { display: flex; justify-content: space-between; gap: var(--gap-s); margin-top: var(--gap-m); }
+
+/* Plain data tables, used in several places on this page. */
+.tbl { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tbl th, .tbl td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--line); }
+.tbl th { font: 700 .74rem/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.tbl td { color: var(--ink-2); }
+.tbl td strong { color: var(--ink); }
+.tblwrap { overflow-x: auto; }
+
+/* Who does a step: AI or a person. Color is never the only signal - the word is there too. */
+.who { display: inline-block; font: 700 .72rem/1 var(--display); padding: .3rem .5rem; border-radius: var(--r-pill); white-space: nowrap; }
+.who--ai { background: var(--accent-wash); color: var(--accent-text); }
+.who--me { background: var(--surface-2); color: var(--ink-2); }
+.handoff td { border-top: 2px dashed var(--accent); }
+
+/* A file shown as it really is: monospace, plain. */
+.file {
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.file__name {
+  display: flex; align-items: center; gap: .45rem;
+  font: 700 .8rem/1 var(--body);
+  padding: .6rem .8rem;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--line);
+}
+.file pre {
+  margin: 0;
+  padding: .9rem 1rem;
+  font: .82rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  color: var(--ink);
+}
+/* Week 3's file list: each bullet is a card, its `filename` on top. */
+#art-3 ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .7rem; }
+#art-3 li { min-width: 0; background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1); padding: 1rem; font-size: .88rem; color: var(--ink-2); }
+#art-3 li > code:first-child { display: block; margin-bottom: .35rem; font: 700 .9rem/1.3 ui-monospace, Menlo, Consolas, monospace; color: var(--ink); background: none; padding: 0; }
+
+/* The automation, drawn as a flow. Each step's first **bold word** is its tag,
+   set in a column on the left; {.person} steps are shaded. */
+#art-4 ol { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+#art-4 li { position: relative; padding: .7rem .85rem .7rem 6.6rem; border-radius: var(--r-sm); background: var(--surface-2); font-size: .92rem; color: var(--ink-2); }
+#art-4 li strong { color: var(--ink); }
+#art-4 li > strong:first-child { position: absolute; left: .85rem; top: .95rem; width: 5.2rem; font: 700 .7rem/1 var(--display); letter-spacing: .05em; text-transform: uppercase; color: var(--accent-text); }
+#art-4 li.person { background: var(--accent-wash); }
+
+/* Before and after, under the whole thing. */
+.monday { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-m); }
+.monday .card { padding: 1.2rem; }
+.monday h4 { font: 700 .95rem/1.3 var(--display); }
+.monday p + p { margin-top: 0; }
+.monday .big { font: 700 1.6rem/1.1 var(--display); color: var(--accent-text); margin: .4rem 0 .3rem; }
+.monday p { font-size: .9rem; color: var(--ink-2); }
+
+/* Three things every week. */
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-m); }
+.trio .card { padding: 1.2rem; }
+.trio h3 { display: flex; align-items: center; gap: .5rem; font-family: var(--display); font-size: 1.05rem; }
+.trio p { font-size: .92rem; color: var(--ink-2); margin-top: .45rem; }
+
+/* Route chooser. */
+.chooser .btnrow { margin-top: .8rem; }
+.chooser [aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); box-shadow: var(--shadow-accent); }
+/* The answer area reserves room for the LONGEST answer before any button is
+   pressed: every possible answer is laid out invisibly in the same grid cell,
+   and the visible one sits on top. So the box never grows when you answer. */
+.verdictbox { display: grid; margin-top: 1rem; }
+.verdictbox > * { grid-area: 1 / 1; }
+.verdict--sizer { visibility: hidden; }
+.routes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-m); }
+.routes .card { padding: 1.3rem; }
+.routes .card.is-picked { box-shadow: inset 0 0 0 2px var(--accent), var(--shadow-2); }
+.routes h3 { font-family: var(--display); font-size: 1.1rem; }
+.routes p, .routes li { font-size: .92rem; color: var(--ink-2); }
+.routes p { margin-top: .5rem; }
+.routes ul { margin: .5rem 0 0 1.1rem; }
+.routes li + li { margin-top: .25rem; }
+.small { font-size: .85rem; }
+.muted { color: var(--ink-3); }
+
+.nextup { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-m); flex-wrap: wrap; }
+.nextup h3 { font-family: var(--display); font-size: 1.15rem; }
+.nextup p { color: var(--ink-2); margin-top: .3rem; max-width: 52ch; }
+
+/* Grid children may shrink below their content's width. Without this, a
+   table or code block inside a grid column forces the column wider than a
+   phone screen, and the page clips it on the right. Wide content scrolls
+   inside its own .tblwrap instead. */
+.endstate > *, .monday > *, .trio > *, .routes > * { min-width: 0; }
+
+/* Visible keyboard focus on everything clickable, in the course accent. */
+.layer:focus-visible, .btn:focus-visible, a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* --- Narrow screens: everything stacks. The layer stack becomes a row of
+       five short buttons above the artifact, still bottom-up left to right. */
+@media (max-width: 760px) {
+  .endstate { grid-template-columns: 1fr; }
+  /* Five numbered buttons that all fit across a phone, Week 1 on the left.
+     The week's name is hidden visually but still read by screen readers,
+     and the panel underneath shows it in its heading. */
+  .layers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; }
+  .layer { position: relative; justify-content: center; padding: .6rem 0; }
+  .layer > span:last-child {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .layer__n { width: 2rem; height: 2rem; font-size: .9rem; }
+  .monday, .trio, .routes { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .layer, .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+  <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><path d="M12 3v12"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+</svg>
+<!-- Two Lucide icons the shared sprite does not carry yet. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+</svg>
+
+<div class="lesson" data-course="240" data-page="01-big-picture.html">
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__row">
+      <span class="coursemark"><svg class="i"><use href="#i-layers"/></svg> CSC 240</span>
+      <span class="lessonno">Week 1 &middot; Module 1 &middot; 1 of 4</span>
+    </div>
+    <h1>The Big Picture</h1>
+    <p class="standfirst">Hiya! Welcome to AI Workflows and Automation! Nothing on this page is graded. By the end you will have seen what you are going to build, know how the five weeks run, and have picked the route that fits the tools you already have.</p>
+    <div class="metarow">
+      <span><svg class="i"><use href="#i-clock"/></svg> About 90 minutes total</span>
+      <span><svg class="i"><use href="#i-list-checks"/></svg> 4 stops</span>
+      <span><svg class="i"><use href="#i-award"/></svg> 1 certificate to hand in</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap lesson__body">
+
+  <!-- Every {{md:...}} below is filled from courses/csc-240/01-blueprints/01-big-picture.md -->
+
+  <!-- ===================================================================== -->
+  <!-- 1  What you are going to build                                         -->
+  <!-- ===================================================================== -->
+  <section class="block" id="build">
+    <div class="stepblock__head">
+      <span class="stepblock__n">1</span>
+      <div><h2>What you are going to build</h2>
+<p>Most people use AI one question at a time - like Google searches. Over the next five weeks you will take one task you actually do, over and over, and turn it into a small working system. It is much easier to show than to describe, so here is a finished one.</p></div>
+    </div>
+
+    <div class="prose"><p>Meet <strong>Maria</strong>. She coordinates volunteers at a community food pantry. Every Monday she takes a messy sign-up sheet and turns it into a shift schedule and a pile of reminder emails. It used to eat her whole morning.</p>
+<p>Below is what Maria built, one week at a time. <em>Click each week</em> to see what it added. Notice that every layer builds on the one before it.</p></div>
+
+    <div class="endstate">
+      <!-- The five layers. Each is a toggle button; selecting Week 3 also marks
+           Weeks 1 and 2 as built, because they are underneath it. -->
+      <div class="layers" role="group" aria-label="Maria's build, one week at a time">
+        <button class="layer" type="button" data-week="1" aria-pressed="true" aria-controls="art-1">
+          <span class="layer__n">1</span><span>The map<span class="layer__sub">Steps, and who does each</span></span>
+        </button>
+        <button class="layer" type="button" data-week="2" aria-pressed="false" aria-controls="art-2">
+          <span class="layer__n">2</span><span>The instructions<span class="layer__sub">An assistant that remembers</span></span>
+        </button>
+        <button class="layer" type="button" data-week="3" aria-pressed="false" aria-controls="art-3">
+          <span class="layer__n">3</span><span>The knowledge<span class="layer__sub">Her files, not the internet</span></span>
+        </button>
+        <button class="layer" type="button" data-week="4" aria-pressed="false" aria-controls="art-4">
+          <span class="layer__n">4</span><span>The automation<span class="layer__sub">It starts itself</span></span>
+        </button>
+        <button class="layer" type="button" data-week="5" aria-pressed="false" aria-controls="art-5">
+          <span class="layer__n">5</span><span>The decision<span class="layer__sub">How much it may do alone</span></span>
+        </button>
+      </div>
+
+      <div class="card artifact-shell">
+        <div class="artstack">
+        <div class="artifact is-active" id="art-1" role="region" aria-label="Week 1: the map">
+          <span class="eyebrow"><svg class="i"><use href="#i-grid"/></svg> Week 1 &middot; The map</span>
+          <h3>First, she wrote the job down as steps</h3>
+<p>No AI yet. Just the steps, who does each one, and how she would know it went right. The dashed lines are <em>handoffs</em> - the moments work passes between Maria and the AI.</p>
+<div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Step</th><th scope="col">Who</th><th scope="col">How she checks it</th></tr></thead><tbody><tr><td><strong>1.</strong> Download Monday&rsquo;s sign-up sheet</td><td><span class="who who--me">Maria</span></td><td>-</td></tr><tr class="handoff"><td><strong>2.</strong> Sort sign-ups into shifts by day and role</td><td><span class="who who--ai">AI</span></td><td>Spot-checks two shifts against the sheet</td></tr><tr><td><strong>3.</strong> Flag any shift with fewer than three people</td><td><span class="who who--ai">AI</span></td><td>Counts are compared with the shift rules</td></tr><tr class="handoff"><td><strong>4.</strong> Decide who to call to fill the gaps</td><td><span class="who who--me">Maria</span></td><td>Only she knows who owes her a favor</td></tr><tr class="handoff"><td><strong>5.</strong> Draft one reminder email per volunteer</td><td><span class="who who--ai">AI</span></td><td>She reads every one before it goes</td></tr><tr class="handoff"><td><strong>6.</strong> Send the reminders</td><td><span class="who who--me">Maria</span></td><td>-</td></tr></tbody></table></div>
+        </div>
+        <div class="artifact" id="art-2" role="region" aria-label="Week 2: the instructions">
+          <span class="eyebrow"><svg class="i"><use href="#i-file-text"/></svg> Week 2 &middot; The instructions</span>
+          <h3>Then she gave the AI standing orders</h3>
+<p>Instead of re-explaining the job every Monday, she wrote it down once and saved it with the assistant. This is the whole file. It is written in <em>markdown</em> - the plain format you will learn very soon! Don&rsquo;t worry - it&rsquo;s easy to learn the basics.</p>
+<div class="file"><div class="file__name"><svg class="i"><use href="#i-file-text"/></svg> instructions.md</div><pre># Pantry Shift Helper
+
+## What you are for
+You help Maria turn the weekly volunteer sign-up
+sheet into a shift schedule and reminder emails.
+
+## How to answer
+- Group volunteers by day, then by role:
+  intake, stocking, distribution.
+- Mark any shift with fewer than 3 people **SHORT**.
+- Reminder emails: warm, plain, under 80 words.
+
+## Never
+- Never invent a volunteer, a time or a shift.
+- Never send anything. Draft only.
+
+## When you are unsure
+Say which row of the sheet confused you, and ask.</pre></div>
+        </div>
+        <div class="artifact" id="art-3" role="region" aria-label="Week 3: the knowledge">
+          <span class="eyebrow"><svg class="i"><use href="#i-book-open"/></svg> Week 3 &middot; The knowledge</span>
+          <h3>Then she gave it her own files</h3>
+<p>Now the assistant answers from the pantry&rsquo;s actual rules instead of guessing. She added one more line to the instructions: <em>say which file each answer came from</em>, so she can check it.</p>
+<ul><li><code>shift-rules.md</code> How many people each shift needs, and who is trained for intake.</li><li><code>roster.csv</code> Names, roles each person is trained for, and preferred days.</li><li><code>email-voice.md</code> Two old reminder emails Maria liked, so new ones sound like her.</li></ul>
+<div class="callout"><span class="icontile"><svg class="i"><use href="#i-shield"/></svg></span><div class="callout__body"><span class="callout__label">The decision that matters here</span><p><strong>The roster has no phone numbers or addresses.</strong> The assistant never needed them, so they never went in. Deciding what stays out of the files is part of the build; privacy and safety first!</p></div></div>
+        </div>
+        <div class="artifact" id="art-4" role="region" aria-label="Week 4: the automation">
+          <span class="eyebrow"><svg class="i"><use href="#i-zap"/></svg> Week 4 &middot; The automation</span>
+          <h3>Then it started itself</h3>
+<p>A no-code tool now watches for the new sheet and does the steps in between. Maria only appears where a person is actually needed - the shaded steps.</p>
+<ol><li><strong>Trigger</strong> A new sign-up sheet is saved to the Monday folder.</li><li><strong>Step</strong> The sheet goes to the assistant, along with its instructions and files.</li><li><strong>Step</strong> The draft schedule and emails land in one review document.</li><li class="person"><strong>Handoff</strong> <em>Maria gets a message:</em> drafts are ready to review.</li><li class="person"><strong>Person</strong> She makes the decisions, then sends.</li></ol>
+<div class="callout callout--warn"><span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span><div class="callout__body"><span class="callout__label">The part most people skip</span><p><strong>What happens when it goes wrong.</strong> An empty sheet, or a SHORT shift, messages Maria first instead of just carrying on. And it runs once per sheet, even if the file gets saved twice.</p></div></div>
+        </div>
+        <div class="artifact" id="art-5" role="region" aria-label="Week 5: the decision">
+          <span class="eyebrow"><svg class="i"><use href="#i-target"/></svg> Week 5 &middot; The decision</span>
+          <h3>Finally, she decided how far to trust it</h3>
+<p>This is the capstone. No new parts - just the judgment calls about the thing she built, written down so someone else could run it.</p>
+<div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Decision</th><th scope="col">Maria&rsquo;s call</th></tr></thead><tbody><tr><td><strong>Where it runs</strong></td><td><strong>A hosted AI service.</strong> Nothing in the files is private. If the roster held contact details, she would run it on her own computer instead - you will try that in Week 5.</td></tr><tr><td><strong>How much it may do alone</strong></td><td><em>Draft and flag. Never send.</em> A wrong email to forty volunteers costs more than the five minutes it takes her to read them.</td></tr><tr><td><strong>If Maria is away</strong></td><td>Jordan opens the review document. Before sending, count the names in the schedule against the sheet. If they do not match, do not send.</td></tr></tbody></table></div>
+        </div>
+        </div><!-- /artstack -->
+
+        <div class="artnav">
+          <button class="btn btn--ghost" type="button" id="artPrev"><svg class="i" style="transform:scaleX(-1)"><use href="#i-arrow-right"/></svg> Previous week</button>
+          <button class="btn btn--primary" type="button" id="artNext">Next week <svg class="i"><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="monday">
+      <div class="card card--quiet"><h4>Monday, before</h4>
+<p class="big">About two hours</p>
+<p>Copying, sorting, counting, and writing the same email forty times.</p></div>
+      <div class="card card--quiet"><h4>Monday, after</h4>
+<p class="big">About twenty-five minutes</p>
+<p>All of it spent on the decisions only Maria can make.</p></div>
+    </div>
+
+    <p class="small muted"><em>About this example.</em> Maria and the pantry are invented, and the times are an illustration rather than a measurement. The files are real examples of what you will make: the same shape, a different task. Yours will be built around something you actually do.</p>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- How the five weeks run                                                 -->
+  <!-- ===================================================================== -->
+  <section class="block" id="weeks">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-layers"/></svg> How the five weeks run</span>
+      <h2>One layer a week</h2>
+<p>Each week adds exactly one of Maria&rsquo;s layers to your own task. By Week 5 you have the whole stack.</p>
+    </div>
+
+    <div class="card card--quiet"><div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Week</th><th scope="col">Module</th><th scope="col">What you add to your build</th></tr></thead><tbody><tr><td><strong>1</strong></td><td>From Prompt to Process</td><td><strong>The map</strong> - your task as steps, with the handoffs and checks marked</td></tr><tr><td><strong>2</strong></td><td>An Assistant That Remembers</td><td><strong>The instructions</strong> - standing orders, saved</td></tr><tr><td><strong>3</strong></td><td>Giving It Your Stuff</td><td><strong>The knowledge</strong> - your files, and a rule to cite them</td></tr><tr><td><strong>4</strong></td><td>Wiring It Together</td><td><strong>The automation</strong> - one handoff that starts itself</td></tr><tr><td><strong>5</strong></td><td>How Much Rope</td><td><strong>The decision</strong> - where it runs and how much it may do alone. This is the Capstone.</td></tr></tbody></table></div></div>
+
+    <div class="trio">
+      <div class="card card--quiet">
+        <h3><svg class="i"><use href="#i-book-open"/></svg> A short lesson</h3>
+        <p>Reading with things to click and try. The idea for the week, and no more of it than you need.</p>
+      </div>
+      <div class="card card--quiet">
+        <h3><svg class="i"><use href="#i-flask"/></svg> A Lab</h3>
+        <p>About forty-five minutes on a ready-made problem. Finished that week. This is where you practice on someone else&rsquo;s mess, where mistakes are cheap.</p>
+      </div>
+      <div class="card card--quiet">
+        <h3><svg class="i"><use href="#i-layers"/></svg> A Build step</h3>
+        <p>The same idea, applied to your own task. Each one adds a layer, and you can see your build grow.</p>
+      </div>
+    </div>
+
+    <div class="callout"><span class="icontile"><svg class="i"><use href="#i-list-checks"/></svg></span><div class="callout__body"><span class="callout__label">What is graded</span><p><strong>The four Build steps and the Capstone are pretty much your grade.</strong> Labs count as done or not done, plus two sentences about what broke - or some other debrief. That note is the point - a Lab where nothing broke was too easy. In this module, the one thing you hand in is the certificate from Markdown Practice.</p></div></div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- Pick your route                                                        -->
+  <!-- ===================================================================== -->
+  <section class="block" id="route">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-route"/></svg> Pick your route</span>
+      <h2>You do not need to buy anything</h2>
+<p>People have very different AI accounts. Both routes below lead to exactly the same build, judged exactly the same way. Pick the one that fits what you have now.</p>
+    </div>
+
+    <div class="card chooser">
+      <div id="chooser-q"><p><strong>Do you have an AI tool where you can save instructions and attach files, so they are already there every time you start a chat?</strong></p></div>
+      <div class="btnrow" role="group" aria-labelledby="chooser-q">
+        <button class="btn" type="button" data-answer="yes" aria-pressed="false">Yes</button>
+        <button class="btn" type="button" data-answer="no" aria-pressed="false">No</button>
+        <button class="btn" type="button" data-answer="unsure" aria-pressed="false">Not sure</button>
+      </div>
+      <!-- The answer appears here. aria-live so a screen reader hears it. -->
+      <div class="verdictbox" id="verdictbox">
+        <p class="verdict" id="verdict" aria-live="polite"></p>
+        <!-- Invisible copies of every answer go here, added by the script, to hold the space. -->
+      </div>
+    </div>
+
+    <div class="routes">
+      <div class="card" id="routeA">
+        <h3>Route A - Saved assistant</h3>
+<p>You build inside an AI tool that keeps your instructions and files for you. Every company calls this something different, and the names keep changing. The idea underneath does not.</p>
+        <div class="tblwrap" style="margin-top:.8rem">
+          <table class="tbl" id="nameTable">
+            <thead><tr><th scope="col">Tool</th><th scope="col">What it is called right now</th></tr></thead>
+            <tbody><!-- Filled in from PRODUCT_NAMES in the script below. --></tbody>
+          </table>
+        </div>
+        <p class="small muted" id="namesAsOf"></p>
+      </div>
+      <div class="card" id="routeB"><h3>Route B - Portable assistant</h3>
+<p>You keep your instructions and files yourself, as two plain text files, and paste them in at the start of a chat in <em>any</em> AI tool - including free ones.</p>
+<ul><li><code>instructions.md</code> - the standing orders</li><li><code>knowledge.md</code> - the facts it should use</li></ul>
+<p><em>This is not the lesser route.</em> A saved assistant <em>is</em> instructions plus files - the tool is just storage. On Route B you can see both parts at all times, which makes it easier to understand what is going on.</p></div>
+    </div>
+
+    <p class="small muted">You can change your mind any time in Week 1. After Week 2, switching routes means redoing one step, so it is worth settling by then.</p>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- Using AI, and what not to put in it                                    -->
+  <!-- ===================================================================== -->
+  <section class="block" id="rules">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-shield"/></svg> Two rules</span>
+      <h2>Use AI on everything. Say how.</h2>
+    </div>
+    <div class="callout callout--good"><span class="icontile"><svg class="i"><use href="#i-check"/></svg></span><div class="callout__body"><span class="callout__label">Rule 1 - Yes, use AI on the coursework</span><p>It is a course about building with AI. Every Build step and the Capstone ends with a short <strong>AI-use statement</strong>: which tools you used and for what. Work without one comes back unmarked so you can add it - not marked down, just not marked yet.</p></div></div>
+<div class="callout callout--warn"><span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span><div class="callout__body"><span class="callout__label">Rule 2 - Choose a task whose files are safe to share</span><p>In Week 3 you will give an AI tool your own documents. So pick a task now where <em>nothing in the files would hurt anyone if it leaked</em>: no student records, health information, passwords, or other people&rsquo;s private details. If your best task involves those, use made-up stand-in data. Week 5 shows you how to run AI on your own computer for exactly this kind of material.</p></div></div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- Next stop                                                               -->
+  <!-- ===================================================================== -->
+  <section class="block">
+    <div class="card nextup">
+      <div>
+        <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> Next &middot; page 2</span>
+        <h3>Meet Markdown</h3>
+<p>The plain format Maria&rsquo;s instructions were written in. Every AI tool in this course reads it. You will meet it, practice it, and write your own instruction file before this module is done.</p>
+      </div>
+      <a class="btn btn--primary" href="02-meet-markdown.html">Go to Meet Markdown <svg class="i"><use href="#i-arrow-right"/></svg></a>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+/* ==========================================================================
+   EDIT HERE: product names
+   --------------------------------------------------------------------------
+   AI companies rename these features often. In September 2026 alone, OpenAI
+   announced Custom GPTs were being replaced by plugins and Google announced
+   Gems were becoming Skills. So every product name on this page lives in
+   this one list and nowhere else - when a name changes, change it here and
+   re-run the assembler. Nothing in the page's own text needs touching.
+
+   Each entry is: [the tool, what its saved-assistant feature is called].
+   ========================================================================== */
+var PRODUCT_NAMES = [
+  ["Claude",             "Projects"],
+  ["ChatGPT",            "Projects. Custom GPTs are being replaced by plugins from October 25, 2026."],
+  ["Gemini",             "Gems, which are becoming Skills. Personal accounts switch in November 2026; school accounts keep Gems until June 2027."],
+  ["Microsoft Copilot",  "Agents"]
+];
+var NAMES_AS_OF = "Names as of October 2026. If yours looks different, that is fine - look for wherever it lets you save instructions and attach files.";
+
+
+/* ==========================================================================
+   The finished build: five layer buttons and five artifact panels
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var layers = Array.prototype.slice.call(document.querySelectorAll(".layer"));
+  var prev = document.getElementById("artPrev");
+  var next = document.getElementById("artNext");
+  var current = 1;   // which week is showing; starts on Week 1
+
+  // Show one week. Every layer at or below it is marked "built", because in
+  // a stack the earlier layers are still there underneath.
+  function show(week) {
+    current = week;
+    layers.forEach(function (btn) {
+      var w = Number(btn.getAttribute("data-week"));
+      btn.setAttribute("aria-pressed", w === week ? "true" : "false");
+      btn.classList.toggle("is-built", w < week);
+      // Show this week's panel; make the others invisible AND inert, so Tab
+      // and screen readers skip them. They keep their space, which is what
+      // keeps the card the same height whichever week is showing.
+      var panel = document.getElementById("art-" + w);
+      panel.classList.toggle("is-active", w === week);
+      if (w === week) { panel.removeAttribute("inert"); panel.removeAttribute("aria-hidden"); }
+      else { panel.setAttribute("inert", ""); panel.setAttribute("aria-hidden", "true"); }
+    });
+    // The arrows stop at the ends rather than wrapping around.
+    prev.disabled = (week === 1);
+    next.disabled = (week === 5);
+  }
+
+  layers.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      show(Number(btn.getAttribute("data-week")));
+    });
+  });
+  prev.addEventListener("click", function () { if (current > 1) show(current - 1); });
+  next.addEventListener("click", function () { if (current < 5) show(current + 1); });
+
+  show(1);
+})();
+
+
+/* ==========================================================================
+   Route A's table of names, built from PRODUCT_NAMES above
+   ========================================================================== */
+(function () {
+  "use strict";
+  var body = document.querySelector("#nameTable tbody");
+
+  PRODUCT_NAMES.forEach(function (row) {
+    var tr = document.createElement("tr");
+    var tool = document.createElement("td");
+    var name = document.createElement("td");
+    // textContent, never innerHTML: the list is ours, but there is no reason
+    // to let a typo in it become markup.
+    tool.innerHTML = "<strong></strong>";
+    tool.firstChild.textContent = row[0];
+    name.textContent = row[1];
+    tr.appendChild(tool);
+    tr.appendChild(name);
+    body.appendChild(tr);
+  });
+  document.getElementById("namesAsOf").textContent = NAMES_AS_OF;
+})();
+
+
+/* ==========================================================================
+   The route chooser: one question, three answers
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var buttons = Array.prototype.slice.call(document.querySelectorAll(".chooser [data-answer]"));
+  var verdict = document.getElementById("verdict");
+  var routeA = document.getElementById("routeA");
+  var routeB = document.getElementById("routeB");
+
+  // What each answer says, and which route card it highlights.
+  var ANSWERS = {
+    yes:    { route: "A", text: "Route A is yours. Use the tool you already have - whatever it calls the feature." },
+    no:     { route: "B", text: "Route B is yours. Any AI chat works, free ones included." },
+    unsure: { route: "B", text: "Start on Route B. It works everywhere, and you can switch to A any time in Week 1 if you find the feature." }
+  };
+
+  // Lay out every possible answer invisibly in the answer area, so it is
+  // already as tall as the longest one before anything is pressed.
+  var box = document.getElementById("verdictbox");
+  Object.keys(ANSWERS).forEach(function (k) {
+    var sizer = document.createElement("p");
+    sizer.className = "verdict verdict--sizer";
+    sizer.setAttribute("aria-hidden", "true");
+    sizer.textContent = ANSWERS[k].text;
+    box.appendChild(sizer);
+  });
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var a = ANSWERS[btn.getAttribute("data-answer")];
+      buttons.forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      verdict.textContent = a.text;
+      routeA.classList.toggle("is-picked", a.route === "A");
+      routeB.classList.toggle("is-picked", a.route === "B");
+    });
+  });
+})();
+</script>
+
+<script>
+/* ===== Brightspace frame sizing (shared; inlined by the assembler) ======== */
+/* Talks to a host page when this lesson is embedded in one.
+
+   The point is to kill the double scrollbar: the page reports how tall it
+   actually is, the host resizes the iframe to match, and the inner scrollbar
+   never appears. Everything scrolls once, in the outer page, the way a reader
+   expects.
+
+   Loaded on every page. When the page is not in a frame, the whole thing is a
+   no-op - there is nobody to talk to. */
+/* ---- LMS mode -------------------------------------------------------------
+   Two ways in, on purpose:
+
+     ?lmsembed=true   forced. Lets Dave open any page and see exactly what a
+                      student in Brightspace sees, without an LMS.
+     the handshake    automatic. The host says it is an LMS, so nothing has to
+                      be added to a URL and there is nothing to mistype.
+
+   What it hides is a list of ids, below. Anything carrying data-lms-hide is
+   hidden too, so a new element can opt in where it is authored rather than by
+   editing this file. */
+(function () {
+  "use strict";
+
+  /* Elements that make sense on a standalone page and get in the way inside an
+     LMS. Add ids here, or put data-lms-hide on the element itself.
+
+     lessonNext - the "next lesson" link. In Brightspace the learner should use
+     the LMS's own navigation: it records progress, and it does not leave them
+     staring at blank space when the next lesson is shorter than this one and
+     the frame has not shrunk yet. */
+  /* scaffoldBtn is the Template view toggle: an authoring aid, meaningless to a
+     student, and doubly wrong in a frame - it is position:fixed, which inside an
+     iframe sized to its full content anchors it to the bottom of the whole
+     document rather than the visible area, so it floats in the middle of the
+     page. Hidden in the LMS, kept when a page is opened directly. */
+  var LMS_HIDE = ["lessonNext", "scaffoldBtn"];
+
+  function applyLmsMode() {
+    var r = document.documentElement;
+    if (r.getAttribute("data-lms") === "1") return;
+    r.setAttribute("data-lms", "1");
+    LMS_HIDE.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("data-lms-hide", "");
+    });
+  }
+  window.applyLmsMode = applyLmsMode;
+
+  if (/[?&]lmsembed=true\b/i.test(location.search)) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLmsMode);
+    } else { applyLmsMode(); }
+  }
+
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
+  if (window.parent === window) return;          /* not embedded; nothing more */
+
+  var TAG = "csc150";
+  var last = 0;
+  var host = null;                 /* what the embedding page told us about itself */
+
+  /* Measure the content wrapper, not the document.
+
+     Both documentElement and body stretch to fill the iframe's viewport, so
+     once the host has made the frame tall neither of them can report a smaller
+     number - the frame ratchets upward and never comes back down. Measured on
+     the vocabulary page: filter 67 terms to 1 and the content is 679px while
+     html and body both still report 13,469. scrollHeight has this problem and
+     so does getBoundingClientRect; it is not a difference between them.
+
+     The wrapper is content-sized, so it tells the truth in both directions. */
+  function contentEl() {
+    return document.querySelector(".lesson") ||
+           document.querySelector("main.wrap") ||
+           document.body;
+  }
+
+  function height() {
+    var el = contentEl();
+    var h = Math.ceil(el.getBoundingClientRect().height);
+    /* Margins on the wrapper's children can escape its box; add whatever sits
+       below it so the last line is never clipped. */
+    var cs = window.getComputedStyle(el);
+    return h + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0) + 8;
+  }
+
+  function send() {
+    var h = height();
+    if (Math.abs(h - last) < 2) return;          /* sub-pixel churn is not news */
+    last = h;
+    /* Target the host's origin once the handshake has told us what it is.
+       Before that it is unknown, so "*" is the only option - and height is not
+       sensitive, which is why sending it before the handshake is acceptable. */
+    window.parent.postMessage({ tag: TAG, type: "height", height: h },
+                              (host && host.origin) || "*");
+  }
+
+  /* ---- handshake ---------------------------------------------------------
+     The page announces itself; a host that understands the protocol answers
+     with what it knows about the surrounding context. Everything in that reply
+     is untrusted - it arrives from a window we did not write - so it is used
+     only for cosmetics and for ids that are sanitised before use. */
+  window.addEventListener("message", function (e) {
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || d.tag !== TAG || d.type !== "host") return;
+    host = {
+      name: String(d.host || "").slice(0, 32).replace(/[^a-z0-9-]/gi, ""),
+      course: String(d.course || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      topic: String(d.topic || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      chrome: !!d.chrome,
+      origin: e.origin && e.origin !== "null" ? e.origin : null
+    };
+    var r = document.documentElement;
+    r.setAttribute("data-embedded", host.name || "1");
+    /* The host already shows a title above this frame, so showing ours too
+       gives the learner the same heading twice. */
+    if (host.chrome) r.setAttribute("data-host-chrome", "1");
+    if (host.course) r.setAttribute("data-course-id", host.course);
+    applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
+    if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
+      var el = document.getElementById(String(d.hash).replace(/^#/, ""));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    send();
+  });
+
+  /* Announce, then a few more times, then stop. The host's listener may be a
+     separate file that has not finished loading when this runs, and a single
+     announcement that arrives before anyone is listening is simply lost. The
+     host also greets on first contact, so this is the belt to that braces. */
+  (function announce(n) {
+    if (host) return;                       /* greeted; nothing more to say */
+    window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+    if (n > 0) setTimeout(function () { announce(n - 1); }, 250);
+  })(8);
+
+  /* The interactives change height constantly - the gate unlocks, a deck card
+     leaves, a candidate list redraws - so polling on load is not enough. */
+  if (window.ResizeObserver) {
+    /* Observing documentElement is useless for the same reason measuring it is:
+       it does not change when the content shrinks inside a tall frame. */
+    new ResizeObserver(send).observe(contentEl());
+  } else {
+    setInterval(send, 400);
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  document.addEventListener("DOMContentLoaded", send);
+
+  /* A full-height iframe has nothing to scroll, so scrollIntoView inside it
+     does nothing - the element the page wanted to show is still off-screen,
+     because the *frame* is off-screen. Redirect those calls to the host, which
+     is the only window that can actually move.
+
+     Patching a DOM prototype is worth a wince. It is done here rather than at
+     the call sites because the call sites are spread across generated pages and
+     will keep being added, and because this is precisely the boundary where
+     the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  /* Only forward a scroll once the learner has actually done something. A page
+     that moves the host window while it is still loading takes the reader
+     somewhere they did not ask to go - and the LMS header and the lesson's own
+     title scroll out of view, which looks like the top of the page vanishing.
+     Anything a page does to itself on load stays inside the frame. */
+  var touched = false;
+  ["pointerdown", "keydown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, function () { touched = true; }, true);
+  });
+
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
+  var native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (arg) {
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
+    try {
+      var r = this.getBoundingClientRect();
+      var top = r.top + (window.scrollY || 0);
+      var block = (arg && typeof arg === "object" && arg.block) || "start";
+      /* Already in view: leave the host alone. Scrolling to something the
+         reader can see is pure disruption. */
+      if (r.top >= 0 && r.bottom <= (window.innerHeight || 0)) return;
+      window.parent.postMessage({
+        tag: TAG, type: "scroll", top: top, height: r.height, block: block,
+        smooth: !(arg && arg.behavior === "auto")
+      }, "*");
+    } catch (e) {
+      native.apply(this, arguments);
+    }
+  };
+})();
+
+</script>
+</body>
+</html>
