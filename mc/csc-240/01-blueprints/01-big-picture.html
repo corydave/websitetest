@@ -24,7 +24,7 @@
   are filled with the shared design system, icons and Brightspace frame
   script, so there is one copy of each.
 
-  Assembled 2026-10-05 20:10
+  Assembled 2026-10-06 01:12
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2029,7 +2029,7 @@ a.btn { text-decoration: none; }
         <div class="artifact is-active" id="art-1" role="region" aria-label="Week 1: the map">
           <span class="eyebrow"><svg class="i"><use href="#i-grid"/></svg> Week 1 &middot; The map</span>
           <h3>First, she wrote the job down as steps</h3>
-<p>No AI yet. Just the steps, who does each one, and how she would know it went right. The dashed lines are <em>handoffs</em> - the moments work passes between Maria and the AI.</p>
+<p>No AI yet. Just the steps, who does each one, and how she would know it went right. The dashed lines are <b class="vt" data-v="handoff"><i>handoffs</i></b> - the moments work passes between Maria and the AI.</p>
 <div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Step</th><th scope="col">Who</th><th scope="col">How she checks it</th></tr></thead><tbody><tr><td><strong>1.</strong> Download Monday&rsquo;s sign-up sheet</td><td><span class="who who--me">Maria</span></td><td>-</td></tr><tr class="handoff"><td><strong>2.</strong> Sort sign-ups into shifts by day and role</td><td><span class="who who--ai">AI</span></td><td>Spot-checks two shifts against the sheet</td></tr><tr><td><strong>3.</strong> Flag any shift with fewer than three people</td><td><span class="who who--ai">AI</span></td><td>Counts are compared with the shift rules</td></tr><tr class="handoff"><td><strong>4.</strong> Decide who to call to fill the gaps</td><td><span class="who who--me">Maria</span></td><td>Only she knows who owes her a favor</td></tr><tr class="handoff"><td><strong>5.</strong> Draft one reminder email per volunteer</td><td><span class="who who--ai">AI</span></td><td>She reads every one before it goes</td></tr><tr class="handoff"><td><strong>6.</strong> Send the reminders</td><td><span class="who who--me">Maria</span></td><td>-</td></tr></tbody></table></div>
         </div>
         <div class="artifact" id="art-2" role="region" aria-label="Week 2: the instructions">
@@ -2165,7 +2165,7 @@ Say which row of the sheet confused you, and ask.</pre></div>
       <div class="card" id="routeB"><h3>Route B - Portable assistant</h3>
 <p>You keep your instructions and files yourself, as two plain text files, and paste them in at the start of a chat in <em>any</em> AI tool - including free ones.</p>
 <ul><li><code>instructions.md</code> - the standing orders</li><li><code>knowledge.md</code> - the facts it should use</li></ul>
-<p><em>This is not the lesser route.</em> A saved assistant <em>is</em> instructions plus files - the tool is just storage. On Route B you can see both parts at all times, which makes it easier to understand what is going on.</p></div>
+<p><em>This is not the lesser route.</em> A <b class="vt" data-v="saved-assistant"><i>saved assistant</i></b> <em>is</em> instructions plus files - the tool is just storage. On Route B you can see both parts at all times, which makes it easier to understand what is going on.</p></div>
     </div>
 
     <p class="small muted">You can change your mind any time in Week 1. After Week 2, switching routes means redoing one step, so it is worth settling by then.</p>
@@ -2179,7 +2179,7 @@ Say which row of the sheet confused you, and ask.</pre></div>
       <span class="eyebrow"><svg class="i"><use href="#i-shield"/></svg> Two rules</span>
       <h2>Use AI on everything. Say how.</h2>
     </div>
-    <div class="callout callout--good"><span class="icontile"><svg class="i"><use href="#i-check"/></svg></span><div class="callout__body"><span class="callout__label">Rule 1 - Yes, use AI on the coursework</span><p>It is a course about building with AI. Every Build step and the Capstone ends with a short <strong>AI-use statement</strong>: which tools you used and for what. Work without one comes back unmarked so you can add it - not marked down, just not marked yet.</p></div></div>
+    <div class="callout callout--good"><span class="icontile"><svg class="i"><use href="#i-check"/></svg></span><div class="callout__body"><span class="callout__label">Rule 1 - Yes, use AI on the coursework</span><p>It is a course about building with AI. Every Build step and the Capstone ends with a short <b class="vt" data-v="ai-use-statement"><i>AI-use statement</i></b>: which tools you used and for what. Work without one comes back unmarked so you can add it - not marked down, just not marked yet.</p></div></div>
 <div class="callout callout--warn"><span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span><div class="callout__body"><span class="callout__label">Rule 2 - Choose a task whose files are safe to share</span><p>In Week 3 you will give an AI tool your own documents. So pick a task now where <em>nothing in the files would hurt anyone if it leaked</em>: no student records, health information, passwords, or other people&rsquo;s private details. If your best task involves those, use made-up stand-in data. Week 5 shows you how to run AI on your own computer for exactly this kind of material.</p></div></div>
   </section>
 
@@ -2579,6 +2579,170 @@ var NAMES_AS_OF = "Names as of October 2026. If yours looks different, that is f
       native.apply(this, arguments);
     }
   };
+})();
+
+</script>
+<script>
+/* ===== Vocabulary: this page's terms, from courses/csc-240/glossary.md ===== */
+var VOCAB240 = {"ai-use-statement": {"d": "A short note at the end of your work saying which AI tools you used, what you used them for, and what you did yourself.", "p": 1, "s": "ai-use-statement", "t": "AI-use statement", "w": "Using AI on the coursework is expected here. Saying how is the skill - and work without one comes back unmarked, so you can add it."}, "handoff": {"d": "Any point where work passes from a person to the AI, or from the AI back to a person.", "p": 5, "s": "handoff", "t": "Handoff", "w": "Where most workflows break - and the part people least often design on purpose."}, "saved-assistant": {"d": "An AI tool set up to keep your instructions and files, so they are already there every time you start a chat. Route A builds one.", "p": 1, "s": "saved-assistant", "t": "Saved assistant", "w": "Every company calls this something different, and the names keep changing. Underneath, it is always instructions plus files."}};
+var VOCAB240_PAGE = "../vocabulary.html";
+/* ==========================================================================
+   Vocabulary pop-ups
+   Version 1.0 (2026-10-06)
+
+   WHAT IT DOES. A vocabulary word on a page is written in the markdown as
+   [[Workflow]], and the build turns it into
+       <b class="vt" data-v="workflow"><i>workflow</i></b>
+   This script makes every one of those a button. Click it (or press Enter or
+   Space on it) and a small panel opens right under the word with the
+   definition, why it matters, the page that teaches it, and a link to the
+   full Vocabulary page. Click anywhere else, press Escape, or press the X to
+   close it.
+
+   WHERE THE WORDS COME FROM. courses/csc-240/glossary.md. The build puts only
+   the terms THIS page uses into a small table called VOCAB240, just above
+   this script - nothing is fetched, so it works inside Brightspace, offline,
+   and from a file on your own computer.
+
+   Same behavior as CSC 150's pop-ups, and it uses the same styles (.vt and
+   .vpop, in shared/css/core.css), but it is CSC 240's own copy, reading
+   CSC 240's own words.
+
+   Inlined by csc-240/build/assemble.py into every page that has a term.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof VOCAB240 === "undefined" || window.__vocab240Ready) return;
+  window.__vocab240Ready = true;
+
+  // Where the full Vocabulary page is, from a page inside a module folder.
+  // The build sets VOCAB240_PAGE; this is only the fallback.
+  var PAGE = (typeof VOCAB240_PAGE === "string") ? VOCAB240_PAGE : "../vocabulary.html";
+
+  var open = null;   // the panel that is open now: { btn, pop } - or null
+
+  /* ---- closing the open panel ------------------------------------------ */
+  function close() {
+    if (!open) return;
+    open.btn.setAttribute("aria-expanded", "false");
+    if (open.pop.parentNode) open.pop.parentNode.removeChild(open.pop);
+    open = null;
+  }
+
+  /* ---- building a panel --------------------------------------------------
+     The definition and "why" were written in glossary.md and made safe by the
+     build (anything typed was escaped there), so they are inserted as HTML;
+     the term's name is set as plain text. */
+  function build(rec) {
+    var pop = document.createElement("span");
+    pop.className = "vpop";
+    pop.setAttribute("role", "dialog");
+    pop.setAttribute("aria-label", rec.t);
+
+    var top = document.createElement("span");
+    top.className = "vpop__top";
+    var name = document.createElement("b");
+    name.className = "vpop__name";
+    name.textContent = rec.t;
+    var from = document.createElement("span");
+    from.className = "vpop__from";
+    from.textContent = "Page " + (rec.p < 10 ? "0" : "") + rec.p;
+    top.appendChild(name);
+    top.appendChild(from);
+
+    var def = document.createElement("span");
+    def.className = "vpop__def";
+    def.innerHTML = rec.d;
+    var why = document.createElement("span");
+    why.className = "vpop__why";
+    why.innerHTML = rec.w;
+
+    // The link opens in a NEW tab, always. Inside Brightspace a normal link
+    // would replace the page in the frame, and coming back would reload it.
+    // rel="noopener" stops the new tab being able to reach back into this one.
+    var foot = document.createElement("span");
+    foot.className = "vpop__foot";
+    foot.innerHTML =
+      '<a class="vpop__more" target="_blank" rel="noopener" href="' + PAGE + "#" + rec.s + '">' +
+      'All the course vocabulary <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg>' +
+      '<span class="visually-hidden">(opens in a new tab)</span></a>' +
+      '<button class="vpop__x" type="button" aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>';
+
+    pop.appendChild(top);
+    pop.appendChild(def);
+    pop.appendChild(why);
+    pop.appendChild(foot);
+
+    // Clicks inside the panel stay inside it, except the X, which closes it
+    // and puts the keyboard back on the word.
+    pop.addEventListener("click", function (e) {
+      if (e.target.closest(".vpop__x")) {
+        var btn = open && open.btn;
+        close();
+        if (btn) btn.focus();
+      }
+      e.stopPropagation();
+    });
+    // Enter or Space inside the panel must not reach the word's own key
+    // handler (which would close and reopen it).
+    pop.addEventListener("keydown", function (e) { e.stopPropagation(); });
+    return pop;
+  }
+
+  /* Keep the panel on the screen. It hangs from the word, so the only way it
+     can go wrong is off the right-hand edge of a narrow screen; nudge it left. */
+  function place(pop) {
+    pop.style.left = "0px";
+    var r = pop.getBoundingClientRect();
+    var over = r.right - (document.documentElement.clientWidth - 12);
+    if (over > 0) pop.style.left = -Math.min(over, r.left - 12) + "px";
+  }
+
+  /* ---- opening and closing by mouse ------------------------------------- */
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".vt");
+    if (!btn) { close(); return; }
+    var rec = VOCAB240[btn.getAttribute("data-v")];
+    if (!rec) return;                       // not in the table: leave it as text
+    var wasOpen = open && open.btn === btn;
+    close();
+    if (wasOpen) return;                    // a second click on the word closes it
+    var pop = build(rec);
+    btn.appendChild(pop);
+    btn.setAttribute("aria-expanded", "true");
+    open = { btn: btn, pop: pop };
+    place(pop);
+  });
+
+  /* ---- Escape closes, and gives the keyboard back to the word ----------- */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && open) {
+      var b = open.btn;
+      close();
+      b.focus();
+    }
+  });
+
+  /* ---- make every word a proper button for the keyboard ------------------
+     Done here, so the markdown only has to say [[Workflow]]. */
+  function arm() {
+    var all = document.querySelectorAll(".vt");
+    for (var i = 0; i < all.length; i++) {
+      var b = all[i];
+      if (b.hasAttribute("data-armed")) continue;
+      b.setAttribute("data-armed", "1");
+      b.setAttribute("role", "button");
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("aria-expanded", "false");
+      var rec = VOCAB240[b.getAttribute("data-v")];
+      if (rec) b.setAttribute("aria-label", rec.t + " - definition");
+      b.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arm);
+  else arm();
 })();
 
 </script>

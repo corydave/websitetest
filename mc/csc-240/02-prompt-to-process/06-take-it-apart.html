@@ -16,7 +16,7 @@
   Then run:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-06 00:34
+  Assembled 2026-10-06 01:12
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2006,7 +2006,7 @@ a.btn { text-decoration: none; }
       <div class="prose"><h3>4. Run two steps as a chain</h3>
 <p>Now try two AI steps for real, in any AI chat - a free one is fine. Below is this week&rsquo;s raw news from Theo&rsquo;s inbox.</p>
 <ol><li>Open a chat. Paste <strong>Prompt A</strong>, then the raw news underneath it. Send.</li><li>Open a <strong>brand new chat</strong>. Paste <strong>Prompt B</strong>, then <em>only</em> the answer you got from Prompt A. Send.</li></ol>
-<p>The new chat matters. It means the second step knows only what the first step handed it - which is exactly what a handoff is.</p></div>
+<p>The new chat matters. It means the second step knows only what the first step handed it - which is exactly what a <b class="vt" data-v="handoff"><i>handoff</i></b> is.</p></div>
       <div class="copygrid">
         <div class="cbox">
           <div class="cbox__bar"><span class="cbox__name"><svg class="i"><use href="#i-message-square"/></svg> Prompt A</span>
@@ -2990,6 +2990,170 @@ var Decomposer = (function () {
       native.apply(this, arguments);
     }
   };
+})();
+
+</script>
+<script>
+/* ===== Vocabulary: this page's terms, from courses/csc-240/glossary.md ===== */
+var VOCAB240 = {"handoff": {"d": "Any point where work passes from a person to the AI, or from the AI back to a person.", "p": 5, "s": "handoff", "t": "Handoff", "w": "Where most workflows break - and the part people least often design on purpose."}};
+var VOCAB240_PAGE = "../vocabulary.html";
+/* ==========================================================================
+   Vocabulary pop-ups
+   Version 1.0 (2026-10-06)
+
+   WHAT IT DOES. A vocabulary word on a page is written in the markdown as
+   [[Workflow]], and the build turns it into
+       <b class="vt" data-v="workflow"><i>workflow</i></b>
+   This script makes every one of those a button. Click it (or press Enter or
+   Space on it) and a small panel opens right under the word with the
+   definition, why it matters, the page that teaches it, and a link to the
+   full Vocabulary page. Click anywhere else, press Escape, or press the X to
+   close it.
+
+   WHERE THE WORDS COME FROM. courses/csc-240/glossary.md. The build puts only
+   the terms THIS page uses into a small table called VOCAB240, just above
+   this script - nothing is fetched, so it works inside Brightspace, offline,
+   and from a file on your own computer.
+
+   Same behavior as CSC 150's pop-ups, and it uses the same styles (.vt and
+   .vpop, in shared/css/core.css), but it is CSC 240's own copy, reading
+   CSC 240's own words.
+
+   Inlined by csc-240/build/assemble.py into every page that has a term.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof VOCAB240 === "undefined" || window.__vocab240Ready) return;
+  window.__vocab240Ready = true;
+
+  // Where the full Vocabulary page is, from a page inside a module folder.
+  // The build sets VOCAB240_PAGE; this is only the fallback.
+  var PAGE = (typeof VOCAB240_PAGE === "string") ? VOCAB240_PAGE : "../vocabulary.html";
+
+  var open = null;   // the panel that is open now: { btn, pop } - or null
+
+  /* ---- closing the open panel ------------------------------------------ */
+  function close() {
+    if (!open) return;
+    open.btn.setAttribute("aria-expanded", "false");
+    if (open.pop.parentNode) open.pop.parentNode.removeChild(open.pop);
+    open = null;
+  }
+
+  /* ---- building a panel --------------------------------------------------
+     The definition and "why" were written in glossary.md and made safe by the
+     build (anything typed was escaped there), so they are inserted as HTML;
+     the term's name is set as plain text. */
+  function build(rec) {
+    var pop = document.createElement("span");
+    pop.className = "vpop";
+    pop.setAttribute("role", "dialog");
+    pop.setAttribute("aria-label", rec.t);
+
+    var top = document.createElement("span");
+    top.className = "vpop__top";
+    var name = document.createElement("b");
+    name.className = "vpop__name";
+    name.textContent = rec.t;
+    var from = document.createElement("span");
+    from.className = "vpop__from";
+    from.textContent = "Page " + (rec.p < 10 ? "0" : "") + rec.p;
+    top.appendChild(name);
+    top.appendChild(from);
+
+    var def = document.createElement("span");
+    def.className = "vpop__def";
+    def.innerHTML = rec.d;
+    var why = document.createElement("span");
+    why.className = "vpop__why";
+    why.innerHTML = rec.w;
+
+    // The link opens in a NEW tab, always. Inside Brightspace a normal link
+    // would replace the page in the frame, and coming back would reload it.
+    // rel="noopener" stops the new tab being able to reach back into this one.
+    var foot = document.createElement("span");
+    foot.className = "vpop__foot";
+    foot.innerHTML =
+      '<a class="vpop__more" target="_blank" rel="noopener" href="' + PAGE + "#" + rec.s + '">' +
+      'All the course vocabulary <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg>' +
+      '<span class="visually-hidden">(opens in a new tab)</span></a>' +
+      '<button class="vpop__x" type="button" aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>';
+
+    pop.appendChild(top);
+    pop.appendChild(def);
+    pop.appendChild(why);
+    pop.appendChild(foot);
+
+    // Clicks inside the panel stay inside it, except the X, which closes it
+    // and puts the keyboard back on the word.
+    pop.addEventListener("click", function (e) {
+      if (e.target.closest(".vpop__x")) {
+        var btn = open && open.btn;
+        close();
+        if (btn) btn.focus();
+      }
+      e.stopPropagation();
+    });
+    // Enter or Space inside the panel must not reach the word's own key
+    // handler (which would close and reopen it).
+    pop.addEventListener("keydown", function (e) { e.stopPropagation(); });
+    return pop;
+  }
+
+  /* Keep the panel on the screen. It hangs from the word, so the only way it
+     can go wrong is off the right-hand edge of a narrow screen; nudge it left. */
+  function place(pop) {
+    pop.style.left = "0px";
+    var r = pop.getBoundingClientRect();
+    var over = r.right - (document.documentElement.clientWidth - 12);
+    if (over > 0) pop.style.left = -Math.min(over, r.left - 12) + "px";
+  }
+
+  /* ---- opening and closing by mouse ------------------------------------- */
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".vt");
+    if (!btn) { close(); return; }
+    var rec = VOCAB240[btn.getAttribute("data-v")];
+    if (!rec) return;                       // not in the table: leave it as text
+    var wasOpen = open && open.btn === btn;
+    close();
+    if (wasOpen) return;                    // a second click on the word closes it
+    var pop = build(rec);
+    btn.appendChild(pop);
+    btn.setAttribute("aria-expanded", "true");
+    open = { btn: btn, pop: pop };
+    place(pop);
+  });
+
+  /* ---- Escape closes, and gives the keyboard back to the word ----------- */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && open) {
+      var b = open.btn;
+      close();
+      b.focus();
+    }
+  });
+
+  /* ---- make every word a proper button for the keyboard ------------------
+     Done here, so the markdown only has to say [[Workflow]]. */
+  function arm() {
+    var all = document.querySelectorAll(".vt");
+    for (var i = 0; i < all.length; i++) {
+      var b = all[i];
+      if (b.hasAttribute("data-armed")) continue;
+      b.setAttribute("data-armed", "1");
+      b.setAttribute("role", "button");
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("aria-expanded", "false");
+      var rec = VOCAB240[b.getAttribute("data-v")];
+      if (rec) b.setAttribute("aria-label", rec.t + " - definition");
+      b.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arm);
+  else arm();
 })();
 
 </script>
