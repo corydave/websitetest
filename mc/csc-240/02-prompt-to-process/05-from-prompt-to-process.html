@@ -7,7 +7,11 @@
 <title>From Prompt to Process</title>
 <!--
   CSC 240 - Module 2 (From Prompt to Process), page 5: the Lesson
-  Version: 1.0 (2026-10-05) - first version: prompt vs. process,
+  Version: 1.3 (2026-10-06) - the sample answer has its own Download as markdown.
+           1.2 (2026-10-06) - The Decomposer's Markdown tab shows book-club-map.md.
+           1.1 (2026-10-06) - a sample answer under The Decomposer, and a
+           Download as markdown button beside Copy.
+           1.0 (2026-10-05) - first version: prompt vs. process,
            decomposition, handoffs, checks, The Decomposer, chaining, ethics.
 
   PAGE TEMPLATE: layout, the interactive and short labels only. Every word a
@@ -15,7 +19,7 @@
   Then run:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-06 01:12
+  Assembled 2026-10-05 23:18
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1739,7 +1743,9 @@ html[data-theme="dark"] .sidetrip {
 .dcmp > * { min-width: 0; }   /* lets long text wrap instead of widening the grid */
 
 /* ---- The list of steps ---------------------------------------------------- */
-.dcmp-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .7rem; }
+/* The gap between steps is wide enough for the round + that sits on each
+   step's bottom edge. */
+.dcmp-list { list-style: none; margin: 0 0 1.2rem; padding: 0; display: flex; flex-direction: column; gap: 1.6rem; }
 
 .dcmp-row {
   position: relative;
@@ -1816,7 +1822,20 @@ html[data-theme="dark"] .sidetrip {
 .dcmp-tools .btn { padding: .38rem .55rem; font-size: .78rem; }
 .dcmp-tools .btn[disabled] { opacity: .35; cursor: default; }
 
-.dcmp-add { margin-top: .8rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+/* The round + : centered on the bottom edge of its step, half in the gap,
+   so it reads as "add one here, between these two". */
+.dcmp-ins {
+  position: absolute; left: 50%; bottom: -1.05rem; transform: translateX(-50%);
+  z-index: 1;
+  width: 2rem; height: 2rem; border-radius: 50%; border: 0; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  background: var(--surface); color: var(--accent-text);
+  box-shadow: inset 0 0 0 1.5px var(--accent), var(--shadow-1);
+}
+.dcmp-ins .i { width: 1.05rem; height: 1.05rem; }
+.dcmp-ins:hover { background: var(--accent-fill); color: var(--accent-on); }
+.dcmp-ins:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.dcmp-ins[disabled] { opacity: .35; cursor: default; }
 
 /* ---- The report ------------------------------------------------------------ */
 .dcmp-report { position: sticky; top: 1rem; display: flex; flex-direction: column; gap: .9rem; padding: 1rem 1.1rem; border-radius: var(--r-sm); background: var(--surface-2); }
@@ -1842,6 +1861,25 @@ html[data-theme="dark"] .sidetrip {
   .dcmp { grid-template-columns: 1fr; }
   .dcmp-report { position: static; }
 }
+
+/* ---- Report / Markdown tabs (1.2) -------------------------------------- */
+.dcmp-tabs { display: flex; gap: .3rem; padding: .2rem; border-radius: var(--r-pill); background: var(--surface); align-self: flex-start; }
+.dcmp-tab { border: 0; cursor: pointer; padding: .42rem .95rem; border-radius: var(--r-pill); background: transparent; color: var(--ink-2); font: 700 .8rem/1 var(--display); }
+.dcmp-tab[aria-selected="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.dcmp-tab:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Both panes in one grid cell; only the chosen one is visible. */
+.dcmp-panes { display: grid; }
+.dcmp-pane { grid-area: 1 / 1; min-width: 0; display: flex; flex-direction: column; gap: .9rem; }
+.dcmp-pane:not(.is-active) { visibility: hidden; }
+.dcmp-mdname { font: 700 .78rem/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--ink-2); }
+.dcmp-md {
+  margin: 0; max-height: 22rem; overflow: auto;
+  padding: .8rem .9rem; border-radius: var(--r-xs); background: var(--surface);
+  font: .76rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--ink);
+  white-space: pre-wrap;       /* long lines wrap: the panel is narrow, and   */
+  overflow-wrap: anywhere;     /* sideways scrolling is hard to read in it    */
+}
+.dcmp-md:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 
 /* ===== This page only ======================================================= */
@@ -1901,6 +1939,18 @@ a.btn { text-decoration: none; }
 .nextup h3 { font-family: var(--display); font-size: 1.15rem; }
 .nextup p { color: var(--ink-2); margin-top: .3rem; max-width: 52ch; }
 
+/* The sample answer: a closed card with a clickable line, a chevron that
+   turns when it opens. Named .sample, not .answer - core.css already uses
+   .answer for quiz-answer buttons, and that grey background leaked in. */
+.sample > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: .55rem; font: 700 1rem/1.3 var(--display); color: var(--accent-text); }
+.sample > summary::-webkit-details-marker { display: none; }
+.sample > summary::before { content: ""; width: .55rem; height: .55rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s; flex: none; }
+.sample[open] > summary::before { transform: rotate(45deg); }
+.sample > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.sample__body { margin-top: 1rem; }
+.sample__actions { margin-top: 1rem; }
+@media (prefers-reduced-motion: reduce) { .sample > summary::before { transition: none; } }
+
 .btn:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 760px) {
@@ -1946,6 +1996,7 @@ a.btn { text-decoration: none; }
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
   <symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
   <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
 </svg>
 
@@ -1978,7 +2029,7 @@ a.btn { text-decoration: none; }
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-lightbulb"/></svg> Part 1 &middot; The idea</span>
       <h2>One prompt, or a process?</h2>
-<p>Most people use AI one ask at a time. Sometimes that works. When it does not, you cannot tell <em>which part</em> went wrong - so you read everything, fix it by hand, and try again the nex time from scratch.</p>
+<p>Most people use AI one ask at a time. Sometimes that works. When it doesn&rsquo;t, you cannot tell <em>which part</em> went wrong - so you read everything, fix it by hand, and try again the next time from scratch.</p>
     </div>
     <div class="versus">
       <div class="card">
@@ -1990,9 +2041,9 @@ a.btn { text-decoration: none; }
         <div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Step</th><th scope="col">Who</th></tr></thead><tbody><tr><td><strong>1.</strong> Download Monday&rsquo;s sign-up sheet</td><td><span class="who who--me">Maria</span></td></tr><tr class="handoff"><td><strong>2.</strong> Sort sign-ups into shifts by day and role</td><td><span class="who who--ai">AI</span></td></tr><tr><td><strong>3.</strong> Flag any shift with fewer than three people</td><td><span class="who who--ai">AI</span></td></tr><tr class="handoff"><td><strong>4.</strong> Decide who to call to fill the gaps</td><td><span class="who who--me">Maria</span></td></tr><tr class="handoff"><td><strong>5.</strong> Draft one reminder email per volunteer</td><td><span class="who who--ai">AI</span></td></tr><tr class="handoff"><td><strong>6.</strong> Send the reminders</td><td><span class="who who--me">Maria</span></td></tr></tbody></table></div>
       </div>
     </div>
-    <div class="prose"><p>That is Maria&rsquo;s job from page 1. The process is not more work. It is the same work, with three things the big prompt does not have:</p>
+    <div class="prose"><p>That is Maria&rsquo;s job from earlier. The process is not more work - it is the same work, with three things the big prompt does not have:</p>
 <ul><li><strong>Every step does one job,</strong> so when something goes wrong you know where.</li><li><strong>Every step has an owner.</strong> The decisions Maria should make stay with Maria.</li><li><strong>Every AI step can be checked -</strong> before the next step builds on it.</li></ul>
-<p>A job written down like this is a <b class="vt" data-v="workflow"><i>workflow</i></b>: a named set of steps that gets one job done again and again, with AI doing some of the steps and you doing the rest.</p></div>
+<p>A job written down like this is a <b class="vt" data-v="workflow"><i>workflow</i></b>: a named set of steps that gets one job done again and again, with AI doing some of the steps and you doing the rest. Another nice thing about the workflow is that when it is time to add a step or remove a step, it&rsquo;s much easier to modify.</p></div>
   </section>
 
   <!-- ===================================================================== -->
@@ -2000,9 +2051,9 @@ a.btn { text-decoration: none; }
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-list-checks"/></svg> Part 2 &middot; Decomposition</span>
       <h2>Small enough to check</h2>
-<p>Breaking a job into steps has a name - <b class="vt" data-v="decomposition"><i>decomposition</i></b> - and one goal: steps small enough that you can check each one. Four rules of thumb:</p>
+<p>Breaking a job into steps has a name - <b class="vt" data-v="decomposition"><i>decomposition</i></b>. One big goal with decomposition - make steps small enough that you can check each one. Four rules of thumb to keep in mind:</p>
     </div>
-    <div class="steps"><ol><li><strong>Start each step with a verb.</strong> <em>Sort, draft, decide, send.</em> If you cannot find the verb, the step is not a step yet.</li><li><strong>If a step says &ldquo;then&rdquo;, it is two steps.</strong> <em>Draft the email, then post it</em> hides a handoff in the middle.</li><li><strong>Name what comes out.</strong> A list, a draft, a decision. The next step needs to know what it is getting.</li><li><strong>The one-minute test.</strong> Could you tell whether this step went right in about a minute? If not, it is too big. Split it.</li></ol></div>
+    <div class="steps"><ol><li><strong>Start each step with a verb.</strong> <em>Sort, draft, decide, send.</em> If you cannot find the verb, the step is not a step yet.</li><li><strong>If a step says &ldquo;then&rdquo;, it is two steps.</strong> <em>Draft the email, then post it</em> is two steps; there is a handoff in the middle.</li><li><strong>Name what comes out.</strong> A list, a draft, a decision. The next step needs to know what it is getting.</li><li><strong>The one-minute test.</strong> Could you tell whether this step went right in about a minute? If not, it is too big. Split it. Note that you should have some carve-outs for jobs that will clearly take a longer time to compute - like rendering a video, for instance.</li></ol></div>
   </section>
 
   <!-- ===================================================================== -->
@@ -2021,10 +2072,10 @@ a.btn { text-decoration: none; }
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-eye"/></svg> Part 4 &middot; Checks</span>
       <h2>A check for every AI step</h2>
-<p>Every AI step needs a way you would notice it went wrong. It does not have to be heavy. Match the check to the risk - the closer a mistake gets to another person, the harder you look.</p>
+<p>Every AI step needs a way you would notice it went wrong. It does not have to be heavy! Match the check to the risk.</p>
     </div>
     <div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Check</th><th scope="col">Good for</th><th scope="col">Maria&rsquo;s version</th></tr></thead><tbody><tr><td><strong>Compare with the source</strong></td><td>Sorting, summaries</td><td>Spot-checks two shifts against the sheet</td></tr><tr><td><strong>Count</strong></td><td>Lists and schedules</td><td>40 names in, 40 names out</td></tr><tr><td><strong>Spot-check a few</strong></td><td>Big batches</td><td>Two random shifts, every week</td></tr><tr><td><strong>Read every one</strong></td><td>Anything a person will receive</td><td>She reads every reminder before it goes</td></tr><tr><td><strong>Ask where it came from</strong></td><td>Facts, numbers, dates</td><td>&ldquo;Which row of the sheet says that?&rdquo;</td></tr></tbody></table></div>
-    <div class="prose"><p class="small muted">This is CSC 150's verification habit, moved <em>inside</em> the process. Instead of checking at the end, you check at each step - while a mistake is still small.</p></div>
+    <div class="prose"><p class="small muted">This is CSC 150's verification habit, moved <em>inside</em> the process. Instead of checking at the end, you check at each step (while a mistake is still small).</p></div>
   </section>
 
   <!-- ===================================================================== -->
@@ -2032,7 +2083,7 @@ a.btn { text-decoration: none; }
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-grid"/></svg> Part 5 &middot; Try it</span>
       <h2>Try it: The Decomposer</h2>
-<p>Below is a first draft of a small job - <strong>sending the monthly book club reminder</strong> - and it has problems. The report beside it points them out as you work. Fix it until the report says it is ready:</p>
+<p>Below is a first draft of a small job - sending the monthly book club reminder - and it has problems. The report beside it points them out as you work. Fix it until the report says it is ready:</p>
 <ul><li>split any step that is really two jobs (look for <em>then</em>)</li><li>give every AI step a check</li><li>switch steps between <strong>Me</strong> and <strong>AI</strong> and watch the handoffs move</li></ul>
 <p>Your changes are saved in this browser, so you can come back to them. Nothing here is graded.</p>
     </div>
@@ -2047,6 +2098,38 @@ Me | Confirm who is hosting and the address |
 AI | Draft three discussion questions about the new book | I read them and keep the best two</pre>
       <div id="dcmpLesson"></div>
     </div>
+
+    <!-- One worked answer, closed until the learner opens it. A plain
+         <details> element: it opens and closes with the keyboard (Enter or
+         Space on the summary line) and needs no script. -->
+    <details class="card sample">
+      <summary>Compare yours!</summary>
+      <div class="prose sample__body"><p>There is more than one good answer. Here is one, with the report at 6 steps, 2 handoffs, 0 AI steps with no check:</p>
+<div class="tblwrap"><table class="tbl"><thead><tr><th scope="col">Step</th><th scope="col">Who</th><th scope="col">How I&rsquo;ll know it worked</th></tr></thead><tbody><tr><td><strong>1.</strong> Pick next month&rsquo;s book</td><td><span class="who who--me">Me</span></td><td>-</td></tr><tr><td><strong>2.</strong> Confirm who is hosting, with their address</td><td><span class="who who--me">Me</span></td><td>-</td></tr><tr class="handoff"><td><strong>3.</strong> Summarize last month&rsquo;s discussion in three bullet points</td><td><span class="who who--ai">AI</span></td><td>I compare the bullets with my notes from last month</td></tr><tr><td><strong>4.</strong> Draft three discussion questions about the new book</td><td><span class="who who--ai">AI</span></td><td>I read them and keep the best two</td></tr><tr><td><strong>5.</strong> Draft the reminder email using steps 1-4</td><td><span class="who who--ai">AI</span></td><td>I check the date, host and address against step 2</td></tr><tr class="handoff"><td><strong>6.</strong> Post the email to the group chat</td><td><span class="who who--me">Me</span></td><td>-</td></tr></tbody></table></div>
+<p>What changed, and why:</p>
+<ul><li><strong>The &ldquo;then&rdquo; step became two.</strong> The AI drafts the email; you post it. Sending to real people stays with a person.</li><li><strong>Every AI step got a check.</strong> The one on the email matters most - a wrong address reaches everybody.</li><li><strong>Confirming the host moved up.</strong> The email cannot be written until you know who is hosting. The report cannot catch a step in the wrong order - only you can.</li><li><strong>The AI steps now run back to back,</strong> each feeding the email. That is prompt chaining, coming up in Part 6.</li></ul></div>
+      <!-- The same answer as plain markdown, for the Download button below. -->
+      <pre id="sampleFile" hidden>There is more than one good answer. Here is one, with the report at 6 steps, 2 handoffs, 0 AI steps with no check:
+
+| Step | Who | How I'll know it worked |
+|---|---|---|
+| **1.** Pick next month's book | Me | - |
+| **2.** Confirm who is hosting, with their address | Me | - |
+| **3.** Summarize last month's discussion in three bullet points | AI | I compare the bullets with my notes from last month |
+| **4.** Draft three discussion questions about the new book | AI | I read them and keep the best two |
+| **5.** Draft the reminder email using steps 1-4 | AI | I check the date, host and address against step 2 |
+| **6.** Post the email to the group chat | Me | - |
+
+What changed, and why:
+
+- **The &quot;then&quot; step became two.** The AI drafts the email; you post it. Sending to real people stays with a person.
+- **Every AI step got a check.** The one on the email matters most - a wrong address reaches everybody.
+- **Confirming the host moved up.** The email cannot be written until you know who is hosting. The report cannot catch a step in the wrong order - only you can.
+- **The AI steps now run back to back,** each feeding the email. That is prompt chaining, coming up in Part 6.</pre>
+      <div class="btnrow sample__actions">
+        <button class="btn btn--ghost" type="button" id="sampleDownload"><svg class="i"><use href="#i-download"/></svg> Download as markdown</button>
+      </div>
+    </details>
   </section>
 
   <!-- ===================================================================== -->
@@ -2054,7 +2137,7 @@ AI | Draft three discussion questions about the new book | I read them and keep 
     <div class="blockhead">
       <span class="eyebrow"><svg class="i"><use href="#i-book-open"/></svg> Part 6 &middot; Two words</span>
       <h2>Two words that sound alike</h2>
-<p>You will meet both. Only one of them is a workflow.</p>
+<p>You will meet both - <b class="vt" data-v="prompt-chaining"><i>prompt chaining</i></b> and <b class="vt" data-v="chain-of-thought"><i>chain-of-thought</i></b>. They are similar, but only one of them is a workflow.</p>
     </div>
     <div class="pair">
       <div class="card is-yes"><h3>Prompt chaining</h3>
@@ -2065,7 +2148,7 @@ AI | Draft three discussion questions about the new book | I read them and keep 
   </section>
 
   <!-- ===================================================================== -->
-  <section class="block"><div class="callout"><span class="icontile"><svg class="i"><use href="#i-help"/></svg></span><div class="callout__body"><span class="callout__label">Whose work is it?</span><p>Once some of the steps are the AI&rsquo;s, whose work is the result? <strong>Yours.</strong> Your name goes on it, and the decisions in it are yours. That is why every Build ends with an <b class="vt" data-v="ai-use-statement"><i>AI-use statement</i></b> - which steps were the AI&rsquo;s, and how you checked them. A good map makes that statement easy to write: it is mostly the AI rows of your table.</p></div></div></section>
+  <section class="block"><div class="callout"><span class="icontile"><svg class="i"><use href="#i-help"/></svg></span><div class="callout__body"><span class="callout__label">Whose work is it?</span><p>Once some of the steps are the AI&rsquo;s, whose work is the result? <strong>Yours.</strong> Your name goes on it, and the decisions in it are yours. That is why every Build ends with an <b class="vt" data-v="ai-use-statement"><i>AI-use statement</i></b> - which steps were the AI&rsquo;s, and how you checked them. A good map makes that statement easy to write: it is mostly the AI rows of your table.</p><p>Remember, &ldquo;If you don&rsquo;t review, the error is on you.&rdquo;</p></div></div></section>
 
   <!-- ===================================================================== -->
   <section class="block">
@@ -2097,7 +2180,9 @@ AI | Draft three discussion questions about the new book | I read them and keep 
 /* ===== The Decomposer (shared; inlined by the assembler) =================== */
 /* ==========================================================================
    The Decomposer
-   Version 1.0 (2026-10-05)
+   Version 1.2 (2026-10-06) - Report and Markdown tabs: the Markdown tab shows
+   the file being built, live. 1.1: a round + under each step adds a step there;
+   Remove is a trash can. (1.0, 2026-10-05: first version.)
 
    WHAT IT IS. A small tool for writing a task down as steps. For each step
    the learner says what happens, who does it (Me or AI), and how they would
@@ -2119,6 +2204,10 @@ AI | Draft three discussion questions about the new book | I read them and keep 
        });
        tool.markdown()   // the map as markdown, for Copy / Download buttons
        tool.reset()      // back to the starting steps
+       tool.refreshView() // redraw the Markdown tab after a page-level change
+   Optional settings: fileName ("book-club-map.md", shown above the
+   markdown) and fileText (a function returning the page's whole file, if the
+   page adds more than the map - the Lab adds a note, the Build adds answers).
        tool.saving       // false if the browser will not let us save
 
    The starting steps come from the page's markdown file, one per line:
@@ -2226,6 +2315,25 @@ var Decomposer = (function () {
     return svg;
   }
 
+  // Two icons drawn right here rather than taken from the page's sprite, so
+  // the tool works on any page: a trash can (Remove) and a plus (Add a step).
+  // Shapes from the Lucide icon set, which the rest of the course uses.
+  var DRAWN = {
+    trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>' +
+           '<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/>' +
+           '<line x1="14" x2="14" y1="11" y2="17"/>',
+    plus:  '<path d="M5 12h14"/><path d="M12 5v14"/>'
+  };
+  function drawn(name) {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "i");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML = DRAWN[name];   // fixed shapes from the table above, never typed text
+    return svg;
+  }
+
   // A table cell in markdown cannot contain a | character, so swap it out.
   function cell(s) { return String(s).replace(/\|/g, "/").trim(); }
 
@@ -2257,14 +2365,11 @@ var Decomposer = (function () {
     var left = el("div", "dcmp-main");
     var list = el("ol", "dcmp-list");
     list.setAttribute("aria-label", opts.listLabel || "Steps");
-    var addRow = el("div", "dcmp-add");
-    var addBtn = el("button", "btn btn--ghost");
-    addBtn.type = "button";
-    addBtn.appendChild(icon("pencil"));
-    addBtn.appendChild(document.createTextNode(" Add a step"));
-    addRow.appendChild(addBtn);
+    // Steps are added with the round + under each step, which puts the new
+    // step exactly where it is wanted (changed 2026-10-06 from one "Add a
+    // step" button at the very bottom, which meant scrolling down and then
+    // moving the new step back up).
     left.appendChild(list);
-    left.appendChild(addRow);
 
     var report = el("aside", "dcmp-report");
     report.setAttribute("aria-label", "What your map shows");
@@ -2279,11 +2384,90 @@ var Decomposer = (function () {
     // stops, so they hear the totals without hearing every keystroke.
     var status = el("p", "dcmp-status");
     status.setAttribute("aria-live", "polite");
-    report.appendChild(stats);
-    report.appendChild(notesHead);
-    report.appendChild(notes);
+    /* Two tabs at the top of the report: Report (the default) and Markdown,
+       which shows the file this page would download, live, as it is typed.
+       Added 2026-10-06 so the markdown taught in Module 1 is visible being
+       built, and so nobody hands in a file they have never looked at.
+       Standard tab keyboard pattern: arrow keys move between the two tabs. */
+    var tabs = el("div", "dcmp-tabs");
+    tabs.setAttribute("role", "tablist");
+    tabs.setAttribute("aria-label", "Show the report or the markdown");
+    var tabReport = tabBtn("report", "Report");
+    var tabMd = tabBtn("md", "Markdown");
+    tabs.appendChild(tabReport);
+    tabs.appendChild(tabMd);
+
+    // Both panels share one grid cell, so the box keeps the height of the
+    // taller one and nothing below it jumps when the tab changes.
+    var panes = el("div", "dcmp-panes");
+    var paneReport = el("div", "dcmp-pane is-active");
+    paneReport.appendChild(stats);
+    paneReport.appendChild(notesHead);
+    paneReport.appendChild(notes);
+    var paneMd = el("div", "dcmp-pane");
+    var mdName = el("p", "dcmp-mdname", opts.fileName || "map.md");
+    var mdView = el("pre", "dcmp-md");
+    // The view scrolls when the file is long, so it must be reachable by keyboard.
+    mdView.setAttribute("tabindex", "0");
+    mdView.setAttribute("aria-label", (opts.fileName || "map.md") + ", as markdown");
+    paneMd.appendChild(mdName);
+    paneMd.appendChild(mdView);
+    panes.appendChild(paneReport);
+    panes.appendChild(paneMd);
+    [[tabReport, paneReport], [tabMd, paneMd]].forEach(function (pair, i) {
+      var id = prefix + "-pane-" + i;
+      pair[1].id = id;
+      pair[1].setAttribute("role", "tabpanel");
+      pair[0].setAttribute("aria-controls", id);
+      pair[0].id = id + "-tab";
+      pair[1].setAttribute("aria-labelledby", id + "-tab");
+    });
+
+    report.appendChild(tabs);
+    report.appendChild(panes);
     report.appendChild(actions);
     report.appendChild(status);
+
+    function tabBtn(key, label) {
+      var b = el("button", "dcmp-tab", label);
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("data-tab", key);
+      return b;
+    }
+    // Show one pane. The other keeps its space but is invisible and inert,
+    // so the keyboard and screen readers skip it.
+    function showTab(which, moveFocus) {
+      [[tabReport, paneReport, "report"], [tabMd, paneMd, "md"]].forEach(function (t) {
+        var on = t[2] === which;
+        t[0].setAttribute("aria-selected", on ? "true" : "false");
+        t[0].setAttribute("tabindex", on ? "0" : "-1");
+        t[1].classList.toggle("is-active", on);
+        if (on) { t[1].removeAttribute("inert"); t[1].removeAttribute("aria-hidden"); }
+        else { t[1].setAttribute("inert", ""); t[1].setAttribute("aria-hidden", "true"); }
+        if (on && moveFocus) t[0].focus();
+      });
+      if (which === "md") paintMarkdown();
+    }
+    tabs.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-tab]");
+      if (b) showTab(b.getAttribute("data-tab"), false);
+    });
+    tabs.addEventListener("keydown", function (e) {
+      if (["ArrowLeft", "ArrowRight", "Home", "End"].indexOf(e.key) === -1) return;
+      e.preventDefault();
+      var now = tabMd.getAttribute("aria-selected") === "true" ? "md" : "report";
+      var next = (e.key === "Home") ? "report" : (e.key === "End") ? "md" : (now === "md" ? "report" : "md");
+      showTab(next, true);
+    });
+
+    // What the Markdown tab shows: the page's whole file if the page says
+    // how to build it (Lab and Build pages add a note and answers), or just
+    // the map. Set as text, never as HTML.
+    function paintMarkdown() {
+      var text = (typeof opts.fileText === "function") ? opts.fileText() : markdown();
+      if (mdView.textContent !== text) mdView.textContent = text;
+    }
 
     root.appendChild(left);
     root.appendChild(report);
@@ -2303,7 +2487,6 @@ var Decomposer = (function () {
     function render() {
       list.innerHTML = "";
       steps.forEach(function (s) { list.appendChild(row(s)); });
-      addBtn.disabled = steps.length >= MAX_STEPS;
       refresh();
       sizeAll();
     }
@@ -2376,7 +2559,7 @@ var Decomposer = (function () {
       var tools = el("span", "dcmp-tools");
       tools.appendChild(toolBtn("up", icon("arrow-right", -90)));
       tools.appendChild(toolBtn("down", icon("arrow-right", 90)));
-      tools.appendChild(toolBtn("remove", icon("x")));
+      tools.appendChild(toolBtn("remove", drawn("trash")));
       mid.appendChild(tools);
       li.appendChild(mid);
 
@@ -2390,6 +2573,15 @@ var Decomposer = (function () {
       c.setAttribute("autocomplete", "off");
       f2.appendChild(l2); f2.appendChild(c);
       li.appendChild(f2);
+
+      // The round + that sits on the bottom edge of the step: adds a new,
+      // empty step right after this one. Last in the row, so the keyboard
+      // reaches it after everything else in the step.
+      var ins = el("button", "dcmp-ins");
+      ins.type = "button";
+      ins.setAttribute("data-act", "insert");
+      ins.appendChild(drawn("plus"));
+      li.appendChild(ins);
 
       return li;
     }
@@ -2434,6 +2626,10 @@ var Decomposer = (function () {
         up.setAttribute("aria-label", "Move step " + n + " up");
         down.setAttribute("aria-label", "Move step " + n + " down");
         rm.setAttribute("aria-label", "Remove step " + n);
+        var ins = li.querySelector('[data-act="insert"]');
+        ins.disabled = steps.length >= MAX_STEPS;
+        ins.setAttribute("aria-label", "Add a step after step " + n);
+        ins.title = "Add a step here";
       }
       paintReport();
     }
@@ -2495,6 +2691,7 @@ var Decomposer = (function () {
           f.unchecked.length + (f.unchecked.length === 1 ? " AI step" : " AI steps") + " with no check.";
       }, 900);
 
+      paintMarkdown();
       if (typeof opts.onChange === "function") opts.onChange();
     }
 
@@ -2533,7 +2730,7 @@ var Decomposer = (function () {
       refresh();
     });
 
-    // Move up, move down, remove.
+    // Move up, move down, remove, and add a step after this one.
     list.addEventListener("click", function (e) {
       var b = e.target.closest("[data-act]");
       if (!b || b.disabled) return;
@@ -2544,6 +2741,16 @@ var Decomposer = (function () {
       if (act === "up" && i > 0) swap(i, i - 1);
       else if (act === "down" && i < steps.length - 1) swap(i, i + 1);
       else if (act === "remove" && steps.length > 1) steps.splice(i, 1);
+      else if (act === "insert" && steps.length < MAX_STEPS) {
+        // The new step starts with the same owner as the one above it -
+        // usually right when a step is being split in two.
+        var fresh = withIds([{ who: steps[i].who, text: "", check: "" }])[0];
+        steps.splice(i + 1, 0, fresh);
+        changed();
+        render();
+        focusIn(fresh.uid, ".dcmp-text");   // ready to type straight away
+        return;
+      }
       else return;
       changed();
       render();
@@ -2557,16 +2764,6 @@ var Decomposer = (function () {
         if (same && !same.disabled) same.focus();
         else focusIn(uid, ".dcmp-text");
       }
-    });
-
-    addBtn.addEventListener("click", function () {
-      if (steps.length >= MAX_STEPS) return;
-      var last = steps[steps.length - 1];
-      var s = withIds([{ who: last ? last.who : "me", text: "", check: "" }])[0];
-      steps.push(s);
-      changed();
-      render();
-      focusIn(s.uid, ".dcmp-text");
     });
 
     function swap(a, b) { var t = steps[a]; steps[a] = steps[b]; steps[b] = t; }
@@ -2604,9 +2801,13 @@ var Decomposer = (function () {
     }
 
     render();
+    showTab("report", false);
 
     return {
       markdown: markdown,
+      // The page calls this when something outside the steps changes (a
+      // note, an answer) so the Markdown tab stays current.
+      refreshView: paintMarkdown,
       findings: findings,
       steps: function () { return copy(steps); },
       actions: actions,          // a place for the page's own buttons
@@ -2650,6 +2851,15 @@ var Decomposer = (function () {
     }
   }
 
+  // Save text as a file the learner downloads.
+  function download(text, name) {
+    var url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+
   // Make a button with an icon and a label.
   function button(iconId, label, primary) {
     var b = document.createElement("button");
@@ -2661,11 +2871,20 @@ var Decomposer = (function () {
   }
 
   // Start the tool. The practice steps come from the markdown file.
+  // The file the Markdown tab shows and the Download button saves - one
+  // function, so the two can never differ. (tool is not ready during the
+  // very first drawing, hence the check.)
+  function mapFile() {
+    return tool ? "# Book club reminder - my map\n\n" + tool.markdown() + "\n" : "";
+  }
   var tool = Decomposer.mount(document.getElementById("dcmpLesson"), {
     storeKey: "csc240.decomposer.lesson5.v1",
     start: Decomposer.parse(document.getElementById("dcmpStart").textContent),
-    listLabel: "Steps for the book club reminder"
+    listLabel: "Steps for the book club reminder",
+    fileName: "book-club-map.md",
+    fileText: mapFile
   });
+  tool.refreshView();
   if (!tool.saving) document.getElementById("storageNote").hidden = false;
 
   var status = tool.actions.parentNode.querySelector(".dcmp-status");
@@ -2676,6 +2895,13 @@ var Decomposer = (function () {
     copyText(tool.markdown(), function (ok) {
       status.textContent = ok ? "Copied. Paste it anywhere that reads markdown." : "Your browser blocked copying. Try again, or select the text by hand.";
     });
+  });
+
+  // Download the map as a markdown file, to keep or to paste into an AI chat.
+  var dlBtn = button("download", "Download as markdown", false);
+  dlBtn.addEventListener("click", function () {
+    download(mapFile(), "book-club-map.md");
+    status.textContent = "Downloaded book-club-map.md.";
   });
 
   // Start over asks twice, without a pop-up: the first click changes the
@@ -2695,7 +2921,16 @@ var Decomposer = (function () {
     status.textContent = "Back to the first draft.";
   });
 
+  // The sample answer's own Download button: the answer as plain markdown,
+  // under the same heading style as the learner's own file.
+  document.getElementById("sampleDownload").addEventListener("click", function () {
+    download("# Book club reminder - one way to fix it\n\n" +
+             document.getElementById("sampleFile").textContent.trim() + "\n",
+             "book-club-sample-answer.md");
+  });
+
   tool.actions.appendChild(copyBtn);
+  tool.actions.appendChild(dlBtn);
   tool.actions.appendChild(resetBtn);
 })();
 </script>
@@ -2950,7 +3185,7 @@ var Decomposer = (function () {
 </script>
 <script>
 /* ===== Vocabulary: this page's terms, from courses/csc-240/glossary.md ===== */
-var VOCAB240 = {"ai-use-statement": {"d": "A short note at the end of your work saying which AI tools you used, what you used them for, and what you did yourself.", "p": 1, "s": "ai-use-statement", "t": "AI-use statement", "w": "Using AI on the coursework is expected here. Saying how is the skill - and work without one comes back unmarked, so you can add it."}, "decomposition": {"d": "Breaking a job into steps small enough that you can check each one.", "p": 5, "s": "decomposition", "t": "Decomposition", "w": "It turns a broken workflow from a mystery into a step you can point at."}, "handoff": {"d": "Any point where work passes from a person to the AI, or from the AI back to a person.", "p": 5, "s": "handoff", "t": "Handoff", "w": "Where most workflows break - and the part people least often design on purpose."}, "workflow": {"d": "A named set of steps that gets one job done again and again, with AI doing some of the steps and you doing the rest.", "p": 5, "s": "workflow", "t": "Workflow", "w": "The thing this whole course builds. A prompt is one turn; a workflow is what you actually run every week."}};
+var VOCAB240 = {"ai-use-statement": {"d": "A short note at the end of your work saying which AI tools you used, what you used them for, and what you did yourself.", "p": 1, "s": "ai-use-statement", "t": "AI-use statement", "w": "Using AI on the coursework is expected here. Saying how is the skill - and work without one comes back unmarked, so you can add it."}, "chain-of-thought": {"d": "Asking a model to reason step by step inside one answer before it replies.", "p": 5, "s": "chain-of-thought", "t": "Chain-of-thought", "w": "Sometimes helps, sometimes only makes the answer longer. Not a workflow: there is no middle for you to check."}, "decomposition": {"d": "Breaking a job into steps small enough that you can check each one.", "p": 5, "s": "decomposition", "t": "Decomposition", "w": "It turns a broken workflow from a mystery into a step you can point at."}, "handoff": {"d": "Any point where work passes from a person to the AI, or from the AI back to a person.", "p": 5, "s": "handoff", "t": "Handoff", "w": "Where most workflows break - and the part people least often design on purpose."}, "prompt-chaining": {"d": "Feeding the output of one prompt into the next, so each prompt does one job.", "p": 5, "s": "prompt-chaining", "t": "Prompt chaining", "w": "A workflow with AI steps back to back - and you can check the work between them."}, "workflow": {"d": "A named set of steps that gets one job done again and again, with AI doing some of the steps and you doing the rest.", "p": 5, "s": "workflow", "t": "Workflow", "w": "The thing this whole course builds. A prompt is one turn; a workflow is what you actually run every week."}};
 var VOCAB240_PAGE = "../vocabulary.html";
 /* ==========================================================================
    Vocabulary pop-ups

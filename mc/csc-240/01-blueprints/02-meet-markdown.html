@@ -12,6 +12,8 @@
 <title>Meet Markdown</title>
 <!--
   CSC 240 - Module 1 (Blueprints), page 2: Meet Markdown
+  Version: 3.1 (2026-10-06) - Part 2: TXTEDTR, the course's markdown editor, with a
+           slot for Dave's demo video.
   Version: 3.0 (2026-10-05) - split: Why + the six cards only. The examples and
            the AI test moved to 0D; the hands-on practice is 0C.
   Version: 2.2 (2026-10-05) - last card points to 0C, Markdown Fundamentals.
@@ -27,7 +29,7 @@
   at the top of this file's script. Then run:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-06 01:12
+  Assembled 2026-10-05 22:52
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1778,9 +1780,21 @@ a.btn { text-decoration: none; }
    table scrolls inside its box instead of pushing off the side of a phone. */
 .marks > *, .mark__pair > * { min-width: 0; }
 
+/* Part 2: TXTEDTR. Text on the left, the demo video on the right when there
+   is one; one column on a phone or when there is no video yet. */
+.editor { display: grid; grid-template-columns: 1fr; gap: var(--gap-l); align-items: start; }
+.editor.has-video { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+.editor > * { min-width: 0; }
+.editor__text > * + * { margin-top: 1rem; }
+.editor__points ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
+.editor__points li { color: var(--ink-2); }
+.editor__points li strong { color: var(--ink); }
+.editor__video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--r-sm); background: var(--surface-2); }
+
 .btn:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 760px) {
+  .editor.has-video { grid-template-columns: 1fr; }
   .marks, .mark__pair { grid-template-columns: 1fr; }
 }
 </style>
@@ -1865,6 +1879,29 @@ a.btn { text-decoration: none; }
     </div>
     <!-- Built from the MARKS list in the script. -->
     <div class="marks" id="marks"></div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- Part 2: TXTEDTR, the course's markdown editor. Dave's demo video sits
+       beside the text once its address is in the markdown (::: text
+       editor-video); until then the text takes the full width. -->
+  <section class="block">
+    <div class="blockhead">
+      <span class="eyebrow"><svg class="i"><use href="#i-file-text"/></svg> Part 2 &middot; Where to write it</span>
+      <h2>Where to write it: TXTEDTR</h2>
+<p>Any plain-text app can write markdown, but it helps to see what you are making. <strong>TXTEDTR</strong> is a free editor that runs in your browser: you type markdown on one side and watch it turn into formatted text on the other. Use it for every file in this course - your instruction file, your workflow map, all of it.</p>
+    </div>
+    <div class="card editor" id="editorCard">
+      <div class="editor__text">
+        <div class="prose editor__points"><ul><li><strong>Nothing to sign up for.</strong> Open it and start typing.</li><li><strong>Works offline.</strong> Install it once and it opens like any other app, even with no internet.</li><li><strong>Your files stay yours.</strong> They are saved on your own computer, not uploaded anywhere.</li></ul></div>
+        <div class="btnrow">
+          <a class="btn btn--primary" href="https://txtedtr.app/" target="_blank" rel="noopener">Open TXTEDTR <svg class="i"><use href="#i-external-link"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a>
+        </div>
+        <div class="prose"><p class="small muted"><strong>To install it,</strong> open it in Chrome or Edge - on a Chromebook too - and click the install icon at the right end of the address bar. In Safari on a Mac, choose File, then Add to Dock. Or just bookmark it.</p></div>
+      </div>
+      <div class="editor__video" id="editorVideo" hidden></div>
+      <span id="editorVideoSrc" hidden></span>
+    </div>
   </section>
 
   <!-- ===================================================================== -->
@@ -2148,6 +2185,31 @@ function render(source) {
 })();
 
 
+</script>
+
+<script>
+/* ==========================================================================
+   Part 2: the TXTEDTR demo video. Its address comes from the markdown. It is
+   shown only if it is a single https:// address - anything else and the page
+   simply shows no video. Loaded lazily, so it costs nothing until a student
+   scrolls to it.
+   ========================================================================== */
+(function () {
+  "use strict";
+  var src = (document.getElementById("editorVideoSrc").textContent || "").trim();
+  if (!/^https:\/\/\S+$/.test(src)) return;
+  var frame = document.createElement("iframe");
+  frame.src = src;
+  frame.title = "TXTEDTR demo video";
+  frame.loading = "lazy";
+  frame.setAttribute("allow", "fullscreen; picture-in-picture");
+  frame.setAttribute("allowfullscreen", "");
+  frame.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+  var box = document.getElementById("editorVideo");
+  box.appendChild(frame);
+  box.hidden = false;
+  document.getElementById("editorCard").classList.add("has-video");
+})();
 </script>
 
 <script>
