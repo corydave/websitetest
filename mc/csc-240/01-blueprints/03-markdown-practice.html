@@ -17,7 +17,7 @@
   courses/csc-240/01-blueprints/03-markdown-practice.md. Then run:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-05 23:24
+  Assembled 2026-10-05 20:10
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1953,9 +1953,31 @@ a.btn { text-decoration: none; }
     </div>
 
     <p class="small muted" style="margin-top:.8rem"><button class="btn btn--ghost" type="button" id="resetAll" style="padding:.4rem .8rem;font-size:.8rem">Start the whole practice over</button></p>
+
+    <!-- The hand-in button. Same card, same id, same behavior as every CSC 150
+         Lab and Checkpoint: it starts hidden, and the shared frame script shows
+         it only when the Brightspace wrapper passes a link in data-submit (and
+         only if that link starts with https://). No link, no button - so the
+         page never offers a dead end.
+
+         The text column is a plain grid, NOT class="stack" as in CSC 150: on
+         this page .stack is the layer-stacking layout used by the practice
+         panels above, which would pile the label and the button on top of
+         each other and hide them both. -->
+    <div class="handin" id="handin" hidden>
+      <div class="icontile"><svg class="i"><use href="#i-upload"/></svg></div>
+      <div style="display:grid;gap:.4rem;justify-items:start">
+        <span class="eyebrow">When you are ready</span>
+        <a class="btn btn--primary" href="#" target="_blank" rel="noopener">Hand in your certificate here.</a>
+      </div>
+    </div>
   </section>
 
-  <section class="block">
+  <!-- data-lms-hide: this "next page" card is for the page opened on its own.
+       Inside Brightspace the shared frame script hides it, so learners move on
+       with Brightspace's own Next button, which records their progress. Same
+       rule as the next-lesson link on every CSC 150 page. -->
+  <section class="block" data-lms-hide>
     <div class="card nextup">
       <div>
         <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> Next &middot; page 4</span>

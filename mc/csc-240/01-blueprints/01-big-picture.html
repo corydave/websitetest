@@ -24,7 +24,7 @@
   are filled with the shared design system, icons and Brightspace frame
   script, so there is one copy of each.
 
-  Assembled 2026-10-05 23:24
+  Assembled 2026-10-05 20:10
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2186,7 +2186,11 @@ Say which row of the sheet confused you, and ask.</pre></div>
   <!-- ===================================================================== -->
   <!-- Next stop                                                               -->
   <!-- ===================================================================== -->
-  <section class="block">
+  <!-- data-lms-hide: this "next page" card is for the page opened on its own.
+       Inside Brightspace the shared frame script hides it, so learners move on
+       with Brightspace's own Next button, which records their progress. Same
+       rule as the next-lesson link on every CSC 150 page. -->
+  <section class="block" data-lms-hide>
     <div class="card nextup">
       <div>
         <span class="eyebrow"><svg class="i"><use href="#i-arrow-right"/></svg> Next &middot; page 2</span>

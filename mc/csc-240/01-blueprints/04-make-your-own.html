@@ -20,7 +20,7 @@
   courses/csc-240/01-blueprints/04-make-your-own.md. Then run:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-05 19:56
+  Assembled 2026-10-05 20:10
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2124,7 +2124,11 @@ meat, dry goods.
   </section>
 
   <!-- ===================================================================== -->
-  <section class="block">
+  <!-- data-lms-hide: this "next page" card is for the page opened on its own.
+       Inside Brightspace the shared frame script hides it, so learners move on
+       with Brightspace's own Next button, which records their progress. Same
+       rule as the next-lesson link on every CSC 150 page. -->
+  <section class="block" data-lms-hide>
     <div class="card nextup">
       <div>
         <span class="eyebrow"><svg class="i"><use href="#i-check"/></svg> That is Module 1 done</span>
