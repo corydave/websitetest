@@ -1,0 +1,2043 @@
+<!--
+  Vibe Coding - CSC 145 - Finger Lakes Community College
+  Lab: The Word Game Nobody Can Play
+  Chapter: Accessibility: did the AI keep its promise?
+
+  GENERATED FILE - do not edit. Built 2026-10-06 by build/build.py from
+  chapters/05-access/01-word-game.md. Edit the source, or shared/lab.css and shared/lab.js,
+  and rebuild. Anything changed here is overwritten on the next build.
+
+  This handout is one HTML file: the page, its styles, and its behavior all
+  live here. It follows the same spec block students use for their own apps,
+  on purpose - View Source and it should look like something you could have
+  made. The only thing it loads from outside is the two fonts.
+
+  Privacy: what is saved in this browser's local storage, on this device only -
+  which steps are marked done, the light/dark choice, and (on labs with a
+  report) a draft of the report so a refresh doesn't lose it. Nothing is sent
+  anywhere.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vibe Coding</title>
+
+  <!-- What names this lab. Written by the build from the source's header. -->
+  <script>
+    const LAB = {
+      title:   "The Word Game Nobody Can Play",
+      chapter: "Accessibility: did the AI keep its promise?",
+      time:    "About 40 minutes",
+      id:      "vibe-lab-word-game"
+    };
+  </script>
+
+  <!-- Apply the saved light/dark choice BEFORE the page paints, so a student
+       who chose dark doesn't see a white flash on every load. Default is light. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('vibe-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); }
+      } catch (e) { /* storage unavailable - stay light */ }
+    })();
+  </script>
+
+  <!-- The one external request in this file: the two course typefaces. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Comfortaa:wght@500;700&display=swap">
+
+  <style>
+    /*
+      Vibe Coding - lab handout stylesheet (SOURCE)
+      This file is inlined into every published handout by build/build.py.
+      Edit it here, run the build, and every lab picks up the change.
+      Never edit the <style> block inside a file in publish/ - it is overwritten.
+
+      Tokens and contrast reasoning: design document section 6.
+    */
+
+    /* ------------------------------------------------------------------
+       DESIGN TOKENS - LIGHT (the default)
+       Every color on the page goes through one of these names. Contrast
+       ratios are measured against white, the card color in light mode.
+       ------------------------------------------------------------------ */
+    :root {
+      color-scheme: light;
+
+      --ink:         #1a1523;   /* body text             17.87:1 */
+      --ink-soft:    #5b5468;   /* secondary text         7.21:1 */
+      --ink-faint:   #6f6880;   /* metadata, counts       5.29:1 */
+      --paper:       #ffffff;   /* page background */
+      --card:        #ffffff;   /* raised surfaces (they get a border instead of a tint) */
+      --line:        #e2dcec;   /* borders and rules */
+      --accent:      #9900ff;   /* brand purple: headings, buttons, numbers, focus rings (5.53:1 - passes for text on white) */
+      --accent-text: #7a00cc;   /* deeper purple for links and small labels (7.78:1) */
+      --accent-soft: #f3ebff;   /* tinted backgrounds */
+      --heading:     #9900ff;   /* headings use the brand purple in light mode */
+      --flag:        #a04a00;   /* troubleshooting cards (6.04:1) */
+      --danger:      #b3261e;   /* destructive actions (6.54:1) */
+      --on-accent:   #ffffff;   /* text on a purple fill (5.53:1 on #9900ff) */
+
+      --font-body:    "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-display: "Comfortaa", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+      --radius: 14px;
+      --gap: 1rem;
+      --measure: 44rem;   /* comfortable reading width */
+    }
+
+    /* ------------------------------------------------------------------
+       DESIGN TOKENS - DARK
+       The original course palette. Ratios are against --card (#1c1826).
+       Only the colors change; nothing about layout does.
+       ------------------------------------------------------------------ */
+    [data-theme="dark"] {
+      color-scheme: dark;
+
+      --ink:         #e8e6ed;   /* 14.05:1 */
+      --ink-soft:    #a09aad;   /*  6.39:1 */
+      --ink-faint:   #8a8397;   /*  4.53:1 */
+      --paper:       #12101a;
+      --card:        #1c1826;
+      --line:        #2f2a3d;
+      --accent:      #9900ff;   /* 3.41:1 - fine for components, NOT for small text on dark */
+      --accent-text: #b478ff;   /* 6.34:1 - the readable purple */
+      --accent-soft: #241338;
+      --heading:     #b478ff;   /* headings step up to the readable purple in dark mode */
+      --flag:        #ffa94d;   /* 9.13:1 */
+      --danger:      #ff8080;   /* 7.16:1 */
+      --on-accent:   #ffffff;
+    }
+
+    /* ------------------------------------------------------------------
+       BASE
+       ------------------------------------------------------------------ */
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.0625rem;      /* 17px */
+      line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Comfortaa runs optically small and wide: a little extra size, no
+       negative letter-spacing. Headings are purple, per the course look. */
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.25;
+      margin: 0;
+      color: var(--heading);
+    }
+
+    p { margin: 0 0 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    a { color: var(--accent-text); }
+
+    code, kbd, pre { font-family: var(--font-mono); font-size: 0.95em; }
+
+    /* Inline code - filenames, tags, literal terms */
+    code {
+      background: var(--accent-soft);
+      color: var(--ink);
+      padding: 0.1em 0.4em;
+      border-radius: 6px;
+    }
+
+    /* Keyboard keys */
+    kbd {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 0.05em 0.45em;
+    }
+
+    /* One visible focus ring for everything focusable. */
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* Skip link - invisible until a keyboard user tabs to it. */
+    .skip {
+      position: absolute; left: 1rem; top: -4rem;
+      background: var(--accent); color: var(--on-accent);
+      padding: 0.6rem 1rem; border-radius: 8px;
+      font-weight: 700; text-decoration: none; z-index: 10;
+    }
+    .skip:focus { top: 1rem; }
+
+    /* ------------------------------------------------------------------
+       LAYOUT
+       ------------------------------------------------------------------ */
+    .wrap {
+      width: min(100% - 2rem, var(--measure));
+      margin: 0 auto;
+      padding: 1.5rem 0 4rem;
+    }
+
+    /* The ribbon row: chapter + time on the left, theme toggle on the right. */
+    .ribbon {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .eyebrow {
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0;
+    }
+
+    h1 { font-size: clamp(1.8rem, 2.4vw + 1.2rem, 2.6rem); margin-bottom: 0.6rem; }
+
+    .lede { color: var(--ink-soft); font-size: 1.1rem; }
+
+    /* The "your tools may differ" note under the title. */
+    .tools-note {
+      color: var(--ink-faint);
+      font-size: 0.95rem;
+      border-left: 3px solid var(--line);
+      padding-left: 0.9rem;
+      margin: 1rem 0 0;
+    }
+
+    /* ------------------------------------------------------------------
+       PROGRESS - one segment per required step
+       ------------------------------------------------------------------ */
+    .progress { display: grid; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+
+    /* One column per segment, however many the build wrote (3 required steps
+       on a build lab, 5 or 6 on a setup lab), so the bar always fills the width. */
+    .progress-bar {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+      gap: 4px; height: 10px;
+    }
+
+    .progress-bar span { background: var(--line); border-radius: 5px; transition: background 200ms ease; }
+    .progress-bar span.filled { background: var(--accent); }
+
+    .progress-text {
+      color: var(--ink-faint); font-size: 0.95rem;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+    }
+
+    /* ------------------------------------------------------------------
+       STEP CARDS
+       ------------------------------------------------------------------ */
+    .step {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-bottom: var(--gap);
+      overflow: hidden;
+    }
+
+    .step.done { border-color: var(--accent); }
+
+    .step-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1rem; }
+
+    .step-num {
+      flex: none; width: 2.1rem; height: 2.1rem;
+      display: grid; place-items: center; border-radius: 50%;
+      background: var(--accent-soft); color: var(--accent-text);
+      font-family: var(--font-display); font-weight: 700;
+    }
+
+    .step.done .step-num { background: var(--accent); color: var(--on-accent); }
+
+    /* The title is a button so the whole heading is clickable and
+       keyboard-reachable, styled to look like a heading. */
+    .step-toggle {
+      flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      background: none; border: 0; padding: 0.25rem 0;
+      color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+    }
+
+    .step-toggle h2 { font-size: 1.2rem; }
+
+    /* Chevron that rotates when the card is open. */
+    .chev {
+      flex: none; width: 0.7rem; height: 0.7rem;
+      border-right: 2px solid var(--ink-soft); border-bottom: 2px solid var(--ink-soft);
+      transform: rotate(45deg); transition: transform 200ms ease; margin-right: 0.3rem;
+    }
+    .step-toggle[aria-expanded="true"] .chev { transform: rotate(-135deg); }
+
+    .step-body {
+      padding: 1.1rem 1rem 1.25rem calc(1rem + 2.1rem + 0.75rem);
+      border-top: 1px solid var(--line);
+    }
+    .step-body[hidden] { display: none; }
+
+    /* ------------------------------------------------------------------
+       OPTIONAL STEPS - Read it, Make it yours, Grow it, Keep it
+       Grouped after the required steps under one heading, each with a small
+       "Optional" tag. A dashed rule marks where the lab itself ends.
+       ------------------------------------------------------------------ */
+    .optional-group {
+      margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 2px dashed var(--line);
+    }
+    .optional-intro { margin-bottom: 1rem; }
+    .optional-intro h2 { font-size: 1.2rem; color: var(--heading); margin-bottom: 0.35rem; }
+    .optional-intro h2:focus { outline: none; }            /* focused by script, not by the student */
+    .optional-intro h2:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+    .optional-intro p { color: var(--ink-soft); margin: 0; }
+
+    /* The optional cards are a shade quieter: dashed border until marked done. */
+    .step.optional { border-style: dashed; }
+    .step.optional.done { border-style: solid; }
+
+    .step-tag {
+      display: inline-block; vertical-align: middle; margin-left: 0.5rem;
+      padding: 0.1em 0.55em; border-radius: 999px;
+      font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--accent-text); background: var(--accent-soft);
+    }
+
+    .step-body h3 {
+      font-size: 1.05rem;
+      margin: 1.4rem 0 0.6rem;
+    }
+
+    /* ------------------------------------------------------------------
+       BUTTONS
+       ------------------------------------------------------------------ */
+    .btn {
+      font: inherit; font-weight: 700; font-size: 0.95rem;
+      padding: 0.5rem 0.9rem; border-radius: 999px;
+      border: 2px solid var(--accent); background: transparent; color: var(--accent-text);
+      cursor: pointer; white-space: nowrap;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .btn:hover { background: var(--accent-soft); }
+
+    .btn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+    .btn.solid { background: var(--accent); color: var(--on-accent); }
+    .btn.solid:hover { filter: brightness(1.08); }
+
+    .btn.quiet { border-color: var(--line); color: var(--ink-soft); font-weight: 400; }
+    .btn.quiet:hover { color: var(--ink); background: var(--accent-soft); }
+
+    .btn.danger { border-color: var(--line); color: var(--danger); }
+
+    /* The theme toggle is a quiet button with a little sun/moon glyph. */
+    .theme { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+    /* ------------------------------------------------------------------
+       PROMPT / SPEC BOXES
+       ------------------------------------------------------------------ */
+    .prompt { position: relative; margin: 1rem 0; }
+
+    .prompt pre {
+      margin: 0; padding: 3rem 1rem 1rem;      /* top room for the copy button */
+      background: var(--accent-soft);
+      border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      white-space: pre-wrap; overflow-wrap: anywhere;
+      line-height: 1.5; font-size: 0.95rem; color: var(--ink);
+    }
+
+    .prompt .copy { position: absolute; top: 0.6rem; right: 0.6rem; }
+
+    /* ------------------------------------------------------------------
+       CALLOUTS
+       .flag  - orange: a specific trap and how to get out of it
+       .note  - purple: the universal reminder (save, refresh)
+       .aside - a quiet side comment
+       ------------------------------------------------------------------ */
+
+    /* Troubleshooting cards are accordions: a <details> element, closed by
+       default, so a student scans the titles for their symptom and opens
+       only the one that matches. Native <details> is keyboard-accessible
+       with no script. Each card opens independently - two problems at once
+       is normal. */
+    .flag {
+      border: 1px solid var(--flag); border-left-width: 4px; border-radius: 10px;
+      margin: 0.6rem 0;
+      background: color-mix(in srgb, var(--flag) 7%, var(--card));
+    }
+
+    .flag summary, details.note summary {
+      cursor: pointer; list-style: none;
+      position: relative;                 /* anchors the chevron */
+      padding: 0.7rem 2.6rem 0.7rem 1rem; /* right padding leaves room for it */
+      font-weight: 700; color: var(--flag);
+    }
+    .flag summary::-webkit-details-marker, details.note summary::-webkit-details-marker { display: none; }
+
+    /* The same chevron the step cards use, so open/closed reads the same way.
+       Positioned absolutely so a <code> chunk inside the title flows inline
+       with the words instead of being pushed to the far side. */
+    .flag summary::after, details.note summary::after {
+      content: ""; position: absolute; right: 1.1rem; top: 50%;
+      width: 0.55rem; height: 0.55rem; margin-top: -0.45rem;
+      border-right: 2px solid var(--flag); border-bottom: 2px solid var(--flag);
+      transform: rotate(45deg); transition: transform 200ms ease;
+    }
+    .flag[open] summary::after, details.note[open] summary::after { transform: rotate(-135deg); margin-top: -0.15rem; }
+
+    /* The two "start here" cards are the same accordion as the orange
+       troubleshooting cards, in purple, because they apply to every lab
+       rather than to one symptom. These rules come after the .flag rules
+       above on purpose, so the purple wins.
+
+       NOTE ON THE NAME: ".note" is used by two different shapes in this
+       file. Here it is a <details> accordion (the universal troubleshooting
+       partial). Further down, under "::: note", it is a <div> callout with a
+       title. Those later rules are scoped as "div.note" so they cannot reach
+       these accordions. Keep it that way. */
+    details.note {
+      border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px;
+      margin: 0.6rem 0;
+      background: var(--accent-soft);
+    }
+    details.note summary { color: var(--accent-text); }
+    details.note summary::after { border-color: var(--accent-text); }
+    details.note .note-body { padding: 0 1rem 0.9rem; }
+    details.note .note-body p:last-child { margin-bottom: 0; }
+
+    .flag .flag-body { padding: 0 1rem 0.9rem; }
+    .flag .flag-body p:last-child { margin-bottom: 0; }
+
+    /* The folder tree: a text diagram of where files should be right now.
+       Shown in a figure with a caption saying the names may differ but the
+       shape must match. */
+    .tree { margin: 1rem 0; }
+    .tree pre {
+      margin: 0; padding: 0.9rem 1rem;
+      background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px;
+      font-size: 0.95rem; line-height: 1.5; color: var(--ink);
+      overflow-x: auto;                    /* a wide tree scrolls inside its box, never the page */
+    }
+    .tree .here { color: var(--accent-text); font-weight: 700; }
+    .tree figcaption { color: var(--ink-soft); font-size: 0.95rem; margin-top: 0.5rem; }
+
+    /* The per-browser shortcut table inside the Developer Console callout. */
+    .shortcuts { width: 100%; border-collapse: collapse; margin: 0.6rem 0 0.4rem; font-size: 0.95rem; }
+    .shortcuts th, .shortcuts td { text-align: left; padding: 0.35rem 0.5rem 0.35rem 0; vertical-align: top; }
+    .shortcuts th { font-weight: 700; color: var(--ink-soft); }
+    .shortcuts tr + tr td, .shortcuts tr + tr th { border-top: 1px solid var(--line); }
+
+    /* The two group labels above the accordions - "This lab", "Every lab". */
+    .group {
+      font-family: var(--font-body); font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-faint); margin: 1.2rem 0 0.4rem;
+    }
+
+    .aside {
+      border-left: 4px solid var(--accent); padding: 0.2rem 0 0.2rem 1rem;
+      color: var(--ink-soft); margin: 1rem 0;
+    }
+
+    /* Read-it questions with reveals */
+    .q { border-top: 1px solid var(--line); padding: 0.9rem 0; }
+    .q:first-of-type { border-top: 0; padding-top: 0; }
+    .q p { margin-bottom: 0.5rem; }
+
+    .answer { margin-top: 0.6rem; padding: 0.7rem 0.9rem; background: var(--accent-soft); border-radius: 8px; }
+    .answer[hidden] { display: none; }
+
+    .step-body ol, .step-body ul { padding-left: 1.3rem; margin: 0 0 1rem; }
+    .step-body li { margin-bottom: 0.4rem; }
+
+    /* ------------------------------------------------------------------
+       DEFINITION OF DONE + LAB REPORT
+       ------------------------------------------------------------------ */
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1.25rem 1.5rem; margin-top: 2rem;
+    }
+
+    .panel h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+
+    .panel .intro { color: var(--ink-soft); }
+
+    .field { display: grid; gap: 0.35rem; margin: 1.1rem 0; }
+
+    .field label { font-weight: 700; }
+
+    .field .help { color: var(--ink-faint); font-size: 0.92rem; font-weight: 400; }
+
+    .field input, .field textarea {
+      font: inherit; color: var(--ink); background: var(--paper);
+      border: 1px solid var(--line); border-radius: 8px; padding: 0.6rem 0.75rem;
+      width: 100%;
+    }
+
+    .field textarea { min-height: 5.5rem; resize: vertical; line-height: 1.5; }
+
+    .field input:focus, .field textarea:focus { border-color: var(--accent); }
+
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-top: 1.25rem; }
+
+    .saved { color: var(--ink-faint); font-size: 0.92rem; }
+
+    /* ------------------------------------------------------------------
+       FOOTER
+       ------------------------------------------------------------------ */
+    footer {
+      margin-top: 2rem; color: var(--ink-faint); font-size: 0.9rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+
+    /* ------------------------------------------------------------------
+       SUBMIT CARD - the last thing on every lab
+       A wide rounded rectangle, outlined in the accent color, with a solid
+       accent block on the left (120px) holding an "open in another page"
+       icon, and the call to action centered in the rest. The whole card is
+       one link. The build writes the href from the lab's submit: line; the
+       instructor pastes the LMS link there. Two blank lines above it, as asked.
+       ------------------------------------------------------------------ */
+    .submit-card {
+      display: flex; align-items: stretch;
+      margin-top: 3.4rem;                       /* about two blank lines */
+      min-height: 84px;
+      border: 2px solid var(--accent); border-radius: 14px; overflow: hidden;
+      background: var(--card); color: var(--ink);
+      text-decoration: none; font-weight: 700; font-size: 1.15rem;
+    }
+    .submit-card .submit-icon {
+      flex: 0 0 120px; display: flex; align-items: center; justify-content: center;
+      background: var(--accent); color: #fff;
+    }
+    .submit-card .submit-icon svg { width: 40px; height: 40px; }
+    .submit-card .submit-text {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 1rem 1.25rem;
+    }
+    .submit-card:hover .submit-text, .submit-card:focus-visible .submit-text { text-decoration: underline; }
+    .submit-card:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 3px; }
+
+    /* ------------------------------------------------------------------
+       VOCABULARY - clickable terms and their pop-up
+       The build inlines the definitions; shared/vocab.js wraps the first
+       mention of each term in a step in a .term-link and opens the <dialog>.
+       A term link looks like a word with a dotted accent underline, not a
+       button, so it reads as "you can ask about this word".
+       ------------------------------------------------------------------ */
+    .term-link {
+      all: unset;                                  /* drop the browser's button look */
+      font: inherit;                               /* the shorthand resets weight, so bold comes after it */
+      font-weight: 700;
+      color: var(--heading);                       /* the same purple as headings and titles */
+      cursor: help;
+      /* A dotted underline in the same purple. Bold and colored says "this word
+         matters"; the dots say "and you can click it for a definition". */
+      text-decoration: underline dotted currentColor 2px; text-underline-offset: 3px;
+      border-radius: 3px;
+    }
+    .term-link:hover { background: var(--accent-soft); }
+    .term-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    code .term-link { text-underline-offset: 2px; }
+
+    dialog.vocab {
+      border: 2px solid var(--accent); border-radius: 14px; padding: 0;
+      width: min(92vw, 30rem); max-height: 80vh; overflow: auto;
+      background: var(--card); color: var(--ink);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    }
+    dialog.vocab::backdrop { background: rgba(26, 21, 35, 0.45); }
+    dialog.vocab .vocab-inner { padding: 1.1rem 1.25rem 1rem; }
+    dialog.vocab h3 { margin: 0 0 0.6rem; font-family: var(--font-display); color: var(--heading); font-size: 1.25rem; }
+    dialog.vocab p { margin: 0 0 0.6rem; line-height: 1.5; }
+    dialog.vocab pre.sample {
+      background: var(--accent-soft); border-left: 4px solid var(--accent);
+      padding: 0.6rem 0.8rem; border-radius: 8px; overflow-x: auto; margin: 0.5rem 0 0.7rem; font-size: 0.9rem;
+    }
+    dialog.vocab .vocab-foot {
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+      margin: 0.8rem 0 0; padding-top: 0.7rem; border-top: 1px solid var(--line); font-size: 0.9rem;
+    }
+    dialog.vocab .vocab-foot a { color: var(--accent-text); font-weight: 700; }
+
+    /* Visually hidden, still read aloud. */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+
+    /* ------------------------------------------------------------------
+       THE PRINTED REPORT
+       #report-print is filled in by the script when the student clicks
+       "Preview and save as PDF". On screen it is hidden. When printing,
+       the rest of the page is hidden and only the report shows. The
+       browser's print dialog has "Save as PDF" - that is the PDF generator.
+       Links stay clickable in the PDF.
+       ------------------------------------------------------------------ */
+    #report-print { display: none; }
+
+    @media print {
+      @page { margin: 2cm; }
+
+      body { background: #fff; color: #000; font-size: 11pt; }
+      body.print-report .wrap { display: none; }
+      body.print-report #report-print { display: block; }
+
+      #report-print h1 { color: #9900ff; font-size: 20pt; margin-bottom: 0.2rem; }
+      #report-print h2 { color: #9900ff; font-size: 13pt; margin: 1.2rem 0 0.3rem; }
+      #report-print .meta { color: #444; margin: 0 0 1rem; }
+      #report-print .meta a { color: #7a00cc; }
+      #report-print .qa { break-inside: avoid; margin-bottom: 0.9rem; }
+      #report-print .qa .question { font-weight: 700; margin: 0 0 0.2rem; }
+      #report-print .qa .response { white-space: pre-wrap; margin: 0; padding: 0.4rem 0.6rem; border-left: 3px solid #9900ff; }
+      #report-print .steps { margin: 0; padding-left: 1.2rem; }
+      #report-print .footer { margin-top: 1.5rem; color: #666; font-size: 9pt; border-top: 1px solid #ccc; padding-top: 0.5rem; }
+    }
+
+    /* ------------------------------------------------------------------
+       WATCH PANEL - an optional video tutorial for the lab
+       A <details> that sits between the progress bar and step 1. Not a
+       step: it has no Mark done and does not count toward progress. Open
+       by default when present. The generator emits it commented out unless
+       the lab's source has a video: line.
+       ------------------------------------------------------------------ */
+    .watch {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      margin-bottom: var(--gap); overflow: hidden;
+    }
+    .watch summary {
+      cursor: pointer; list-style: none;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--heading);
+    }
+    .watch summary::-webkit-details-marker { display: none; }
+    .watch summary .len { font-family: var(--font-body); font-weight: 400; font-size: 0.9rem; color: var(--ink-faint); }
+    .watch .watch-body { padding: 0 1rem 1rem; }
+    .watch .transcript { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.6rem; }
+
+    /* A responsive 16:9 video frame. Same convention as the CSC 150 pages:
+       the wrapper governs the size; any width on the iframe itself is ignored. */
+    .embed {
+      width: 100%; aspect-ratio: 16 / 9;
+      background: var(--accent-soft); border-radius: 10px; overflow: hidden;
+    }
+    .embed iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* ------------------------------------------------------------------
+       DEMO CARD - a link to the instructor's finished version of the lab
+       Lives at the end of Picture it. Emitted commented out unless the
+       lab's source has a demo: line.
+       ------------------------------------------------------------------ */
+    .demo-card {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      margin-top: 1rem; padding: 0.9rem 1.1rem;
+      border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px;
+      background: var(--accent-soft); color: var(--ink); text-decoration: none;
+    }
+    .demo-card:hover { border-color: var(--accent); }
+    .demo-card .demo-label { font-weight: 700; color: var(--accent-text); display: block; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .demo-card .demo-title { display: block; }
+    .demo-card .demo-arrow { color: var(--accent-text); font-size: 1.4rem; flex: none; }
+    /* The words and the arrow share one row, whether or not there is a picture. */
+    .demo-card .demo-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; }
+
+    /* With a picture (demo-image:), the picture sits on top of the card:
+       always 16:9, rounded corners, a soft shadow. object-fit: cover means a
+       picture that is not quite 16:9 is trimmed at the edges, never squashed. */
+    .demo-card.has-thumb { flex-direction: column; align-items: stretch; padding: 1rem 1.1rem; }
+    .demo-thumb {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 16 / 9; object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(26, 21, 35, 0.18), 0 1px 3px rgba(26, 21, 35, 0.12);
+      background: var(--line);                 /* shows while the picture loads */
+    }
+    [data-theme="dark"] .demo-thumb { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4); }
+    .demo-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    /* ------------------------------------------------------------------
+       SMALL SCREENS
+       ------------------------------------------------------------------ */
+    @media (max-width: 520px) {
+      body { font-size: 1rem; }
+      /* Mark done drops under the title instead of squeezing it. */
+      .step-head { flex-wrap: wrap; }
+      .step-toggle { flex: 1 0 calc(100% - 2.1rem - 0.75rem); }
+      .step-head .btn { margin-left: calc(2.1rem + 0.75rem); }
+      .step-body { padding-left: 1rem; }
+    }
+
+    /* ------------------------------------------------------------------
+       THE TOP BAR
+       Carries the lab's name, the field guide button, and the theme toggle.
+
+       It sticks to the top of whatever is actually scrolling:
+         - a phone inside the LMS (the frame is screen-height, the page
+           scrolls inside it) - it follows you down
+         - a page opened directly on the web - it follows you down
+         - a desktop inside the LMS - the frame is sized to the whole page,
+           so nothing scrolls inside it and the bar simply sits at the top.
+           That is correct rather than broken, and if the frame is ever given
+           a fixed height the bar starts sticking with no change here.
+       ------------------------------------------------------------------ */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      width: min(100% - 2rem, var(--measure));
+      margin: 0 auto;
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    /* The name truncates rather than wrapping, so the bar is always one line
+       tall and never eats the screen on a phone. */
+    .topbar-title {
+      margin: 0;
+      min-width: 0;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--heading);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* The guide button is an <a>, so it needs the bits a <button> gets free. */
+    .guide-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      text-decoration: none;
+    }
+
+    .guide-arrow { font-size: 0.85em; opacity: 0.7; }
+
+    /* Narrow screens: the guide button keeps its words, because they are the
+       ones that say what is on the other end. The theme toggle keeps only its
+       moon, because everybody already knows what that does. */
+    @media (max-width: 34rem) {
+      .topbar-title { font-size: 0.85rem; }
+      .theme #theme-label { display: none; }
+    }
+
+    /* ---------------------------------------------------------------------
+       Quotes. An inset block for something being quoted back at the reader -
+       a line of the specification, a bug report, a prompt about to be sent.
+       The accent bar down the left says "this is somebody else's words"
+       without needing quotation marks.
+       --------------------------------------------------------------------- */
+    blockquote {
+      margin: 1.1rem 0;
+      padding: 0.85rem 1.1rem 0.85rem 1.25rem;
+      border-left: 4px solid var(--accent);
+      background: var(--card);
+      border-radius: 0 6px 6px 0;
+    }
+    blockquote > :first-child { margin-top: 0; }
+    blockquote > :last-child  { margin-bottom: 0; }
+    blockquote ul,
+    blockquote ol { margin: 0; padding-left: 1.2rem; }
+
+    /* ---------------------------------------------------------------------
+       The Tools page. One card per tool, so the page scans as a list of
+       things rather than as an article you have to read.
+       --------------------------------------------------------------------- */
+    .reading .tool {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem 1.25rem;
+      margin: 1.1rem 0;
+    }
+    .reading .tool h3 { margin-top: 0; }
+    .reading .tool > :last-child { margin-bottom: 0; }
+
+    /* The link that opens a tool. Looks like a button, is a real link, so
+       middle-click and "open in new tab" both still work. */
+    .tool-link {
+      display: inline-block;
+      padding: 0.55rem 1rem;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      color: var(--heading);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .tool-link:hover,
+    .tool-link:focus-visible { background: var(--accent); color: var(--on-accent); }
+
+    /* The bookmarklet. Grabbable rather than clickable, and it says so. */
+    .drag-me { cursor: grab; }
+
+    .reading .tool table { width: 100%; border-collapse: collapse; margin: 0.9rem 0 0; }
+    .reading .tool th,
+    .reading .tool td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); }
+    .reading .tool th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+    .reading .tool tr:last-child td { border-bottom: 0; }
+
+    .lede-note { color: var(--ink-soft); }
+
+    /* ---------------------------------------------------------------------
+       The chapter overview page. One card per page in the chapter, so the
+       list says what each thing is and how long it takes before anybody
+       clicks anything.
+       --------------------------------------------------------------------- */
+    .overview-list { list-style: none; margin: 1.2rem 0 0; padding: 0; counter-reset: ov; }
+    .overview-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.95rem 1.1rem 1.05rem;
+      margin: 0 0 0.75rem;
+    }
+    /* The anchor lab - the one that gets handed in - is marked, not hidden. */
+    .overview-item.is-anchor { border-color: var(--accent); }
+
+    .overview-link {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--heading);
+      text-decoration: none;
+    }
+    .overview-link:hover,
+    .overview-link:focus-visible { text-decoration: underline; }
+
+    .overview-meta { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }
+    .overview-kind {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      padding: 0.16rem 0.5rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+    .overview-kind.is-anchor-tag { background: var(--accent); color: var(--on-accent); }
+    .overview-time { font-size: 0.88rem; color: var(--ink-soft); }
+    .overview-lede { margin: 0.5rem 0 0; color: var(--ink-soft); }
+    .overview-note { color: var(--ink-soft); }
+    .overview-foot { margin-top: 1.4rem; }
+
+    /* ---------------------------------------------------------------------
+       ::: video - a clip placed exactly where it is needed. (The header's
+       video: field is the other thing: "watch this first", near the top.)
+       --------------------------------------------------------------------- */
+    figure.video { margin: 1.3rem 0; }
+    .video-frame {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+    figure.video figcaption {
+      margin-top: 0.55rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: baseline;
+    }
+    .video-title { font-weight: 700; color: var(--heading); }
+    .video-length { font-size: 0.88rem; color: var(--ink-soft); }
+    .video-transcript-link { font-size: 0.88rem; }
+
+    /* A pasted transcript. Closed by default - a ten-minute one would otherwise
+       push the rest of the page off the screen. */
+    .video-transcript { margin-top: 0.6rem; }
+    .video-transcript > summary { cursor: pointer; font-weight: 700; color: var(--heading); }
+    .video-transcript-body {
+      margin-top: 0.6rem;
+      padding: 0.85rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      /* pre-wrap, NOT <pre>: keeps the line breaks and blank lines exactly as
+     pasted, but still wraps instead of scrolling sideways on a phone. */
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Tables. Written in Markdown with pipes; see the dialect notes at the
+   top of build/mdparse.py. Kept quiet on purpose - a table in a handout
+   is a reference, not a feature.
+   --------------------------------------------------------------------- */
+.wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.1rem 0;
+  font-size: 0.97rem;
+}
+.wrap th,
+.wrap td {
+  text-align: left;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.wrap thead th {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--line);
+}
+.wrap tbody tr:last-child td { border-bottom: 0; }
+.wrap tbody tr:hover { background: var(--card); }
+
+/* On a narrow screen a wide table would push the page sideways. Let the
+   table itself scroll instead of the whole handout. */
+@media (max-width: 34rem) {
+  .wrap table { display: block; overflow-x: auto; }
+}
+
+/* ---------------------------------------------------------------------
+   ``` fenced code blocks. readings get this from reading.css; labs and
+   setup pages had nothing, so a fenced block in a lab came out as bare
+   monospace with no box around it. Same values as the reading rule, so a
+   sample looks the same whichever kind of page it lands on.
+   --------------------------------------------------------------------- */
+.wrap pre.sample {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.8rem 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------
+   ::: note - a callout with a heading, for something that should stop
+   the reader. .aside is the quiet cousin: a thin rule in the margin and
+   no title. A note is a filled box, because it is meant to interrupt.
+
+   IMPORTANT - why every selector here says "div.note" and not just
+   ".note": the class name is already taken. The universal troubleshooting
+   partial up in the CALLOUTS section uses <details class="note"> for the
+   purple "start here" accordions. A bare .note rule down here would come
+   later in the file and win, which would hand those accordions a padding
+   they do not want and flatten their 4px left bar. The two shapes are
+   told apart by their ELEMENT: the directive emits a <div>, the partial
+   emits a <details>. So this block stays element-scoped. If you ever add
+   a note rule, scope it the same way.
+   --------------------------------------------------------------------- */
+div.note {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.95rem 1.15rem;
+  margin: 1.2rem 0;
+}
+div.note .note-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--heading);
+  margin: 0 0 0.45rem;
+}
+div.note > :last-child { margin-bottom: 0; }
+  </style>
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to the steps</a>
+
+  <!-- The top bar. Sticks to the top of whatever is scrolling; see lab.css. -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <p class="topbar-title" id="topbar-title"></p>
+      <div class="topbar-actions">
+        <a class="btn quiet guide-link" href="https://corydave.github.io/websitetest/mc/csc-145/05-access/00-The-Field-Guide-to-Who-You-Are-Building-For.html#five" target="_blank" rel="noopener"><span class="guide-label">The five ingredients</span><span aria-hidden="true" class="guide-arrow">↗</span><span class="sr-only"> (field guide, opens in a new tab)</span></a>
+        <button class="btn quiet theme" id="theme-toggle" aria-pressed="false">
+          <span aria-hidden="true" id="theme-glyph">&#9790;</span>
+          <span id="theme-label">Dark mode</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <header class="lab-head">
+      <p class="eyebrow" id="lab-ribbon"></p>
+      <h1 id="lab-title"></h1>
+      <p class="lede">Build a word game the way we've been building. Then try playing it without a mouse. Or your eyes closed.</p>
+      <p class="tools-note">These instructions say <strong>TXTEDTR</strong> and a folder called <code>vibe-coding</code>. Those are our conventions, not requirements. If you use Notepad++, VS Code, or a folder with a different name, everything here still works - swap in your names as you read.</p>
+    </header>
+
+    <!-- One segment per step. The build writes the count, so a checklist lab
+         with five steps and a build lab with seven both get the right bar. -->
+    <div class="progress" role="progressbar" aria-label="Lab progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" id="progress">
+      <div class="progress-bar" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="progress-text">
+        <span id="progress-label">0 of 3 steps done</span>
+        <span>Your progress is saved on this device</span>
+      </div>
+    </div>
+
+    <!-- WATCH PANEL - a video tutorial for this lab. Sits above the steps, is not a step,
+         and does not count toward progress. To turn it on: put the embed URL on the
+         video: line in the lab source (and video-length:, transcript: if you have them)
+         and rebuild - or replace the example URL below and remove this comment's markers.
+    <details class="watch" open>
+      <summary><span>Watch first</span><span class="len"></span></summary>
+      <div class="watch-body">
+        <div class="embed">
+          <iframe src="https://example.com/your-video-embed" title="Video tutorial for this lab" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe>
+        </div>
+      </div>
+    </details>
+    -->
+
+    <main id="main">
+      <!-- ============ 1 - PICTURE IT ============ -->
+      <section class="step" data-step="1" data-beat="picture">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">1</span>
+          <button class="step-toggle" aria-expanded="true" aria-controls="body-1">
+            <h2><span class="step-title">Picture it</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-1">
+          <p>You know the game. Five letters, six tries, green means right place, yellow means right letter wrong place, gray means not in the word (if you don't know, Google "Wordle").</p>
+          <p>Today you build one, and you build it the ordinary way - a grid, a keyboard drawn on the screen, click the letters. It will work. It will look good. You will play a round and most likely feel pleased.</p>
+          <p>Then you will look at it through an accessibility lens, and you will find out that you built something a lot of people cannot use at all.</p>
+          <p><strong>That is the point of this lab, and you are not being set up to fail.</strong> You are about to see exactly what happens when a perfectly reasonable person builds a perfectly reasonable app - because this is what everybody's first version looks like, including the professionals'. The difference is that you are going to check.</p>
+          <p><strong>Definition of Done:</strong> <code>word-game/index.html</code> works with the mouse <em>and</em> with the keyboard alone, the tiles say more than their color, and submitting a guess announces what happened in words.</p>
+          <!-- DEMO CARD - a link to your finished version of this lab.
+               To turn it on: put the URL on the demo: line in the lab source and rebuild,
+               or (quick fix) replace the example URL below and remove this comment's markers.
+          <a class="demo-card" href="https://example.com/your-finished-version" target="_blank" rel="noopener">
+            <span class="demo-row">
+              <span><span class="demo-label">See Example</span><span class="demo-title">Open the instructor’s version in a new tab</span></span>
+              <span class="demo-arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+          -->
+        </div>
+      </section>
+      <!-- ============ 2 - ASK FOR IT ============ -->
+      <section class="step" data-step="2" data-beat="ask">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">2</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-2">
+            <h2><span class="step-title">Ask for it</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-2" hidden>
+          <p>Start a new chat and describe the game in your own words. Make sure it says:</p>
+          <ul>
+            <li>A five-letter word guessing game, six tries (although if you wanna jazz that up, go for it! Don't let me yuck your yum).</li>
+            <li>A grid of tiles that fill in as you guess</li>
+            <li>A keyboard drawn on the screen that you click to enter letters, with Backspace and Enter keys</li>
+            <li>Color the tiles after each guess: <em>green</em> for the right letter in the right place, <em>yellow</em> for the right letter in the wrong place, <em>gray</em> for a letter that is not in the word</li>
+            <li>A <em>list of at least twenty five-letter words at the top of the script</em> that I can edit (so you can add your own words if you want!)</li>
+            <li>Picks one word at random each time you load the page</li>
+          </ul>
+          <p>Then paste the specification at the end of your prompt, exactly as it is.</p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="spec-block">Copy specification</button>
+            <pre id="spec-block">Build it to this specification:
+
+# SPECIFICATIONS
+
+* Everything in one single HTML file - HTML, CSS, and JavaScript together
+* No build tools - no React, Vue, or anything requiring npm
+* CDN libraries are fine if they help
+* Use vanilla JavaScript only
+* Fully responsive - works on phone, tablet, and desktop
+* Fully accessible - semantic HTML, ARIA labels, keyboard navigation
+* No data sent to any server - everything runs in the browser only
+* Versioning in comments (e.g., // v1.0 - initial build)
+* Very descriptive JavaScript comments explaining each code block in plain language</pre>
+          </div>
+          <p class="aside"><strong>Read the fourth line of that specification again!!!</strong> <em>Fully accessible - semantic HTML, ARIA labels, keyboard navigation.</em> You have sent that line with every prompt since week one, and you are about to find out, for the first time, how much work it does. Do not change it, and do not add anything extra about accessibility. Ask the way you always ask. The whole lab depends on you not helping.</p>
+        </div>
+      </section>
+      <!-- ============ 3 - RUN IT ============ -->
+      <section class="step" data-step="3" data-beat="run">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">3</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-3">
+            <h2><span class="step-title">Run it</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-3" hidden>
+          <ol>
+            <li>Inside <code>vibe-coding</code>, make a new folder called <code>word-game</code>.</li>
+            <li>Save the code into it as <code>index.html</code>.</li>
+            <li>Open it and <strong>play a whole round with your mouse.</strong> Click letters, press the on-screen Enter, see the tiles color in. Play until you win or run out.</li>
+          </ol>
+          <p>It works. It is a real game, you made it in about ten minutes, and in September you did not know what a file extension was!</p>
+          <p>Enjoy that for a second, because the next step is going to be annoying.</p>
+
+          <h3>Troubleshooting</h3>
+          <p>Every lab has a few ways to go sideways. None of them mean you did something wrong - they mean you’re doing the lab. Scan the titles for what you’re seeing and open that one.</p>
+
+          <h4 class="group">Start here</h4>
+
+          <details class="note">
+            <summary>Nothing changed after you fixed something?</summary>
+            <div class="note-body">
+              <p>Did you save? Did you refresh? Both, every time. Edit → save → switch to the browser → refresh. Most “it’s broken” moments this semester are one of those two steps skipped.</p>
+            </div>
+          </details>
+
+          <details class="note" id="console">
+            <summary>Open the Developer Console - it tells you what broke, and where</summary>
+            <div class="note-body">
+              <p>Your browser has a hidden panel that reports exactly what went wrong and <strong>which line it went wrong on</strong> - even when the page itself shows nothing. That’s far more useful than guessing, and it’s what you paste to the AI. Open it with:</p>
+              <table class="shortcuts">
+                <tr><th scope="row">Chrome, Edge, Brave</th><td><kbd>F12</kbd>, or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>J</kbd> (Mac: <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>J</kbd>)</td></tr>
+                <tr><th scope="row">Firefox</th><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (Mac: <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>K</kbd>)</td></tr>
+                <tr><th scope="row">Safari</th><td>Once: Safari → Settings → Advanced → turn on <em>Show features for web developers</em>. Then <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>C</kbd></td></tr>
+                <tr><th scope="row">Any browser</th><td>Right-click the page → <strong>Inspect</strong> → click the <strong>Console</strong> tab</td></tr>
+              </table>
+              <p>What you’re looking for: <strong>red lines</strong>. Each one has a message (what broke) and, at the right, a file name and a number like <code>countdown.html:42</code> (where - line 42). Copy the message exactly and paste it to the AI. The line number tells you where to look in your editor if you’re curious.</p>
+            </div>
+          </details>
+
+          <h4 class="group">This lab</h4>
+
+          <details class="flag">
+            <summary><strong>I typed on my keyboard and letters went into the page twice.</strong></summary>
+            <div class="flag-body">
+              <p>Both the click handler and the key handler are firing. Tell the AI exactly that: <em>"typing a letter enters it twice - the on-screen key and the real key are both adding a letter."</em></p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary><strong>Enter reloads the page and wipes my guess.</strong></summary>
+            <div class="flag-body">
+              <p>The AI used a form. Same bug as the Decision Maker in chapter 4, same fix: <em>"pressing Enter reloads the page - it should submit my guess instead."</em></p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary><strong>The focus outline still is not visible.</strong></summary>
+            <div class="flag-body">
+              <p>Look in the CSS for <code>outline: none</code> or <code>outline: 0</code> and tell the AI to remove every one of them: <em>"there are rules removing the focus outline - take them all out and give focused elements a clear visible outline instead."</em></p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary><strong>My aria-live status says the same thing twice, or nothing at all.</strong></summary>
+            <div class="flag-body">
+              <p>Live regions are fussy: the element has to already be on the page before the text changes. If it is created fresh each time, nothing is announced. Tell the AI: <em>"the status element should already exist when the page loads, and only its text should change."</em></p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary><strong>I cannot find the Accessibility tab in DevTools.</strong></summary>
+            <div class="flag-body">
+              <p>It is in the Elements panel, in the right-hand sidebar with Styles and Computed, and it is usually hidden behind the small <strong>≫</strong> button at the end of that row. Widening the DevTools window makes it appear. Or press <strong>Ctrl+Shift+P</strong> and type "accessibility".</p>
+            </div>
+          </details>
+          <details class="flag">
+            <summary><strong>The deuteranopia filter did nothing.</strong></summary>
+            <div class="flag-body">
+              <p>You may be in the wrong panel. Press <strong>Ctrl+Shift+P</strong> (<strong>Cmd+Shift+P</strong>), type "rendering", open that drawer, then scroll down to <strong>Emulate vision deficiencies</strong> and pick from the menu. It applies to the whole page, live.</p>
+            </div>
+          </details>
+
+          <h4 class="group">Every lab</h4>
+
+          <details class="flag">
+            <summary>A blank page, or red text on it</summary>
+            <div class="flag-body">
+              <p>The file is fine. Something in it broke - and a blank page is the browser giving up quietly rather than telling you. <strong>Open the Developer Console</strong> (see above). There will almost always be a red line there, even though the page shows nothing. <strong>Copy the exact message</strong> - not “it’s broken” - and paste it to the AI with “I got this error.” Then copy the fixed code, paste it over everything, save, refresh.</p>
+              <p>This is the loop: console → red text → copy it exactly → paste it back. You’ll use it all semester, and the difference between quoting the error and describing it is enormous.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>Double-clicking opens the code, not the page</summary>
+            <div class="flag-body">
+              <p>Your computer sent the <code>.html</code> file to a text editor. Right-click the file → <strong>Open with</strong> → pick your browser. Or drag the file onto an open browser window.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>The file ends in <code>.html.txt</code></summary>
+            <div class="flag-body">
+              <p>Your editor added <code>.txt</code>. If you can’t see file extensions, turn them on (Mac: Finder → Settings → Advanced. Windows: File Explorer → View → File name extensions). Then rename the file to end in <code>.html</code> and nothing else.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>Blank page, and the console is empty too</summary>
+            <div class="flag-body">
+              <p>No red line and nothing on the page usually means the browser never got a whole page. Scroll to the bottom of your file - it should end with <code>&lt;/html&gt;</code>. If it doesn’t, you copied only part of the code: go back to the AI’s reply and use the <strong>Copy</strong> button on the code block, not select-and-drag. Also check the file really ends in <code>.html</code> and not <code>.txt</code>.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>The AI gave you two or three separate files</summary>
+            <div class="flag-body">
+              <p>Sometimes it splits the HTML, CSS, and JavaScript apart even when asked not to. Tell it: <em>“put everything in one HTML file, please.”</em> That line in the specification is there for exactly this.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>You pasted through a Word document or email first</summary>
+            <div class="flag-body">
+              <p>Word-processor-shaped things turn straight quotes <code>"</code> into curly ones <code>“ ”</code>, and code can’t read curly quotes. Go back to the AI’s code block and copy it straight into your editor.</p>
+            </div>
+          </details>
+
+          <details class="flag">
+            <summary>You can’t find the file you saved</summary>
+            <div class="flag-body">
+              <p>It probably landed in Downloads. Search your computer for the file name you gave it, move it into your course folder, and from now on use <strong>Save as</strong> and pick the folder deliberately.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+      <!-- ============ OPTIONAL: GO FURTHER ============ -->
+      <div class="optional-group" role="group" aria-labelledby="optional-title">
+        <div class="optional-intro">
+          <h2 id="optional-title" tabindex="-1">Optional: go further</h2>
+          <p>The three steps above are the lab. If your app meets the Definition of Done, you're finished.
+          These are for when you have time and want more - do any of them, all of them, or none.</p>
+        </div>
+      <!-- ============ 4 - READ IT (OPTIONAL) ============ -->
+      <section class="step optional" data-step="4" data-beat="read">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">4</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-4">
+            <h2><span class="step-title">Read it</span><span class="step-tag">Optional</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-4" hidden>
+          <p>Now check it. Five questions, and you are going to run all five yourself.</p>
+          <div class="q">
+            <p><strong>One. Put your hands in your lap and press Tab a few times. Can you play?</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
+            <div class="answer" id="ans-1" hidden>Probably not, or barely. Either nothing on the page responds to Tab at all, or every single on-screen letter is its own stop and reaching Enter takes twenty-eight presses. Try actually typing a letter on your real keyboard - most likely nothing happens, because the game is only listening for clicks.</div>
+          </div>
+          <div class="q">
+            <p><strong>Two. As you Tab, can you see where you are?</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
+            <div class="answer" id="ans-2" hidden>Sometimes. If you can see a glowing outline moving around, the AI left the focus ring alone - good. If you cannot see anything move, it was removed somewhere in the styling because it looked untidy. That is the most common accessibility mistake on the web and you may have just found it in your own app.</div>
+          </div>
+          <div class="q">
+            <p><strong>Three. Open DevTools, press Ctrl+Shift+P (Cmd+Shift+P on a Mac), type "rendering", and set Emulate vision deficiencies to deuteranopia. Play a round.</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
+            <div class="answer" id="ans-3" hidden>The green tiles and the gray tiles go nearly the same color. <em>Right place</em> and <em>not in the word at all</em> - the two most opposite messages in the game - become hard to tell apart. The game is not harder; it is broken. This will have happened no matter how carefully you asked, because "use accessible colors" and "do not make color the only signal" are different instructions and you only gave one of them.</div>
+          </div>
+          <div class="q">
+            <p><strong>Four. Submit a guess. What would somebody who cannot see the screen know about what just happened?</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-4">Show answer</button>
+            <div class="answer" id="ans-4" hidden>Nothing. The tiles changed color, silently. There is no text anywhere saying <em>two letters right, one in the wrong place.</em> For a player using a screen reader the game simply does not respond.</div>
+          </div>
+          <div class="q">
+            <p><strong>Five. Open DevTools, Elements panel, and click one of your on-screen letter keys. Find the Accessibility tab in the sidebar - it may be hidden behind the ≫ button. What is it called?</strong></p>
+            <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-5">Show answer</button>
+            <div class="answer" id="ans-5" hidden>Hopefully the letter. If the key is a real <code>&lt;button&gt;</code> with a letter in it, it is called that letter and all is well. If it is a styled <code>&lt;div&gt;</code>, it has no name and no role, and it does not exist as a control at all. Check Backspace and Enter especially - if they are symbols rather than words, they may be announced as nothing, or as "left arrow".</div>
+          </div>
+          <p>Write down which of the five your version passed. The AI will have got some right on its own. That is worth noticing too - this is not a story about the AI being useless, it is a story about <em>nobody having looked.</em></p>
+        </div>
+      </section>
+      <!-- ============ 5 - MAKE IT YOURS (OPTIONAL) ============ -->
+      <section class="step optional" data-step="5" data-beat="yours">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">5</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-5">
+            <h2><span class="step-title">Make it yours</span><span class="step-tag">Optional</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-5" hidden>
+          <p>Now fix it, one ingredient at a time. One prompt, test, then the next. Do not paste all five at once - when something breaks you want to know which one did it.</p>
+          <p><strong>One - the keyboard.</strong></p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-1">Copy prompt</button>
+            <pre id="prompt-1">Let me type my guess on my real keyboard as well as clicking the on-screen keys: letters type, Backspace deletes the last letter, Enter submits the guess. Keep everything else exactly the same.</pre>
+          </div>
+          <p>Test it with your hands on the keys and your mouse untouched.</p>
+          <p><strong>Two - show me where I am.</strong></p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-2">Copy prompt</button>
+            <pre id="prompt-2">When I move through the page with Tab, make it obvious where I am with a clear, high-contrast outline. Do not remove the browser's focus outline anywhere in the CSS.</pre>
+          </div>
+          <p><strong>Three - stop making color do all the work.</strong></p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-3">Copy prompt</button>
+            <pre id="prompt-3">Right now the only difference between a green tile and a gray tile is the color, and some players cannot tell those apart. Add a second signal to every tile - a small symbol and a short word - so that color is never the only thing carrying the meaning.</pre>
+          </div>
+          <p>Turn the deuteranopia filter back on and play again. It should be playable now.</p>
+          <p><strong>Four - say what happened.</strong></p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-4">Copy prompt</button>
+            <pre id="prompt-4">When I submit a guess, nothing announces the result to a screen reader. Add a status line using aria-live="polite" that says in plain words how the guess went, for example: "Guess 3. Two letters in the right place, one in the wrong place."</pre>
+          </div>
+          <p><strong>Five - give everything a name.</strong></p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-5">Copy prompt</button>
+            <pre id="prompt-5">Make sure every on-screen key is a real button element with a clear accessible name. Backspace and Enter should be named with words, not just symbols.</pre>
+          </div>
+          <p>Then go back and run all five checks again. It just takes five minutes of asking to get an app that works for a lot more people than it did before.</p>
+          <p class="aside">Notice what you did not have to do: learn any of this. You described a problem in plain words and the AI fixed it, every time. The skill this chapter is teaching is not how to write <code>aria-live</code>. It is <strong>knowing to look</strong>, and knowing what to look for.</p>
+        </div>
+      </section>
+      <!-- ============ 6 - GROW IT (OPTIONAL) ============ -->
+      <section class="step optional" data-step="6" data-beat="grow">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">6</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-6">
+            <h2><span class="step-title">Grow it</span><span class="step-tag">Optional</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-6" hidden>
+          <p>First, save a copy of the folder as <code>word-game-v1</code>.</p>
+          <p><strong>One - works both ways at once.</strong> Your on-screen keyboard is still there. Make sure clicking it <em>and</em> typing both work, and that clicking a key shows up for somebody who is listening rather than looking. Somebody who cannot use a keyboard and somebody who cannot use a mouse can now both play the same game.</p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-6">Copy prompt</button>
+            <pre id="prompt-6">Make the on-screen keys and the physical keyboard work together: pressing a real key should highlight the matching on-screen key, and clicking an on-screen key should do exactly what typing it does.</pre>
+          </div>
+          <p><strong>Two - a high-contrast mode</strong>, exactly the one real Wordle added.</p>
+          <div class="prompt">
+            <button class="btn copy" data-copy="prompt-7">Copy prompt</button>
+            <pre id="prompt-7">Add a high contrast toggle that switches the tile colors to a colorblind-friendly set, and remember the setting while the page is open.</pre>
+          </div>
+          <p><strong>Three - your own words.</strong> Replace the word list with twenty words from something you care about - a sport, a show, your subject. Five letters each.</p>
+        </div>
+      </section>
+      <!-- ============ 7 - KEEP IT (OPTIONAL) ============ -->
+      <section class="step optional" data-step="7" data-beat="keep">
+        <div class="step-head">
+          <span class="step-num" aria-hidden="true">7</span>
+          <button class="step-toggle" aria-expanded="false" aria-controls="body-7">
+            <h2><span class="step-title">Keep it</span><span class="step-tag">Optional</span></h2>
+            <span class="chev" aria-hidden="true"></span>
+          </button>
+          <button class="btn mark" aria-pressed="false">Mark done</button>
+        </div>
+        <div class="step-body" id="body-7" hidden>
+          <ul>
+            <li>Your game is <code>vibe-coding/word-game/index.html</code>, with <code>word-game-v1</code> beside it - the version from before you checked - make sure it's on GitHub!</li>
+            <li>Keep both. Next lab you are going to audit apps you built weeks ago, and having the before-and-after of this one on hand makes the scores mean something.</li>
+            <li>Which of the five did the AI get right without being asked? Write it down. You are going to be asked this question again at the end of the week, about everything else you have built.</li>
+            <li>Play it. Then hand it to somebody and watch them play without saying a word.</li>
+          </ul>
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <section class="panel" aria-labelledby="dod-title">
+      <h2 id="dod-title">Definition of Done</h2>
+      <p><code>word-game/index.html</code> works with the mouse <em>and</em> with the keyboard alone, the tiles say more than their color, and submitting a guess announces what happened in words.</p>
+    </section>
+
+
+
+    <!-- SUBMIT CARD - hidden until it has a link. The Brightspace embed snippet (README)
+         posts the assignment URL into the page; or put a URL on the submit: line and rebuild. -->
+    <a class="submit-card" id="submit-card" href="#" target="_blank" rel="noopener" hidden>
+      <span class="submit-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </span>
+      <span class="submit-text">Click here to submit your work.</span>
+    </a>
+
+    <footer>
+      <span>Your progress on this page is saved on this device only.</span>
+      <button class="btn danger" id="reset">Start over</button>
+    </footer>
+
+  </div>
+
+  <div id="report-print" aria-hidden="true"></div>
+  <div class="sr-only" aria-live="polite" id="announce"></div>
+
+  <!-- The vocabulary pop-up. Empty until a term is clicked; filled by shared/vocab.js. -->
+  <dialog class="vocab" id="vocab-dialog" aria-labelledby="vocab-title">
+    <div class="vocab-inner">
+      <h3 id="vocab-title"></h3>
+      <div id="vocab-body"></div>
+      <p class="vocab-foot">
+        <a id="vocab-more" href="https://corydave.github.io/websitetest/mc/csc-145/vocabulary.html">All vocabulary →</a>
+        <button type="button" class="btn quiet" id="vocab-close">Close</button>
+      </p>
+    </div>
+  </dialog>
+
+  <script>
+    // Vibe Coding - lab handout behavior (SOURCE)
+    //
+    // This file is inlined into every published handout by build/build.py.
+    // Edit it here, run the build, and every lab picks up the change.
+    // Never edit the <script> block inside a file in publish/ - it is overwritten.
+    //
+    // Behavior only. The words on a handout are in its source in chapters/.
+    // Jobs, in order:
+    //   1. Light / dark mode, remembered
+    //   2. Open and close the step cards
+    //   3. Mark done buttons, remembered (optional steps never open by themselves)
+    //   4. The progress bar (counts required steps only)
+    //   5. Copy buttons
+    //   6. Show / hide answers in Read it
+    //   7. The lab report (only on handouts that have one): autosave, print to PDF
+    //   8. Start over
+    //
+    // The page's <head> defines a LAB object (title, chapter, time, id) - the
+    // generator writes it from the lab's source. Everything named below comes
+    // from there.
+    //
+    // Privacy: everything saved lives in this browser's local storage on this
+    // device. Nothing is sent anywhere.
+
+    (function () {
+      'use strict';
+
+      // Names for what we save. Each lab has its own id so progress and report
+      // drafts never bleed between labs. The theme is shared across handouts.
+      const KEY_DONE   = LAB.id + '-done';
+      const KEY_REPORT = LAB.id + '-report';
+      const KEY_THEME  = 'vibe-theme';
+
+      // Small helpers for saving and loading, wrapped so a browser with storage
+      // turned off still gets a working page - it just won't remember.
+      function load(key, fallback) {
+        try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); }
+        catch (e) { return fallback; }
+      }
+      function save(key, value) {
+        try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* no storage; carry on */ }
+      }
+
+      const $ = (id) => document.getElementById(id);
+
+      // Announce something to screen-reader users without showing it.
+      const announcer = $('announce');
+      function announce(message) {
+        if (!announcer) return;
+        announcer.textContent = '';
+        setTimeout(function () { announcer.textContent = message; }, 50);
+      }
+
+      // Write the lab's name, chapter and time into the page.
+      document.title = LAB.title + ' | Vibe Coding';
+      if ($('lab-title'))  { $('lab-title').textContent = LAB.title; }
+      if ($('lab-ribbon')) { $('lab-ribbon').textContent = LAB.chapter + '  ·  ' + LAB.time; }
+      if ($('topbar-title')) { $('topbar-title').textContent = LAB.title; }
+
+
+      // ---------------------------------------------------------------
+      // 1. LIGHT / DARK MODE
+      // The <head> already applied the saved choice before paint. This wires
+      // up the button and keeps its label honest.
+      // ---------------------------------------------------------------
+      const themeButton = $('theme-toggle');
+      if (themeButton) {
+        const themeLabel = $('theme-label');
+        const themeGlyph = $('theme-glyph');
+        function renderTheme() {
+          const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+          themeButton.setAttribute('aria-pressed', String(dark));
+          themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';   // names what it will switch TO
+          themeGlyph.textContent = dark ? '☀' : '☾';
+        }
+        themeButton.addEventListener('click', function () {
+          const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+          if (dark) { document.documentElement.removeAttribute('data-theme'); }
+          else      { document.documentElement.setAttribute('data-theme', 'dark'); }
+          try { localStorage.setItem(KEY_THEME, dark ? 'light' : 'dark'); } catch (e) {}
+          renderTheme();
+        });
+        renderTheme();
+      }
+
+
+      // ---------------------------------------------------------------
+      // 2. OPENING AND CLOSING CARDS
+      // ---------------------------------------------------------------
+      const steps = Array.from(document.querySelectorAll('.step'));
+
+      // Some steps are OPTIONAL (the build marks them with class="optional").
+      // Only the required ones count toward "done" - so a student who finishes
+      // Picture it, Ask for it and Run it has finished the lab.
+      const requiredSteps = steps.filter(function (s) { return !s.classList.contains('optional'); });
+      const requiredNums  = requiredSteps.map(function (s) { return Number(s.dataset.step); });
+      const hasOptional   = requiredSteps.length < steps.length;
+      const TOTAL = requiredSteps.length;   // read from the page rather than assumed
+
+      // Is this step one of the optional ones?
+      function isOptional(step) { return step.classList.contains('optional'); }
+
+      function openStep(step) {
+        step.querySelector('.step-toggle').setAttribute('aria-expanded', 'true');
+        step.querySelector('.step-body').hidden = false;
+      }
+      function closeStep(step) {
+        step.querySelector('.step-toggle').setAttribute('aria-expanded', 'false');
+        step.querySelector('.step-body').hidden = true;
+      }
+
+      steps.forEach(function (step) {
+        step.querySelector('.step-toggle').addEventListener('click', function () {
+          const isOpen = this.getAttribute('aria-expanded') === 'true';
+          if (isOpen) { closeStep(step); } else { openStep(step); }
+        });
+      });
+
+
+      // ---------------------------------------------------------------
+      // 3. MARK DONE, REMEMBERED
+      // ---------------------------------------------------------------
+      let done = load(KEY_DONE, []);      // e.g. [1, 2, 3]
+
+      function renderStep(step) {
+        const num = Number(step.dataset.step);
+        const isDone = done.includes(num);
+        const button = step.querySelector('.mark');
+        step.classList.toggle('done', isDone);
+        button.setAttribute('aria-pressed', String(isDone));
+        button.textContent = isDone ? 'Done ✓' : 'Mark done';
+      }
+
+      // Marking a step done closes it and opens the next unfinished one, and
+      // moves keyboard focus there, so the page carries the student forward.
+      steps.forEach(function (step) {
+        step.querySelector('.mark').addEventListener('click', function () {
+          const num = Number(step.dataset.step);
+          if (done.includes(num)) {
+            done = done.filter(function (n) { return n !== num; });
+            renderStep(step);
+          } else {
+            done.push(num);
+            renderStep(step);
+            closeStep(step);
+
+            // Which step comes next? Stay in the same kind of step:
+            //  - after a required step, the next unfinished REQUIRED step. The
+            //    optional ones never open by themselves - that is the point.
+            //  - after an optional step, the next unfinished optional step below it.
+            let next;
+            if (isOptional(step)) {
+              next = steps.find(function (s) {
+                return isOptional(s) && Number(s.dataset.step) > num && !done.includes(Number(s.dataset.step));
+              });
+            } else {
+              next = requiredSteps.find(function (s) { return !done.includes(Number(s.dataset.step)); });
+            }
+
+            // Move keyboard focus to the next step WITHOUT scrolling. A plain
+            // focus() inside an LMS iframe makes iOS scroll the outer page to
+            // the frame's top; the next step's header is already where the
+            // collapsed one was, so no scrolling is wanted anyway.
+            if (next) {
+              openStep(next);
+              next.querySelector('.step-toggle').focus({ preventScroll: true });
+            } else if (!isOptional(step) && hasOptional) {
+              // That was the last required step. Say so, and put focus on the
+              // "Optional: go further" heading, which sits right below.
+              announce('All required steps done. The rest are optional.');
+              const optionalTitle = $('optional-title');
+              if (optionalTitle) { optionalTitle.focus({ preventScroll: true }); }
+            }
+          }
+          save(KEY_DONE, done);
+          renderProgress();
+        });
+      });
+
+
+      // ---------------------------------------------------------------
+      // 4. THE PROGRESS BAR
+      // ---------------------------------------------------------------
+      const progressEl    = $('progress');
+      const progressLabel = $('progress-label');
+      const segments      = Array.from(document.querySelectorAll('.progress-bar span'));
+
+      function renderProgress() {
+        if (!progressEl) return;
+        // Count required steps only. Optional ones are counted separately, as a bonus.
+        const count = done.filter(function (n) { return requiredNums.includes(n); }).length;
+        const extras = steps.filter(function (s) {
+          return isOptional(s) && done.includes(Number(s.dataset.step));
+        }).length;
+        // On a lab with optional steps the label says "required", so nobody
+        // wonders why the bar is full when there are still steps below it.
+        const word = hasOptional ? 'required steps' : 'steps';
+        segments.forEach(function (seg, i) { seg.classList.toggle('filled', i < count); });
+        progressEl.setAttribute('aria-valuenow', String(count));
+        if (count === TOTAL) {
+          progressLabel.textContent = 'All ' + TOTAL + ' ' + word + ' done - nice work'
+            + (extras > 0 ? ' (plus ' + extras + ' optional)' : '');
+        } else {
+          progressLabel.textContent = count + ' of ' + TOTAL + ' ' + word + ' done';
+        }
+      }
+
+
+      // ---------------------------------------------------------------
+      // 5. COPY BUTTONS
+      // Each button names the <pre> it copies in data-copy.
+  // ---------------------------------------------------------------
+  document.querySelectorAll('.copy').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const pre = $(button.dataset.copy);
+      if (!pre) return;
+      const text = pre.textContent;
+      const originalLabel = button.textContent;
+
+      function copied() {
+        button.textContent = 'Copied ✓';
+        announce('Copied to clipboard');
+        setTimeout(function () { button.textContent = originalLabel; }, 1800);
+      }
+      // If the clipboard isn't available, select the text so Ctrl+C works.
+      function fallback() {
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+        button.textContent = 'Press Ctrl+C';
+        announce('Text selected. Press Control C to copy.');
+        setTimeout(function () { button.textContent = originalLabel; }, 3000);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(copied, fallback);
+      } else { fallback(); }
+    });
+  });
+
+
+  // ---------------------------------------------------------------
+  // 6. SHOW / HIDE ANSWERS
+  // ---------------------------------------------------------------
+  document.querySelectorAll('.reveal').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const answer = $(button.getAttribute('aria-controls'));
+      const isOpen = button.getAttribute('aria-expanded') === 'true';
+      answer.hidden = isOpen;
+      button.setAttribute('aria-expanded', String(!isOpen));
+      button.textContent = isOpen ? 'Show answer' : 'Hide answer';
+    });
+  });
+
+
+  // ---------------------------------------------------------------
+  // 7. THE LAB REPORT (only on handouts that have one - the chapter anchor)
+  // ---------------------------------------------------------------
+  const reportPanel = $('report');
+  if (reportPanel) {
+    // The questions are read from the page, so the source decides them.
+    const questionFields = Array.from(reportPanel.querySelectorAll('textarea'));
+    const REPORT_FIELDS = questionFields.map(function (ta) {
+      const label = reportPanel.querySelector('label[for="' + ta.id + '"]');
+      return { id: ta.id, label: label ? label.textContent.replace(/\s+/g, ' ').trim() : ta.id };
+    });
+    const nameInput = $('r-name');
+    const urlInput  = $('r-url');           // may not exist before the publishing chapter
+    const savedNote = $('report-saved');
+    const allInputs = [nameInput, urlInput].filter(Boolean).concat(questionFields);
+
+    // Put a saved draft back into the form on load.
+    const draft = load(KEY_REPORT, {});
+    allInputs.forEach(function (el) { if (draft[el.id]) { el.value = draft[el.id]; } });
+
+    // Save the whole form whenever anything changes, once per pause in typing.
+    let saveTimer = null;
+    allInputs.forEach(function (el) {
+      el.addEventListener('input', function () {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function () {
+          const data = {};
+          allInputs.forEach(function (i) { data[i.id] = i.value; });
+          save(KEY_REPORT, data);
+          if (savedNote) { savedNote.textContent = 'Saved on this device'; setTimeout(function () { savedNote.textContent = ''; }, 2000); }
+        }, 400);
+      });
+    });
+
+    // Make text safe to drop into HTML. The student's answers are their own
+    // words; this makes sure a stray < or & can't change the page.
+    function escapeHtml(text) {
+      return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Build the printable report from the form, then open the print dialog.
+    // "Save as PDF" in that dialog is the PDF generator - no library, and
+    // links stay clickable in the PDF.
+    $('report-print-btn').addEventListener('click', function () {
+      const name = nameInput.value.trim() || '(name not entered)';
+      const url  = urlInput ? urlInput.value.trim() : '';
+      const when = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // Only real web links become links in the PDF; anything else prints as text.
+      const urlIsLink = /^https?:\/\/[^\s]+$/i.test(url);
+      const urlLine = !urlInput ? ''
+        : 'Link to the lab: ' + (!url ? '<em>not on the web yet</em>' : urlIsLink ? '<a href="' + escapeHtml(url) + '">' + escapeHtml(url) + '</a>' : escapeHtml(url)) + '<br>';
+
+      let html = '';
+      html += '<h1>Lab report - ' + escapeHtml(LAB.title) + '</h1>';
+      html += '<p class="meta">Chapter: ' + escapeHtml(LAB.chapter) + '<br>';
+      html += 'Student: <strong>' + escapeHtml(name) + '</strong><br>';
+      html += urlLine;
+      html += 'Report generated: ' + escapeHtml(when) + '</p>';
+
+      REPORT_FIELDS.forEach(function (f, i) {
+        const answer = $(f.id).value.trim();
+        html += '<div class="qa">';
+        html += '<p class="question">' + (i + 1) + '. ' + escapeHtml(f.label) + '</p>';
+        html += '<p class="response">' + (answer ? escapeHtml(answer) : '<em>(no answer)</em>') + '</p>';
+        html += '</div>';
+      });
+
+      html += '<h2>Steps marked done</h2><ul class="steps">';
+      steps.forEach(function (s) {
+        const n = Number(s.dataset.step);
+        // The title without its "Optional" tag; the tag is added back in words.
+        const titleEl = s.querySelector('.step-title') || s.querySelector('h2');
+        const title = titleEl.textContent.trim() + (isOptional(s) ? ' (optional)' : '');
+        html += '<li>' + (done.includes(n) ? '✓ ' : '☐ ') + escapeHtml(title) + '</li>';
+      });
+      html += '</ul>';
+      html += '<p class="footer">Vibe Coding - CSC 145 - Finger Lakes Community College. Generated from the lab handout; the handout itself is one HTML file.</p>';
+
+      $('report-print').innerHTML = html;
+      document.body.classList.add('print-report');
+      window.addEventListener('afterprint', function restore() {
+        document.body.classList.remove('print-report');
+        window.removeEventListener('afterprint', restore);
+      });
+      window.print();
+    });
+
+    // Clear the report draft: two clicks, no blocking dialog.
+    const clearButton = $('report-clear');
+    let clearArmed = false;
+    clearButton.addEventListener('click', function () {
+      if (!clearArmed) {
+        clearArmed = true;
+        clearButton.textContent = 'Really clear? Click again';
+        setTimeout(function () { clearArmed = false; clearButton.textContent = 'Clear answers'; }, 4000);
+        return;
+      }
+      allInputs.forEach(function (el) { el.value = ''; });
+      save(KEY_REPORT, {});
+      clearArmed = false;
+      clearButton.textContent = 'Clear answers';
+      announce('Report answers cleared');
+    });
+  }
+
+
+  // ---------------------------------------------------------------
+  // 8. START OVER (steps only - the report has its own clear button)
+  // ---------------------------------------------------------------
+  const resetButton = $('reset');
+  if (resetButton) {
+    resetButton.addEventListener('click', function () {
+      done = [];
+      save(KEY_DONE, done);
+      steps.forEach(function (step, i) { renderStep(step); if (i === 0) { openStep(step); } else { closeStep(step); } });
+      renderProgress();
+      announce('Progress cleared. Starting from step one.');
+      steps[0].querySelector('.step-toggle').focus({ preventScroll: true });
+    });
+  }
+
+
+  // ---------------------------------------------------------------
+  // 9. INSIDE AN LMS FRAME? REPORT OUR HEIGHT
+  // When this page is embedded in an iframe (Brightspace, usually), the
+  // parent page cannot see how tall we are. We tell it, so it can size the
+  // frame to fit and avoid a second scrollbar. Only a number is sent - never
+  // anything about the student - and only when the height actually changes,
+  // so scrolling on a phone (where the address bar comes and goes) does not
+  // cause a storm of messages. The parent decides whether to act on it.
+  // ---------------------------------------------------------------
+  if (window.parent !== window && 'ResizeObserver' in window) {
+    let lastHeight = 0;
+    const reportHeight = function () {
+      const height = document.documentElement.scrollHeight;
+      if (Math.abs(height - lastHeight) < 4) return;    // ignore sub-pixel wobble
+      lastHeight = height;
+      window.parent.postMessage({ vibeHeight: height }, '*');
+    };
+    new ResizeObserver(reportHeight).observe(document.body);
+    window.addEventListener('load', reportHeight);
+  }
+
+
+  // ---------------------------------------------------------------
+  // 10. THE HAND-IN LINK COMES FROM THE LMS
+  // The "Click here to submit your work" card is hidden until it has a link.
+  // The assignment URL belongs to the course running this page, not to the
+  // page itself, so the Brightspace embed posts it in:
+  //     frame.contentWindow.postMessage({ vibeSubmit: url }, 'https://our-site');
+  // We accept it only from our own parent window, and only if it is an
+  // https address. Anything else is ignored and the card stays hidden.
+  // ---------------------------------------------------------------
+  const submitCard = $('submit-card');
+  function showSubmit(url) {
+    if (typeof url !== 'string' || !/^https:\/\//i.test(url)) return;   // https only
+    submitCard.href = url;
+    submitCard.hidden = false;
+  }
+  if (submitCard) {
+    // Route 1: the parent page posts the link in (the normal, LMS-embed route).
+    if (window.parent !== window) {
+      window.addEventListener('message', function (e) {
+        if (e.source !== window.parent) return;
+        showSubmit(e.data && e.data.vibeSubmit);
+      });
+    }
+    // Route 2: the link is in the page's own address, ?submit=ENCODED-URL.
+    // For a topic that cannot run script. The value must be URL-encoded
+    // (encodeURIComponent), since LMS links are full of ? and & themselves.
+    try {
+      showSubmit(new URL(window.location.href).searchParams.get('submit'));
+    } catch (e) { /* no usable address - card stays hidden */ }
+  }
+
+
+  // ---------------------------------------------------------------
+  // FIRST DRAW
+  // Draw every step from saved state, then open the first unfinished
+  // REQUIRED one so a returning student lands where they left off. If every
+  // required step is done, nothing opens: the lab is finished, and the
+  // optional steps wait, closed, until the student chooses one.
+  // ---------------------------------------------------------------
+  steps.forEach(renderStep);
+  renderProgress();
+  const firstOpen = requiredSteps.find(function (s) { return !done.includes(Number(s.dataset.step)); });
+  steps.forEach(function (s) { if (s === firstOpen) { openStep(s); } else { closeStep(s); } });
+})();
+  </script>
+  <!-- The vocabulary: definitions inlined by the build from shared/vocabulary.html. -->
+  <script>
+    const VOCAB = {"web-page":{"title":"Web page","match":["web page","web pages","webpage"],"html":"  <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.<\/p>"},"browser":{"title":"Browser","match":["browser","browsers"],"html":"  <p>The program that reads web page files and draws them on your screen: Chrome, Safari, Edge, Firefox. It reads the file top to bottom and follows the instructions in it. When you double-click an <code>.html<\/code> file, this is what opens.<\/p>"},"html":{"title":"HTML","match":["HTML"],"html":"  <p>The language that says what is <em>on<\/em> a page. It is mostly your own words, wrapped in tags that say what each thing is: a heading, a paragraph, a button. Stands for HyperText Markup Language, which you will never need to say out loud.<\/p>"},"css":{"title":"CSS","match":["CSS"],"html":"  <p>The language that says what a page <em>looks like<\/em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;<\/code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.<\/p>"},"javascript":{"title":"JavaScript","match":["JavaScript"],"html":"  <p>The language that makes a page <em>do<\/em> things: count down, flip a card, respond to a click. It lives inside the <code>&lt;script&gt;<\/code> tag. Not related to Java, despite the name.<\/p>"},"vibe-coding":{"title":"Vibe coding","match":["vibe coding","vibe code"],"html":"  <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.<\/p>"},"tag":{"title":"Tag","match":["tag","tags"],"html":"  <p>A word in angle brackets that tells the browser what something is: <code>&lt;h1&gt;<\/code> means <em>a big heading<\/em>, <code>&lt;p&gt;<\/code> means <em>a paragraph<\/em>. Most tags come in pairs, like bookends, with your content between them:<\/p>\n  <pre class=\"sample\">&lt;h1&gt;Hello, world&lt;/h1&gt;<\/pre>\n  <p>The tags never show on the page. Only the words between them do.<\/p>"},"bookends":{"title":"Opening and closing tags (bookends)","match":["bookends","bookend","opening tag","closing tag","opening and closing tags"],"html":"  <p>The two halves of a tag pair. The <strong>opening tag<\/strong> says <em>start<\/em>: <code>&lt;p&gt;<\/code>. The <strong>closing tag<\/strong> is the same word with a slash in front and says <em>stop<\/em>: <code>&lt;/p&gt;<\/code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.<\/p>"},"content":{"title":"Content","match":["the content"],"html":"  <p>The words between a pair of tags - the part that actually shows on the page. In <code>&lt;h1&gt;Hello, world&lt;/h1&gt;<\/code>, the content is <em>Hello, world<\/em>. Changing content is always safe; you cannot break a page by changing the words between two tags.<\/p>"},"nesting":{"title":"Nesting","match":["nest inside","nested","nesting"],"html":"  <p>Tags inside tags, like boxes inside boxes. A paragraph sits inside the body; a bit of bold sits inside the paragraph. The rule: whatever you open last, you close first.<\/p>\n  <pre class=\"sample\">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;<\/pre>"},"six-landmarks":{"title":"The six landmarks","match":["six landmarks","the orientation six","landmarks"],"html":"  <p>The six tags every page in this course has, in the same arrangement: <code>&lt;html&gt;<\/code> around everything; <code>&lt;head&gt;<\/code> for settings, holding <code>&lt;title&gt;<\/code> and <code>&lt;style&gt;<\/code>; and <code>&lt;body&gt;<\/code> for everything you see, with <code>&lt;script&gt;<\/code> usually at its end. Learn them as a map. A 300-line file becomes three rooms to look in.<\/p>"},"doctype":{"title":"&lt;!DOCTYPE html&gt;","match":[],"html":"  <p>The very first line of every page. It tells the browser <em>this is a modern web page<\/em>. It is not really a tag and it never closes. It is always there and you never think about it.<\/p>"},"html-tag":{"title":"&lt;html&gt; … &lt;/html&gt;","match":[],"html":"  <p>The outermost pair of bookends. Everything on the page sits between <code>&lt;html&gt;<\/code> near the top and <code>&lt;/html&gt;<\/code> on the last line.<\/p>"},"head":{"title":"&lt;head&gt; … &lt;/head&gt;","match":[],"html":"  <p>The settings section of a page. Nothing inside the head shows on the page itself. It holds the <code>&lt;title&gt;<\/code> (the browser tab's text) and the <code>&lt;style&gt;<\/code> (how things look). <strong>Head or body?<\/strong> If a visitor can see it, it is in the body; if it is a setting, it is in the head.<\/p>"},"body":{"title":"&lt;body&gt; … &lt;/body&gt;","match":[],"html":"  <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;<\/code> usually sits at the very end of the body.<\/p>"},"title":{"title":"&lt;title&gt; … &lt;/title&gt;","match":[],"html":"  <p>The page's name. It lives in the head and shows on the <strong>browser tab<\/strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.<\/p>\n  <pre class=\"sample\">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;<\/pre>"},"style":{"title":"&lt;style&gt; … &lt;/style&gt;","match":[],"html":"  <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.<\/p>"},"script":{"title":"&lt;script&gt; … &lt;/script&gt;","match":[],"html":"  <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves<\/em> or <em>responds<\/em>, this is where it happens.<\/p>"},"h1":{"title":"&lt;h1&gt; … &lt;/h1&gt;","match":[],"html":"  <p>The biggest heading on a page. <code>&lt;h2&gt;<\/code> through <code>&lt;h6&gt;<\/code> are smaller headings, in order. Changing the words between the tags is the safest edit you can make.<\/p>"},"p":{"title":"&lt;p&gt; … &lt;/p&gt;","match":[],"html":"  <p>A paragraph. Every paragraph gets its own pair. The browser adds a little space above and below each one, so two paragraphs look like two paragraphs. Without the tags, the words run together into one lump.<\/p>"},"br":{"title":"&lt;br /&gt;","match":[],"html":"  <p>A line break: <em>end the line here<\/em>, inside a paragraph. For the lines of an address, a poem, an ingredient list. It has no closing tag, because nothing goes inside a line break; instead the slash goes at the end. Two in a row make a blank line. But for a new <em>thought<\/em>, use <code>&lt;p&gt;<\/code>, not a pile of <code>&lt;br /&gt;<\/code>s.<\/p>\n  <pre class=\"sample\">3325 Marvin Sands Drive&lt;br /&gt;\nCanandaigua, NY 14424<\/pre>"},"self-closing":{"title":"Self-closing tag","match":["self-closing","self-closing tag"],"html":"  <p>A tag that is complete on its own, with no closing partner, because nothing goes inside it. The slash goes at the end: <code>&lt;br /&gt;<\/code>. You will meet <code>&lt;img … /&gt;<\/code> next chapter - an image has nothing inside it either.<\/p>"},"strong-em":{"title":"&lt;strong&gt; and &lt;em&gt;","match":[],"html":"  <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;<\/code><\/p>"},"button":{"title":"&lt;button&gt; … &lt;/button&gt;","match":[],"html":"  <p>A thing to press. The words between the tags are its label. What the button <em>says<\/em> is HTML; what it <em>does<\/em> is JavaScript, somewhere in the script.<\/p>"},"whitespace":{"title":"Whitespace","match":["whitespace","white space","indentation","indented"],"html":"  <p>Spaces, tabs, and new lines. The browser squashes any amount of it down to one space, so pressing Enter in the code does nothing and ten spaces look like one. All that neat indentation in the AI's code is for <em>you<\/em>, so you can see what is inside what. The browser ignores it.<\/p>"},"comment":{"title":"Comment","match":["comment","comments","commented out"],"html":"  <p>A note in the code that the browser skips completely. For people, not machines. In HTML: <code>&lt;!-- like this --&gt;<\/code>. In JavaScript: a line starting with <code>//<\/code>. The AI writes lots of them, one above nearly every block, saying what the block does in plain language. They are the first place to look when you want to change something.<\/p>"},"plain-text":{"title":"Plain text","match":["plain text","plain-text"],"html":"  <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.<\/p>"},"txtedtr":{"title":"TXTEDTR","match":["TXTEDTR","text editor","plain-text editor"],"html":"  <p>The plain-text editor we use in this course, at <a href=\"https://txtedtr.app\" target=\"_blank\" rel=\"noopener\">txtedtr.app<\/a>. It is one HTML file, built with AI, by your instructor - the same kind of thing you are making. Notepad++, VS Code, or Sublime Text work too. What does not work: Word, Google Docs, TextEdit, Notepad.<\/p>"},"save-as":{"title":"Save As","match":["Save As"],"html":"  <p>Saving a file under a name and location you choose. In this course you type the whole name yourself, including the <code>.html<\/code>, and pick the <code>vibe-coding<\/code> folder on purpose. Plain <em>Save<\/em> writes over the file you already have; <em>Save As<\/em> makes a new one.<\/p>"},"save-refresh":{"title":"Save, then refresh","match":["save and refresh","save then refresh","refresh the browser"],"html":"  <p>The two-step loop for seeing a change. <strong>Save<\/strong> the file in your editor, then <strong>refresh<\/strong> the browser tab (the circular arrow, or <kbd>F5<\/kbd>, or <kbd>⌘<\/kbd>+<kbd>R<\/kbd>) so it reads the file again. If nothing changed, you skipped one of the two. This is the first thing to check, every time.<\/p>"},"copy-button":{"title":"The Copy button","match":["Copy button"],"html":"  <p>The small button in the corner of a code block in the AI's reply. It copies the whole block, exactly. Always use it instead of selecting the code by hand, which misses the top or bottom line more often than you would think.<\/p>"},"paste-over":{"title":"Paste over everything","match":["paste over everything","paste it over everything","paste over"],"html":"  <p>Replacing the whole file with the AI's new version: in your editor, select all (<kbd>Ctrl<\/kbd>+<kbd>A<\/kbd>, Mac <kbd>⌘<\/kbd>+<kbd>A<\/kbd>), then paste. Not <em>adding<\/em> the new code below the old - replacing it. Half-pasted files are a common cause of a blank page.<\/p>"},"version-copy":{"title":"Version copy","match":["version copy","versions","the version"],"html":"  <p>A duplicate of a working file, made <em>before<\/em> you let the AI change it: <code>pomodoro.html<\/code> becomes <code>pomodoro-v1.html<\/code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.<\/p>"},"developer-console":{"title":"Developer Console","match":["Developer Console","the console","DevTools"],"html":"  <p>A panel built into every browser that shows what went wrong and where. Open it with <kbd>F12<\/kbd>, or right-click the page and choose <em>Inspect<\/em>, then the <em>Console<\/em> tab. A <strong>red line<\/strong> is an error: it has a message and a line number. Copy the red line exactly and paste it to the AI. Most students do not know this panel exists; now you do.<\/p>"},"library":{"title":"Library","match":["library","libraries"],"html":"  <p>Someone else's code that your page borrows, usually with one line like <code>&lt;script src=\"https://…\"&gt;<\/code>. The QR code generator borrows a library that knows how to draw QR codes; nobody writes that part themselves. It is also why some pages need the internet even though they are files on your computer.<\/p>"},"screenshot":{"title":"Screenshot","match":["screenshot","screenshots"],"html":"  <p>A picture of your screen. Mac: <kbd>Shift<\/kbd>+<kbd>⌘<\/kbd>+<kbd>4<\/kbd>, then drag a box. Windows: <kbd>Win<\/kbd>+<kbd>Shift<\/kbd>+<kbd>S<\/kbd>. Chromebook: <kbd>Shift<\/kbd>+<kbd>Ctrl<\/kbd>+<kbd>Show windows<\/kbd>. You will use it for hand-ins and for showing someone exactly what went wrong.<\/p>"},"prompt":{"title":"Prompt","match":["prompt","prompts"],"html":"  <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.<\/p>"},"specification":{"title":"Specification (the spec)","match":["specification","the spec","spec block"],"html":"  <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.<\/p>"},"iteration":{"title":"Iteration","match":["iteration","iterations","iterate"],"html":"  <p>Asking for a change to something that already works, then another, then another. <em>Add a color picker. Now put my initials in the middle.<\/em> Small asks, one at a time, is the normal way to build; nobody gets the whole thing in one prompt.<\/p>"},"keep-everything":{"title":"“Keep everything else the same”","match":["keep everything else the same","keep everything else exactly the same"],"html":"  <p>The sentence to put at the end of an ask for one change. Left alone, an AI asked to change one thing will sometimes redesign three, or quietly drop a feature you added earlier. Saying what <em>not<\/em> to touch is part of asking well.<\/p>"},"hand-edit":{"title":"Hand edit","match":["hand edit","hand edits"],"html":"  <p>A change you make to the code yourself, in the editor, without asking the AI. This course builds up to them slowly: first the words between two tags (safe; you cannot break anything), then a number the code uses, then a date with a strict format.<\/p>"},"definition-of-done":{"title":"Definition of Done","match":["Definition of Done"],"html":"  <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.<\/p>"},"setinterval":{"title":"setInterval","match":["setInterval"],"html":"  <p>The line of JavaScript that makes a page tick: <em>run this again every so many milliseconds<\/em>. <code>setInterval(update, 1000)<\/code> means run <code>update<\/code> once a second. It is the reason a countdown counts and a timer times. You will recognize it in every app that moves.<\/p>"},"milliseconds":{"title":"Milliseconds","match":["milliseconds","millisecond"],"html":"  <p>Thousandths of a second. JavaScript measures time in them, so <code>1000<\/code> means one second and <code>60000<\/code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.<\/p>"},"nan":{"title":"NaN","match":["NaN"],"html":"  <p>“Not a Number.” What the browser says when it was asked to do math on something that is not a number - most often a date typed in a form it did not understand. If you just edited a date and see this, look at what you changed: a month over 12, a missing dash, a lost quote. Fix that one thing.<\/p>"},"value":{"title":"Value","match":["a value"],"html":"  <p>A fact the code uses: the <code>25<\/code> in a Pomodoro timer, the date in a countdown. Values often sit near the top of the script so you can find them. Changing a value changes how the whole app behaves, which is why it is a step up from changing words.<\/p>"},"index-html":{"title":"<code>index.html<\/code>","match":["index.html"],"html":"  <p>The front door of a folder. Every app you build gets a folder, and the main page inside it is called <code>index.html<\/code>. The name is a convention everything agrees on: browsers and web servers open that file first, without being told to. Four folders can each hold a file with this name without any confusion, because the folder is what tells them apart.<\/p>"},"same-folder-rule":{"title":"The same-folder rule","match":["same-folder rule","same folder rule"],"html":"  <p>When a page asks for another file by name - a picture, a second page - the browser looks in the folder the page is in. Just there, nowhere else. So everything an app needs sits beside the app: one folder, one address, and a name is enough to find anything at it.<\/p>"},"attribute":{"title":"Attribute","match":["attribute","attributes"],"html":"  <p>Extra information carried inside an opening tag, always in the shape <code>name=\"value\"<\/code>. A picture tag needs to know which picture; a link tag needs to know where it goes. The quotes are part of it, not decoration.<\/p>\n  <pre class=\"sample\">&lt;img src=\"photo.jpg\" alt=\"A bowl of soup\" /&gt;<\/pre>"},"img":{"title":"<code>&lt;img /&gt;<\/code>","match":[],"html":"  <p>The tag that puts a picture on a page. It has nothing to wrap, so it closes itself instead of coming in a pair. It needs two attributes: <code>src<\/code> for which file, and <code>alt<\/code> for what the picture shows.<\/p>"},"src":{"title":"<code>src<\/code>","match":["src"],"html":"  <p>Short for <em>source<\/em>. The attribute that names the file to fetch. On a picture it is the file name of the picture, and the browser looks for it in the same folder as the page.<\/p>"},"alt-text":{"title":"<code>alt<\/code> text","match":["alt text","alt"],"html":"  <p>Short for <em>alternative<\/em>. Words that stand in for a picture. A screen reader says them out loud to someone who cannot see the image, they appear on the page if the file is missing, and search engines read them. Write them like you are describing the picture to someone over the phone - not <em>photo<\/em> or <em>image1<\/em>.<\/p>"},"anchor":{"title":"<code>&lt;a&gt;<\/code>","match":[],"html":"  <p>The link tag. It has two separate parts: <code>href<\/code>, which says where it goes and is for the browser, and the words between the tags, which are what a person sees and clicks. Change either without touching the other.<\/p>"},"href":{"title":"<code>href<\/code>","match":["href"],"html":"  <p>The attribute on a link that says where the link goes. When the destination is a file sitting beside this one, it is just the file name: <code>href=\"notes.html\"<\/code>.<\/p>"},"card":{"title":"Card","match":["cards"],"html":"  <p>A box holding one thing - a picture, a heading, a couple of lines. Usually with rounded corners, a soft shadow and space around the edge. It is one of the most useful words you can say to an AI, because it is the word the people who build these things use.<\/p>"},"slider":{"title":"Slider","match":["slider","sliders","carousel"],"html":"  <p>A row of cards shown one at a time, with a way to move between them. Also called a carousel. Asking for \"a slider of cards\" gets you what you pictured; asking for \"make the pictures go sideways\" gets you a guess.<\/p>"},"caption":{"title":"Caption","match":["caption","captions"],"html":"  <p>Words shown with a picture, saying what it is. Different from <code>alt<\/code> text: a caption is for everybody and appears on the page, while <code>alt<\/code> is for people who cannot see the picture and normally stays invisible. A picture often wants both.<\/p>"},"broken-image":{"title":"Broken picture icon","match":["broken picture icon","broken image icon","broken-image icon"],"html":"  <p>The little torn-page symbol, or an empty box with the <code>alt<\/code> words in it. It means one thing: the browser looked in this folder for that name and did not find it. Check the folder, then the spelling, then the format - almost never the code.<\/p>"},"heic":{"title":"HEIC","match":["HEIC",".HEIC"],"html":"  <p>The format iPhones save photos in. Browsers mostly cannot show it, and renaming the file to <code>.jpg<\/code> does not help - the inside of the file has to be converted, not just the name. Export it as a JPG first.<\/p>"},"jpg":{"title":"JPG and JPEG","match":["JPG",".jpg","JPEG",".jpeg"],"html":"  <p>The same kind of picture file under two spellings, for historical reasons nobody enjoys. It does not matter which one your file uses, but the code has to say the same one the file does.<\/p>"},"comma":{"title":"Comma","match":["comma","commas"],"html":"  <p>The separator between one item in a list and the next. Leave one out and the browser cannot make sense of the list, stops reading, and shows you a blank page - which feels wildly out of proportion to a missing comma, and is. Add new items in the middle of a list rather than at the end and the problem never comes up.<\/p>"},"syntax-error":{"title":"<code>SyntaxError<\/code>","match":["SyntaxError","Unexpected token"],"html":"  <p>The Developer Console saying: I cannot read this, so I stopped. Usually punctuation - a missing comma, an apostrophe inside single quotes, a stray bracket. The message comes with a line number, and the problem is on that line or just above it.<\/p>"},"inspect":{"title":"Inspect","match":["Inspect"],"html":"  <p>Right-click anything on a page and choose <strong>Inspect<\/strong> to see the exact line of code behind it, highlighted. The fastest way to find out what file name a broken picture is actually asking for.<\/p>"},"user-input":{"title":"User input","match":["user input"],"html":"  <p>Anything the person using your app types, taps or chooses while it is running. The Decision Maker's options are user input. The Magic 8-Ball's answers are not - you wrote those before anyone used it.<\/p>"},"empty-state":{"title":"Empty state","match":["empty state","empty states"],"html":"  <p>What an app shows when there is nothing to show yet - an empty list, a missing name. A friendly message like <em>Add at least two options first<\/em> makes an app feel finished; a blank screen makes it feel broken. The AI often forgets it unless you ask.<\/p>"},"edge-case":{"title":"Edge case","match":["edge case","edge cases"],"html":"  <p>An input nobody planned for until somebody typed it: a blank option, the same thing twice, a name with a comma in it. Trying them on purpose is half of testing anything.<\/p>"},"query-string":{"title":"Query string","match":["query string","query strings","url parameter","url parameters"],"html":"  <p>The part of a web address after the <code>?<\/code>. It carries information for the page to read, as names and values joined by <code>&amp;<\/code>:<\/p>\n  <pre class=\"sample\">invite/?to=Sam&amp;event=Game%20Night<\/pre>\n  <p>Each <code>name=value<\/code> piece is called a URL parameter. Anyone who has the link can read it, so never put anything private in one.<\/p>"},"url-encoding":{"title":"%20 (URL encoding)","match":["%20","url encoding"],"html":"  <p>Web addresses cannot contain spaces, so a space is written as <code>%20<\/code>. Other awkward characters get codes too. You can type a normal space in the address bar and the browser swaps it in for you; a well-made page turns it back into a space.<\/p>"},"json":{"title":"JSON","match":["JSON"],"html":"  <p>A way of writing down information so a program can read it. It looks almost exactly like JavaScript and follows stricter rules: <strong>no comments<\/strong>, <strong>no comma after the last item<\/strong>, and <strong>double quotes only<\/strong>. Break one of those in a <code>manifest.json<\/code> and Chrome refuses the whole extension rather than loading a broken one.<\/p>\n  <p>If you are unsure, paste it into the AI and ask <em>\"is this valid JSON?\"<\/em><\/p>"},"chrome-web-store":{"title":"Chrome Web Store","match":["Chrome Web Store","Web Store"],"html":"  <p>Where extensions normally come from. Putting one there costs a one-off developer fee and means waiting in a review queue, which is why most people's own tools never go in it. Extensions cannot run on the Web Store's own pages, so it is a bad place to test yours.<\/p>"},"localstorage":{"title":"<code>localStorage<\/code>","match":["localStorage","local storage"],"html":"  <p>A small box the browser gives a page to keep things in, which survives closing the tab. You put something in under a name and get it back later by that name. It is the simplest way to make an app remember.<\/p>\n  <p>Two limits worth knowing now: it is <strong>this browser on this computer<\/strong> - nothing syncs to your phone - and anyone using that computer can read it.<\/p>"},"key-value":{"title":"Key and value","match":["key and value","key-value pair"],"html":"  <p>A way of storing things so you can find them again: the <strong>value<\/strong> is what you saved, and the <strong>key<\/strong> is the name you saved it under. Using a page's web address as the key is what lets one notes app keep a separate note for every page you visit.<\/p>\n  <p>Same idea as naming your files properly. The name is how you find the thing.<\/p>"},"accessibility":{"title":"Accessibility","match":["accessibility","accessible","a11y"],"html":"  <p>Building so that people can actually use the thing - including somebody using a keyboard with no mouse, somebody who cannot see colors the way you do, somebody whose hands shake, and somebody whose computer reads the screen aloud.<\/p>\n  <p>Not a checklist you run at the end. Almost everything on the list makes the app better for everybody: clearer labels, visible focus, information that does not depend on one sense.<\/p>"},"assistive-technology":{"title":"Assistive technology","match":["assistive technology","assistive tech"],"html":"  <p>Anything somebody uses to work a computer differently: screen readers, magnifiers, voice control, switches, high-contrast modes. It is far more common than people expect, and most of it is already built into the computer rather than bought separately.<\/p>"},"screen-reader":{"title":"Screen reader","match":["screen reader","screen readers"],"html":"  <p>Software that reads what is on screen out loud and lets you move around with the keyboard. It does not read your HTML; it reads what the browser worked out your HTML <em>means<\/em>, which is why the tags you choose matter so much.<\/p>\n  <p>Built in everywhere: VoiceOver on a Mac (<code>Cmd+F5<\/code>), Narrator on Windows (<code>Ctrl+Windows+Enter<\/code>), ChromeVox on a Chromebook (<code>Ctrl+Alt+Z<\/code>). Write the off switch down before you turn one on.<\/p>"},"semantic-html":{"title":"Semantic HTML","match":["semantic HTML","semantic markup"],"html":"  <p>Using the tag that means the thing. A <code>&lt;button&gt;<\/code> for a button, an <code>&lt;a&gt;<\/code> for a link, a <code>&lt;label&gt;<\/code> for a label, real headings in order.<\/p>\n  <p>The highest-leverage thing in this chapter. A real button is focusable, works with Enter and Space, and announces itself as a button, all for free. A <code>&lt;div&gt;<\/code> painted to look like one does none of that until you add it back by hand, and you will miss some.<\/p>"},"focus":{"title":"Focus","match":["focus","focused"],"html":"  <p>Where the keyboard currently is. Press Tab and focus moves to the next thing you can interact with. If something cannot take focus, a keyboard user cannot reach it, and for a lot of people that means it does not exist.<\/p>"},"focus-ring":{"title":"Focus ring","match":["focus ring","focus outline","focus indicator"],"html":"  <p>The outline a browser draws around whatever has focus. Browsers put it there for free and it is the only way a keyboard user can see where they are.<\/p>\n  <p>Removing it because it looks untidy is the single most common accessibility mistake on the web, and it is usually one line: <code>outline: none<\/code>. If you take it away, replace it with something clearer. Never just take it away.<\/p>"},"tab-order":{"title":"Tab order","match":["tab order","tabbing order"],"html":"  <p>The order Tab visits things in. By default it follows the order of your HTML, which is one more reason to write the page in the order it should be read. If the tab order jumps around the screen at random, something is reordering things with CSS and the markup no longer matches what people see.<\/p>"},"accessible-name":{"title":"Accessible name","match":["accessible name"],"html":"  <p>What assistive technology calls something. It comes from a label, an <code>aria-label<\/code>, alt text, or the words inside the element - and when there is none, a control is announced as just \"button\" or \"text box\", which tells the person nothing at all.<\/p>\n  <p>You can see it for any element in Developer Tools: Elements panel, then the Accessibility tab in the sidebar.<\/p>"},"label":{"title":"<code>&lt;label&gt;<\/code>","match":["label","labels","&lt;label&gt;"],"html":"  <p>The visible text that says what a form field is for, tied to the field with <code>for<\/code> and the field's <code>id<\/code>:<\/p>\n  <pre class=\"sample\">&lt;label for=\"email\"&gt;Your email&lt;/label&gt;\n&lt;input id=\"email\" type=\"email\"&gt;<\/pre>\n  <p>A properly connected label is announced with the field, and clicking it focuses the field, which makes it easier to hit.<\/p>"},"placeholder":{"title":"Placeholder is not a label","match":["placeholder","placeholder text"],"html":"  <p>Faint gray text inside a box is not a label. It vanishes the moment you type, so anybody who loses their place has nothing to go back to; it usually fails contrast; and it may not be announced at all. Use a real <code>&lt;label&gt;<\/code> that stays on the page, and keep the placeholder for an example if you want one.<\/p>"},"contrast-ratio":{"title":"Contrast ratio","match":["contrast ratio","contrast"],"html":"  <p>How different two colors are, written like <code>4.5:1<\/code>. Normal text usually needs at least <strong>4.5 to 1<\/strong> against its background; large text can go down to 3 to 1.<\/p>\n  <p>Pale gray on white is the classic failure. It looks elegant on a good monitor in a dark room and disappears on a phone outdoors.<\/p>"},"color-alone":{"title":"Color as the only signal","match":["color as the only signal","color alone"],"html":"  <p>When the only difference between two states is their color - red for wrong and green for right, a yellow tile and a green tile. For a lot of people there is then no difference at all.<\/p>\n  <p>The fix is never to stop using color. It is to <strong>add a second signal<\/strong>: a symbol, a word, a border, a position. Color then becomes the fast way to read it rather than the only way.<\/p>"},"colorblindness":{"title":"Colorblindness","match":["colorblind","color blind","colorblindness","deuteranopia"],"html":"  <p>Seeing some colors as closer together than most people do. Around one man in twelve has some form of it. <strong>Deuteranopia<\/strong> is the most common, and it pulls green towards gray - which is why a green \"correct\" tile and a gray \"wrong\" tile can end up looking almost identical.<\/p>\n  <p>Chrome can show you: Developer Tools, then the Rendering drawer, then <em>Emulate vision deficiencies<\/em>.<\/p>"},"aria":{"title":"ARIA","match":["ARIA"],"html":"  <p>Extra attributes that tell assistive technology things plain HTML cannot express. Genuinely useful, and the most misused thing on the web, because people reach for it instead of just using the right tag.<\/p>\n  <p>The rule people say out loud is <strong>the first rule of ARIA is don't use ARIA<\/strong>. If real HTML can do the job, use real HTML.<\/p>"},"aria-live":{"title":"Live region (<code>aria-live<\/code>)","match":["aria-live","live region","live regions"],"html":"  <p>The one piece of ARIA this course asks you to use. When something changes on the page by itself - a result appears, a score updates, an error shows - nothing announces it, because no HTML tag means <em>say this out loud when it changes<\/em>.<\/p>\n  <pre class=\"sample\">&lt;p id=\"status\" aria-live=\"polite\"&gt;&lt;/p&gt;<\/pre>\n  <p>Put text in that paragraph and a screen reader reads it. The element has to be on the page <em>before<\/em> the text changes, or nothing is announced.<\/p>"},"lighthouse":{"title":"Lighthouse","match":["Lighthouse"],"html":"  <p>An audit built into Chrome's Developer Tools. Tick Accessibility, click Analyze, and you get a score out of 100 plus a list of what is wrong and which elements are wrong, in plain words.<\/p>\n  <p>It only runs on a real web address, not a file from your computer. And a score of 100 is not a certificate - it checks what a machine can check, which is not everything.<\/p>"},"devtools-accessibility":{"title":"The Accessibility tab","match":["Accessibility pane","Accessibility tab"],"html":"  <p>In Developer Tools: the Elements panel, then the sidebar on the right where Styles and Computed live. It is usually hidden behind the small <strong>≫<\/strong> button at the end of that row, which is why almost nobody finds it. It shows what the selected element is <em>called<\/em> and what it counts as.<\/p>\n  <p>Easier route: press <code>Ctrl+Shift+P<\/code> (<code>Cmd+Shift+P<\/code> on a Mac) with Developer Tools open and type what you want.<\/p>"},"listenmode":{"title":"ListenMode","match":["ListenMode"],"html":"  <p>A small tool built for this course. It hides the page and says out loud what the keyboard lands on as you press Tab - <em>\"Submit, button\"<\/em>, or revealingly, <em>\"button, with no name\"<\/em>.<\/p>\n  <p><strong>It is a demonstration, not a screen reader.<\/strong> A real one reads your whole computer, has browse and focus modes and hundreds of commands. ListenMode does one slice. Enough to find holes in your own work; not enough to tell you what using a screen reader is really like.<\/p>"},"fieldset":{"title":"<code>&lt;fieldset&gt;<\/code> and <code>&lt;legend&gt;<\/code>","match":["fieldset","legend"],"html":"  <p>How you name a <em>group<\/em> of form controls, usually radio buttons. Without it a person hears \"Morning, radio button, one of three\" and has no idea what question they are answering.<\/p>\n  <pre class=\"sample\">&lt;fieldset&gt;\n  &lt;legend&gt;Which session?&lt;/legend&gt;\n  ...the radio buttons...\n&lt;/fieldset&gt;<\/pre>"},"reduced-motion":{"title":"Reduced motion","match":["prefers-reduced-motion","reduced motion"],"html":"  <p>Some people get genuinely unwell from things moving on screen, and their computer already knows they have asked for less of it. <code>prefers-reduced-motion<\/code> is how your page finds out, so you can shorten or switch off animations without being asked.<\/p>"},"telling-vs-checking":{"title":"Telling is not checking","match":["telling is not checking"],"html":"  <p>You asked the AI for something. It said yes. Those are two different facts, and only one of them is evidence.<\/p>\n  <p>The biggest idea in this course, and it is not really about accessibility - it is about every instruction you will ever give an AI. The output looking right is not the same as the output being right, and the only way to close that gap is to go and look.<\/p>"},"universal-design":{"title":"Universal design","match":["universal design","universally designed"],"html":"  <p>Designing something so that the widest possible range of people can use it, without anybody needing a special version.<\/p>\n  <p>The classic example is not on a screen at all: the dropped kerb at a street corner was put there for wheelchairs, and it is now used by everybody with a stroller, a suitcase, a delivery trolley or a bad knee. Captions were for deaf viewers; now half the world watches with them on in a noisy room.<\/p>\n  <p>That is the pattern, and it is why this is not a favor you do for a small group. Big clear buttons, labels that stay put, text you can read in sunlight, something that works without a mouse - every one of those is better for <em>everyone<\/em>, some of the time, and essential for <em>somebody<\/em>, all of the time.<\/p>"}};
+  </script>
+  <script>
+    /* ====================================================================
+       Vibe Coding - vocabulary pop-ups
+       Inlined by the build into every lab and reading, after lab.js.
+
+       The build also inlines a VOCAB object (from shared/vocabulary.html):
+
+         VOCAB = {
+           "tag": { title: "Tag", match: ["tag", "tags"], html: "<p>...</p>" },
+           ...
+         }
+
+       What this script does:
+         1. Walks the text of the page and, the FIRST time a vocabulary term
+            appears in each step (or each section, on a reading), wraps that
+            word in a small button. Later mentions in the same step are left
+            alone, so a page is not covered in links.
+         2. Clicking the button opens a small pop-up (a native <dialog>) with
+            the term's definition and a link to the full vocabulary page.
+
+       It never touches code samples in <pre>, the demo <textarea>s, links,
+   other buttons, headings, or the pretend-browser chrome. Inline <code>
+   IS allowed when the whole code element is the term - that is where
+   "<title>" appears in a sentence - but not inside a longer code sample.
+   ==================================================================== */
+(function () {
+  'use strict';
+  if (typeof VOCAB !== 'object' || !VOCAB) return;
+  const dialog = document.getElementById('vocab-dialog');
+  if (!dialog) return;
+
+  // ---------------------------------------------------------------
+  // 1. ONE REGULAR EXPRESSION FOR EVERY SPELLING OF EVERY TERM
+  // Longest spellings first, so "opening tag" wins over "tag".
+  // ---------------------------------------------------------------
+  const spellings = [];             // [{ text, id }]
+  Object.keys(VOCAB).forEach(function (id) {
+    (VOCAB[id].match || []).forEach(function (text) {
+      if (text.trim()) spellings.push({ text: text.trim(), id: id });
+    });
+  });
+  spellings.sort(function (a, b) { return b.text.length - a.text.length; });
+  const byLower = {};
+  spellings.forEach(function (s) { byLower[s.text.toLowerCase()] = s.id; });
+
+  function escapeRegex(text) { return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  const pattern = new RegExp(spellings.map(function (s) { return escapeRegex(s.text); }).join('|'), 'gi');
+
+  // A match only counts if it is a whole word: no letter or digit directly
+  // before it (when it starts with one) or after it (when it ends with one).
+  // "tag" must not light up inside "tags" or "stage".
+  // Dots, hyphens, slashes and underscores count as glue too, so "html" does
+  // not light up inside the file name "qr-code.html".
+  const GLUE = /[\w.\-\/_]/;
+  function isWholeWord(text, start, end) {
+    const first = text[start], last = text[end - 1];
+    const before = text[start - 1] || ' ', after = text[end] || ' ';
+    if (/\w/.test(first) && GLUE.test(before)) return false;
+    if (/\w/.test(last) && GLUE.test(after)) return false;
+    return true;
+  }
+
+  // ---------------------------------------------------------------
+  // 2. WHERE NOT TO LOOK
+  // ---------------------------------------------------------------
+  const SKIP = 'pre, textarea, svg, a, button, label, input, select, script, style, h1, h2, dialog, .fake-chrome, .contents, .ribbon, .term-link, .tools-note, .submit-card';
+
+  function skippable(node) {
+    for (let el = node.parentElement; el; el = el.parentElement) {
+      if (el.matches(SKIP)) return true;
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------
+  // 3. LINK THE FIRST MENTION OF EACH TERM IN EACH BLOCK
+  // A "block" is a step body on a lab, or a section on a reading.
+  // ---------------------------------------------------------------
+  const main = document.getElementById('main');
+  if (!main) return;
+  let blocks = Array.from(main.querySelectorAll('.step-body, :scope > section'));
+  if (!blocks.length) blocks = [main];
+
+  blocks.forEach(function (block) {
+    const seen = new Set();
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue.trim() && !skippable(node)) textNodes.push(node);
+    }
+    textNodes.forEach(function (textNode) { linkTerms(textNode, seen); });
+  });
+
+  function linkTerms(textNode, seen) {
+    const text = textNode.nodeValue;
+
+    // Inside inline <code>, link ONLY when the whole code element is the term:
+    // <code>&lt;title&gt;</code> in a sentence is a mention and should link, but
+    // a code sample like <code>&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</code>
+    // is an example, not a mention, and should stay plain.
+    const codeEl = textNode.parentElement && textNode.parentElement.closest('code');
+    const codeWhole = codeEl ? codeEl.textContent.trim() : null;
+
+    pattern.lastIndex = 0;
+    let match, last = 0;
+    const pieces = [];
+    while ((match = pattern.exec(text))) {
+      const start = match.index, end = start + match[0].length;
+      const id = byLower[match[0].toLowerCase()];
+      if (!id || seen.has(id) || !isWholeWord(text, start, end)) continue;
+      if (codeEl && match[0] !== codeWhole) continue;      // a code sample, not a mention
+      seen.add(id);
+      pieces.push(document.createTextNode(text.slice(last, start)));
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'term-link';
+      button.dataset.term = id;
+      button.textContent = match[0];
+      button.setAttribute('aria-label', match[0] + ' - show definition');
+      pieces.push(button);
+      last = end;
+    }
+    if (!pieces.length) return;
+    pieces.push(document.createTextNode(text.slice(last)));
+    const parent = textNode.parentNode;
+    pieces.forEach(function (piece) { parent.insertBefore(piece, textNode); });
+    parent.removeChild(textNode);
+  }
+
+  // ---------------------------------------------------------------
+  // 4. THE POP-UP
+  // A native <dialog>: Escape closes it, focus stays inside it, and the
+  // page behind is dimmed. When it closes, focus goes back to the word
+  // that opened it.
+  // ---------------------------------------------------------------
+  const titleEl = dialog.querySelector('#vocab-title');
+  const bodyEl  = dialog.querySelector('#vocab-body');
+  const moreEl  = dialog.querySelector('#vocab-more');
+  let opener = null;
+
+  function open(id, button) {
+    const entry = VOCAB[id];
+    if (!entry) return;
+    opener = button;
+    titleEl.innerHTML = entry.title;
+    // The definition HTML comes from shared/vocabulary.html, written by the
+    // course author and inlined at build time - not from anything a visitor
+    // typed - so putting it in with innerHTML is safe here.
+    bodyEl.innerHTML = entry.html;
+    if (moreEl) moreEl.hash = '#' + id;
+    if (typeof dialog.showModal === 'function') { dialog.showModal(); } else { dialog.setAttribute('open', ''); }
+  }
+
+  document.addEventListener('click', function (e) {
+    const button = e.target.closest('.term-link');
+    if (button) { e.preventDefault(); open(button.dataset.term, button); }
+  });
+
+  dialog.querySelector('#vocab-close').addEventListener('click', function () { dialog.close(); });
+  // Clicking the dimmed backdrop (outside the pop-up's box) closes it too.
+  dialog.addEventListener('click', function (e) {
+    const box = dialog.getBoundingClientRect();
+    const outside = e.clientX < box.left || e.clientX > box.right || e.clientY < box.top || e.clientY > box.bottom;
+    if (outside) dialog.close();
+  });
+  dialog.addEventListener('close', function () { if (opener) { opener.focus(); opener = null; } });
+})();
+  </script>
+</body>
+</html>
