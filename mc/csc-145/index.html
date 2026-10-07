@@ -177,12 +177,14 @@ h1 { font-size: clamp(1.8rem, 2.4vw + 1.2rem, 2.6rem); margin-bottom: 0.6rem; }
 }
 
 /* ------------------------------------------------------------------
-   PROGRESS - seven segments, one per beat
+   PROGRESS - one segment per required step
    ------------------------------------------------------------------ */
 .progress { display: grid; gap: 0.5rem; margin: 1.5rem 0 2rem; }
 
+/* One column per segment, however many the build wrote (3 required steps
+   on a build lab, 5 or 6 on a setup lab), so the bar always fills the width. */
 .progress-bar {
-  display: grid; grid-template-columns: repeat(7, 1fr);
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
   gap: 4px; height: 10px;
 }
 
@@ -241,6 +243,33 @@ h1 { font-size: clamp(1.8rem, 2.4vw + 1.2rem, 2.6rem); margin-bottom: 0.6rem; }
   border-top: 1px solid var(--line);
 }
 .step-body[hidden] { display: none; }
+
+/* ------------------------------------------------------------------
+   OPTIONAL STEPS - Read it, Make it yours, Grow it, Keep it
+   Grouped after the required steps under one heading, each with a small
+   "Optional" tag. A dashed rule marks where the lab itself ends.
+   ------------------------------------------------------------------ */
+.optional-group {
+  margin-top: 2rem; padding-top: 1.5rem;
+  border-top: 2px dashed var(--line);
+}
+.optional-intro { margin-bottom: 1rem; }
+.optional-intro h2 { font-size: 1.2rem; color: var(--heading); margin-bottom: 0.35rem; }
+.optional-intro h2:focus { outline: none; }            /* focused by script, not by the student */
+.optional-intro h2:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.optional-intro p { color: var(--ink-soft); margin: 0; }
+
+/* The optional cards are a shade quieter: dashed border until marked done. */
+.step.optional { border-style: dashed; }
+.step.optional.done { border-style: solid; }
+
+.step-tag {
+  display: inline-block; vertical-align: middle; margin-left: 0.5rem;
+  padding: 0.1em 0.55em; border-radius: 999px;
+  font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--accent-text); background: var(--accent-soft);
+}
 
 .step-body h3 {
   font-size: 1.05rem;
@@ -306,38 +335,44 @@ h1 { font-size: clamp(1.8rem, 2.4vw + 1.2rem, 2.6rem); margin-bottom: 0.6rem; }
   background: color-mix(in srgb, var(--flag) 7%, var(--card));
 }
 
-.flag summary, .note summary {
+.flag summary, details.note summary {
   cursor: pointer; list-style: none;
   position: relative;                 /* anchors the chevron */
   padding: 0.7rem 2.6rem 0.7rem 1rem; /* right padding leaves room for it */
   font-weight: 700; color: var(--flag);
 }
-.flag summary::-webkit-details-marker, .note summary::-webkit-details-marker { display: none; }
+.flag summary::-webkit-details-marker, details.note summary::-webkit-details-marker { display: none; }
 
 /* The same chevron the step cards use, so open/closed reads the same way.
    Positioned absolutely so a <code> chunk inside the title flows inline
    with the words instead of being pushed to the far side. */
-.flag summary::after, .note summary::after {
+.flag summary::after, details.note summary::after {
   content: ""; position: absolute; right: 1.1rem; top: 50%;
   width: 0.55rem; height: 0.55rem; margin-top: -0.45rem;
   border-right: 2px solid var(--flag); border-bottom: 2px solid var(--flag);
   transform: rotate(45deg); transition: transform 200ms ease;
 }
-.flag[open] summary::after, .note[open] summary::after { transform: rotate(-135deg); margin-top: -0.15rem; }
+.flag[open] summary::after, details.note[open] summary::after { transform: rotate(-135deg); margin-top: -0.15rem; }
 
 /* The two "start here" cards are the same accordion as the orange
    troubleshooting cards, in purple, because they apply to every lab
    rather than to one symptom. These rules come after the .flag rules
-   above on purpose, so the purple wins. */
-.note {
+   above on purpose, so the purple wins.
+
+   NOTE ON THE NAME: ".note" is used by two different shapes in this
+   file. Here it is a <details> accordion (the universal troubleshooting
+   partial). Further down, under "::: note", it is a <div> callout with a
+   title. Those later rules are scoped as "div.note" so they cannot reach
+   these accordions. Keep it that way. */
+details.note {
   border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px;
   margin: 0.6rem 0;
   background: var(--accent-soft);
 }
-.note summary { color: var(--accent-text); }
-.note summary::after { border-color: var(--accent-text); }
-.note .note-body { padding: 0 1rem 0.9rem; }
-.note .note-body p:last-child { margin-bottom: 0; }
+details.note summary { color: var(--accent-text); }
+details.note summary::after { border-color: var(--accent-text); }
+details.note .note-body { padding: 0 1rem 0.9rem; }
+details.note .note-body p:last-child { margin-bottom: 0; }
 
 .flag .flag-body { padding: 0 1rem 0.9rem; }
 .flag .flag-body p:last-child { margin-bottom: 0; }
@@ -461,8 +496,13 @@ footer {
    ------------------------------------------------------------------ */
 .term-link {
   all: unset;                                  /* drop the browser's button look */
-  font: inherit; color: inherit; cursor: help;
-  text-decoration: underline dotted var(--accent) 2px; text-underline-offset: 3px;
+  font: inherit;                               /* the shorthand resets weight, so bold comes after it */
+  font-weight: 700;
+  color: var(--heading);                       /* the same purple as headings and titles */
+  cursor: help;
+  /* A dotted underline in the same purple. Bold and colored says "this word
+     matters"; the dots say "and you can click it for a definition". */
+  text-decoration: underline dotted currentColor 2px; text-underline-offset: 3px;
   border-radius: 3px;
 }
 .term-link:hover { background: var(--accent-soft); }
@@ -568,6 +608,22 @@ dialog.vocab .vocab-foot a { color: var(--accent-text); font-weight: 700; }
 .demo-card .demo-label { font-weight: 700; color: var(--accent-text); display: block; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; }
 .demo-card .demo-title { display: block; }
 .demo-card .demo-arrow { color: var(--accent-text); font-size: 1.4rem; flex: none; }
+/* The words and the arrow share one row, whether or not there is a picture. */
+.demo-card .demo-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; }
+
+/* With a picture (demo-image:), the picture sits on top of the card:
+   always 16:9, rounded corners, a soft shadow. object-fit: cover means a
+   picture that is not quite 16:9 is trimmed at the edges, never squashed. */
+.demo-card.has-thumb { flex-direction: column; align-items: stretch; padding: 1rem 1.1rem; }
+.demo-thumb {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 16 / 9; object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(26, 21, 35, 0.18), 0 1px 3px rgba(26, 21, 35, 0.12);
+  background: var(--line);                 /* shows while the picture loads */
+}
+[data-theme="dark"] .demo-thumb { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4); }
+.demo-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 /* ------------------------------------------------------------------
    SMALL SCREENS
@@ -581,20 +637,363 @@ dialog.vocab .vocab-foot a { color: var(--accent-text); font-weight: 700; }
   .step-body { padding-left: 1rem; }
 }
 
+/* ------------------------------------------------------------------
+   THE TOP BAR
+   Carries the lab's name, the field guide button, and the theme toggle.
+
+   It sticks to the top of whatever is actually scrolling:
+     - a phone inside the LMS (the frame is screen-height, the page
+       scrolls inside it) - it follows you down
+     - a page opened directly on the web - it follows you down
+     - a desktop inside the LMS - the frame is sized to the whole page,
+       so nothing scrolls inside it and the bar simply sits at the top.
+       That is correct rather than broken, and if the frame is ever given
+       a fixed height the bar starts sticking with no change here.
+   ------------------------------------------------------------------ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  width: min(100% - 2rem, var(--measure));
+  margin: 0 auto;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* The name truncates rather than wrapping, so the bar is always one line
+   tall and never eats the screen on a phone. */
+.topbar-title {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* The guide button is an <a>, so it needs the bits a <button> gets free. */
+.guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+}
+
+.guide-arrow { font-size: 0.85em; opacity: 0.7; }
+
+/* Narrow screens: the guide button keeps its words, because they are the
+   ones that say what is on the other end. The theme toggle keeps only its
+   moon, because everybody already knows what that does. */
+@media (max-width: 34rem) {
+  .topbar-title { font-size: 0.85rem; }
+  .theme #theme-label { display: none; }
+}
+
+/* ---------------------------------------------------------------------
+   Quotes. An inset block for something being quoted back at the reader -
+   a line of the specification, a bug report, a prompt about to be sent.
+   The accent bar down the left says "this is somebody else's words"
+   without needing quotation marks.
+   --------------------------------------------------------------------- */
+blockquote {
+  margin: 1.1rem 0;
+  padding: 0.85rem 1.1rem 0.85rem 1.25rem;
+  border-left: 4px solid var(--accent);
+  background: var(--card);
+  border-radius: 0 6px 6px 0;
+}
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child  { margin-bottom: 0; }
+blockquote ul,
+blockquote ol { margin: 0; padding-left: 1.2rem; }
+
+/* ---------------------------------------------------------------------
+   The Tools page. One card per tool, so the page scans as a list of
+   things rather than as an article you have to read.
+   --------------------------------------------------------------------- */
+.reading .tool {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem 1.25rem;
+  margin: 1.1rem 0;
+}
+.reading .tool h3 { margin-top: 0; }
+.reading .tool > :last-child { margin-bottom: 0; }
+
+/* The link that opens a tool. Looks like a button, is a real link, so
+   middle-click and "open in new tab" both still work. */
+.tool-link {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--heading);
+  font-weight: 700;
+  text-decoration: none;
+}
+.tool-link:hover,
+.tool-link:focus-visible { background: var(--accent); color: var(--on-accent); }
+
+/* The bookmarklet. Grabbable rather than clickable, and it says so. */
+.drag-me { cursor: grab; }
+
+.reading .tool table { width: 100%; border-collapse: collapse; margin: 0.9rem 0 0; }
+.reading .tool th,
+.reading .tool td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); }
+.reading .tool th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+.reading .tool tr:last-child td { border-bottom: 0; }
+
+.lede-note { color: var(--ink-soft); }
+
+/* ---------------------------------------------------------------------
+   The chapter overview page. One card per page in the chapter, so the
+   list says what each thing is and how long it takes before anybody
+   clicks anything.
+   --------------------------------------------------------------------- */
+.overview-list { list-style: none; margin: 1.2rem 0 0; padding: 0; counter-reset: ov; }
+.overview-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.95rem 1.1rem 1.05rem;
+  margin: 0 0 0.75rem;
+}
+/* The anchor lab - the one that gets handed in - is marked, not hidden. */
+.overview-item.is-anchor { border-color: var(--accent); }
+
+.overview-link {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--heading);
+  text-decoration: none;
+}
+.overview-link:hover,
+.overview-link:focus-visible { text-decoration: underline; }
+
+.overview-meta { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }
+.overview-kind {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.overview-kind.is-anchor-tag { background: var(--accent); color: var(--on-accent); }
+.overview-time { font-size: 0.88rem; color: var(--ink-soft); }
+.overview-lede { margin: 0.5rem 0 0; color: var(--ink-soft); }
+.overview-note { color: var(--ink-soft); }
+.overview-foot { margin-top: 1.4rem; }
+
+/* ---------------------------------------------------------------------
+   ::: video - a clip placed exactly where it is needed. (The header's
+   video: field is the other thing: "watch this first", near the top.)
+   --------------------------------------------------------------------- */
+figure.video { margin: 1.3rem 0; }
+.video-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+figure.video figcaption {
+  margin-top: 0.55rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+.video-title { font-weight: 700; color: var(--heading); }
+.video-length { font-size: 0.88rem; color: var(--ink-soft); }
+.video-transcript-link { font-size: 0.88rem; }
+
+/* A pasted transcript. Closed by default - a ten-minute one would otherwise
+   push the rest of the page off the screen. */
+.video-transcript { margin-top: 0.6rem; }
+.video-transcript > summary { cursor: pointer; font-weight: 700; color: var(--heading); }
+.video-transcript-body {
+  margin-top: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  /* pre-wrap, NOT <pre>: keeps the line breaks and blank lines exactly as
+     pasted, but still wraps instead of scrolling sideways on a phone. */
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Tables. Written in Markdown with pipes; see the dialect notes at the
+   top of build/mdparse.py. Kept quiet on purpose - a table in a handout
+   is a reference, not a feature.
+   --------------------------------------------------------------------- */
+.wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.1rem 0;
+  font-size: 0.97rem;
+}
+.wrap th,
+.wrap td {
+  text-align: left;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.wrap thead th {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--line);
+}
+.wrap tbody tr:last-child td { border-bottom: 0; }
+.wrap tbody tr:hover { background: var(--card); }
+
+/* On a narrow screen a wide table would push the page sideways. Let the
+   table itself scroll instead of the whole handout. */
+@media (max-width: 34rem) {
+  .wrap table { display: block; overflow-x: auto; }
+}
+
+/* ---------------------------------------------------------------------
+   ``` fenced code blocks. readings get this from reading.css; labs and
+   setup pages had nothing, so a fenced block in a lab came out as bare
+   monospace with no box around it. Same values as the reading rule, so a
+   sample looks the same whichever kind of page it lands on.
+   --------------------------------------------------------------------- */
+.wrap pre.sample {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.8rem 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------
+   ::: note - a callout with a heading, for something that should stop
+   the reader. .aside is the quiet cousin: a thin rule in the margin and
+   no title. A note is a filled box, because it is meant to interrupt.
+
+   IMPORTANT - why every selector here says "div.note" and not just
+   ".note": the class name is already taken. The universal troubleshooting
+   partial up in the CALLOUTS section uses <details class="note"> for the
+   purple "start here" accordions. A bare .note rule down here would come
+   later in the file and win, which would hand those accordions a padding
+   they do not want and flatten their 4px left bar. The two shapes are
+   told apart by their ELEMENT: the directive emits a <div>, the partial
+   emits a <details>. So this block stays element-scoped. If you ever add
+   a note rule, scope it the same way.
+   --------------------------------------------------------------------- */
+div.note {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.95rem 1.15rem;
+  margin: 1.2rem 0;
+}
+div.note .note-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--heading);
+  margin: 0 0 0.45rem;
+}
+div.note > :last-child { margin-bottom: 0; }
+
 .wrap ul { list-style: none; padding: 0; } .wrap li { padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
 .time { color: var(--ink-faint); font-size: 0.9rem; margin-left: 0.5rem; }
 .tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-text); background: var(--accent-soft); padding: 0.1em 0.5em; border-radius: 999px; margin-left: 0.4rem; }
 h2 { margin-top: 1.5rem; font-size: 1.2rem; }
 </style></head>
-<body><div class="wrap"><h1>Vibe Coding - all labs</h1><p class="lede">Built 2026-09-07. Generated by build/build.py; do not edit.</p>
+<body><div class="wrap"><h1>Vibe Coding - all labs</h1><p class="lede">Built 2026-10-06. Generated by build/build.py; do not edit.</p>
 <h2>Chapter 1 - Out of the chat, onto your computer</h2>
 <ul>
-  <li><a href="01-files/00-reading-web-page-structure.html">The structure of a web page</a> <span class="time">Reading · about 20 minutes</span> <span class="tag">reading</span></li>
-  <li><a href="01-files/01-setup.html">Setting up your environment</a> <span class="time">About 20 minutes</span> <span class="tag">setup</span></li>
-  <li><a href="01-files/02-qr-code-v2.html">QR code generator v2 - make it yours, by asking</a> <span class="time">About 30 minutes</span></li>
-  <li><a href="01-files/03-hello-world.html">Hello, world - typed by hand</a> <span class="time">About 15 minutes</span></li>
-  <li><a href="01-files/04-pomodoro.html">Pomodoro timer - twenty-five minutes of focus</a> <span class="time">About 25 minutes</span></li>
-  <li><a href="01-files/05-countdown.html">Countdown to something you care about</a> <span class="time">About 20 minutes</span></li>
+  <li><a href="01-files/00-The-Structure-of-a-Web-Page.html">The Structure of a Web Page</a> <span class="time">Reading · about 20 minutes</span> <span class="tag">reading</span></li>
+  <li><a href="01-files/01-Setting-Up-Your-Environment.html">Setting Up Your Environment</a> <span class="time">About 20 minutes</span> <span class="tag">setup</span></li>
+  <li><a href="01-files/02-QR-Code-Generator-v2-Make-It-Yours-by-Asking.html">QR Code Generator v2 - Make It Yours, by Asking</a> <span class="time">About 30 minutes</span></li>
+  <li><a href="01-files/03-Hello-World-Typed-by-Hand.html">Hello, World - Typed by Hand</a> <span class="time">About 15 minutes</span></li>
+  <li><a href="01-files/04-Pomodoro-Timer-Twenty-Five-Minutes-of-Focus.html">Pomodoro Timer - Twenty-Five Minutes of Focus</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="01-files/05-Countdown-to-Something-You-Care-About.html">Countdown to Something You Care About</a> <span class="time">About 20 minutes</span></li>
+</ul>
+<h2>Chapter 2 - A page is never alone</h2>
+<ul>
+  <li><a href="02-organize/00-The-Field-Guide-to-Files-and-Folders.html">The Field Guide to Files and Folders</a> <span class="time">Reference · dip in when you are stuck</span> <span class="tag">reading</span></li>
+  <li><a href="02-organize/01-The-Great-Tidy-Up.html">The Great Tidy-Up</a> <span class="time">About 25 minutes</span> <span class="tag">setup</span></li>
+  <li><a href="02-organize/02-Recipe-Card-with-a-Photo.html">Recipe Card, with a Photo</a> <span class="time">About 30 minutes</span></li>
+  <li><a href="02-organize/03-A-Second-Page-Linked-Both-Ways.html">A Second Page, Linked Both Ways</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="02-organize/04-A-Page-of-Your-Pictures.html">A Page of Your Pictures</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="02-organize/05-Captions-and-Alt-Text-from-One-List.html">Captions and Alt Text, from One List</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="02-organize/06-Your-Page-via-the-Interview-Prompt.html">Your Page, via the Interview Prompt</a> <span class="time">About 40 minutes</span> <span class="tag">anchor</span></li>
+</ul>
+<h2>Chapter 3 - GitHub Pages and the hub</h2>
+<ul>
+  <li><a href="03-publish/00-The-Field-Guide-to-Putting-Your-Work-Online.html">The Field Guide to Putting Your Work Online</a> <span class="time">Reference - dip in when you are stuck</span> <span class="tag">reading</span></li>
+  <li><a href="03-publish/01-Your-Site-Exists.html">Your Site Exists</a> <span class="time">About 25 minutes</span> <span class="tag">setup</span></li>
+  <li><a href="03-publish/02-Everything-You-Have-Made-Online.html">Everything You Have Made, Online</a> <span class="time">About 40 minutes</span> <span class="tag">setup</span></li>
+  <li><a href="03-publish/03-When-It-Goes-Wrong-Your-404.html">When It Goes Wrong: Your 404</a> <span class="time">About 20 minutes</span></li>
+  <li><a href="03-publish/04-Your-Hub-Page.html">Your Hub Page</a> <span class="time">About 45 minutes</span> <span class="tag">anchor</span></li>
+  <li><a href="03-publish/05-Does-It-Work-on-Your-Phone.html">Does It Work on Your Phone?</a> <span class="time">About 20 minutes</span></li>
+</ul>
+<h2>Chapter 4 - Apps worth sharing</h2>
+<ul>
+  <li><a href="04-share/00-Information-in-a-Link.html">Information in a Link</a> <span class="time">About 5 minutes</span> <span class="tag">reading</span></li>
+  <li><a href="04-share/00-The-Field-Guide-to-Apps-Worth-Sharing.html">The Field Guide to Apps Worth Sharing</a> <span class="time">Reference - dip in when you are curious or stuck</span> <span class="tag">reading</span></li>
+  <li><a href="04-share/01-Magic-8-Ball.html">Magic 8-Ball</a> <span class="time">About 15 minutes</span></li>
+  <li><a href="04-share/02-Decision-Maker.html">Decision Maker</a> <span class="time">About 20 minutes</span></li>
+  <li><a href="04-share/03-Breathing-Buddy.html">Breathing Buddy</a> <span class="time">About 20 minutes</span></li>
+  <li><a href="04-share/04-Invite-From-a-Link.html">Invite From a Link</a> <span class="time">About 30 minutes</span></li>
+  <li><a href="04-share/05-Decision-Maker-2.html">Decision Maker 2</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="04-share/06-Choose-Your-Own-Adventure.html">Choose Your Own Adventure</a> <span class="time">About 50 minutes</span> <span class="tag">anchor</span></li>
+</ul>
+<h2>Chapter 5 - Accessibility: did the AI keep its promise?</h2>
+<ul>
+  <li><a href="05-access/00-The-Field-Guide-to-Who-You-Are-Building-For.html">The Field Guide to Who You Are Building For</a> <span class="time">About 15 minutes</span> <span class="tag">reading</span></li>
+  <li><a href="05-access/01-The-Word-Game-Nobody-Can-Play.html">The Word Game Nobody Can Play</a> <span class="time">About 40 minutes</span></li>
+  <li><a href="05-access/02-One-App-One-Score.html">One App, One Score</a> <span class="time">About 30 minutes</span></li>
+  <li><a href="05-access/03-Fix-and-Republish.html">Fix and Republish</a> <span class="time">About 35 minutes</span> <span class="tag">anchor</span></li>
+  <li><a href="05-access/04-The-Sign-Up-Sheet.html">The Sign-Up Sheet</a> <span class="time">About 30 minutes</span></li>
+</ul>
+<h2>Chapter 6 - Changing pages you didn’t write</h2>
+<ul>
+  <li><a href="06-extensions/00-The-Field-Guide-to-Browser-Extensions.html">The Field Guide to Browser Extensions</a> <span class="time">About 15 minutes - read this one first</span> <span class="tag">reading</span></li>
+  <li><a href="06-extensions/01-Your-Own-New-Tab.html">Your Own New Tab</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="06-extensions/02-Find-and-Replace-the-Internet.html">Find and Replace the Internet</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="06-extensions/03-Quick-Draw.html">Quick Draw</a> <span class="time">About 25 minutes</span></li>
+  <li><a href="06-extensions/04-Page-Notes.html">Page Notes</a> <span class="time">About 40 minutes</span> <span class="tag">anchor</span></li>
 </ul>
 <h2>Course-wide</h2>
 <ul>

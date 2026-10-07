@@ -1,10 +1,10 @@
 <!--
   Vibe Coding - CSC 145 - Finger Lakes Community College
-  Reading: Vocabulary
+  Reading: Chapters
   Chapter: Vibe Coding
 
   GENERATED FILE - do not edit. Built 2026-10-06 by build/build.py from
-  chapters/shared/vocabulary.html. Edit the source, or shared/lab.css and shared/lab.js,
+  chapters/build/build.py (write_overview). Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
   This reading is one HTML file: the page, its styles, its behavior and its
@@ -27,10 +27,10 @@
   <!-- What names this lab. Written by the build from the source's header. -->
   <script>
     const LAB = {
-      title:   "Vocabulary",
+      title:   "Chapters",
       chapter: "Vibe Coding",
-      time:    "Every term in the course, in one place",
-      id:      "vibe-vocabulary"
+      time:    "What is in each chapter",
+      id:      "vibe-overview"
     };
   </script>
 
@@ -1133,7 +1133,7 @@ div.note > :last-child { margin-bottom: 0; }
     <header class="lab-head">
       <p class="eyebrow" id="lab-ribbon"></p>
       <h1 id="lab-title"></h1>
-      <p class="lede">Every word this course uses that it does not expect you to know already. Click any dotted word on a lab or reading and you land on its entry here; or search.</p>
+      <p class="lede">Pick a chapter to see what is in it.</p>
     </header>
 
     <!-- The optional video panel: filled in from the video: line in the reading's
@@ -1141,559 +1141,153 @@ div.note > :last-child { margin-bottom: 0; }
 
 
     <main id="main">
-<div class="vocab-search">
-  <label for="vocab-filter">Find a term</label>
-  <input type="search" id="vocab-filter" placeholder="Type to filter…" autocomplete="off">
-  <span class="vocab-count" id="vocab-count" aria-live="polite">112 terms</span>
-</div>
-<nav class="letters" aria-label="Jump to a letter"><a href="#letter-%">%</a> <a href="#letter-<"><</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a> <a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
+<div id="overview-root"></div>
 
-<h2 class="letter-head" id="letter-%">%</h2>
-<article class="term" id="url-encoding" data-search="%20 (url encoding) %20 url encoding">
-  <h3>%20 (URL encoding)</h3>
-  <p>Web addresses cannot contain spaces, so a space is written as <code>%20</code>. Other awkward characters get codes too. You can type a normal space in the address bar and the browser swaps it in for you; a well-made page turns it back into a space.</p>
-</article>
-<h2 class="letter-head" id="letter-<"><</h2>
-<article class="term" id="anchor" data-search="&lt;a&gt; ">
-  <h3><code>&lt;a&gt;</code></h3>
-  <p>The link tag. It has two separate parts: <code>href</code>, which says where it goes and is for the browser, and the words between the tags, which are what a person sees and clicks. Change either without touching the other.</p>
-</article>
-<article class="term" id="activetab" data-search="activetab activetab">
-  <h3><code>activeTab</code></h3>
-  <p>A permission that gives an extension access to the tab you are looking at <em>only</em> once you click it, and takes it away again afterwards. It is the polite version: the extension can do nothing at all until you ask, which is why a tool built on it shows a much gentler sentence on its card.</p>
-</article>
-<article class="term" id="alt-text" data-search="alt text alt text alt">
-  <h3><code>alt</code> text</h3>
-  <p>Short for <em>alternative</em>. Words that stand in for a picture. A screen reader says them out loud to someone who cannot see the image, they appear on the page if the file is missing, and search engines read them. Write them like you are describing the picture to someone over the phone - not <em>photo</em> or <em>image1</em>.</p>
-</article>
-<article class="term" id="fieldset" data-search="&lt;fieldset&gt; and &lt;legend&gt; fieldset legend">
-  <h3><code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></h3>
-  <p>How you name a <em>group</em> of form controls, usually radio buttons. Without it a person hears "Morning, radio button, one of three" and has no idea what question they are answering.</p>
-  <pre class="sample">&lt;fieldset&gt;
-  &lt;legend&gt;Which session?&lt;/legend&gt;
-  ...the radio buttons...
-&lt;/fieldset&gt;</pre>
-</article>
-<article class="term" id="href" data-search="href href">
-  <h3><code>href</code></h3>
-  <p>The attribute on a link that says where the link goes. When the destination is a file sitting beside this one, it is just the file name: <code>href="notes.html"</code>.</p>
-</article>
-<article class="term" id="img" data-search="&lt;img /&gt; ">
-  <h3><code>&lt;img /&gt;</code></h3>
-  <p>The tag that puts a picture on a page. It has nothing to wrap, so it closes itself instead of coming in a pair. It needs two attributes: <code>src</code> for which file, and <code>alt</code> for what the picture shows.</p>
-</article>
-<article class="term" id="index-html" data-search="index.html index.html">
-  <h3><code>index.html</code></h3>
-  <p>The front door of a folder. Every app you build gets a folder, and the main page inside it is called <code>index.html</code>. The name is a convention everything agrees on: browsers and web servers open that file first, without being told to. Four folders can each hold a file with this name without any confusion, because the folder is what tells them apart.</p>
-</article>
-<article class="term" id="label" data-search="&lt;label&gt; label labels &lt;label&gt;">
-  <h3><code>&lt;label&gt;</code></h3>
-  <p>The visible text that says what a form field is for, tied to the field with <code>for</code> and the field's <code>id</code>:</p>
-  <pre class="sample">&lt;label for="email"&gt;Your email&lt;/label&gt;
-&lt;input id="email" type="email"&gt;</pre>
-  <p>A properly connected label is announced with the field, and clicking it focuses the field, which makes it easier to hit.</p>
-</article>
-<article class="term" id="localstorage" data-search="localstorage localstorage local storage">
-  <h3><code>localStorage</code></h3>
-  <p>A small box the browser gives a page to keep things in, which survives closing the tab. You put something in under a name and get it back later by that name. It is the simplest way to make an app remember.</p>
-  <p>Two limits worth knowing now: it is <strong>this browser on this computer</strong> - nothing syncs to your phone - and anyone using that computer can read it.</p>
-</article>
-<article class="term" id="manifest" data-search="manifest.json manifest.json manifest the manifest">
-  <h3><code>manifest.json</code></h3>
-  <p>The note on the front of an extension's folder. Every extension has exactly one, named exactly this. It says what the extension is called, what it wants to touch, and which file does the work:</p>
-  <pre class="sample">{
-  "manifest_version": 3,
-  "name": "My Launch Pad",
-  "version": "1.0",
-  "chrome_url_overrides": { "newtab": "newtab.html" }
-}</pre>
-  <p>It is written in JSON, not JavaScript, which matters more than it sounds.</p>
-</article>
-<article class="term" id="src" data-search="src src">
-  <h3><code>src</code></h3>
-  <p>Short for <em>source</em>. The attribute that names the file to fetch. On a picture it is the file name of the picture, and the browser looks for it in the same folder as the page.</p>
-</article>
-<article class="term" id="syntax-error" data-search="syntaxerror syntaxerror unexpected token">
-  <h3><code>SyntaxError</code></h3>
-  <p>The Developer Console saying: I cannot read this, so I stopped. Usually punctuation - a missing comma, an apostrophe inside single quotes, a stray bracket. The message comes with a line number, and the problem is on that line or just above it.</p>
-</article>
-<h2 class="letter-head" id="letter-A">A</h2>
-<article class="term" id="accessibility" data-search="accessibility accessibility accessible a11y">
-  <h3>Accessibility</h3>
-  <p>Building so that people can actually use the thing - including somebody using a keyboard with no mouse, somebody who cannot see colors the way you do, somebody whose hands shake, and somebody whose computer reads the screen aloud.</p>
-  <p>Not a checklist you run at the end. Almost everything on the list makes the app better for everybody: clearer labels, visible focus, information that does not depend on one sense.</p>
-</article>
-<article class="term" id="accessible-name" data-search="accessible name accessible name">
-  <h3>Accessible name</h3>
-  <p>What assistive technology calls something. It comes from a label, an <code>aria-label</code>, alt text, or the words inside the element - and when there is none, a control is announced as just "button" or "text box", which tells the person nothing at all.</p>
-  <p>You can see it for any element in Developer Tools: Elements panel, then the Accessibility tab in the sidebar.</p>
-</article>
-<article class="term" id="aria" data-search="aria aria">
-  <h3>ARIA</h3>
-  <p>Extra attributes that tell assistive technology things plain HTML cannot express. Genuinely useful, and the most misused thing on the web, because people reach for it instead of just using the right tag.</p>
-  <p>The rule people say out loud is <strong>the first rule of ARIA is don't use ARIA</strong>. If real HTML can do the job, use real HTML.</p>
-</article>
-<article class="term" id="assistive-technology" data-search="assistive technology assistive technology assistive tech">
-  <h3>Assistive technology</h3>
-  <p>Anything somebody uses to work a computer differently: screen readers, magnifiers, voice control, switches, high-contrast modes. It is far more common than people expect, and most of it is already built into the computer rather than bought separately.</p>
-</article>
-<article class="term" id="attribute" data-search="attribute attribute attributes">
-  <h3>Attribute</h3>
-  <p>Extra information carried inside an opening tag, always in the shape <code>name="value"</code>. A picture tag needs to know which picture; a link tag needs to know where it goes. The quotes are part of it, not decoration.</p>
-  <pre class="sample">&lt;img src="photo.jpg" alt="A bowl of soup" /&gt;</pre>
-</article>
-<h2 class="letter-head" id="letter-B">B</h2>
-<article class="term" id="body" data-search="&lt;body&gt; … &lt;/body&gt; ">
-  <h3>&lt;body&gt; … &lt;/body&gt;</h3>
-  <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;</code> usually sits at the very end of the body.</p>
-</article>
-<article class="term" id="br" data-search="&lt;br /&gt; ">
-  <h3>&lt;br /&gt;</h3>
-  <p>A line break: <em>end the line here</em>, inside a paragraph. For the lines of an address, a poem, an ingredient list. It has no closing tag, because nothing goes inside a line break; instead the slash goes at the end. Two in a row make a blank line. But for a new <em>thought</em>, use <code>&lt;p&gt;</code>, not a pile of <code>&lt;br /&gt;</code>s.</p>
-  <pre class="sample">3325 Marvin Sands Drive&lt;br /&gt;
-Canandaigua, NY 14424</pre>
-</article>
-<article class="term" id="broken-image" data-search="broken picture icon broken picture icon broken image icon broken-image icon">
-  <h3>Broken picture icon</h3>
-  <p>The little torn-page symbol, or an empty box with the <code>alt</code> words in it. It means one thing: the browser looked in this folder for that name and did not find it. Check the folder, then the spelling, then the format - almost never the code.</p>
-</article>
-<article class="term" id="browser" data-search="browser browser browsers">
-  <h3>Browser</h3>
-  <p>The program that reads web page files and draws them on your screen: Chrome, Safari, Edge, Firefox. It reads the file top to bottom and follows the instructions in it. When you double-click an <code>.html</code> file, this is what opens.</p>
-</article>
-<article class="term" id="browser-extension" data-search="browser extension browser extension browser extensions chrome extension chrome extensions extension extensions">
-  <h3>Browser extension</h3>
-  <p>A small program that adds something to your browser, or changes pages you visit. It is not a web page and it is not an app you install on your computer: it is a <em>folder</em> of ordinary HTML, CSS and JavaScript, with one extra file on the front telling Chrome what it is allowed to do.</p>
-  <p>The ad blockers, password managers and dark-mode buttons people install are all this shape.</p>
-</article>
-<article class="term" id="button" data-search="&lt;button&gt; … &lt;/button&gt; ">
-  <h3>&lt;button&gt; … &lt;/button&gt;</h3>
-  <p>A thing to press. The words between the tags are its label. What the button <em>says</em> is HTML; what it <em>does</em> is JavaScript, somewhere in the script.</p>
-</article>
-<h2 class="letter-head" id="letter-C">C</h2>
-<article class="term" id="caption" data-search="caption caption captions">
-  <h3>Caption</h3>
-  <p>Words shown with a picture, saying what it is. Different from <code>alt</code> text: a caption is for everybody and appears on the page, while <code>alt</code> is for people who cannot see the picture and normally stays invisible. A picture often wants both.</p>
-</article>
-<article class="term" id="card" data-search="card cards">
-  <h3>Card</h3>
-  <p>A box holding one thing - a picture, a heading, a couple of lines. Usually with rounded corners, a soft shadow and space around the edge. It is one of the most useful words you can say to an AI, because it is the word the people who build these things use.</p>
-</article>
-<article class="term" id="chrome-web-store" data-search="chrome web store chrome web store web store">
-  <h3>Chrome Web Store</h3>
-  <p>Where extensions normally come from. Putting one there costs a one-off developer fee and means waiting in a review queue, which is why most people's own tools never go in it. Extensions cannot run on the Web Store's own pages, so it is a bad place to test yours.</p>
-</article>
-<article class="term" id="color-alone" data-search="color as the only signal color as the only signal color alone">
-  <h3>Color as the only signal</h3>
-  <p>When the only difference between two states is their color - red for wrong and green for right, a yellow tile and a green tile. For a lot of people there is then no difference at all.</p>
-  <p>The fix is never to stop using color. It is to <strong>add a second signal</strong>: a symbol, a word, a border, a position. Color then becomes the fast way to read it rather than the only way.</p>
-</article>
-<article class="term" id="colorblindness" data-search="colorblindness colorblind color blind colorblindness deuteranopia">
-  <h3>Colorblindness</h3>
-  <p>Seeing some colors as closer together than most people do. Around one man in twelve has some form of it. <strong>Deuteranopia</strong> is the most common, and it pulls green towards gray - which is why a green "correct" tile and a gray "wrong" tile can end up looking almost identical.</p>
-  <p>Chrome can show you: Developer Tools, then the Rendering drawer, then <em>Emulate vision deficiencies</em>.</p>
-</article>
-<article class="term" id="comma" data-search="comma comma commas">
-  <h3>Comma</h3>
-  <p>The separator between one item in a list and the next. Leave one out and the browser cannot make sense of the list, stops reading, and shows you a blank page - which feels wildly out of proportion to a missing comma, and is. Add new items in the middle of a list rather than at the end and the problem never comes up.</p>
-</article>
-<article class="term" id="comment" data-search="comment comment comments commented out">
-  <h3>Comment</h3>
-  <p>A note in the code that the browser skips completely. For people, not machines. In HTML: <code>&lt;!-- like this --&gt;</code>. In JavaScript: a line starting with <code>//</code>. The AI writes lots of them, one above nearly every block, saying what the block does in plain language. They are the first place to look when you want to change something.</p>
-</article>
-<article class="term" id="content" data-search="content the content">
-  <h3>Content</h3>
-  <p>The words between a pair of tags - the part that actually shows on the page. In <code>&lt;h1&gt;Hello, world&lt;/h1&gt;</code>, the content is <em>Hello, world</em>. Changing content is always safe; you cannot break a page by changing the words between two tags.</p>
-</article>
-<article class="term" id="content-script" data-search="content script content script content scripts">
-  <h3>Content script</h3>
-  <p>A JavaScript file that Chrome drops <em>into</em> a page somebody else wrote, where it can read and change anything on it. This is the part of an extension that does the surprising stuff: rewriting words, hiding adverts, rearranging a page you use every day.</p>
-  <p>Change one and you need <strong>two</strong> reloads: the extension first, then the page.</p>
-</article>
-<article class="term" id="context-menu" data-search="context menu context menu context menus right-click menu">
-  <h3>Context menu</h3>
-  <p>The menu you get when you right-click. An extension can add its own items to it, and can say <em>only show this when the person right-clicks something they can type into</em>. Because the thing you right-clicked is the thing you meant, it avoids the problem popups have.</p>
-</article>
-<article class="term" id="contrast-ratio" data-search="contrast ratio contrast ratio contrast">
-  <h3>Contrast ratio</h3>
-  <p>How different two colors are, written like <code>4.5:1</code>. Normal text usually needs at least <strong>4.5 to 1</strong> against its background; large text can go down to 3 to 1.</p>
-  <p>Pale gray on white is the classic failure. It looks elegant on a good monitor in a dark room and disappears on a phone outdoors.</p>
-</article>
-<article class="term" id="css" data-search="css css">
-  <h3>CSS</h3>
-  <p>The language that says what a page <em>looks like</em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;</code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.</p>
-</article>
-<h2 class="letter-head" id="letter-D">D</h2>
-<article class="term" id="definition-of-done" data-search="definition of done definition of done">
-  <h3>Definition of Done</h3>
-  <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.</p>
-</article>
-<article class="term" id="developer-console" data-search="developer console developer console the console devtools">
-  <h3>Developer Console</h3>
-  <p>A panel built into every browser that shows what went wrong and where. Open it with <kbd>F12</kbd>, or right-click the page and choose <em>Inspect</em>, then the <em>Console</em> tab. A <strong>red line</strong> is an error: it has a message and a line number. Copy the red line exactly and paste it to the AI. Most students do not know this panel exists; now you do.</p>
-</article>
-<article class="term" id="developer-mode" data-search="developer mode developer mode">
-  <h3>Developer mode</h3>
-  <p>A switch at the top right of <code>chrome://extensions</code>. With it on, you can load an extension from a folder on your own computer instead of installing one from the Chrome Web Store. Some school and work computers block it by policy, and when they do there is no way around it from inside the browser.</p>
-</article>
-<article class="term" id="doctype" data-search="&lt;!doctype html&gt; ">
-  <h3>&lt;!DOCTYPE html&gt;</h3>
-  <p>The very first line of every page. It tells the browser <em>this is a modern web page</em>. It is not really a tag and it never closes. It is always there and you never think about it.</p>
-</article>
-<h2 class="letter-head" id="letter-E">E</h2>
-<article class="term" id="edge-case" data-search="edge case edge case edge cases">
-  <h3>Edge case</h3>
-  <p>An input nobody planned for until somebody typed it: a blank option, the same thing twice, a name with a comma in it. Trying them on purpose is half of testing anything.</p>
-</article>
-<article class="term" id="empty-state" data-search="empty state empty state empty states">
-  <h3>Empty state</h3>
-  <p>What an app shows when there is nothing to show yet - an empty list, a missing name. A friendly message like <em>Add at least two options first</em> makes an app feel finished; a blank screen makes it feel broken. The AI often forgets it unless you ask.</p>
-</article>
-<h2 class="letter-head" id="letter-F">F</h2>
-<article class="term" id="file-extension" data-search="file extension file extension file extensions extension extensions filename extensions file name extensions">
-  <h3>File extension</h3>
-  <p>The last part of a file's name, after the dot: <code>.html</code>, <code>.jpg</code>, <code>.txt</code>. It tells the computer what kind of file it is. Mac and Windows <em>hide</em> extensions by default, so a file that looks like <code>qr-code.html</code> can secretly be <code>qr-code.html.txt</code> and show a blank page. Turning extensions on is the first thing this course asks you to do.</p>
-</article>
-<article class="term" id="focus" data-search="focus focus focused">
-  <h3>Focus</h3>
-  <p>Where the keyboard currently is. Press Tab and focus moves to the next thing you can interact with. If something cannot take focus, a keyboard user cannot reach it, and for a lot of people that means it does not exist.</p>
-</article>
-<article class="term" id="focus-ring" data-search="focus ring focus ring focus outline focus indicator">
-  <h3>Focus ring</h3>
-  <p>The outline a browser draws around whatever has focus. Browsers put it there for free and it is the only way a keyboard user can see where they are.</p>
-  <p>Removing it because it looks untidy is the single most common accessibility mistake on the web, and it is usually one line: <code>outline: none</code>. If you take it away, replace it with something clearer. Never just take it away.</p>
-</article>
-<h2 class="letter-head" id="letter-H">H</h2>
-<article class="term" id="h1" data-search="&lt;h1&gt; … &lt;/h1&gt; ">
-  <h3>&lt;h1&gt; … &lt;/h1&gt;</h3>
-  <p>The biggest heading on a page. <code>&lt;h2&gt;</code> through <code>&lt;h6&gt;</code> are smaller headings, in order. Changing the words between the tags is the safest edit you can make.</p>
-</article>
-<article class="term" id="hand-edit" data-search="hand edit hand edit hand edits">
-  <h3>Hand edit</h3>
-  <p>A change you make to the code yourself, in the editor, without asking the AI. This course builds up to them slowly: first the words between two tags (safe; you cannot break anything), then a number the code uses, then a date with a strict format.</p>
-</article>
-<article class="term" id="head" data-search="&lt;head&gt; … &lt;/head&gt; ">
-  <h3>&lt;head&gt; … &lt;/head&gt;</h3>
-  <p>The settings section of a page. Nothing inside the head shows on the page itself. It holds the <code>&lt;title&gt;</code> (the browser tab's text) and the <code>&lt;style&gt;</code> (how things look). <strong>Head or body?</strong> If a visitor can see it, it is in the body; if it is a setting, it is in the head.</p>
-</article>
-<article class="term" id="heic" data-search="heic heic .heic">
-  <h3>HEIC</h3>
-  <p>The format iPhones save photos in. Browsers mostly cannot show it, and renaming the file to <code>.jpg</code> does not help - the inside of the file has to be converted, not just the name. Export it as a JPG first.</p>
-</article>
-<article class="term" id="host-permission" data-search="host permission host permission host permissions">
-  <h3>Host permission</h3>
-  <p>Permission to work on particular websites, named in the manifest, whether or not you have asked the extension to do anything. Broader and longer-lasting than <code>activeTab</code>, and the thing to ask for only when the extension genuinely has to run on its own.</p>
-</article>
-<article class="term" id="html" data-search="html html">
-  <h3>HTML</h3>
-  <p>The language that says what is <em>on</em> a page. It is mostly your own words, wrapped in tags that say what each thing is: a heading, a paragraph, a button. Stands for HyperText Markup Language, which you will never need to say out loud.</p>
-</article>
-<article class="term" id="html-tag" data-search="&lt;html&gt; … &lt;/html&gt; ">
-  <h3>&lt;html&gt; … &lt;/html&gt;</h3>
-  <p>The outermost pair of bookends. Everything on the page sits between <code>&lt;html&gt;</code> near the top and <code>&lt;/html&gt;</code> on the last line.</p>
-</article>
-<h2 class="letter-head" id="letter-I">I</h2>
-<article class="term" id="inspect" data-search="inspect inspect">
-  <h3>Inspect</h3>
-  <p>Right-click anything on a page and choose <strong>Inspect</strong> to see the exact line of code behind it, highlighted. The fastest way to find out what file name a broken picture is actually asking for.</p>
-</article>
-<article class="term" id="iteration" data-search="iteration iteration iterations iterate">
-  <h3>Iteration</h3>
-  <p>Asking for a change to something that already works, then another, then another. <em>Add a color picker. Now put my initials in the middle.</em> Small asks, one at a time, is the normal way to build; nobody gets the whole thing in one prompt.</p>
-</article>
-<h2 class="letter-head" id="letter-J">J</h2>
-<article class="term" id="javascript" data-search="javascript javascript">
-  <h3>JavaScript</h3>
-  <p>The language that makes a page <em>do</em> things: count down, flip a card, respond to a click. It lives inside the <code>&lt;script&gt;</code> tag. Not related to Java, despite the name.</p>
-</article>
-<article class="term" id="jpg" data-search="jpg and jpeg jpg .jpg jpeg .jpeg">
-  <h3>JPG and JPEG</h3>
-  <p>The same kind of picture file under two spellings, for historical reasons nobody enjoys. It does not matter which one your file uses, but the code has to say the same one the file does.</p>
-</article>
-<article class="term" id="json" data-search="json json">
-  <h3>JSON</h3>
-  <p>A way of writing down information so a program can read it. It looks almost exactly like JavaScript and follows stricter rules: <strong>no comments</strong>, <strong>no comma after the last item</strong>, and <strong>double quotes only</strong>. Break one of those in a <code>manifest.json</code> and Chrome refuses the whole extension rather than loading a broken one.</p>
-  <p>If you are unsure, paste it into the AI and ask <em>"is this valid JSON?"</em></p>
-</article>
-<h2 class="letter-head" id="letter-K">K</h2>
-<article class="term" id="keep-everything" data-search="“keep everything else the same” keep everything else the same keep everything else exactly the same">
-  <h3>“Keep everything else the same”</h3>
-  <p>The sentence to put at the end of an ask for one change. Left alone, an AI asked to change one thing will sometimes redesign three, or quietly drop a feature you added earlier. Saying what <em>not</em> to touch is part of asking well.</p>
-</article>
-<article class="term" id="key-value" data-search="key and value key and value key-value pair">
-  <h3>Key and value</h3>
-  <p>A way of storing things so you can find them again: the <strong>value</strong> is what you saved, and the <strong>key</strong> is the name you saved it under. Using a page's web address as the key is what lets one notes app keep a separate note for every page you visit.</p>
-  <p>Same idea as naming your files properly. The name is how you find the thing.</p>
-</article>
-<h2 class="letter-head" id="letter-L">L</h2>
-<article class="term" id="least-privilege" data-search="least privilege least privilege">
-  <h3>Least privilege</h3>
-  <p>Asking for the smallest amount of access that will do the job, and no more. The same instinct as not handing a house key to somebody who only needs to water the plants once. It is a habit worth building now, because the consequences get much larger in the chapters about keys and servers.</p>
-</article>
-<article class="term" id="library" data-search="library library libraries">
-  <h3>Library</h3>
-  <p>Someone else's code that your page borrows, usually with one line like <code>&lt;script src="https://…"&gt;</code>. The QR code generator borrows a library that knows how to draw QR codes; nobody writes that part themselves. It is also why some pages need the internet even though they are files on your computer.</p>
-</article>
-<article class="term" id="lighthouse" data-search="lighthouse lighthouse">
-  <h3>Lighthouse</h3>
-  <p>An audit built into Chrome's Developer Tools. Tick Accessibility, click Analyze, and you get a score out of 100 plus a list of what is wrong and which elements are wrong, in plain words.</p>
-  <p>It only runs on a real web address, not a file from your computer. And a score of 100 is not a certificate - it checks what a machine can check, which is not everything.</p>
-</article>
-<article class="term" id="listenmode" data-search="listenmode listenmode">
-  <h3>ListenMode</h3>
-  <p>A small tool built for this course. It hides the page and says out loud what the keyboard lands on as you press Tab - <em>"Submit, button"</em>, or revealingly, <em>"button, with no name"</em>.</p>
-  <p><strong>It is a demonstration, not a screen reader.</strong> A real one reads your whole computer, has browse and focus modes and hundreds of commands. ListenMode does one slice. Enough to find holes in your own work; not enough to tell you what using a screen reader is really like.</p>
-</article>
-<article class="term" id="aria-live" data-search="live region (aria-live) aria-live live region live regions">
-  <h3>Live region (<code>aria-live</code>)</h3>
-  <p>The one piece of ARIA this course asks you to use. When something changes on the page by itself - a result appears, a score updates, an error shows - nothing announces it, because no HTML tag means <em>say this out loud when it changes</em>.</p>
-  <pre class="sample">&lt;p id="status" aria-live="polite"&gt;&lt;/p&gt;</pre>
-  <p>Put text in that paragraph and a screen reader reads it. The element has to be on the page <em>before</em> the text changes, or nothing is announced.</p>
-</article>
-<article class="term" id="load-unpacked" data-search="load unpacked load unpacked">
-  <h3>Load unpacked</h3>
-  <p>The button that turns a folder on your computer into a working extension. Pick <strong>the folder that contains</strong> <code>manifest.json</code> - not the manifest file itself, and not the folder above it.</p>
-  <p>Chrome remembers where that folder is, not what is in it. Move or rename it and the extension stops working.</p>
-</article>
-<h2 class="letter-head" id="letter-M">M</h2>
-<article class="term" id="match-pattern" data-search="match pattern match pattern match patterns matches line">
-  <h3>Match pattern</h3>
-  <p>The line in a manifest that says which websites a content script runs on. A single site looks like <code>https://en.wikipedia.org/*</code>, where the <code>*</code> means "any page on it". The widest possible is <code>&lt;all_urls&gt;</code>, which means every page you ever open.</p>
-  <p>It is fussy about exact addresses: <code>en.wikipedia.org</code> is not <code>simple.wikipedia.org</code>.</p>
-</article>
-<article class="term" id="milliseconds" data-search="milliseconds milliseconds millisecond">
-  <h3>Milliseconds</h3>
-  <p>Thousandths of a second. JavaScript measures time in them, so <code>1000</code> means one second and <code>60000</code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.</p>
-</article>
-<h2 class="letter-head" id="letter-N">N</h2>
-<article class="term" id="nan" data-search="nan nan">
-  <h3>NaN</h3>
-  <p>“Not a Number.” What the browser says when it was asked to do math on something that is not a number - most often a date typed in a form it did not understand. If you just edited a date and see this, look at what you changed: a month over 12, a missing dash, a lost quote. Fix that one thing.</p>
-</article>
-<article class="term" id="nesting" data-search="nesting nest inside nested nesting">
-  <h3>Nesting</h3>
-  <p>Tags inside tags, like boxes inside boxes. A paragraph sits inside the body; a bit of bold sits inside the paragraph. The rule: whatever you open last, you close first.</p>
-  <pre class="sample">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</pre>
-</article>
-<h2 class="letter-head" id="letter-O">O</h2>
-<article class="term" id="bookends" data-search="opening and closing tags (bookends) bookends bookend opening tag closing tag opening and closing tags">
-  <h3>Opening and closing tags (bookends)</h3>
-  <p>The two halves of a tag pair. The <strong>opening tag</strong> says <em>start</em>: <code>&lt;p&gt;</code>. The <strong>closing tag</strong> is the same word with a slash in front and says <em>stop</em>: <code>&lt;/p&gt;</code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.</p>
-</article>
-<h2 class="letter-head" id="letter-P">P</h2>
-<article class="term" id="p" data-search="&lt;p&gt; … &lt;/p&gt; ">
-  <h3>&lt;p&gt; … &lt;/p&gt;</h3>
-  <p>A paragraph. Every paragraph gets its own pair. The browser adds a little space above and below each one, so two paragraphs look like two paragraphs. Without the tags, the words run together into one lump.</p>
-</article>
-<article class="term" id="paste-over" data-search="paste over everything paste over everything paste it over everything paste over">
-  <h3>Paste over everything</h3>
-  <p>Replacing the whole file with the AI's new version: in your editor, select all (<kbd>Ctrl</kbd>+<kbd>A</kbd>, Mac <kbd>⌘</kbd>+<kbd>A</kbd>), then paste. Not <em>adding</em> the new code below the old - replacing it. Half-pasted files are a common cause of a blank page.</p>
-</article>
-<article class="term" id="permission" data-search="permission permission permissions">
-  <h3>Permission</h3>
-  <p>Something an extension asks to be allowed to do, listed in its manifest and shown to you before you install it. "Read and change all your data on all websites" is the big one, and it means exactly what it says: while that extension is on, it can see anything on any page you open, including things you are typing.</p>
-</article>
-<article class="term" id="placeholder" data-search="placeholder is not a label placeholder placeholder text">
-  <h3>Placeholder is not a label</h3>
-  <p>Faint gray text inside a box is not a label. It vanishes the moment you type, so anybody who loses their place has nothing to go back to; it usually fails contrast; and it may not be announced at all. Use a real <code>&lt;label&gt;</code> that stays on the page, and keep the placeholder for an example if you want one.</p>
-</article>
-<article class="term" id="plain-text" data-search="plain text plain text plain-text">
-  <h3>Plain text</h3>
-  <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.</p>
-</article>
-<article class="term" id="popup" data-search="popup popup popups">
-  <h3>Popup</h3>
-  <p>The small panel that appears when you click an extension's icon. It is an ordinary little web page. One catch worth knowing: opening it takes the cursor out of whatever box you were typing in, so a popup that inserts text into a page needs extra work that a right-click menu does not.</p>
-</article>
-<article class="term" id="prompt" data-search="prompt prompt prompts">
-  <h3>Prompt</h3>
-  <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.</p>
-</article>
-<h2 class="letter-head" id="letter-Q">Q</h2>
-<article class="term" id="query-string" data-search="query string query string query strings url parameter url parameters">
-  <h3>Query string</h3>
-  <p>The part of a web address after the <code>?</code>. It carries information for the page to read, as names and values joined by <code>&amp;</code>:</p>
-  <pre class="sample">invite/?to=Sam&amp;event=Game%20Night</pre>
-  <p>Each <code>name=value</code> piece is called a URL parameter. Anyone who has the link can read it, so never put anything private in one.</p>
-</article>
-<h2 class="letter-head" id="letter-R">R</h2>
-<article class="term" id="reduced-motion" data-search="reduced motion prefers-reduced-motion reduced motion">
-  <h3>Reduced motion</h3>
-  <p>Some people get genuinely unwell from things moving on screen, and their computer already knows they have asked for less of it. <code>prefers-reduced-motion</code> is how your page finds out, so you can shorten or switch off animations without being asked.</p>
-</article>
-<h2 class="letter-head" id="letter-S">S</h2>
-<article class="term" id="save-as" data-search="save as save as">
-  <h3>Save As</h3>
-  <p>Saving a file under a name and location you choose. In this course you type the whole name yourself, including the <code>.html</code>, and pick the <code>vibe-coding</code> folder on purpose. Plain <em>Save</em> writes over the file you already have; <em>Save As</em> makes a new one.</p>
-</article>
-<article class="term" id="save-refresh" data-search="save, then refresh save and refresh save then refresh refresh the browser">
-  <h3>Save, then refresh</h3>
-  <p>The two-step loop for seeing a change. <strong>Save</strong> the file in your editor, then <strong>refresh</strong> the browser tab (the circular arrow, or <kbd>F5</kbd>, or <kbd>⌘</kbd>+<kbd>R</kbd>) so it reads the file again. If nothing changed, you skipped one of the two. This is the first thing to check, every time.</p>
-</article>
-<article class="term" id="screen-reader" data-search="screen reader screen reader screen readers">
-  <h3>Screen reader</h3>
-  <p>Software that reads what is on screen out loud and lets you move around with the keyboard. It does not read your HTML; it reads what the browser worked out your HTML <em>means</em>, which is why the tags you choose matter so much.</p>
-  <p>Built in everywhere: VoiceOver on a Mac (<code>Cmd+F5</code>), Narrator on Windows (<code>Ctrl+Windows+Enter</code>), ChromeVox on a Chromebook (<code>Ctrl+Alt+Z</code>). Write the off switch down before you turn one on.</p>
-</article>
-<article class="term" id="screenshot" data-search="screenshot screenshot screenshots">
-  <h3>Screenshot</h3>
-  <p>A picture of your screen. Mac: <kbd>Shift</kbd>+<kbd>⌘</kbd>+<kbd>4</kbd>, then drag a box. Windows: <kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>. Chromebook: <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>Show windows</kbd>. You will use it for hand-ins and for showing someone exactly what went wrong.</p>
-</article>
-<article class="term" id="script" data-search="&lt;script&gt; … &lt;/script&gt; ">
-  <h3>&lt;script&gt; … &lt;/script&gt;</h3>
-  <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves</em> or <em>responds</em>, this is where it happens.</p>
-</article>
-<article class="term" id="self-closing" data-search="self-closing tag self-closing self-closing tag">
-  <h3>Self-closing tag</h3>
-  <p>A tag that is complete on its own, with no closing partner, because nothing goes inside it. The slash goes at the end: <code>&lt;br /&gt;</code>. You will meet <code>&lt;img … /&gt;</code> next chapter - an image has nothing inside it either.</p>
-</article>
-<article class="term" id="semantic-html" data-search="semantic html semantic html semantic markup">
-  <h3>Semantic HTML</h3>
-  <p>Using the tag that means the thing. A <code>&lt;button&gt;</code> for a button, an <code>&lt;a&gt;</code> for a link, a <code>&lt;label&gt;</code> for a label, real headings in order.</p>
-  <p>The highest-leverage thing in this chapter. A real button is focusable, works with Enter and Space, and announces itself as a button, all for free. A <code>&lt;div&gt;</code> painted to look like one does none of that until you add it back by hand, and you will miss some.</p>
-</article>
-<article class="term" id="service-worker" data-search="service worker service worker service workers background service worker">
-  <h3>Service worker</h3>
-  <p>A small file in an extension that runs in the background, outside any page. It is for jobs that are about the browser rather than about a web page: building a right-click menu, or deciding what the toolbar icon does. Often three lines long, and it has to be its own file.</p>
-</article>
-<article class="term" id="setinterval" data-search="setinterval setinterval">
-  <h3>setInterval</h3>
-  <p>The line of JavaScript that makes a page tick: <em>run this again every so many milliseconds</em>. <code>setInterval(update, 1000)</code> means run <code>update</code> once a second. It is the reason a countdown counts and a timer times. You will recognize it in every app that moves.</p>
-</article>
-<article class="term" id="side-panel" data-search="side panel side panel side panels">
-  <h3>Side panel</h3>
-  <p>A strip that opens down the side of the browser and <em>stays there</em> while you scroll, click links and move around. Unlike a popup, it does not close the moment you look away, which makes it the right shape for anything you want beside a page rather than on top of it.</p>
-</article>
-<article class="term" id="site-access" data-search="site access site access">
-  <h3>Site access</h3>
-  <p>What an extension is allowed to reach <strong>right now</strong>, which is not the same as what it asked for when you installed it. <strong>Right-click any extension's icon</strong> in the toolbar and you can change it to <em>On click</em> or <em>On specific sites</em> without uninstalling anything.</p>
-  <p>Most extensions work perfectly well on <em>On click</em>, and almost nobody tries.</p>
-</article>
-<article class="term" id="slider" data-search="slider slider sliders carousel">
-  <h3>Slider</h3>
-  <p>A row of cards shown one at a time, with a way to move between them. Also called a carousel. Asking for "a slider of cards" gets you what you pictured; asking for "make the pictures go sideways" gets you a guess.</p>
-</article>
-<article class="term" id="specification" data-search="specification (the spec) specification the spec spec block">
-  <h3>Specification (the spec)</h3>
-  <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.</p>
-</article>
-<article class="term" id="strong-em" data-search="&lt;strong&gt; and &lt;em&gt; ">
-  <h3>&lt;strong&gt; and &lt;em&gt;</h3>
-  <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;</code></p>
-</article>
-<article class="term" id="style" data-search="&lt;style&gt; … &lt;/style&gt; ">
-  <h3>&lt;style&gt; … &lt;/style&gt;</h3>
-  <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.</p>
-</article>
-<h2 class="letter-head" id="letter-T">T</h2>
-<article class="term" id="tab-order" data-search="tab order tab order tabbing order">
-  <h3>Tab order</h3>
-  <p>The order Tab visits things in. By default it follows the order of your HTML, which is one more reason to write the page in the order it should be read. If the tab order jumps around the screen at random, something is reordering things with CSS and the markup no longer matches what people see.</p>
-</article>
-<article class="term" id="tag" data-search="tag tag tags">
-  <h3>Tag</h3>
-  <p>A word in angle brackets that tells the browser what something is: <code>&lt;h1&gt;</code> means <em>a big heading</em>, <code>&lt;p&gt;</code> means <em>a paragraph</em>. Most tags come in pairs, like bookends, with your content between them:</p>
-  <pre class="sample">&lt;h1&gt;Hello, world&lt;/h1&gt;</pre>
-  <p>The tags never show on the page. Only the words between them do.</p>
-</article>
-<article class="term" id="telling-vs-checking" data-search="telling is not checking telling is not checking">
-  <h3>Telling is not checking</h3>
-  <p>You asked the AI for something. It said yes. Those are two different facts, and only one of them is evidence.</p>
-  <p>The biggest idea in this course, and it is not really about accessibility - it is about every instruction you will ever give an AI. The output looking right is not the same as the output being right, and the only way to close that gap is to go and look.</p>
-</article>
-<article class="term" id="text-node" data-search="text node text node text nodes">
-  <h3>Text node</h3>
-  <p>One run of readable text on a page, with no tags inside it. Code that wants to change words goes looking for text nodes rather than rewriting the whole page, because the whole page includes tags, web addresses and the page's own code - and rewriting those breaks it.</p>
-  <p>A phrase split over two lines in the source is two things to the computer, which is why some matches quietly fail.</p>
-</article>
-<article class="term" id="devtools-accessibility" data-search="the accessibility tab accessibility pane accessibility tab">
-  <h3>The Accessibility tab</h3>
-  <p>In Developer Tools: the Elements panel, then the sidebar on the right where Styles and Computed live. It is usually hidden behind the small <strong>≫</strong> button at the end of that row, which is why almost nobody finds it. It shows what the selected element is <em>called</em> and what it counts as.</p>
-  <p>Easier route: press <code>Ctrl+Shift+P</code> (<code>Cmd+Shift+P</code> on a Mac) with Developer Tools open and type what you want.</p>
-</article>
-<article class="term" id="copy-button" data-search="the copy button copy button">
-  <h3>The Copy button</h3>
-  <p>The small button in the corner of a code block in the AI's reply. It copies the whole block, exactly. Always use it instead of selecting the code by hand, which misses the top or bottom line more often than you would think.</p>
-</article>
-<article class="term" id="same-folder-rule" data-search="the same-folder rule same-folder rule same folder rule">
-  <h3>The same-folder rule</h3>
-  <p>When a page asks for another file by name - a picture, a second page - the browser looks in the folder the page is in. Just there, nowhere else. So everything an app needs sits beside the app: one folder, one address, and a name is enough to find anything at it.</p>
-</article>
-<article class="term" id="six-landmarks" data-search="the six landmarks six landmarks the orientation six landmarks">
-  <h3>The six landmarks</h3>
-  <p>The six tags every page in this course has, in the same arrangement: <code>&lt;html&gt;</code> around everything; <code>&lt;head&gt;</code> for settings, holding <code>&lt;title&gt;</code> and <code>&lt;style&gt;</code>; and <code>&lt;body&gt;</code> for everything you see, with <code>&lt;script&gt;</code> usually at its end. Learn them as a map. A 300-line file becomes three rooms to look in.</p>
-</article>
-<article class="term" id="title" data-search="&lt;title&gt; … &lt;/title&gt; ">
-  <h3>&lt;title&gt; … &lt;/title&gt;</h3>
-  <p>The page's name. It lives in the head and shows on the <strong>browser tab</strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.</p>
-  <pre class="sample">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;</pre>
-</article>
-<article class="term" id="txtedtr" data-search="txtedtr txtedtr text editor plain-text editor">
-  <h3>TXTEDTR</h3>
-  <p>The plain-text editor we use in this course, at <a href="https://txtedtr.app" target="_blank" rel="noopener">txtedtr.app</a>. It is one HTML file, built with AI, by your instructor - the same kind of thing you are making. Notepad++, VS Code, or Sublime Text work too. What does not work: Word, Google Docs, TextEdit, Notepad.</p>
-</article>
-<h2 class="letter-head" id="letter-U">U</h2>
-<article class="term" id="universal-design" data-search="universal design universal design universally designed">
-  <h3>Universal design</h3>
-  <p>Designing something so that the widest possible range of people can use it, without anybody needing a special version.</p>
-  <p>The classic example is not on a screen at all: the dropped kerb at a street corner was put there for wheelchairs, and it is now used by everybody with a stroller, a suitcase, a delivery trolley or a bad knee. Captions were for deaf viewers; now half the world watches with them on in a noisy room.</p>
-  <p>That is the pattern, and it is why this is not a favor you do for a small group. Big clear buttons, labels that stay put, text you can read in sunlight, something that works without a mouse - every one of those is better for <em>everyone</em>, some of the time, and essential for <em>somebody</em>, all of the time.</p>
-</article>
-<article class="term" id="unpacked" data-search="unpacked unpacked unpacked extension unpacked extensions">
-  <h3>Unpacked</h3>
-  <p>An extension running straight from a folder on your machine, rather than installed from the Chrome Web Store. Unpacked means: this computer only, no syncing to your other devices, and no automatic updates. For a tool you built for yourself, all three are fine.</p>
-</article>
-<article class="term" id="user-input" data-search="user input user input">
-  <h3>User input</h3>
-  <p>Anything the person using your app types, taps or chooses while it is running. The Decision Maker's options are user input. The Magic 8-Ball's answers are not - you wrote those before anyone used it.</p>
-</article>
-<h2 class="letter-head" id="letter-V">V</h2>
-<article class="term" id="value" data-search="value a value">
-  <h3>Value</h3>
-  <p>A fact the code uses: the <code>25</code> in a Pomodoro timer, the date in a countdown. Values often sit near the top of the script so you can find them. Changing a value changes how the whole app behaves, which is why it is a step up from changing words.</p>
-</article>
-<article class="term" id="version-copy" data-search="version copy version copy versions the version">
-  <h3>Version copy</h3>
-  <p>A duplicate of a working file, made <em>before</em> you let the AI change it: <code>pomodoro.html</code> becomes <code>pomodoro-v1.html</code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.</p>
-</article>
-<article class="term" id="vibe-coding" data-search="vibe coding vibe coding vibe code">
-  <h3>Vibe coding</h3>
-  <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.</p>
-</article>
-<h2 class="letter-head" id="letter-W">W</h2>
-<article class="term" id="web-page" data-search="web page web page web pages webpage">
-  <h3>Web page</h3>
-  <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.</p>
-</article>
-<article class="term" id="whitespace" data-search="whitespace whitespace white space indentation indented">
-  <h3>Whitespace</h3>
-  <p>Spaces, tabs, and new lines. The browser squashes any amount of it down to one space, so pressing Enter in the code does nothing and ten spaces look like one. All that neat indentation in the AI's code is for <em>you</em>, so you can see what is inside what. The browser ignores it.</p>
-</article>
+<noscript>
+  <p>This page shows one chapter at a time and needs JavaScript to do it.
+  Every handout is also linked from the course index page.</p>
+</noscript>
 
 <script>
-  // Filter the list as you type. Matches the term, its other spellings, and
-  // the words of its definition. Letter headings hide when their group is empty.
-  (function () {
-    const box = document.getElementById('vocab-filter');
-    const count = document.getElementById('vocab-count');
-    const terms = Array.from(document.querySelectorAll('.reading .term'));
-    const heads = Array.from(document.querySelectorAll('.letter-head'));
-    box.addEventListener('input', function () {
-      const q = box.value.trim().toLowerCase();
-      let shown = 0;
-      terms.forEach(function (t) {
-        const hit = !q || t.dataset.search.includes(q) || t.textContent.toLowerCase().includes(q);
-        t.hidden = !hit; if (hit) shown++;
-      });
-      heads.forEach(function (h) {
-        let next = h.nextElementSibling, any = false;
-        while (next && !next.classList.contains('letter-head')) { if (!next.hidden) any = true; next = next.nextElementSibling; }
-        h.hidden = !any;
-      });
-      count.textContent = shown + (shown === 1 ? ' term' : ' terms');
+  // ------------------------------------------------------------------
+  // 1. THE WHOLE COURSE, AS DATA
+  // Written by the build. One entry per chapter that actually has pages.
+  // ------------------------------------------------------------------
+  var CHAPTERS = [{"n":1,"key":"files","title":"Out of the chat, onto your computer","blurb":"Every web page you have ever seen is a text file. This is the map of that file - six landmarks, a few tags, and the reason spacing never matters.","labs":[{"title":"The Structure of a Web Page","time":"Reading · about 20 minutes","lede":"Every web page you have ever seen is a text file. This is the map of that file - six landmarks, a few tags, and the reason spacing never matters.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/00-The-Structure-of-a-Web-Page.html"},{"title":"Setting Up Your Environment","time":"About 20 minutes","lede":"A folder, a text editor, and one settings change.","kind":"setup","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/01-Setting-Up-Your-Environment.html"},{"title":"QR Code Generator v2 - Make It Yours, by Asking","time":"About 30 minutes","lede":"The QR code generator from orientation, saved as a real file on your computer - and, if you like, changed three times without touching a line of code.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/02-QR-Code-Generator-v2-Make-It-Yours-by-Asking.html"},{"title":"Hello, World - Typed by Hand","time":"About 15 minutes","lede":"The smallest complete web page there is, typed by you - just this once.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/03-Hello-World-Typed-by-Hand.html"},{"title":"Pomodoro Timer - Twenty-Five Minutes of Focus","time":"About 25 minutes","lede":"A focus timer with Start, Pause, and Reset.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/04-Pomodoro-Timer-Twenty-Five-Minutes-of-Focus.html"},{"title":"Countdown to Something You Care About","time":"About 20 minutes","lede":"A page that counts down to your date and updates itself every second.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/01-files/05-Countdown-to-Something-You-Care-About.html"}]},{"n":2,"key":"organize","title":"A page is never alone","blurb":"Not homework. The one idea is at the top, and everything under it is here for the moment a picture will not show up or a link goes nowhere.","labs":[{"title":"The Field Guide to Files and Folders","time":"Reference · dip in when you are stuck","lede":"Not homework. The one idea is at the top, and everything under it is here for the moment a picture will not show up or a link goes nowhere.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/00-The-Field-Guide-to-Files-and-Folders.html"},{"title":"The Great Tidy-Up","time":"About 25 minutes","lede":"Four loose files become four apps with addresses of their own.","kind":"setup","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/01-The-Great-Tidy-Up.html"},{"title":"Recipe Card, with a Photo","time":"About 30 minutes","lede":"A card for something you actually make, with a picture of it sitting beside the page.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/02-Recipe-Card-with-a-Photo.html"},{"title":"A Second Page, Linked Both Ways","time":"About 25 minutes","lede":"Your recipe gets a page of notes beside it, and a link in each direction.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/03-A-Second-Page-Linked-Both-Ways.html"},{"title":"A Page of Your Pictures","time":"About 25 minutes","lede":"Five of your own photos, each on a card, one at a time, with buttons to move between them.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/04-A-Page-of-Your-Pictures.html"},{"title":"Captions and Alt Text, from One List","time":"About 25 minutes","lede":"Every card gets words, and all the words move to one place at the top.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/05-Captions-and-Alt-Text-from-One-List.html"},{"title":"Your Page, via the Interview Prompt","time":"About 40 minutes","lede":"A page about you - or a persona you choose - built by an AI that interviews you first.","kind":"lab","anchor":true,"href":"https://corydave.github.io/websitetest/mc/csc-145/02-organize/06-Your-Page-via-the-Interview-Prompt.html"}]},{"n":3,"key":"publish","title":"GitHub Pages and the hub","blurb":"Not homework. The first two sections are the idea; everything after them is here for the moment your page says 404 and you have no idea why.","labs":[{"title":"The Field Guide to Putting Your Work Online","time":"Reference - dip in when you are stuck","lede":"Not homework. The first two sections are the idea; everything after them is here for the moment your page says 404 and you have no idea why.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/00-The-Field-Guide-to-Putting-Your-Work-Online.html"},{"title":"Your Site Exists","time":"About 25 minutes","lede":"By the end of this you have a web address of your own, with something of yours at it.","kind":"setup","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/01-Your-Site-Exists.html"},{"title":"Everything You Have Made, Online","time":"About 40 minutes","lede":"Seven folders go up, one of them breaks on purpose, and you learn the two things that will rescue you all semester.","kind":"setup","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/02-Everything-You-Have-Made-Online.html"},{"title":"When It Goes Wrong: Your 404","time":"About 20 minutes","lede":"Somebody is going to mistype your address. This decides what they see when they do.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/03-When-It-Goes-Wrong-Your-404.html"},{"title":"Your Hub Page","time":"About 45 minutes","lede":"One page at the front of your site that links to everything you have made, so nobody has to know your folder names.","kind":"lab","anchor":true,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/04-Your-Hub-Page.html"},{"title":"Does It Work on Your Phone?","time":"About 20 minutes","lede":"Your pages have claimed to work on a phone since week one. Nobody has ever checked.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/03-publish/05-Does-It-Work-on-Your-Phone.html"}]},{"n":4,"key":"share","title":"Apps worth sharing","blurb":"Required reading, and short on purpose. The one idea behind two of this week's labs.","labs":[{"title":"Information in a Link","time":"About 5 minutes","lede":"Required reading, and short on purpose. The one idea behind two of this week's labs.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/00-Information-in-a-Link.html"},{"title":"The Field Guide to Apps Worth Sharing","time":"Reference - dip in when you are curious or stuck","lede":"Not homework. Every lab this week works without it. This is here for the moment you wonder why something happened, or want to do more.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/00-The-Field-Guide-to-Apps-Worth-Sharing.html"},{"title":"Magic 8-Ball","time":"About 15 minutes","lede":"Ask it anything. It answers with words you wrote.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/01-Magic-8-Ball.html"},{"title":"Decision Maker","time":"About 20 minutes","lede":"Can't pick where to eat? Type in the options and let the app decide.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/02-Decision-Maker.html"},{"title":"Breathing Buddy","time":"About 20 minutes","lede":"A calm little app that paces your breathing, for the minute before an exam.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/03-Breathing-Buddy.html"},{"title":"Invite From a Link","time":"About 30 minutes","lede":"One page, a hundred different invites - the name comes from the link.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/04-Invite-From-a-Link.html"},{"title":"Decision Maker 2","time":"About 25 minutes","lede":"The Decision Maker learns to remember - by writing your list into a link.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/05-Decision-Maker-2.html"},{"title":"Choose Your Own Adventure","time":"About 50 minutes","lede":"You write the story. The AI builds the game. You pick what it looks like.","kind":"lab","anchor":true,"href":"https://corydave.github.io/websitetest/mc/csc-145/04-share/06-Choose-Your-Own-Adventure.html"}]},{"n":5,"key":"access","title":"Accessibility: did the AI keep its promise?","blurb":"We should be making web apps that are \"fully accessible\". It's time to do that with intention.","labs":[{"title":"The Field Guide to Who You Are Building For","time":"About 15 minutes","lede":"We should be making web apps that are \"fully accessible\". It's time to do that with intention.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/05-access/00-The-Field-Guide-to-Who-You-Are-Building-For.html"},{"title":"The Word Game Nobody Can Play","time":"About 40 minutes","lede":"Build a word game the way we've been building. Then try playing it without a mouse. Or your eyes closed.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/05-access/01-The-Word-Game-Nobody-Can-Play.html"},{"title":"One App, One Score","time":"About 30 minutes","lede":"Pick the app you're least sure about. Let Chrome tell you what's wrong with it. Then ask the AI to fix it.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/05-access/02-One-App-One-Score.html"},{"title":"Fix and Republish","time":"About 35 minutes","lede":"You fixed one thing. Now take a single app and fix everything you can find in it.","kind":"lab","anchor":true,"href":"https://corydave.github.io/websitetest/mc/csc-145/05-access/03-Fix-and-Republish.html"},{"title":"The Sign-Up Sheet","time":"About 30 minutes","lede":"A form anybody can fill in, that hands you back a link with the answers already in it.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/05-access/04-The-Sign-Up-Sheet.html"}]},{"n":6,"key":"extensions","title":"Changing pages you didn’t write","blurb":"Read this before lab 1. Everything else this week assumes it, and most people have never been told what an extension actually is.","labs":[{"title":"The Field Guide to Browser Extensions","time":"About 15 minutes - read this one first","lede":"Read this before lab 1. Everything else this week assumes it, and most people have never been told what an extension actually is.","kind":"reading","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/06-extensions/00-The-Field-Guide-to-Browser-Extensions.html"},{"title":"Your Own New Tab","time":"About 25 minutes","lede":"A launch pad with your links on it, replacing the page Chrome shows you fifty times a day.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/06-extensions/01-Your-Own-New-Tab.html"},{"title":"Find and Replace the Internet","time":"About 25 minutes","lede":"Pick a word. Pick what it should say instead. Now every page on one website agrees with you.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/06-extensions/02-Find-and-Replace-the-Internet.html"},{"title":"Quick Draw","time":"About 25 minutes","lede":"The things you retype every week, dropped into any box on any website with a right-click.","kind":"lab","anchor":false,"href":"https://corydave.github.io/websitetest/mc/csc-145/06-extensions/03-Quick-Draw.html"},{"title":"Page Notes","time":"About 40 minutes","lede":"A panel that sits beside any page, tells you what is in it, and remembers what you thought about it.","kind":"lab","anchor":true,"href":"https://corydave.github.io/websitetest/mc/csc-145/06-extensions/04-Page-Notes.html"}]}];
+
+  var root = document.getElementById('overview-root');
+
+  // What each kind of page is called, so the list says what things ARE.
+  var KIND_LABEL = { reading: 'Reading', setup: 'Setup', lab: 'Lab' };
+
+  // Anything that came from the build goes through here before it reaches
+  // the page, so a stray angle bracket in a title cannot break the layout.
+  function esc(text) {
+    return String(text == null ? '' : text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // The template filled the heading, the tab text and the ribbon with
+  // placeholders. Put them all in step with whatever we are showing.
+  function setHeadings(ribbon, title, lede) {
+    document.title = title + ' - Vibe Coding';
+    var heading = document.getElementById('lab-title');
+    var ribbonEl = document.getElementById('lab-ribbon');
+    var bar = document.getElementById('topbar-title');
+    var ledeEl = document.querySelector('.lede');
+    if (heading)  { heading.textContent = title; }
+    if (ribbonEl) { ribbonEl.textContent = ribbon; }
+    if (bar)      { bar.textContent = title; }
+    if (ledeEl)   { ledeEl.textContent = lede; }
+  }
+
+  // Where this page lives, without any ?chapter on the end. Used for the
+  // "All chapters" link and for tidying the address.
+  var OVERVIEW_URL = window.location.pathname;
+
+  // ------------------------------------------------------------------
+  // 2. ONE CHAPTER
+  // ------------------------------------------------------------------
+  function showChapter(chapter) {
+    setHeadings('Chapter ' + chapter.n, chapter.title,
+                chapter.blurb || 'Everything in this chapter, in order.');
+
+    var html = '<ol class="overview-list">';
+    chapter.labs.forEach(function (lab) {
+      var kind = KIND_LABEL[lab.kind] || 'Lab';
+      html += '<li class="overview-item' + (lab.anchor ? ' is-anchor' : '') + '">';
+      html +=   '<a class="overview-link" href="' + esc(lab.href) + '" target="_blank" rel="noopener">';
+      html +=     esc(lab.title);
+      html +=   '</a>';
+      html +=   '<p class="overview-meta">';
+      html +=     '<span class="overview-kind">' + esc(kind) + '</span>';
+      if (lab.anchor) {
+        html +=   '<span class="overview-kind is-anchor-tag">Hand this one in</span>';
+      }
+      if (lab.time) {
+        html +=   '<span class="overview-time">' + esc(lab.time) + '</span>';
+      }
+      html +=   '</p>';
+      if (lab.lede) {
+        html +=   '<p class="overview-lede">' + esc(lab.lede) + '</p>';
+      }
+      html += '</li>';
     });
+    html += '</ol>';
+    html += '<p class="overview-foot"><a href="' + esc(OVERVIEW_URL) + '">All chapters</a></p>';
+    root.innerHTML = html;
+  }
+
+  // ------------------------------------------------------------------
+  // 3. NO CHAPTER ASKED FOR: THE PICKER
+  // ------------------------------------------------------------------
+  function showPicker(note) {
+    setHeadings('Vibe Coding', 'Chapters', 'Pick a chapter to see what is in it.');
+
+    var html = note ? '<p class="overview-note">' + esc(note) + '</p>' : '';
+    html += '<ol class="overview-list is-picker">';
+    CHAPTERS.forEach(function (chapter) {
+      var count = chapter.labs.length;
+      html += '<li class="overview-item">';
+      html +=   '<a class="overview-link" href="?c=' + esc(chapter.key) + '">';
+      html +=     'Chapter ' + chapter.n + ' - ' + esc(chapter.title);
+      html +=   '</a>';
+      html +=   '<p class="overview-meta"><span class="overview-kind">';
+      html +=     count + (count === 1 ? ' page' : ' pages');
+      html +=   '</span></p>';
+      if (chapter.blurb) {
+        html +=   '<p class="overview-lede">' + esc(chapter.blurb) + '</p>';
+      }
+      html += '</li>';
+    });
+    html += '</ol>';
+    root.innerHTML = html;
+  }
+
+  // ------------------------------------------------------------------
+  // 4. WHICH CHAPTER DOES THE ADDRESS ASK FOR?
+  // ------------------------------------------------------------------
+  (function route() {
+    var params;
+    try {
+      params = new URL(window.location.href).searchParams;
+    } catch (e) {
+      showPicker('');       // a browser too old to read the address: show everything
+      return;
+    }
+
+    var asked = (params.get('c') || params.get('chapter') || '').trim();
+    if (!asked) { showPicker(''); return; }
+
+    // By KEY first, because that is the form that never changes.
+    var found = null;
+    CHAPTERS.forEach(function (chapter) {
+      if (chapter.key.toLowerCase() === asked.toLowerCase()) { found = chapter; }
+    });
+
+    // Then by number, for a ?chapter=5 somebody typed by hand. Tidy the
+    // address to the key form afterwards, so a link copied from here keeps
+    // working even after the chapters are renumbered.
+    if (!found && /^[0-9]+$/.test(asked)) {
+      CHAPTERS.forEach(function (chapter) {
+        if (String(chapter.n) === asked) { found = chapter; }
+      });
+      if (found && window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', OVERVIEW_URL + '?c=' + found.key);
+      }
+    }
+
+    if (found) {
+      showChapter(found);
+    } else {
+      showPicker('There is no chapter called "' + asked + '". Here is everything.');
+    }
   })();
 </script>
+
     </main>
 
     <footer>
