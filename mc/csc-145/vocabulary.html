@@ -3,7 +3,7 @@
   Reading: Vocabulary
   Chapter: Vibe Coding
 
-  GENERATED FILE - do not edit. Built 2026-10-06 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-10-12 by build/build.py from
   chapters/shared/vocabulary.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1144,9 +1144,9 @@ div.note > :last-child { margin-bottom: 0; }
 <div class="vocab-search">
   <label for="vocab-filter">Find a term</label>
   <input type="search" id="vocab-filter" placeholder="Type to filter…" autocomplete="off">
-  <span class="vocab-count" id="vocab-count" aria-live="polite">112 terms</span>
+  <span class="vocab-count" id="vocab-count" aria-live="polite">128 terms</span>
 </div>
-<nav class="letters" aria-label="Jump to a letter"><a href="#letter-%">%</a> <a href="#letter-<"><</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a> <a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
+<nav class="letters" aria-label="Jump to a letter"><a href="#letter-%">%</a> <a href="#letter-<"><</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-G">G</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a> <a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
 
 <h2 class="letter-head" id="letter-%">%</h2>
 <article class="term" id="url-encoding" data-search="%20 (url encoding) %20 url encoding">
@@ -1279,6 +1279,12 @@ Canandaigua, NY 14424</pre>
   <h3>Card</h3>
   <p>A box holding one thing - a picture, a heading, a couple of lines. Usually with rounded corners, a soft shadow and space around the edge. It is one of the most useful words you can say to an AI, because it is the word the people who build these things use.</p>
 </article>
+<article class="term" id="cdn" data-search="cdn cdn cdns content delivery network">
+  <h3>CDN</h3>
+  <p>Short for <em>content delivery network</em>: a company that keeps copies of popular libraries on computers all over the world, so a page can fetch one quickly wherever it is opened. The two big free ones are <strong>cdnjs</strong> and <strong>jsDelivr</strong>.</p>
+  <p>A library address reads like a label: who is handing it over, which library, which version, which file.</p>
+  <pre class="sample">cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js</pre>
+</article>
 <article class="term" id="chrome-web-store" data-search="chrome web store chrome web store web store">
   <h3>Chrome Web Store</h3>
   <p>Where extensions normally come from. Putting one there costs a one-off developer fee and means waiting in a review queue, which is why most people's own tools never go in it. Extensions cannot run on the Web Store's own pages, so it is a bad place to test yours.</p>
@@ -1323,10 +1329,25 @@ Canandaigua, NY 14424</pre>
   <h3>CSS</h3>
   <p>The language that says what a page <em>looks like</em>: colors, sizes, fonts, spacing. It lives inside the <code>&lt;style&gt;</code> tag. In this course the AI writes almost all of it; you will learn to find the one line you want to change.</p>
 </article>
+<article class="term" id="csv" data-search="csv csv .csv">
+  <h3>CSV</h3>
+  <p><em>Comma-separated values</em>: a spreadsheet saved as plain text, one row per line, with commas between the columns. Every spreadsheet program can open and save it, which makes it the easiest way to move data between programs.</p>
+  <pre class="sample">Month,Tacos,Burritos
+January,420,310
+February,388,295</pre>
+</article>
 <h2 class="letter-head" id="letter-D">D</h2>
+<article class="term" id="dashboard" data-search="dashboard dashboard dashboards">
+  <h3>Dashboard</h3>
+  <p>A screen that shows what a pile of numbers means at a glance: a few big numbers at the top, charts underneath. The spreadsheet holds the data; the dashboard tells the story.</p>
+</article>
 <article class="term" id="definition-of-done" data-search="definition of done definition of done">
   <h3>Definition of Done</h3>
   <p>The one sentence on every lab that says what finished looks like. If your app does that, the lab is done. Everything else in the lab is a bonus.</p>
+</article>
+<article class="term" id="dependency" data-search="dependency dependency dependencies depends on">
+  <h3>Dependency</h3>
+  <p>A library your app cannot work without. Take the line away and the app breaks. Every library you borrow is a dependency, and every dependency is something you are trusting.</p>
 </article>
 <article class="term" id="developer-console" data-search="developer console developer console the console devtools">
   <h3>Developer Console</h3>
@@ -1363,6 +1384,15 @@ Canandaigua, NY 14424</pre>
   <p>The outline a browser draws around whatever has focus. Browsers put it there for free and it is the only way a keyboard user can see where they are.</p>
   <p>Removing it because it looks untidy is the single most common accessibility mistake on the web, and it is usually one line: <code>outline: none</code>. If you take it away, replace it with something clearer. Never just take it away.</p>
 </article>
+<article class="term" id="fork" data-search="fork fork forks forked">
+  <h3>Fork</h3>
+  <p>A copy of somebody's project that other people carry on working on separately. When a popular library stops being looked after, a fork is often how it keeps going.</p>
+</article>
+<h2 class="letter-head" id="letter-G">G</h2>
+<article class="term" id="game-loop" data-search="game loop game loop the game loop">
+  <h3>Game loop</h3>
+  <p>The heartbeat of every game: a few lines that run about sixty times a second. Each time, they move things a little, check what touched what, and draw the new picture. Everything that seems to happen continuously in a game is really this loop running very fast.</p>
+</article>
 <h2 class="letter-head" id="letter-H">H</h2>
 <article class="term" id="h1" data-search="&lt;h1&gt; … &lt;/h1&gt; ">
   <h3>&lt;h1&gt; … &lt;/h1&gt;</h3>
@@ -1396,6 +1426,10 @@ Canandaigua, NY 14424</pre>
 <article class="term" id="inspect" data-search="inspect inspect">
   <h3>Inspect</h3>
   <p>Right-click anything on a page and choose <strong>Inspect</strong> to see the exact line of code behind it, highlighted. The fastest way to find out what file name a broken picture is actually asking for.</p>
+</article>
+<article class="term" id="invented-package" data-search="invented libraries (slopsquatting) invented library invented package slopsquatting made-up library made up a name">
+  <h3>Invented libraries (slopsquatting)</h3>
+  <p>AI tools sometimes suggest a library that does not exist, and they tend to invent the same names repeatedly. Anyone can then publish a real library under that invented name, with whatever code they like inside. Checking that a library is real before you use it is the whole defense.</p>
 </article>
 <article class="term" id="iteration" data-search="iteration iteration iterations iterate">
   <h3>Iteration</h3>
@@ -1456,6 +1490,10 @@ Canandaigua, NY 14424</pre>
   <p>Chrome remembers where that folder is, not what is in it. Move or rename it and the extension stops working.</p>
 </article>
 <h2 class="letter-head" id="letter-M">M</h2>
+<article class="term" id="maintained" data-search="maintained maintained unmaintained looking after it">
+  <h3>Maintained</h3>
+  <p>A library somebody is still looking after: fixing problems, answering questions, releasing new versions. You can tell by when its files were last changed on GitHub. An unmaintained library still works; it just means nobody is coming to fix it if a problem turns up.</p>
+</article>
 <article class="term" id="match-pattern" data-search="match pattern match pattern match patterns matches line">
   <h3>Match pattern</h3>
   <p>The line in a manifest that says which websites a content script runs on. A single site looks like <code>https://en.wikipedia.org/*</code>, where the <code>*</code> means "any page on it". The widest possible is <code>&lt;all_urls&gt;</code>, which means every page you ever open.</p>
@@ -1464,6 +1502,15 @@ Canandaigua, NY 14424</pre>
 <article class="term" id="milliseconds" data-search="milliseconds milliseconds millisecond">
   <h3>Milliseconds</h3>
   <p>Thousandths of a second. JavaScript measures time in them, so <code>1000</code> means one second and <code>60000</code> means one minute. When you see a suspiciously large number next to a timer, it is probably milliseconds.</p>
+</article>
+<article class="term" id="minified" data-search="minified minified .min.js min.js">
+  <h3>Minified</h3>
+  <p>Code squashed onto as few lines as possible, with the spaces and comments removed, so it downloads faster. The <code>.min</code> in <code>qrcode.min.js</code> means minified. It is for computers, not for reading.</p>
+</article>
+<article class="term" id="trained-model" data-search="model (trained) trained model the model a model models">
+  <h3>Model (trained)</h3>
+  <p>A file full of numbers that a computer adjusted over and over, while looking at huge numbers of examples, until it got good at one job - finding faces, say, or predicting the next word. Nobody writes a model line by line; it is <em>trained</em>.</p>
+  <p>The AI you prompt is a very large model. The one in the googly eyes lab is a tiny one that only knows faces, and it runs right on your computer.</p>
 </article>
 <h2 class="letter-head" id="letter-N">N</h2>
 <article class="term" id="nan" data-search="nan nan">
@@ -1476,6 +1523,10 @@ Canandaigua, NY 14424</pre>
   <pre class="sample">&lt;p&gt;Some &lt;strong&gt;bold&lt;/strong&gt; words&lt;/p&gt;</pre>
 </article>
 <h2 class="letter-head" id="letter-O">O</h2>
+<article class="term" id="official-source" data-search="official source official source official line">
+  <h3>Official source</h3>
+  <p>The library's own website, run by the people who wrote it. Big CDNs keep copies, and copies can fall behind. When in doubt, get the line from the official source, not from the AI.</p>
+</article>
 <article class="term" id="bookends" data-search="opening and closing tags (bookends) bookends bookend opening tag closing tag opening and closing tags">
   <h3>Opening and closing tags (bookends)</h3>
   <p>The two halves of a tag pair. The <strong>opening tag</strong> says <em>start</em>: <code>&lt;p&gt;</code>. The <strong>closing tag</strong> is the same word with a slash in front and says <em>stop</em>: <code>&lt;/p&gt;</code>. Whatever sits between the bookends is the content. Forget the closing tag and everything after it gets swept in - a whole page turns into one giant heading.</p>
@@ -1492,6 +1543,10 @@ Canandaigua, NY 14424</pre>
 <article class="term" id="permission" data-search="permission permission permissions">
   <h3>Permission</h3>
   <p>Something an extension asks to be allowed to do, listed in its manifest and shown to you before you install it. "Read and change all your data on all websites" is the big one, and it means exactly what it says: while that extension is on, it can see anything on any page you open, including things you are typing.</p>
+</article>
+<article class="term" id="pinned" data-search="pinning a version pinned pin the version pinning pin a version">
+  <h3>Pinning a version</h3>
+  <p>Putting an exact version number in a library's address, so your page always gets that same version. An address that says <code>latest</code>, or leaves the number out, quietly gets whatever is newest the day the page opens - which is how an app breaks without you changing anything.</p>
 </article>
 <article class="term" id="placeholder" data-search="placeholder is not a label placeholder placeholder text">
   <h3>Placeholder is not a label</h3>
@@ -1585,6 +1640,10 @@ Canandaigua, NY 14424</pre>
   <h3>&lt;style&gt; … &lt;/style&gt;</h3>
   <p>Where the looks live: colors, fonts, sizes, spacing. It sits in the head and is written in CSS. Usually the longest part of a file, and the part you will change least by hand.</p>
 </article>
+<article class="term" id="supply-chain-attack" data-search="supply chain attack supply chain attack supply chain attacks supply chain">
+  <h3>Supply chain attack</h3>
+  <p>An attack that comes in through something you borrowed rather than something you built. In 2024, the address of a library called polyfill.io changed hands, and the new owner sent harmful code to visitors of more than a hundred thousand websites that had trusted it for years. None of those sites changed a thing.</p>
+</article>
 <h2 class="letter-head" id="letter-T">T</h2>
 <article class="term" id="tab-order" data-search="tab order tab order tabbing order">
   <h3>Tab order</h3>
@@ -1610,6 +1669,17 @@ Canandaigua, NY 14424</pre>
   <h3>The Accessibility tab</h3>
   <p>In Developer Tools: the Elements panel, then the sidebar on the right where Styles and Computed live. It is usually hidden behind the small <strong>≫</strong> button at the end of that row, which is why almost nobody finds it. It shows what the selected element is <em>called</em> and what it counts as.</p>
   <p>Easier route: press <code>Ctrl+Shift+P</code> (<code>Cmd+Shift+P</code> on a Mac) with Developer Tools open and type what you want.</p>
+</article>
+<article class="term" id="background-check" data-search="the background check background check the background check four questions">
+  <h3>The background check</h3>
+  <p>Four questions to ask about any library before you trust it:</p>
+  <ol>
+    <li><strong>Is it real?</strong></li>
+    <li><strong>Where is it coming from?</strong></li>
+    <li><strong>Is anybody still looking after it?</strong></li>
+    <li><strong>Is this the newest version?</strong></li>
+  </ol>
+  <p>Old is not the same as bad. Old <em>and</em> doing something risky is the thing to watch.</p>
 </article>
 <article class="term" id="copy-button" data-search="the copy button copy button">
   <h3>The Copy button</h3>
@@ -1656,6 +1726,10 @@ Canandaigua, NY 14424</pre>
   <h3>Version copy</h3>
   <p>A duplicate of a working file, made <em>before</em> you let the AI change it: <code>pomodoro.html</code> becomes <code>pomodoro-v1.html</code>. The plain name is always the current version; the numbered copies are the history. If an iteration breaks things, the copy is your way back.</p>
 </article>
+<article class="term" id="version-number" data-search="version number version number version numbers">
+  <h3>Version number</h3>
+  <p>Which release of a library you are getting, usually three numbers like <code>4.5.1</code>. The first changes when the library changes in a way that might break your app, the second when something new is added, the third for small fixes.</p>
+</article>
 <article class="term" id="vibe-coding" data-search="vibe coding vibe coding vibe code">
   <h3>Vibe coding</h3>
   <p>Building software by describing what you want to an AI in plain language, running what it gives you, and asking for changes until it is right. You steer; the AI types. The loop is: ask, copy, paste over, save, refresh.</p>
@@ -1664,6 +1738,10 @@ Canandaigua, NY 14424</pre>
 <article class="term" id="web-page" data-search="web page web page web pages webpage">
   <h3>Web page</h3>
   <p>A text file that a browser knows how to read and draw. The file describes what is on the page (words, headings, buttons) and how it should look and behave. Every page you have ever visited is one of these, no matter how fancy.</p>
+</article>
+<article class="term" id="wasm" data-search="webassembly (wasm) wasm webassembly">
+  <h3>WebAssembly (wasm)</h3>
+  <p>A way to run very fast code inside a web page. Libraries that do heavy work - tracking a face thirty times a second, for instance - often ship that part as <code>.wasm</code> files alongside their JavaScript. The two halves are made to fit each other, so pin them to the same version.</p>
 </article>
 <article class="term" id="whitespace" data-search="whitespace whitespace white space indentation indented">
   <h3>Whitespace</h3>
