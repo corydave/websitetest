@@ -3,7 +3,7 @@
   Lab: Roll the Ball
   Chapter: Code other people wrote
 
-  GENERATED FILE - do not edit. Built 2026-10-12 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-10-13 by build/build.py from
   chapters/06-libraries/02-roll-the-ball.md. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1048,18 +1048,14 @@ div.note > :last-child { margin-bottom: 0; }
         <div class="step-body" id="body-1">
           <p>A ball sitting on a floor. You roll it around with the arrow keys. Three gold coins spin in the air, and when you roll into one, it vanishes and your score goes up. Get all three and you win.</p>
           <p>That is a game. It's a very small one, but it's a game. Every 3D game has the same bones: a world, a thing you control, things to collect, and a score.</p>
-          <p>This one is built on <strong>Three.js</strong>, the most popular 3D library on the web. Remember the 3D world from last lab? A-Frame is built on top of Three.js. Today you skip the friendly layer and borrow the engine underneath it.</p>
-          <p><strong>Definition of Done:</strong> <code>roll-the-ball/index.html</code> opens from your <code>vibe-coding</code> folder, you can roll the ball with the keyboard and collect all three coins, and you have checked which version of Three.js it uses.</p>
-          <!-- DEMO CARD - a link to your finished version of this lab.
-               To turn it on: put the URL on the demo: line in the lab source and rebuild,
-               or (quick fix) replace the example URL below and remove this comment's markers.
-          <a class="demo-card" href="https://example.com/your-finished-version" target="_blank" rel="noopener">
+          <p>This one is built on <code>Three.js</code>, the most popular 3D library on the web. Remember the 3D world from last lab? <code>A-Frame</code> is built on top of <code>Three.js</code>. Today you skip the friendly layer and steal the engine underneath it.</p>
+          <p><strong>Definition of Done:</strong> <code>roll-the-ball/index.html</code> opens from your <code>vibe-coding</code> folder, you can roll the ball with the keyboard and collect all three coins, and you have checked which version of <code>Three.js</code> it uses.</p>
+          <a class="demo-card" href="https://corydave.github.io/vibe-coding/roll-the-ball/" target="_blank" rel="noopener">
             <span class="demo-row">
               <span><span class="demo-label">See Example</span><span class="demo-title">Open the instructor’s version in a new tab</span></span>
               <span class="demo-arrow" aria-hidden="true">→</span>
             </span>
           </a>
-          -->
         </div>
       </section>
       <!-- ============ 2 - ASK FOR IT ============ -->
@@ -1075,11 +1071,11 @@ div.note > :last-child { margin-bottom: 0; }
         <div class="step-body" id="body-2" hidden>
           <p>Start a new chat and describe the game. Make sure it says:</p>
           <ul>
-            <li>Build it with the <strong>Three.js</strong> library</li>
-            <li>A big flat <strong>floor</strong>, seen from above at an angle, so I can see the whole thing</li>
-            <li>A <strong>ball</strong> I roll with the <strong>arrow keys or WASD</strong>. It should not be able to roll off the edge</li>
-            <li><strong>Three gold coins</strong> floating and spinning in different places. Rolling into one <strong>collects</strong> it</li>
-            <li>A <strong>score</strong> on the screen, and a <strong>"You got them all!"</strong> message with a <strong>Play again</strong> button at the end</li>
+            <li>Build it with the <code>Three.js</code> library</li>
+            <li>A big flat floor, seen from above at an angle, so I can see the whole thing</li>
+            <li>A ball I roll with the arrow keys or WASD. It should not be able to roll off the edge</li>
+            <li>Three gold coins floating and spinning in different places. Rolling into one collects it</li>
+            <li>A score on the screen, and a "You got them all!" message with a "Play again" button at the end</li>
             <li>Every time the score changes, say it out loud for screen readers</li>
           </ul>
           <p>Then paste the specification at the end of your prompt, exactly as it is.</p>
@@ -1115,8 +1111,8 @@ div.note > :last-child { margin-bottom: 0; }
         <div class="step-body" id="body-3" hidden>
           <ol>
             <li>Make a new folder: <code>vibe-coding/roll-the-ball</code>.</li>
-            <li>Copy the code, paste it into TXTEDTR, and <strong>Save as</strong> <code>index.html</code> inside that folder.</li>
-            <li>Double-click <code>index.html</code>. Roll into all three coins. Press <strong>Play again</strong>.</li>
+            <li>Copy the code, paste it into TXTEDTR, and Save as <code>index.html</code> inside that folder.</li>
+            <li>Double-click <code>index.html</code>. Roll into all three coins. Press "Play again".</li>
           </ol>
           <figure class="tree">
             <pre role="img" aria-label="Folder diagram. The vibe-coding folder contains the app folders from earlier chapters, the world folder from the last lab, and a new roll-the-ball folder holding index.html.">vibe-coding/
@@ -1124,15 +1120,15 @@ div.note > :last-child { margin-bottom: 0; }
 ├── world/
 └── roll-the-ball/
     └── index.html   <span class="here">← this lab</span></pre>
-            <figcaption>Same shape as every app. The 3D engine arrives from the internet when the page opens.</figcaption>
+            <figcaption>Same as every other app. The 3D engine arrives from the internet when the page opens.</figcaption>
           </figure>
-          <p><strong>Last: the background check.</strong> Run all four questions on the Three.js line, but spend your time on the last one: <strong>is this the newest version?</strong></p>
+          <p>Last - the background check. Run all four questions on the <code>Three.js</code> line, but spend your time on the last one: <em>is this the newest version?</em></p>
           <ul>
-            <li>Find the version number in your file's library comment, or in the address. It may look like <code>0.160.0</code>, or like <code>r128</code>. Three.js counts its releases, so <code>r128</code> means release 128, and <code>0.160.0</code> means release 160.</li>
-            <li>Go to <strong>threejs.org</strong>. The number of the newest release is near the top of the page.</li>
-            <li>Compare the two. <strong>How many releases behind is yours?</strong></li>
+            <li>Find the version number in your file's library comment, or in the address. It may look like <code>0.160.0</code>, or like <code>r128</code>. <code>Three.js</code> counts its releases, so <code>r128</code> means release 128, and <code>0.160.0</code> means release 160.</li>
+            <li>Go to <a href="https://threejs.org/"><code>threejs.org</code></a>. The number of the newest release is near the top of the page.</li>
+            <li>Compare the two. How many releases behind is yours?</li>
           </ul>
-          <p>Write down your verdict in a few words. There is a good chance your AI handed you an old one. Read it, below, explains why, and whether that matters.</p>
+          <p>Write down your findings in a few words. There is a good chance your AI handed you an old one. Read it, below, explains why, and whether that matters.</p>
 
           <h3>Troubleshooting</h3>
           <p>Every lab has a few ways to go sideways. None of them mean you did something wrong - they mean you’re doing the lab. Scan the titles for what you’re seeing and open that one.</p>
@@ -1265,19 +1261,19 @@ div.note > :last-child { margin-bottom: 0; }
         </div>
         <div class="step-body" id="body-4" hidden>
           <div class="q">
-            <p><strong>Your Three.js is many releases old, and the game works fine.</strong> Should you change it?</p>
+            <p>Your <code>Three.js</code> is many releases old, and the game works fine. Should you change it?</p>
             <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-1">Show answer</button>
-            <div class="answer" id="ans-1" hidden>Not necessarily. Last lab's question was <em>is it real?</em> This lab's is <em>how old is my copy?</em>, and the answer depends on what the code is doing. An old copy of a 3D engine drawing a ball and three coins on your own computer is not a danger to anybody. <strong>An old copy with a known security problem is different</strong> - you will meet one of those in the last lab of the chapter, and that one you will fix. The Grow step below shows how to move to the newest version if you want to.</div>
+            <div class="answer" id="ans-1" hidden>Not necessarily. Last lab's question was <em>is it real?</em> This lab's is <em>how old is my copy?</em>, and the answer depends on what the code is doing. An old copy of a 3D engine drawing a ball and three coins on your own computer is not a danger to anybody. An old copy with a known security problem is different - you will meet one of those in the last lab of the chapter, and that one you will fix. The Grow step below shows how to move to the newest version if you want to.</div>
           </div>
           <div class="q">
-            <p><strong>Why would the AI give you an old version in the first place?</strong></p>
+            <p>Why would the AI give you an old version in the first place?</p>
             <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-2">Show answer</button>
-            <div class="answer" id="ans-2" hidden>Because the AI learned from years of code written by other people, and for a long time one particular old version was what almost everybody used. It is the answer the AI has seen most often, not the newest one. The AI cannot look at threejs.org. You can.</div>
+            <div class="answer" id="ans-2" hidden>Because the AI learned from years of code written by other people, and for a long time one particular old version was what almost everybody used. It is the answer the AI has seen most often, not the newest one. The AI might not be able to look at <code>threejs.org</code>. You can.</div>
           </div>
           <div class="q">
-            <p><strong>A-Frame, last lab, is built on Three.js.</strong> What does that mean for the background check you ran on A-Frame?</p>
+            <p><code>A-Frame</code>, last lab, is built on <code>Three.js</code>. What does that mean for the background check you ran on <code>A-Frame</code>?</p>
             <button class="btn quiet reveal" aria-expanded="false" aria-controls="ans-3">Show answer</button>
-            <div class="answer" id="ans-3" hidden>That A-Frame borrowed Three.js, so when you borrowed A-Frame, you borrowed Three.js too, without ever seeing its name. Libraries have dependencies of their own. That chain is called the <strong>supply chain</strong>, and it is why trusting a library really means trusting everybody <em>it</em> trusts. The field guide has a story about what happens when one link goes bad.</div>
+            <div class="answer" id="ans-3" hidden>That <code>A-Frame</code> borrowed <code>Three.js</code>, so when you borrowed <code>A-Frame</code>, you borrowed <code>Three.js</code> too, without ever seeing its name. Libraries have dependencies of their own. That chain is called the <strong>supply chain</strong>, and it is why trusting a library really means trusting everybody <em>it</em> trusts. The field guide has a story about what happens when one link goes bad. Now imagine you used code that used code that used code that used code someone else wrote - that's a house of cards! And that's <em>exactly</em> what happened in the <a href="https://www.ibm.com/think/topics/log4j">Log4J vulnerability</a> a few years ago.</div>
           </div>
         </div>
       </section>
@@ -1292,7 +1288,7 @@ div.note > :last-child { margin-bottom: 0; }
           <button class="btn mark" aria-pressed="false">Mark done</button>
         </div>
         <div class="step-body" id="body-5" hidden>
-          <p>Ask for <strong>one change</strong>. Same loop as always: ask, copy, paste over everything, save, refresh.</p>
+          <p>Ask for one change. Same loop as always: ask, copy, paste over everything, save, refresh.</p>
           <div class="prompt">
             <button class="btn copy" data-copy="prompt-1">Copy prompt</button>
             <pre id="prompt-1">Make the camera follow the ball smoothly as it rolls, so the floor can be bigger than the screen. Keep everything else exactly the same.</pre>
@@ -1313,9 +1309,9 @@ div.note > :last-child { margin-bottom: 0; }
         <div class="step-body" id="body-6" hidden>
           <p>One at a time:</p>
           <ul>
-            <li><strong>Move to the newest Three.js.</strong> First make a version copy: save your working file as <code>index-v1.html</code>, so you can always go back. Then copy the newest release number from threejs.org, then ask: <em>"Use Three.js version [the number] from jsDelivr, with the exact version in the address. Keep everything else exactly the same."</em> Newer versions of Three.js load in a different way, so the AI may change more than one line. <strong>Test everything afterward</strong> - that is what changing a version on purpose means.</li>
-            <li><strong>Add a danger.</strong> A red block that slides back and forth. Touch it and the game restarts.</li>
-            <li><strong>More levels.</strong> When you collect all three coins, a new floor appears with five coins and the score keeps going.</li>
+            <li>Move to the newest <code>Three.js</code>. First make a version copy: save your working file as <code>index-v1.html</code>, so you can always go back. Then copy the newest release number from <code>threejs.org</code>, then ask: <em>"Use <code>Three.js</code> version [the number] from <code>jsDelivr</code>, with the exact version in the address. Keep everything else exactly the same."</em> Newer versions of <code>Three.js</code> load in a different way, so the AI may change more than one line. Test everything afterward - that is what changing a version on purpose means.</li>
+            <li>Add a danger. A red block that slides back and forth. Touch it and the game restarts.</li>
+            <li>More levels. When you collect all three coins, a new floor appears with five coins and the score keeps going.</li>
           </ul>
         </div>
       </section>
@@ -1331,8 +1327,8 @@ div.note > :last-child { margin-bottom: 0; }
         </div>
         <div class="step-body" id="body-7" hidden>
           <p>Your game is <code>vibe-coding/roll-the-ball/index.html</code>.</p>
-          <p><strong>Want it online?</strong> Drag the <code>roll-the-ball</code> folder onto your repository on <code>github.com</code>, and send <code>your-username.github.io/vibe-coding/roll-the-ball/</code> to someone who will try to beat your time.</p>
-          <p><strong>Write down</strong> your background-check verdict - which version you got, and how far behind it was. Hang on to this game; the course comes back to games later.</p>
+          <p>Want it online? Drag the <code>roll-the-ball</code> folder onto your repository on <code>github.com</code>, and send <code>your-username.github.io/vibe-coding/roll-the-ball/</code> to someone who will try to beat your time.</p>
+          <p>Write down your background-check findings - which version you got, and how far behind it was. Hang on to this game; the course comes back to games later.</p>
         </div>
       </section>
       </div>
@@ -1340,7 +1336,7 @@ div.note > :last-child { margin-bottom: 0; }
 
     <section class="panel" aria-labelledby="dod-title">
       <h2 id="dod-title">Definition of Done</h2>
-      <p><code>roll-the-ball/index.html</code> opens from your <code>vibe-coding</code> folder, you can roll the ball with the keyboard and collect all three coins, and you have checked which version of Three.js it uses.</p>
+      <p><code>roll-the-ball/index.html</code> opens from your <code>vibe-coding</code> folder, you can roll the ball with the keyboard and collect all three coins, and you have checked which version of <code>Three.js</code> it uses.</p>
     </section>
 
 
