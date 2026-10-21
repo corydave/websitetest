@@ -21,7 +21,7 @@
   workflow-builder.js and .css, inlined here by:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-21 17:18
+  Assembled 2026-10-21 19:19
 -->
 <link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1722,6 +1722,97 @@ html[data-theme="dark"] .sidetrip {
   --accent-wash: rgba(71, 131, 222, .13);
   --accent-glow: rgba(71, 131, 222, .16);
 }
+
+
+/* ===========================================================================
+   Form fields, course-wide
+   ===========================================================================
+   These used to be copied into pages 7, 9 and 10 one at a time, and pages 12
+   and 13 used the same markup with none of the styles - so their boxes fell
+   back to browser defaults, with the label stranded beside a tiny field.
+   One definition, here, so every page gets the same field.
+
+   Markup it expects:
+       <div class="q"><label for="x">Label</label><textarea id="x"></textarea></div>
+   =========================================================================== */
+.q label,
+.q legend {
+  display: block;
+  font: 700 .9rem/1.3 var(--display);
+  color: var(--ink);
+  margin-bottom: .4rem;
+}
+.q input[type="text"],
+.q textarea,
+.q select {
+  width: 100%;
+  box-sizing: border-box;          /* padding must not push it past its column */
+  font: inherit;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .7rem .85rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  /* A hairline at rest so an empty field still reads as a field on a card. */
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition: box-shadow .15s ease, background-color .15s ease;
+}
+.q input[type="text"]::placeholder,
+.q textarea::placeholder { color: var(--ink-3); }
+
+.q textarea {
+  min-height: 6rem;
+  resize: vertical;
+  /* Grows with what is typed, in browsers that support it. Everywhere else
+     it is an ordinary resizable box, which is why min-height is still set. */
+  field-sizing: content;
+}
+
+.q input[type="text"]:hover,
+.q textarea:hover,
+.q select:hover { box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+
+.q input[type="text"]:focus,
+.q textarea:focus,
+.q select:focus {
+  outline: none;                   /* replaced by the ring below, not removed */
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.q fieldset { border: 0; margin: 0; padding: 0; }
+.q + .q { margin-top: 1rem; }
+/* A field that follows a paragraph needs air, or the label crowds the prose
+   and reads as part of it. */
+.prose + .q,
+.stepcard .prose + .q { margin-top: .9rem; }
+
+/* Pass / Fail as a segmented control rather than two loose radio dots.
+   The real radio is still there - hidden, focusable, and announced - so
+   arrow keys and screen readers behave exactly as they always did. */
+.pf {
+  display: inline-flex;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  overflow: hidden;
+}
+.pf label { position: relative; cursor: pointer; }
+.pf input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pf span {
+  display: inline-block;
+  padding: .4rem .85rem;
+  font: 700 .8rem/1 var(--display);
+  color: var(--ink-2);
+  transition: background-color .15s ease, color .15s ease;
+}
+.pf label:hover span { background: var(--accent-wash); color: var(--accent-text); }
+.pf input[value="Pass"]:checked + span { background: var(--accent-fill); color: var(--accent-on); }
+.pf input[value="Fail"]:checked + span { background: var(--surface-2); color: var(--ink);
+                                         text-decoration: underline; text-decoration-thickness: 2px; }
+/* The focus ring has to live on the visible half, since the input is hidden. */
+.pf input:focus-visible + span { box-shadow: inset 0 0 0 2px var(--accent); }
 
 /* ===== The Workflow Builder ================================================= */
 /* ==========================================================================

@@ -23,7 +23,7 @@
   Tool steps are NOT repeated here - they live once, in Lab 9's markdown,
   and the words on this page link back to them.
 
-  Assembled 2026-10-21 17:18
+  Assembled 2026-10-21 20:50
 -->
 <link rel="icon" href="../../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1724,6 +1724,97 @@ html[data-theme="dark"] .sidetrip {
 }
 
 
+/* ===========================================================================
+   Form fields, course-wide
+   ===========================================================================
+   These used to be copied into pages 7, 9 and 10 one at a time, and pages 12
+   and 13 used the same markup with none of the styles - so their boxes fell
+   back to browser defaults, with the label stranded beside a tiny field.
+   One definition, here, so every page gets the same field.
+
+   Markup it expects:
+       <div class="q"><label for="x">Label</label><textarea id="x"></textarea></div>
+   =========================================================================== */
+.q label,
+.q legend {
+  display: block;
+  font: 700 .9rem/1.3 var(--display);
+  color: var(--ink);
+  margin-bottom: .4rem;
+}
+.q input[type="text"],
+.q textarea,
+.q select {
+  width: 100%;
+  box-sizing: border-box;          /* padding must not push it past its column */
+  font: inherit;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .7rem .85rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  /* A hairline at rest so an empty field still reads as a field on a card. */
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition: box-shadow .15s ease, background-color .15s ease;
+}
+.q input[type="text"]::placeholder,
+.q textarea::placeholder { color: var(--ink-3); }
+
+.q textarea {
+  min-height: 6rem;
+  resize: vertical;
+  /* Grows with what is typed, in browsers that support it. Everywhere else
+     it is an ordinary resizable box, which is why min-height is still set. */
+  field-sizing: content;
+}
+
+.q input[type="text"]:hover,
+.q textarea:hover,
+.q select:hover { box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+
+.q input[type="text"]:focus,
+.q textarea:focus,
+.q select:focus {
+  outline: none;                   /* replaced by the ring below, not removed */
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.q fieldset { border: 0; margin: 0; padding: 0; }
+.q + .q { margin-top: 1rem; }
+/* A field that follows a paragraph needs air, or the label crowds the prose
+   and reads as part of it. */
+.prose + .q,
+.stepcard .prose + .q { margin-top: .9rem; }
+
+/* Pass / Fail as a segmented control rather than two loose radio dots.
+   The real radio is still there - hidden, focusable, and announced - so
+   arrow keys and screen readers behave exactly as they always did. */
+.pf {
+  display: inline-flex;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  overflow: hidden;
+}
+.pf label { position: relative; cursor: pointer; }
+.pf input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pf span {
+  display: inline-block;
+  padding: .4rem .85rem;
+  font: 700 .8rem/1 var(--display);
+  color: var(--ink-2);
+  transition: background-color .15s ease, color .15s ease;
+}
+.pf label:hover span { background: var(--accent-wash); color: var(--accent-text); }
+.pf input[value="Pass"]:checked + span { background: var(--accent-fill); color: var(--accent-on); }
+.pf input[value="Fail"]:checked + span { background: var(--surface-2); color: var(--ink);
+                                         text-decoration: underline; text-decoration-thickness: 2px; }
+/* The focus ring has to live on the visible half, since the input is hidden. */
+.pf input:focus-visible + span { box-shadow: inset 0 0 0 2px var(--accent); }
+
+
 /* ---- this page only ---------------------------------------------------- */
 /* The pack: four files, one after another, each with its own Copy. */
 .packfile { border:1px solid var(--line); border-radius:var(--r); background:var(--ground);
@@ -1753,9 +1844,7 @@ html[data-theme="dark"] .sidetrip {
 .tests .marks { display:flex; flex-wrap:wrap; gap:.9rem; margin-top:.55rem; }
 .tests .toolmark { display:flex; align-items:center; gap:.4rem; font-size:.85rem; }
 .tests .toolmark .who { color:var(--ink-3); }
-.tests .cited { margin-top:.5rem; }
-.tests .cited label { display:block; font-size:.8rem; color:var(--ink-3); margin-bottom:.15rem; }
-.tests .cited input { width:100%; }
+.tests .cited { margin-top:.6rem; }
 .tests .passnote { margin:.35rem 0 0; font-size:.82rem; color:var(--ink-3); }
 .tally { margin:.6rem 0 0; font-family:var(--display); color:var(--ink-2); }
 @media (max-width:30rem) {
@@ -1803,6 +1892,7 @@ html[data-theme="dark"] .sidetrip {
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
   <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol>
 </svg>
 
 <div class="lesson" data-course="240" data-page="12-three-ways-to-cut.html">
@@ -1986,8 +2076,16 @@ Where did you get that? | Names membership.md, and does not quietly change its e
 
     <!-- The wrapper ships with data-submit="" - paste the Lab 12 dropbox
          link in (https only) and the button appears. See shared/js/frame.js. -->
+    <!-- frame.js fills the <a> here with the dropbox URL and unhides the card.
+         THE ANCHOR IS LOAD-BEARING: showSubmit() does card.querySelector(&ldquo;a&rdquo;)
+         and returns silently if there is not one, so a card built from prose
+         alone looks exactly like a data-submit that never arrived. -->
     <div class="handin" id="handin" hidden>
-      <div class="prose"><p>Hand in your lab here.</p></div>
+      <div class="icontile"><svg class="i"><use href="#i-upload"/></svg></div>
+      <div style="display:grid;gap:.4rem;justify-items:start">
+        <span class="eyebrow">When you are ready</span>
+        <a class="btn btn--primary" href="#" target="_blank" rel="noopener">Hand in your lab here.</a>
+      </div>
     </div>
   </section>
 
@@ -2130,25 +2228,34 @@ Where did you get that? | Names membership.md, and does not quietly change its e
       who.className = "who";
       who.id = "who-" + i + "-" + tool;
       wrap.appendChild(who);
+      /* A segmented Pass/Fail control. The real radio is still there, just
+         hidden - so arrow keys, Tab and screen readers behave exactly as
+         they would with two plain radio buttons. Only the paint changes. */
+      var pf = document.createElement("span");
+      pf.className = "pf";
       ["Pass", "Fail"].forEach(function (v) {
         var id = "m" + i + "-" + tool + "-" + v;
+        var l = document.createElement("label");
         var r = document.createElement("input");
         r.type = "radio"; r.id = id; r.name = "m" + i + "-" + tool; r.value = v;
         r.addEventListener("change", function () {
           marks[i + "-" + tool] = v;
           saveAll(); tally();
         });
-        var l = document.createElement("label");
-        l.setAttribute("for", id);
-        l.textContent = v;
-        wrap.appendChild(r); wrap.appendChild(l);
+        var face = document.createElement("span");
+        face.textContent = v;
+        l.appendChild(r); l.appendChild(face);
+        pf.appendChild(l);
       });
+      wrap.appendChild(pf);
       marksRow.appendChild(wrap);
     });
     li.appendChild(marksRow);
 
     var citedWrap = document.createElement("div");
-    citedWrap.className = "cited";
+    /* "q" as well as "cited", so it picks up the course field styling
+       rather than being the one raw input on the page. */
+    citedWrap.className = "cited q";
     var cl = document.createElement("label");
     cl.setAttribute("for", "cited-" + i);
     cl.textContent = "Which file did it cite?";
