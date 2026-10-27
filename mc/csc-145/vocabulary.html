@@ -3,7 +3,7 @@
   Reading: Vocabulary
   Chapter: Vibe Coding
 
-  GENERATED FILE - do not edit. Built 2026-10-12 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-10-27 by build/build.py from
   chapters/shared/vocabulary.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1144,7 +1144,7 @@ div.note > :last-child { margin-bottom: 0; }
 <div class="vocab-search">
   <label for="vocab-filter">Find a term</label>
   <input type="search" id="vocab-filter" placeholder="Type to filter…" autocomplete="off">
-  <span class="vocab-count" id="vocab-count" aria-live="polite">128 terms</span>
+  <span class="vocab-count" id="vocab-count" aria-live="polite">147 terms</span>
 </div>
 <nav class="letters" aria-label="Jump to a letter"><a href="#letter-%">%</a> <a href="#letter-<"><</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-G">G</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a> <a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
 
@@ -1166,6 +1166,14 @@ div.note > :last-child { margin-bottom: 0; }
   <h3><code>alt</code> text</h3>
   <p>Short for <em>alternative</em>. Words that stand in for a picture. A screen reader says them out loud to someone who cannot see the image, they appear on the page if the file is missing, and search engines read them. Write them like you are describing the picture to someone over the phone - not <em>photo</em> or <em>image1</em>.</p>
 </article>
+<article class="term" id="blob-address" data-search="blob: address blob: address blob:">
+  <h3><code>blob:</code> address</h3>
+  <p>A temporary address a browser makes up for a file you chose, so the page can use it. It only means something inside that one tab, on that one computer. Nothing was uploaded to get it.</p>
+</article>
+<article class="term" id="device-pixel-ratio" data-search="devicepixelratio devicepixelratio">
+  <h3><code>devicePixelRatio</code></h3>
+  <p>How many real screen dots fit in each dot you see. On most phones and newer laptops it is 2 or 3. A canvas that ignores it looks blurry, because it is being stretched.</p>
+</article>
 <article class="term" id="fieldset" data-search="&lt;fieldset&gt; and &lt;legend&gt; fieldset legend">
   <h3><code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></h3>
   <p>How you name a <em>group</em> of form controls, usually radio buttons. Without it a person hears "Morning, radio button, one of three" and has no idea what question they are answering.</p>
@@ -1173,6 +1181,10 @@ div.note > :last-child { margin-bottom: 0; }
   &lt;legend&gt;Which session?&lt;/legend&gt;
   ...the radio buttons...
 &lt;/fieldset&gt;</pre>
+</article>
+<article class="term" id="getusermedia" data-search="getusermedia getusermedia">
+  <h3><code>getUserMedia</code></h3>
+  <p>The code a page uses to ask for your camera or microphone. It is what makes the browser show <em>"wants to use your camera"</em>. If you say no, a good app tells you how to change your mind; a poor one just does nothing.</p>
 </article>
 <article class="term" id="href" data-search="href href">
   <h3><code>href</code></h3>
@@ -1209,6 +1221,10 @@ div.note > :last-child { margin-bottom: 0; }
 }</pre>
   <p>It is written in JSON, not JavaScript, which matters more than it sounds.</p>
 </article>
+<article class="term" id="request-animation-frame" data-search="requestanimationframe requestanimationframe">
+  <h3><code>requestAnimationFrame</code></h3>
+  <p>The browser's way of saying <em>"just before you next redraw the screen, run this."</em> The code it runs ends by asking again, which is what makes the loop. It pauses by itself in a tab you are not looking at.</p>
+</article>
 <article class="term" id="src" data-search="src src">
   <h3><code>src</code></h3>
   <p>Short for <em>source</em>. The attribute that names the file to fetch. On a picture it is the file name of the picture, and the browser looks for it in the same folder as the page.</p>
@@ -1227,6 +1243,10 @@ div.note > :last-child { margin-bottom: 0; }
   <h3>Accessible name</h3>
   <p>What assistive technology calls something. It comes from a label, an <code>aria-label</code>, alt text, or the words inside the element - and when there is none, a control is announced as just "button" or "text box", which tells the person nothing at all.</p>
   <p>You can see it for any element in Developer Tools: Elements panel, then the Accessibility tab in the sidebar.</p>
+</article>
+<article class="term" id="animation-loop" data-search="animation loop animation loop">
+  <h3>Animation loop</h3>
+  <p>How anything moves on a screen: about sixty times a second, work out how much time has passed, move everything a little, check what touched what, wipe the canvas, and paint it all again. In a game it is called the game loop.</p>
 </article>
 <article class="term" id="aria" data-search="aria aria">
   <h3>ARIA</h3>
@@ -1271,6 +1291,11 @@ Canandaigua, NY 14424</pre>
   <p>A thing to press. The words between the tags are its label. What the button <em>says</em> is HTML; what it <em>does</em> is JavaScript, somewhere in the script.</p>
 </article>
 <h2 class="letter-head" id="letter-C">C</h2>
+<article class="term" id="canvas" data-search="canvas canvas &lt;canvas&gt;">
+  <h3>Canvas</h3>
+  <p>A blank rectangle on a page that code paints on: lines, circles, words, whole photos. It shows nothing until the code draws something.</p>
+  <p>A canvas remembers dots, not shapes. Once a circle is painted it is just colored dots, so to move it you paint over it and draw it again somewhere else.</p>
+</article>
 <article class="term" id="caption" data-search="caption caption captions">
   <h3>Caption</h3>
   <p>Words shown with a picture, saying what it is. Different from <code>alt</code> text: a caption is for everybody and appears on the page, while <code>alt</code> is for people who cannot see the picture and normally stays invisible. A picture often wants both.</p>
@@ -1288,6 +1313,10 @@ Canandaigua, NY 14424</pre>
 <article class="term" id="chrome-web-store" data-search="chrome web store chrome web store web store">
   <h3>Chrome Web Store</h3>
   <p>Where extensions normally come from. Putting one there costs a one-off developer fee and means waiting in a review queue, which is why most people's own tools never go in it. Extensions cannot run on the Web Store's own pages, so it is a bad place to test yours.</p>
+</article>
+<article class="term" id="collision" data-search="collision collision collisions collide">
+  <h3>Collision</h3>
+  <p>Two things in a game touching - the star reaching the basket, the snake hitting the wall. Every turn of the loop, the code checks whether any of them overlap, and decides what happens.</p>
 </article>
 <article class="term" id="color-alone" data-search="color as the only signal color as the only signal color alone">
   <h3>Color as the only signal</h3>
@@ -1324,6 +1353,10 @@ Canandaigua, NY 14424</pre>
   <h3>Contrast ratio</h3>
   <p>How different two colors are, written like <code>4.5:1</code>. Normal text usually needs at least <strong>4.5 to 1</strong> against its background; large text can go down to 3 to 1.</p>
   <p>Pale gray on white is the classic failure. It looks elegant on a good monitor in a dark room and disappears on a phone outdoors.</p>
+</article>
+<article class="term" id="coordinates" data-search="coordinates coordinates coordinate (0 0)">
+  <h3>Coordinates</h3>
+  <p>The address of a spot on a canvas: how far across, then how far down. The top-left corner is <code>(0, 0)</code>, and going <em>down</em> makes the second number bigger - the opposite of a graph in math class.</p>
 </article>
 <article class="term" id="css" data-search="css css">
   <h3>CSS</h3>
@@ -1370,10 +1403,19 @@ February,388,295</pre>
   <h3>Empty state</h3>
   <p>What an app shows when there is nothing to show yet - an empty list, a missing name. A friendly message like <em>Add at least two options first</em> makes an app feel finished; a blank screen makes it feel broken. The AI often forgets it unless you ask.</p>
 </article>
+<article class="term" id="exif" data-search="exif exif">
+  <h3>EXIF</h3>
+  <p>Hidden information stored inside a photo file: the phone or camera, the date and time, which way up to show it - and often the exact place it was taken. You cannot see it in the picture, but anybody with the file can read it.</p>
+  <p>Painting a photo onto a canvas and saving a new picture leaves it all behind, because only the dots come along.</p>
+</article>
 <h2 class="letter-head" id="letter-F">F</h2>
 <article class="term" id="file-extension" data-search="file extension file extension file extensions extension extensions filename extensions file name extensions">
   <h3>File extension</h3>
   <p>The last part of a file's name, after the dot: <code>.html</code>, <code>.jpg</code>, <code>.txt</code>. It tells the computer what kind of file it is. Mac and Windows <em>hide</em> extensions by default, so a file that looks like <code>qr-code.html</code> can secretly be <code>qr-code.html.txt</code> and show a blank page. Turning extensions on is the first thing this course asks you to do.</p>
+</article>
+<article class="term" id="filter" data-search="filter (photo) filter filters">
+  <h3>Filter (photo)</h3>
+  <p>A rule that changes every pixel of a picture the same way. Black and white sets red, green and blue to one brightness number. Negative flips each number to 255 minus itself. A filter is arithmetic, done to every dot.</p>
 </article>
 <article class="term" id="focus" data-search="focus focus focused">
   <h3>Focus</h3>
@@ -1392,6 +1434,10 @@ February,388,295</pre>
 <article class="term" id="game-loop" data-search="game loop game loop the game loop">
   <h3>Game loop</h3>
   <p>The heartbeat of every game: a few lines that run about sixty times a second. Each time, they move things a little, check what touched what, and draw the new picture. Everything that seems to happen continuously in a game is really this loop running very fast.</p>
+</article>
+<article class="term" id="gps-location" data-search="gps location (in a photo) gps location gps tab gps">
+  <h3>GPS location (in a photo)</h3>
+  <p>The latitude and longitude of where a photo was taken, saved in its EXIF information by most phones. Precise enough to find a front door. On a Mac, Preview's Inspector shows it; on Windows, the file's Properties, Details tab.</p>
 </article>
 <h2 class="letter-head" id="letter-H">H</h2>
 <article class="term" id="h1" data-search="&lt;h1&gt; … &lt;/h1&gt; ">
@@ -1473,6 +1519,10 @@ February,388,295</pre>
   <p>An audit built into Chrome's Developer Tools. Tick Accessibility, click Analyze, and you get a score out of 100 plus a list of what is wrong and which elements are wrong, in plain words.</p>
   <p>It only runs on a real web address, not a file from your computer. And a score of 100 is not a certificate - it checks what a machine can check, which is not everything.</p>
 </article>
+<article class="term" id="link-shortener" data-search="link shortener link shortener link shorteners">
+  <h3>Link shortener</h3>
+  <p>A service like <code>bit.ly</code> that turns a long address into a short one, then forwards you on. Handy, but it hides where you will really end up - so a short link in a QR code deserves a second look.</p>
+</article>
 <article class="term" id="listenmode" data-search="listenmode listenmode">
   <h3>ListenMode</h3>
   <p>A small tool built for this course. It hides the page and says out loud what the keyboard lands on as you press Tab - <em>"Submit, button"</em>, or revealingly, <em>"button, with no name"</em>.</p>
@@ -1548,6 +1598,13 @@ February,388,295</pre>
   <h3>Pinning a version</h3>
   <p>Putting an exact version number in a library's address, so your page always gets that same version. An address that says <code>latest</code>, or leaves the number out, quietly gets whatever is newest the day the page opens - which is how an app breaks without you changing anything.</p>
 </article>
+<article class="term" id="pixel" data-search="pixel pixel pixels">
+  <h3>Pixel</h3>
+  <p>One dot of a picture. Every pixel is four numbers: how much red, green and blue (each 0 to 255), and how see-through it is. Change the numbers and the picture changes - that is all a photo filter is.</p>
+  <pre class="sample">255, 255, 255, 255   white, solid
+0, 0, 0, 255         black, solid
+255, 0, 0, 0         red, but invisible</pre>
+</article>
 <article class="term" id="placeholder" data-search="placeholder is not a label placeholder placeholder text">
   <h3>Placeholder is not a label</h3>
   <p>Faint gray text inside a box is not a label. It vanishes the moment you type, so anybody who loses their place has nothing to go back to; it usually fails contrast; and it may not be announced at all. Use a real <code>&lt;label&gt;</code> that stays on the page, and keep the placeholder for an example if you want one.</p>
@@ -1555,6 +1612,14 @@ February,388,295</pre>
 <article class="term" id="plain-text" data-search="plain text plain text plain-text">
   <h3>Plain text</h3>
   <p>Text with nothing hidden in it: no fonts, no bold, no invisible formatting. Code has to be plain text. Word, Google Docs, TextEdit, and Notepad all add or mangle things, which is why you need a plain-text editor like TXTEDTR.</p>
+</article>
+<article class="term" id="png" data-search="png png .png">
+  <h3>PNG</h3>
+  <p>A picture format that keeps every dot exactly, including how see-through it is. Best for screenshots, signatures, logos and anything with sharp edges or a see-through background. Photos are usually smaller as a JPG.</p>
+</article>
+<article class="term" id="pointer-events" data-search="pointer events pointer events pointer event">
+  <h3>Pointer events</h3>
+  <p>One set of code that works for a mouse, a pen and a finger alike: <em>down</em> (start), <em>move</em> (keep going), <em>up</em> (stop). Before pointer events, mouse and touch needed separate code.</p>
 </article>
 <article class="term" id="popup" data-search="popup popup popups">
   <h3>Popup</h3>
@@ -1565,11 +1630,19 @@ February,388,295</pre>
   <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.</p>
 </article>
 <h2 class="letter-head" id="letter-Q">Q</h2>
+<article class="term" id="qr-code" data-search="qr code qr code qr codes">
+  <h3>QR code</h3>
+  <p>Text - usually a web address - drawn as a square pattern a camera can read. The three big squares in the corners tell a scanner where the code is and which way up. There is enough spare information inside that a scratched code often still reads.</p>
+</article>
 <article class="term" id="query-string" data-search="query string query string query strings url parameter url parameters">
   <h3>Query string</h3>
   <p>The part of a web address after the <code>?</code>. It carries information for the page to read, as names and values joined by <code>&amp;</code>:</p>
   <pre class="sample">invite/?to=Sam&amp;event=Game%20Night</pre>
   <p>Each <code>name=value</code> piece is called a URL parameter. Anyone who has the link can read it, so never put anything private in one.</p>
+</article>
+<article class="term" id="quishing" data-search="quishing quishing">
+  <h3>Quishing</h3>
+  <p>Phishing with a QR code. Scammers print their own codes and stick them over real ones - on parking meters, restaurant tables, posters - so a scan leads to a fake page. The defense: look at the address before you go.</p>
 </article>
 <h2 class="letter-head" id="letter-R">R</h2>
 <article class="term" id="reduced-motion" data-search="reduced motion prefers-reduced-motion reduced motion">
@@ -1597,6 +1670,10 @@ February,388,295</pre>
 <article class="term" id="script" data-search="&lt;script&gt; … &lt;/script&gt; ">
   <h3>&lt;script&gt; … &lt;/script&gt;</h3>
   <p>Where the behavior lives: the JavaScript that makes a page count down, flip a card, or make a QR code. Usually at the end of the body. When something <em>moves</em> or <em>responds</em>, this is where it happens.</p>
+</article>
+<article class="term" id="secure-context" data-search="secure page secure page secure pages secure web address secure address">
+  <h3>Secure page</h3>
+  <p>A page whose address starts <code>https://</code>. Browsers only trust secure pages with powerful things like the camera, the microphone and your location. Your <code>github.io</code> address is one. A file opened from your own computer is trusted by Chrome but not by every browser.</p>
 </article>
 <article class="term" id="self-closing" data-search="self-closing tag self-closing self-closing tag">
   <h3>Self-closing tag</h3>
@@ -1697,6 +1774,10 @@ February,388,295</pre>
   <h3>&lt;title&gt; … &lt;/title&gt;</h3>
   <p>The page's name. It lives in the head and shows on the <strong>browser tab</strong>, not on the page. It is the easiest hand edit there is: change the words between the tags, save, refresh, look at the tab.</p>
   <pre class="sample">&lt;title&gt;Dave's Focus Timer&lt;/title&gt;</pre>
+</article>
+<article class="term" id="transparency" data-search="transparency transparency transparent see-through">
+  <h3>Transparency</h3>
+  <p>Parts of a picture you can see through. A signature saved with a transparent background is just ink, with nothing behind it, so it can sit on top of any document. Only some picture formats can store it - PNG can, JPG cannot.</p>
 </article>
 <article class="term" id="txtedtr" data-search="txtedtr txtedtr text editor plain-text editor">
   <h3>TXTEDTR</h3>

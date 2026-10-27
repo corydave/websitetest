@@ -3,7 +3,7 @@
   Reading: Tools
   Chapter: Vibe Coding
 
-  GENERATED FILE - do not edit. Built 2026-10-12 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-10-27 by build/build.py from
   chapters/shared/tools.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1178,12 +1178,15 @@ open every week, and the two prompts that are worth having by heart.</p>
   added.</p>
   <div class="prompt">
   <button class="btn copy" data-copy="spec-block-extension">Copy extension specification</button>
-  <pre id="spec-block-extension"># SPECIFICATIONS - BROWSER EXTENSION
+  <pre id="spec-block-extension">Build it to this specification:
+
+# SPECIFICATIONS - BROWSER EXTENSION
 
 * A Chrome extension using Manifest V3
 * As few files as possible - manifest.json, plus one file per job
 * No build tools - no React, Vue, or anything requiring npm
-* CDN libraries are fine if they help
+* No JavaScript written inside an HTML file - every script goes in its own .js file in the folder
+* No libraries loaded from the web - Chrome only runs code that is inside the extension's folder. If a library is truly needed, save its file into the folder, pinned to an exact version, and list it in a comment at the top: its name, version, where it came from, and what it does
 * Use vanilla JavaScript only
 * Fully accessible - semantic HTML, ARIA labels, keyboard navigation
 * Versioning in comments (e.g., // v1.0 - initial build)
