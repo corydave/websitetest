@@ -21,7 +21,7 @@
   workflow-builder.js and .css, inlined here by:
       python3 csc-240/build/assemble.py
 
-  Assembled 2026-10-21 19:19
+  Assembled 2026-10-27 01:30
 -->
 <link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1789,6 +1789,14 @@ html[data-theme="dark"] .sidetrip {
 .prose + .q,
 .stepcard .prose + .q { margin-top: .9rem; }
 
+/* Fields laid out SIDE BY SIDE, in a container that handles its own gaps.
+   Without this the stacking margin above still fires on the second field -
+   they are adjacent siblings even in a grid - and it sits a line lower than
+   the first, so two fields meant to be a pair look misaligned. */
+.fieldrow { display: flex; flex-wrap: wrap; gap: 1rem; }
+.fieldrow > .q { flex: 1 1 14rem; min-width: 0; }
+.fieldrow .q + .q { margin-top: 0; }
+
 /* Pass / Fail as a segmented control rather than two loose radio dots.
    The real radio is still there - hidden, focusable, and announced - so
    arrow keys and screen readers behave exactly as they always did. */
@@ -1823,6 +1831,8 @@ html[data-theme="dark"] .sidetrip {
    Version: 2.0 (2026-10-14) - laid out like the workflow designers learners
             meet at work: a top bar, an Add panel on the left, a dotted canvas
             in the middle, a properties panel on the right.
+            2.2 (2026-10-26) - the On/Off switch, the key warning, and the
+            learner's own test items (Module 5).
             2.1 (2026-10-15) - an Agent's tray: Model, Memory and Tools on
             dotted lines; the line legend under the canvas.
             1.0 (2026-10-14) - a list of step cards (classes .wfb-*). Kept in
@@ -2136,6 +2146,31 @@ html[data-theme="dark"] .sidetrip {
 .wfx-diagram { max-height: 70vh; overflow: auto; border-radius: var(--r-sm); background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); }
 .wfx-diagram svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
 
+/* ---- 2.2: On / Off, the key warning, the learner's test items ---------------- */
+/* The switch: a track and a knob. On is green AND says "On" in words. */
+.wfx-switch { display: inline-flex; align-items: center; gap: .45rem; border: 0; background: transparent; cursor: pointer;
+  padding: .3rem .45rem; border-radius: var(--r-pill); font: 700 .84rem/1 var(--display); color: var(--ink-2); }
+.wfx-switch:hover { background: var(--surface-2); }
+.wfx-switch:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wfx-switch__track { position: relative; flex: none; width: 2.4rem; height: 1.35rem; border-radius: 999px;
+  background: var(--surface-2); box-shadow: inset 0 0 0 1.5px var(--ink-3); transition: background .15s; }
+.wfx-switch__knob { position: absolute; top: .2rem; left: .2rem; width: .95rem; height: .95rem; border-radius: 50%;
+  background: var(--ink-3); transition: transform .15s; }
+.wfx-switch[aria-checked="true"] { color: var(--wfx-ok); }
+.wfx-switch[aria-checked="true"] .wfx-switch__track { background: var(--wfx-ok); box-shadow: none; }
+.wfx-switch[aria-checked="true"] .wfx-switch__knob { transform: translateX(1.05rem); background: #fff; }
+@media (prefers-reduced-motion: reduce) { .wfx-switch__track, .wfx-switch__knob { transition: none; } }
+/* The key warning: hard to miss, and it says what to do. */
+.wfx-keywarn { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .6rem; padding: .75rem .9rem; border-radius: var(--r-sm);
+  background: var(--warn-soft); box-shadow: inset 0 0 0 2px var(--warn); color: var(--ink); font-size: .88rem; line-height: 1.45; }
+.wfx-keywarn p { margin: 0; flex: 1 1 16rem; }
+/* The learner's own test items, in the Test panel. */
+.wfx-items { display: flex; flex-direction: column; gap: .55rem; padding: .7rem; border-radius: var(--r-sm); box-shadow: inset 0 0 0 1.5px var(--line); }
+.wfx-itemlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+.wfx-itemlist li { display: flex; gap: .35rem; align-items: center; }
+.wfx-itemlist li > .btn:first-child { flex: 1 1 auto; min-width: 0; justify-content: flex-start; text-align: left; overflow-wrap: anywhere; }
+.wfx-items > .btn { align-self: flex-start; }
+
 /* ---- Narrower screens -------------------------------------------------------- */
 /* A laptop beside another window: the Add panel moves above, as a row. */
 @media (max-width: 1100px) {
@@ -2279,6 +2314,20 @@ html[data-theme="dark"] .sidetrip {
             a properties panel on the right, and Build / Activity / Monitor
             across the top. If/Else now has real True and False branches.
             The canvas turns (left to right, or top to bottom) and zooms.
+            2.2 (2026-10-26) - for Module 5. Three additions:
+              ON / OFF   mount(..., { inbox: true }) puts a switch in the
+                         top bar. While it is On, a pretend inbox delivers
+                         the learner's own test items by itself, a few
+                         seconds apart - and the first one arrives twice,
+                         the way real systems sometimes retry.
+              TEST ITEMS the learner writes and keeps their own items in
+                         the Test panel (inbox pages only).
+              KEYS       anything shaped like an API key is removed the
+                         moment it appears, and the page says why. A key is
+                         never saved, never put in a prompt, never exported.
+            Also fixed: "Run once per item" now remembers every item that
+            ran to the end, even before the box was ticked - so ticking it
+            after a double fire stops the third one, as the lesson says.
             2.1 (2026-10-15) - an Agent can have tools, memory and a model,
             hung underneath it on DOTTED lines, the way n8n and Copilot
             Studio show them. The agent picks its own tools; each tool can
@@ -2370,6 +2419,51 @@ var WorkflowBuilder = (function () {
     row:   { name: "Add a row (Excel)",             to: "Spreadsheet", body: "Row values" }
   };
   var ON_FAIL = { stop: "Stop, and alert the owner", skip: "Skip this step and carry on", keep: "Carry on with what it has" };
+
+  /* ---- Keys are passwords (2.2) ---------------------------------------------
+     Anything that looks like an API key is taken out the moment it shows up -
+     typed into a step, pasted into a test, or found in an opened file - and
+     KEY_GONE goes in its place. So a key is never saved in this browser,
+     never put into a prompt, and never exported. The page then says why.
+     The shapes it looks for: the fixed starts that common services use
+     (OpenAI and Anthropic "sk-", Google "AIza", GitHub "ghp_" and friends,
+     Slack "xox", Amazon "AKIA"), plus any long unbroken run that mixes
+     letters AND numbers - which is what most other keys look like. Ordinary
+     words never match: no word is 32 letters long with digits in it. */
+  var KEY_GONE = "[key removed]";
+  var KEY_SHAPES = [
+    /\bsk-(?:ant-|proj-)?[A-Za-z0-9_-]{20,}/g,
+    /\bAIza[0-9A-Za-z_-]{30,}/g,
+    /\bgh[pousr]_[A-Za-z0-9]{30,}/g,
+    /\bgithub_pat_[A-Za-z0-9_]{20,}/g,
+    /\bxox[abprs]-[A-Za-z0-9-]{10,}/g,
+    /\bAKIA[0-9A-Z]{16}\b/g,
+    /\b(?=[A-Za-z0-9_-]*[0-9])(?=[A-Za-z0-9_-]*[A-Za-z])[A-Za-z0-9_-]{32,}/g
+  ];
+  // Take key-shaped text out of one string. Returns { text, hit }.
+  function scrubText(s) {
+    var hit = false;
+    s = String(s);
+    KEY_SHAPES.forEach(function (re) { s = s.replace(re, function () { hit = true; return KEY_GONE; }); });
+    return { text: s, hit: hit };
+  }
+  // The same, for every piece of text inside an object, changed in place.
+  // Returns true if anything was taken out.
+  function scrubAll(o) {
+    var hit = false;
+    (function go(x) {
+      if (!x || typeof x !== "object") return;
+      Object.keys(x).forEach(function (k) {
+        if (typeof x[k] === "string") {
+          var r = scrubText(x[k]);
+          if (r.hit) { x[k] = r.text; hit = true; }
+        } else go(x[k]);
+      });
+    })(o);
+    return hit;
+  }
+  // Set by clean(): did the workflow it just checked have a key in it?
+  var cleanFoundKey = false;
 
   /* The tools an Agent can be given. "does" is what the AI is told the tool
      does (in "My own AI chat" mode); "help" is what the learner is told. "info" tools find things out and run
@@ -2509,6 +2603,8 @@ var WorkflowBuilder = (function () {
       steps: list(raw.steps, 0)
     };
     if (!wf.trigger.inputs.length) wf.trigger.inputs = [{ name: "message", about: "" }];
+    // Keys never get in, from storage, a file or an example (2.2).
+    cleanFoundKey = scrubAll(wf);
     return wf;
 
     function list(arr, depth) {
@@ -2631,8 +2727,13 @@ var WorkflowBuilder = (function () {
       var m = t.match(/\b(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?\b|\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b|\b(?:today|tomorrow|tonight)\b/i);
       return m ? m[0] : "";
     },
+    // A name: after "my name is", "I'm" and so on (any capitals), on a form's
+    // "Name:" line, after a dash, or under a sign-off. The name itself must
+    // be Capitalized. (2.2: the lead words used to have to be lowercase, so
+    // "My name is Priya Shah" found nothing.)
     name:  function (t) {
-      var m = t.match(/\b(?:my name is|i'm|i am|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/) ||
+      var m = t.match(/\b(?:[Mm]y name is|I'm|I am|[Tt]his is)\s+([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)/) ||
+              t.match(/(?:^|\n)\s*[Nn]ame\s*:[ \t]*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)/) ||
               t.match(/(?:^|\n)\s*[-~]\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/) ||
               t.match(/(?:thanks|thank you|cheers|best),?\s*\n\s*([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+)?)/i);
       return m ? m[1] : "";
@@ -2950,6 +3051,10 @@ var WorkflowBuilder = (function () {
   function mount(root, opts) {
     opts = opts || {};
     var KEY = opts.storeKey || "csc240.workflow.v2";
+    // inbox: true (2.2) adds the On/Off switch and the learner's own test items.
+    var INBOX = opts.inbox === true;
+    var LIVE_MS = 4000;                 // how often the pretend inbox delivers, while On
+    var MAX_ITEMS = 6;                  // test items a learner can keep
     var EXAMPLES = (opts.examples || []).map(function (ex) { return { id: ex.id, name: ex.name, workflow: strip(clean(ex.workflow)), items: ex.items || [] }; });
 
     var saving = true;
@@ -2957,10 +3062,21 @@ var WorkflowBuilder = (function () {
     function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
     function save() {
       if (!saving) return;
-      try { localStorage.setItem(KEY, JSON.stringify({ workflow: strip(wf), example: exampleId, mode: mode, layout: layout, handled: handled.slice(-200), outbox: outbox.slice(-60), runs: runs.slice(-40) })); } catch (e) { saving = false; }
+      // A last check before anything is written down: no keys (2.2).
+      if (scrubAll(wf) || scrubAll(items)) keyWarn();
+      try { localStorage.setItem(KEY, JSON.stringify({ workflow: strip(wf), example: exampleId, mode: mode, layout: layout, handled: handled.slice(-200), outbox: outbox.slice(-60), runs: runs.slice(-40), items: items })); } catch (e) { saving = false; }
+      if (typeof opts.onChange === "function") { try { opts.onChange(); } catch (e) { /* the page's own problem */ } }
     }
     var stored = load() || {};
     var wf = stored.workflow ? clean(stored.workflow) : clean(EXAMPLES[0] ? EXAMPLES[0].workflow : {});
+    // The learner's own test items (2.2): [{ label, text }], checked and cut.
+    var items = (INBOX && Array.isArray(stored.items) ? stored.items : []).filter(function (it) { return it && typeof it.text === "string" && it.text.trim(); })
+      .slice(0, MAX_ITEMS).map(function (it) { return { label: str(it.label, 40) || "Item", text: str(it.text, MAX_ITEM) }; });
+    scrubAll(items);
+    var draftLabel = "", draftText = "";   // the item being written, before it is kept
+    // On / Off (2.2). Always Off when the page opens: nothing starts by
+    // itself until the learner says so.
+    var live = false, liveTimer = null, queue = [];
     var mode = stored.mode === "chat" ? "chat" : "rules";
     // Which example is on the canvas (its sample items show under Test).
     // null = a blank or opened workflow: every example's samples show.
@@ -2975,7 +3091,7 @@ var WorkflowBuilder = (function () {
     var outbox = (Array.isArray(stored.outbox) ? stored.outbox : []).filter(function (m) { return m && typeof m === "object"; })
       .map(function (m) { return { how: str(m.how, 60), to: str(m.to, 200), body: str(m.body, MAX_LONG), alert: m.alert === true, run: typeof m.run === "number" ? m.run : 0 }; });
     var runs = (Array.isArray(stored.runs) ? stored.runs : []).filter(function (r) { return r && typeof r === "object"; })
-      .map(function (r) { return { n: typeof r.n === "number" ? r.n : 0, item: str(r.item, 120), result: str(r.result, 200), ok: r.ok === true }; });
+      .map(function (r) { return { n: typeof r.n === "number" ? r.n : 0, item: str(r.item, 120), result: str(r.result, 200), ok: r.ok === true, auto: r.auto === true }; });
 
     var selected = "start";             // the selected node's id ("start" = the trigger)
     var insertAt = null;                // { path, index } while choosing what to add
@@ -3001,11 +3117,33 @@ var WorkflowBuilder = (function () {
     var exportBtn = el("button", { class: "btn btn--primary", type: "button", id: "wfxExport", text: "Export" });
     bar.appendChild(el("div", { class: "wfx-bar__left" }, [nameIn, chip]));
     bar.appendChild(tabs);
-    bar.appendChild(el("div", { class: "wfx-bar__right" }, [testBtn, exportBtn]));
+    // The On/Off switch (2.2): a real button with role="switch", so a
+    // screen reader says "switch, off" and Space or Enter flips it.
+    var liveBtn = null;
+    if (INBOX) {
+      liveBtn = el("button", { class: "wfx-switch", type: "button", role: "switch", "aria-checked": "false", id: "wfxLive" }, [
+        el("span", { class: "wfx-switch__track", "aria-hidden": "true" }, [el("span", { class: "wfx-switch__knob" })]),
+        el("span", { class: "wfx-switch__text", text: "Off" })]);
+      liveBtn.setAttribute("aria-label", "Turn the workflow on");
+      liveBtn.addEventListener("click", function () { if (live) turnOff("Off. Nothing will start by itself."); else turnOn(); });
+    }
+    bar.appendChild(el("div", { class: "wfx-bar__right" }, liveBtn ? [liveBtn, testBtn, exportBtn] : [testBtn, exportBtn]));
     root.appendChild(bar);
     var statusLine = el("p", { class: "wfx-status", "aria-live": "polite" });
     root.appendChild(statusLine);
     function status(m) { statusLine.textContent = m; }
+    // The key warning (2.2). Hidden until something key-shaped is taken out.
+    var keyBox = el("div", { class: "wfx-keywarn", id: "wfxKeyWarn", hidden: true });
+    var keyText = el("p", { text: "That looked like an API key, so the Builder took it out. Keys are passwords: they never go in a workflow, a prompt or a file. If it was a real key, go to the service, revoke it, and make a new one." });
+    var keyOk = el("button", { class: "btn btn--ghost", type: "button", text: "Got it" });
+    keyOk.addEventListener("click", function () { keyBox.hidden = true; status("Warning closed."); });
+    keyBox.appendChild(keyText); keyBox.appendChild(keyOk);
+    root.appendChild(keyBox);
+    function keyWarn() {
+      keyBox.hidden = false;
+      keyBox.setAttribute("role", "alert");
+      if (nameIn) nameIn.value = wf.name;
+    }
 
     /* -- the views -- */
     var vBuild = el("div", { class: "wfx-view wfx-build", role: "tabpanel", "aria-labelledby": "wfxt-build" });
@@ -3482,7 +3620,9 @@ var WorkflowBuilder = (function () {
         file.text().then(function (text) {
           var got = unpack(text);
           if (!got) { status("That file has no workflow in it. Only files saved from this Builder can be opened."); return; }
+          var hadKey = cleanFoundKey;
           replaceWith(got, "Opened " + got.name + ".", null);
+          if (hadKey) keyWarn();
         });
         fileIn.value = "";
       });
@@ -3490,6 +3630,7 @@ var WorkflowBuilder = (function () {
       propsPanel.appendChild(tools);
     }
     function replaceWith(newWf, msg, exId) {
+      if (live) turnOff("");
       wf = newWf; exampleId = exId; handled = []; run = null; selected = "start"; insertAt = null; panel = "props";
       nameIn.value = wf.name; paintAll(); save(); status(msg);
     }
@@ -3514,8 +3655,10 @@ var WorkflowBuilder = (function () {
         });
       });
       propsPanel.appendChild(samples);
+      if (INBOX) propsPanel.appendChild(itemsBox());
       wf.trigger.inputs.forEach(function (x) {
-        propsPanel.appendChild(field("{" + x.name + "}" + (x.about ? " - " + x.about : ""), tArea(inputValues[x.name] || "", MAX_ITEM, 6), function (v) { inputValues[x.name] = v; }));
+        var box = tArea(inputValues[x.name] || "", MAX_ITEM, 6); box.setAttribute("data-input", x.name);
+        propsPanel.appendChild(field("{" + x.name + "}" + (x.about ? " - " + x.about : ""), box, function (v) { inputValues[x.name] = v; }));
       });
       propsPanel.appendChild(field("Where the AI steps get their answers",
         sel([["rules", "Stand-in rules (simple, visible)"], ["chat", "My own AI chat (copy and paste)"]], mode),
@@ -3525,21 +3668,120 @@ var WorkflowBuilder = (function () {
         : "The stand-in rules are not AI: Classify matches your words, Extract looks for patterns, Agent fills in {braces}. They make mistakes on purpose." }));
       var go = el("button", { class: "btn btn--primary", type: "button", id: "wfxRun", text: "Run the test" });
       go.disabled = !wf.steps.length;
-      go.addEventListener("click", startRun);
+      go.addEventListener("click", function () { startRun(false); });
       var back = el("button", { class: "btn btn--ghost", type: "button", text: "Back to properties" });
       back.addEventListener("click", function () { panel = "props"; paintProps(); focusPanel(); });
       propsPanel.appendChild(el("div", { class: "wfx-proptools" }, [go, back]));
     }
 
+    /* -- the learner's own test items (2.2) --
+       What the pretend inbox delivers while the workflow is On. Each one
+       is a button that also puts it in the test box, for a test by hand. */
+    function itemsBox() {
+      var box = el("div", { class: "wfx-items" });
+      box.appendChild(el("p", { class: "wfx-sub", text: "Your test items - what arrives by itself when the workflow is On" }));
+      var ul = el("ul", { class: "wfx-itemlist" });
+      if (!items.length) ul.appendChild(el("li", { class: "wfx-hint", text: "None yet. Write one below and keep it." }));
+      items.forEach(function (it, k) {
+        var use = el("button", { class: "btn btn--ghost", type: "button", text: it.label });
+        use.setAttribute("aria-label", "Put " + it.label + " in the test box");
+        use.addEventListener("click", function () {
+          inputValues[wf.trigger.inputs[0].name] = it.text;
+          paintProps(); var t = propsPanel.querySelector("textarea[data-input]"); if (t) t.focus();
+        });
+        var rm = el("button", { class: "btn btn--ghost", type: "button", text: "Remove" });
+        rm.setAttribute("aria-label", "Remove " + it.label);
+        rm.addEventListener("click", function () { items.splice(k, 1); save(); paintProps(); status("Removed " + it.label + "."); });
+        ul.appendChild(el("li", {}, [use, rm]));
+      });
+      box.appendChild(ul);
+      if (items.length < MAX_ITEMS) {
+        box.appendChild(field("Name it", tIn(draftLabel, 40, "A normal one"), function (v) { draftLabel = v; }));
+        box.appendChild(field("What arrives", tArea(draftText, MAX_ITEM, 4), function (v) { draftText = v; },
+          "Made-up details only - never a real person's."));
+        var keep = el("button", { class: "btn btn--ghost", type: "button", text: "Keep it as a test item", "data-focus": "keepitem" });
+        keep.addEventListener("click", function () {
+          if (!draftText.trim()) { status("Write what arrives first."); return; }
+          var r = scrubText(draftText.slice(0, MAX_ITEM));
+          if (r.hit) keyWarn();
+          var it = { label: oneLine(draftLabel).slice(0, 40) || "Item " + (items.length + 1), text: r.text };
+          items.push(it);
+          if (live) queue.push({ label: it.label, text: it.text });
+          draftLabel = ""; draftText = "";
+          save(); focusAfter = "keepitem"; paintAll();
+          status("Kept " + it.label + "." + (live ? " It will arrive in a moment." : ""));
+        });
+        box.appendChild(keep);
+      } else box.appendChild(el("p", { class: "wfx-hint", text: "That is the most you can keep. Remove one to add another." }));
+      return box;
+    }
+
+    /* -- On / Off (2.2) --
+       While On, every few seconds the pretend inbox delivers the next test
+       item, and the workflow runs on it by itself - exactly what Test does,
+       without anyone pressing anything. The first item arrives TWICE, the
+       way a real system sometimes retries: that is the Double Fire, and
+       "Run once per item" on Start is the fix. Nothing is delivered while a
+       run waits for a person, or while the learner is typing in the
+       Builder - so it never snatches the keyboard away. */
+    function turnOn() {
+      if (wf.trigger.kind === "manual") { status("This workflow's trigger is Manual, so it only runs when someone presses Test. Click Start and choose When an item arrives, or Recurrence - then turn it on."); return; }
+      if (!wf.steps.length) { status("Add a step first - there is nothing to run yet."); return; }
+      var list = items.length ? items.slice()
+        : wf.trigger.kind === "schedule" ? [1, 2, 3].map(function (n) { return { label: "Scheduled run " + n, text: "Scheduled run " + n }; })
+        : [];
+      if (!list.length) { status("Nothing to deliver yet. Press Test, write a test item, and press Keep it as a test item."); panel = "test"; paintProps(); return; }
+      queue = list.map(function (it) { return { label: it.label, text: it.text }; });
+      // The first one, again: a retry, as real systems do.
+      queue.splice(1, 0, { label: queue[0].label, text: queue[0].text, again: true });
+      live = true;
+      liveBtn.setAttribute("aria-checked", "true");
+      liveBtn.setAttribute("aria-label", "Turn the workflow off");
+      liveBtn.querySelector(".wfx-switch__text").textContent = "On";
+      chip.textContent = "On";
+      status("On. " + (wf.trigger.kind === "schedule" ? "Each tick stands for one scheduled time" : "The inbox starts delivering your test items") + " in a few seconds. Open Monitor to watch.");
+      clearInterval(liveTimer);
+      liveTimer = setInterval(tick, LIVE_MS);
+      setTimeout(tick, 1500);
+    }
+    function turnOff(msg) {
+      live = false; queue = [];
+      clearInterval(liveTimer); liveTimer = null;
+      if (liveBtn) {
+        liveBtn.setAttribute("aria-checked", "false");
+        liveBtn.setAttribute("aria-label", "Turn the workflow on");
+        liveBtn.querySelector(".wfx-switch__text").textContent = "Off";
+      }
+      chip.textContent = "Off";
+      if (msg) status(msg);
+    }
+    function tick() {
+      if (!live) return;
+      if (wf.trigger.kind === "manual") { turnOff("Turned off: the trigger is Manual now, so it cannot start by itself."); return; }
+      if (run && run.wait) return;            // a person is needed first
+      var a = document.activeElement;         // the learner is typing: wait
+      if (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+      if (!queue.length) { status("On, and waiting for something new to arrive. Keep another test item to send one in, or turn it off."); return; }
+      var next = queue.shift();
+      inputValues[wf.trigger.inputs[0].name] = next.text;
+      status(next.again ? "The same item arrived again: " + next.label + ". Real systems sometimes deliver twice." : "Something arrived: " + next.label + ". Running it now.");
+      startRun(true);
+    }
+
     /* ===== The engine: run the steps, branch by branch ===== */
     // The run keeps a stack of places to carry on from, so it can pause for a
     // person (or a chat answer) in the middle of a branch and pick up again.
-    function startRun() {
+    function startRun(auto) {
+      // What goes in is checked for keys first: it may end up in a prompt (2.2).
+      var hadKey = false;
+      Object.keys(inputValues).forEach(function (k) { var r = scrubText(inputValues[k] || ""); if (r.hit) { inputValues[k] = r.text; hadKey = true; } });
+      if (hadKey) keyWarn();
       var first = wf.trigger.inputs[0].name, item = String(inputValues[first] || "");
-      run = { data: {}, log: [], status: {}, stack: [{ list: wf.steps, i: 0 }], wait: null, done: "", n: (runs.length ? runs[runs.length - 1].n : 0) + 1, item: item };
+      // auto: started by the On switch, not by a person pressing Run.
+      run = { data: {}, log: [], status: {}, stack: [{ list: wf.steps, i: 0 }], wait: null, done: "", n: (runs.length ? runs[runs.length - 1].n : 0) + 1, item: item, auto: auto === true };
       wf.trigger.inputs.forEach(function (x) { run.data[x.name] = String(inputValues[x.name] || "").slice(0, MAX_ITEM); });
       run.status.start = "ok";
-      log("ok", "Start", "Started with " + wf.trigger.inputs.map(function (x) { return "{" + x.name + "}"; }).join(", ") + ".");
+      log("ok", "Start", (run.auto ? "Started by itself - something arrived - with " : "Started with ") + wf.trigger.inputs.map(function (x) { return "{" + x.name + "}"; }).join(", ") + ".");
       if (!item.trim()) { run.status.start = "fail"; finish("Stopped: the test had nothing in {" + first + "}.", false); return; }
       if (wf.trigger.remember && handled.indexOf(fingerprint(item)) !== -1) {
         run.status.start = "skip";
@@ -3552,11 +3794,15 @@ var WorkflowBuilder = (function () {
     function title(s) { return s.label || (s.kind === "ifelse" ? condText(s) : KINDS[s.kind].name); }
     function finish(msg, ok) {
       run.done = msg; run.wait = null; run.ok = !!ok;
-      if (ok && wf.trigger.remember && run.item) handled.push(fingerprint(run.item));
-      runs.push({ n: run.n, item: oneLine(run.item).slice(0, 120), result: msg, ok: !!ok });
-      chip.textContent = ok ? "Last test: done" : "Last test: stopped";
+      // Every item that ran to the end is remembered, ticked or not (2.2), so
+      // ticking "Run once per item" after a double fire stops the next one.
+      // Skipping only happens while the box is ticked (see startRun).
+      if (ok && run.item && handled.indexOf(fingerprint(run.item)) === -1) handled.push(fingerprint(run.item));
+      runs.push({ n: run.n, item: oneLine(run.item).slice(0, 120), result: msg, ok: !!ok, auto: run.auto });
+      chip.textContent = live ? "On" : ok ? "Last test: done" : "Last test: stopped";
       save(); panel = "test"; paintAll();
-      var r = propsPanel.querySelector(".wfx-result"); if (r) { r.setAttribute("tabindex", "-1"); r.focus(); }
+      // A run that started by itself does not move the keyboard focus.
+      var r = propsPanel.querySelector(".wfx-result"); if (r && !run.auto) { r.setAttribute("tabindex", "-1"); r.focus(); }
     }
     function failed(s, reason) {
       if (s.onFail === "skip") { run.status[s.id] = "skip"; log("skip", title(s), reason + " Skipped, as this step is set to."); return true; }
@@ -3582,12 +3828,12 @@ var WorkflowBuilder = (function () {
         if (KINDS[s.kind].ai && mode === "chat") {
           run.wait = { type: "chat", step: s, prompt: promptFor(s, String(run.data[s.from] || ""), run.data) };
           run.status[s.id] = "wait"; log("wait", title(s), "Waiting for your AI chat's answer.");
-          save(); panel = "test"; paintAll(); focusPanel(); return;
+          save(); panel = "test"; paintAll(); if (!run.auto) focusPanel(); else status("A run that started by itself needs your AI chat - see Test."); return;
         }
         if (s.kind === "review") {
           run.wait = { type: "review", step: s, field: s.what && run.data[s.what] !== undefined ? s.what : "" };
           run.status[s.id] = "wait"; log("wait", title(s), "Waiting for " + (s.who || wf.owner) + " to review.");
-          save(); panel = "test"; paintAll(); focusPanel(); return;
+          save(); panel = "test"; paintAll(); if (!run.auto) focusPanel(); else status("A run that started by itself is waiting for " + (s.who || wf.owner) + " to review - see Test."); return;
         }
         top.i++;
         if (!doStep(s)) return;
@@ -3826,7 +4072,7 @@ var WorkflowBuilder = (function () {
     var STATE_WORDS = { ok: "Done", fail: "Failed", skip: "Skipped", wait: "Waiting", warn: "Check" };
     function paintActivity() {
       vActivity.textContent = "";
-      vActivity.appendChild(el("h3", { class: "wfx-h", text: run ? "Test " + run.n : "No tests yet" }));
+      vActivity.appendChild(el("h3", { class: "wfx-h", text: run ? "Test " + run.n + (run.auto ? " - started by itself" : "") : "No tests yet" }));
       if (!run) { vActivity.appendChild(el("p", { class: "wfx-hint", text: "Press Test, then Run the test. Each step's result shows up here." })); return; }
       if (run.done) vActivity.appendChild(el("p", { class: "wfx-result", text: run.done }));
       var ol = el("ol", { class: "wfx-log" });
@@ -3862,7 +4108,7 @@ var WorkflowBuilder = (function () {
       runs.slice().reverse().forEach(function (r) {
         rl.appendChild(el("li", { class: "wfx-log__item is-" + (r.ok ? "ok" : "fail") }, [
           el("span", { class: "wfx-log__state", text: r.ok ? "Done" : "Stopped" }),
-          el("span", { class: "wfx-log__step", text: "Test " + r.n + ": " + (r.item || "(empty)") }),
+          el("span", { class: "wfx-log__step", text: "Test " + r.n + (r.auto ? " (started by itself)" : "") + ": " + (r.item || "(empty)") }),
           el("span", { class: "wfx-log__detail", text: r.result })]));
       });
       left.appendChild(rl);
@@ -3933,7 +4179,11 @@ var WorkflowBuilder = (function () {
       // Typing changes the workflow in place. Redraw the canvas (names show
       // there) a moment later, but never rebuild the panel being typed in.
       clearTimeout(timer);
-      timer = setTimeout(function () { paintCanvas(); save(); chip.textContent = "Draft - saved"; }, 200);
+      timer = setTimeout(function () {
+        // A key typed or pasted into a step comes straight back out (2.2).
+        if (scrubAll(wf)) { keyWarn(); paintProps(); }
+        paintCanvas(); save(); chip.textContent = live ? "On" : "Draft - saved";
+      }, 200);
     }
     function paintAll() {
       paintAdd(); paintCanvas(); paintProps();
@@ -3947,7 +4197,19 @@ var WorkflowBuilder = (function () {
     paintAll();
     setZoom(1);
     showView("build", false);
-    return { saving: saving, workflow: function () { return strip(wf); }, markdown: function () { return markdownFile(wf); } };
+    return {
+      saving: saving,
+      workflow: function () { return strip(wf); },
+      markdown: function () { return markdownFile(wf); },
+      // 2.2: what the page's hand-in needs - every test, the Outbox, the
+      // learner's items, and whether it is On. Copies, never the originals.
+      summary: function () {
+        return { runs: runs.map(function (r) { return { n: r.n, item: r.item, result: r.result, ok: r.ok, auto: r.auto }; }),
+                 outbox: outbox.map(function (m) { return { how: m.how, to: m.to, body: m.body, alert: m.alert, run: m.run }; }),
+                 items: items.map(function (it) { return { label: it.label, text: it.text }; }),
+                 live: live, remember: wf.trigger.remember, trigger: TRIGGERS[wf.trigger.kind].name };
+      }
+    };
   }
 
   return { mount: mount, clean: clean, unpack: unpack, markdown: function (w) { return markdownFile(clean(w)); } };
