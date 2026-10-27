@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--
+    SECURITY: the Content Security Policy (CSP) below is the page's "house rules."
+    - default-src 'none'  : by default, the page may not load ANYTHING from the internet.
+    - script-src : only the code written inside this one file may run, plus ONE outside tool
+                   (pdf-lib, which builds the PDF) from cdn.jsdelivr.net.
+    - style-src 'unsafe-inline' : only the styles written inside this file are used.
+    - img-src blob: data: : pictures may only come from files the learner adds on their own computer.
+    - connect-src is not listed, so it falls back to 'none': the page cannot send data anywhere.
+    - form-action 'none' / base-uri 'none' : no form can submit to a website, and links cannot be redirected.
+    In plain words: nothing a learner adds ever leaves their computer unless THEY upload the finished PDF.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; img-src blob: data:; base-uri 'none'; form-action 'none'">
+  <!-- PRIVACY: if a learner clicks a link, do not tell the other site where they came from. -->
+  <meta name="referrer" content="no-referrer">
+
+  <title>Lab Hand-In</title>
+
+  <!--
+    pdf-lib is a free, well-known tool (MIT license) that builds PDF files right in the browser.
+    SECURITY: the "integrity" value is a fingerprint of the exact file we tested. If the copy
+    on the CDN were ever changed - even by one character - the browser would refuse to run it.
+    "crossorigin" is required for that fingerprint check to work.
+    PRIVACY: loading this file is the ONLY time the page talks to the internet, and it sends
+    none of the learner's work - the CDN only sees that someone downloaded pdf-lib.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"
+          integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+
+  <style>
+    /* =========================================================
+       1. COLOR TOKENS
+       Every color lives here, in one place. Change a token and
+       the whole page updates. All text colors clear 7:1 contrast.
+       ========================================================= */
+    :root {
+      --blue:   #0046ad;   /* main buttons and headings  */
+      --gray:   #4b5563;   /* quieter helper text        */
+      --green:  #305305;   /* "it worked" messages       */
+      --orange: #a23108;   /* warnings and "remove"      */
+
+      --page:   #f6f7f9;   /* page background            */
+      --card:   #ffffff;   /* background of each section */
+      --ink:    #111827;   /* normal text                */
+      --line:   #d1d5db;   /* borders                    */
+      --zone:   #eef3fb;   /* drop-zone background       */
+      --focus:  #0046ad;   /* keyboard focus ring        */
+      --on-blue:#ffffff;   /* text sitting on blue       */
+    }
+
+    /* Dark mode: used when the learner's computer is set to dark. */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --blue:   #9cc0ff;
+        --gray:   #c3c9d3;
+        --green:  #b7e08a;
+        --orange: #ffb08f;
+
+        --page:   #111418;
+        --card:   #1b2027;
+        --ink:    #f2f4f7;
+        --line:   #3a424e;
+        --zone:   #1f2a3a;
+        --focus:  #9cc0ff;
+        --on-blue:#0b1220;
+      }
+    }
+
+    /* =========================================================
+       2. PAGE BASICS
+       ========================================================= */
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      /* Atkinson Hyperlegible is used if the computer has it; otherwise the system font.
+         PRIVACY: we do NOT load fonts from Google, so no outside site sees who opens this page. */
+      font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    /* The "skip link" is invisible until a keyboard user presses Tab. */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 0.5rem;
+      background: var(--blue);
+      color: var(--on-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      z-index: 10;
+    }
+    .skip-link:focus { left: 0.5rem; }
+
+    /* A clear, thick outline shows exactly where keyboard focus is. */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    /* Hides text visually but keeps it readable by screen readers. */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    header, main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 16px;   /* 16px side gutter so nothing touches the phone's edge */
+    }
+
+    header { padding-top: 1.5rem; }
+
+    h1 {
+      margin: 0 0 0.25rem;
+      color: var(--blue);
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+    }
+
+    h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+      color: var(--blue);
+    }
+
+    .lede   { margin: 0 0 0.5rem; }
+    .helper { color: var(--gray); font-size: 0.95rem; margin: 0.25rem 0 0.75rem; }
+
+    /* The little "stays on your computer" note. */
+    .privacy-note {
+      border-left: 4px solid var(--green);
+      padding: 0.5rem 0.75rem;
+      background: var(--card);
+      border-radius: 0 6px 6px 0;
+      font-size: 0.95rem;
+      margin: 1rem 0;
+    }
+
+    /* =========================================================
+       3. SECTIONS ("cards")
+       ========================================================= */
+    section.card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 0 0 1.25rem;
+    }
+
+    /* The step number in front of each heading. */
+    .step {
+      display: inline-grid;
+      place-items: center;
+      width: 1.8rem; height: 1.8rem;
+      margin-right: 0.4rem;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--on-blue);
+      font-size: 1rem;
+    }
+
+    /* =========================================================
+       4. FORM FIELDS
+       ========================================================= */
+    .two-up {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    /* On narrow screens, stack the two fields instead of side by side. */
+    @media (max-width: 600px) {
+      .two-up { grid-template-columns: 1fr; }
+    }
+
+    label { display: block; font-weight: 700; margin-bottom: 0.25rem; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      font: inherit;
+      color: var(--ink);
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+    }
+    input[type="text"]:focus, textarea:focus { border-color: var(--blue); }
+
+    textarea { min-height: 14rem; resize: vertical; }
+
+    .counter { text-align: right; color: var(--gray); font-size: 0.9rem; margin-top: 0.25rem; }
+
+    /* =========================================================
+       5. BUTTONS
+       ========================================================= */
+    button {
+      font: inherit;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      border: 2px solid var(--blue);
+      background: var(--card);
+      color: var(--blue);
+      font-weight: 700;
+    }
+    button:hover { background: var(--zone); }
+
+    button.primary {
+      background: var(--blue);
+      color: var(--on-blue);
+    }
+    button.primary:hover { filter: brightness(1.1); }
+
+    button.danger { border-color: var(--orange); color: var(--orange); }
+
+    /* Small icon-style buttons on each screenshot / file row. */
+    button.small { padding: 0.3rem 0.6rem; font-size: 0.9rem; }
+
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+    /* =========================================================
+       6. DROP ZONES (where screenshots and files go)
+       ========================================================= */
+    .drop-zone {
+      border: 2px dashed var(--blue);
+      border-radius: 10px;
+      background: var(--zone);
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .drop-zone p { margin: 0.5rem 0 0; }
+
+    /* Shown while a file is being dragged over the zone. */
+    .drop-zone.is-dragging {
+      border-style: solid;
+      outline: 3px solid var(--blue);
+    }
+
+    /* Keyboard shortcut "keys", e.g. Ctrl + V */
+    kbd {
+      font-family: inherit;
+      border: 1px solid var(--line);
+      border-bottom-width: 3px;
+      border-radius: 4px;
+      padding: 0 0.35rem;
+      background: var(--card);
+      font-size: 0.9em;
+    }
+
+    /* =========================================================
+       7. LISTS OF ADDED SCREENSHOTS AND FILES
+       ========================================================= */
+    .item-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+
+    .shot {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    @media (max-width: 600px) {
+      .shot { grid-template-columns: 1fr; }
+    }
+
+    .shot img {
+      width: 100%;
+      max-height: 160px;
+      object-fit: contain;
+      background: var(--page);
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .shot .meta { color: var(--gray); font-size: 0.9rem; margin: 0.25rem 0 0.5rem; word-break: break-word; }
+
+    .file-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .file-row .name { font-weight: 700; word-break: break-word; }
+    .file-row .meta { color: var(--gray); font-size: 0.9rem; }
+
+    .empty { color: var(--gray); font-style: italic; margin: 0.75rem 0 0; }
+
+    /* =========================================================
+       8. MESSAGES (success / warning)
+       ========================================================= */
+    .message {
+      margin: 0.75rem 0 0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      border-left: 4px solid var(--orange);
+      color: var(--orange);
+      background: var(--card);
+      font-weight: 700;
+    }
+    .message.ok { border-left-color: var(--green); color: var(--green); }
+    .message:empty { display: none; }
+
+    .summary { font-weight: 700; margin: 0 0 0.75rem; }
+
+    footer { max-width: 860px; margin: 0 auto 2rem; padding: 0 16px; color: var(--gray); font-size: 0.9rem; }
+
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to the form</a>
+
+  <header>
+    <h1>Lab Hand-In</h1>
+    <p class="lede">Put your write-up, screenshots, and files together in one place, then download one PDF to upload to Brightspace.</p>
+  </header>
+
+  <main id="main">
+
+    <p class="privacy-note">
+      <strong>Private by design:</strong> everything you add stays on this computer.
+      Your PDF is made right here in your browser - your work is never sent anywhere. Nothing leaves until <em>you</em> upload it.
+    </p>
+
+    <!-- ================= STEP 1: ABOUT THIS LAB ================= -->
+    <section class="card" aria-labelledby="about-heading">
+      <h2 id="about-heading"><span class="step" aria-hidden="true">1</span>About this lab</h2>
+      <div class="two-up">
+        <div>
+          <label for="student-name">Your name</label>
+          <input type="text" id="student-name" autocomplete="name" maxlength="120">
+        </div>
+        <div>
+          <label for="assignment">Assignment</label>
+          <input type="text" id="assignment" autocomplete="off" maxlength="160" aria-describedby="assignment-help">
+          <p class="helper" id="assignment-help">For example: Lab 1.2 - Your First Page</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STEP 2: WRITE-UP ================= -->
+    <section class="card" aria-labelledby="writeup-heading">
+      <h2 id="writeup-heading"><span class="step" aria-hidden="true">2</span>Your write-up</h2>
+      <label for="writeup" class="sr-only">Your write-up</label>
+      <p class="helper" id="writeup-help">Type or paste your answers here. Line breaks are kept exactly as you type them.</p>
+      <textarea id="writeup" aria-describedby="writeup-help writeup-count"></textarea>
+      <p class="counter" id="writeup-count" aria-live="off">0 words</p>
+    </section>
+
+    <!-- ================= STEP 3: SCREENSHOTS ================= -->
+    <section class="card" aria-labelledby="shots-heading">
+      <h2 id="shots-heading"><span class="step" aria-hidden="true">3</span>Screenshots</h2>
+
+      <div class="drop-zone" id="shot-zone">
+        <button type="button" class="primary" id="shot-button">Choose screenshots</button>
+        <p>
+          Or paste a screenshot anywhere on this page with
+          <kbd>Ctrl</kbd> + <kbd>V</kbd> (Windows) or <kbd>⌘</kbd> + <kbd>V</kbd> (Mac),
+          or drag pictures into this box.
+        </p>
+        <p class="helper">PNG, JPG, GIF, or WebP. You can add as many as you need.</p>
+        <!-- The real file picker is hidden; the button above opens it. -->
+        <input type="file" id="shot-input" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
+      </div>
+
+      <p class="message" id="shot-message" role="alert"></p>
+      <ul class="item-list" id="shot-list" aria-label="Screenshots you have added"></ul>
+      <p class="empty" id="shot-empty">No screenshots yet.</p>
+    </section>
+
+    <!-- ================= STEP 4: FILES ================= -->
+    <section class="card" aria-labelledby="files-heading">
+      <h2 id="files-heading"><span class="step" aria-hidden="true">4</span>Files <span class="helper">(optional)</span></h2>
+
+      <div class="drop-zone" id="file-zone">
+        <button type="button" class="primary" id="file-button">Choose files</button>
+        <p>Or drag files into this box - for example your <code>.html</code> page, a document, or a zip.</p>
+        <p class="helper">Files are attached inside your PDF. Upload them to Brightspace too, so they're easy to open.</p>
+        <input type="file" id="file-input" multiple hidden>
+      </div>
+
+      <p class="message" id="file-message" role="alert"></p>
+      <ul class="item-list" id="file-list" aria-label="Files you have added"></ul>
+      <p class="empty" id="file-empty">No files yet.</p>
+    </section>
+
+    <!-- ================= STEP 5: FINISH ================= -->
+    <section class="card" aria-labelledby="finish-heading">
+      <h2 id="finish-heading"><span class="step" aria-hidden="true">5</span>Download and hand in</h2>
+      <p class="summary" id="summary">Nothing added yet.</p>
+
+      <div class="button-row">
+        <button type="button" class="primary" id="download-button">Download my PDF</button>
+        <button type="button" class="danger" id="reset-button">Start over</button>
+      </div>
+
+      <p class="helper">Your PDF has your write-up and screenshots, with any files attached inside it. Open it to check it, then upload it to Brightspace.</p>
+
+      <p class="message" id="finish-message" role="status"></p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Tip: your name, assignment, and write-up are kept if you accidentally refresh this tab, and erased when you close it. Screenshots and files are not kept, so download before you close the tab.</p>
+  </footer>
+
+  <!-- A hidden "announcer" that tells screen-reader users what just happened. -->
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+
+<script>
+/* =================================================================
+   LAB HAND-IN
+   How it works, in four sentences:
+   1. The learner types text, adds screenshots, and adds files.
+   2. Everything is kept in a list in memory (the "state" below).
+   3. "Download my PDF" draws that list onto PDF pages (using pdf-lib).
+   4. Nothing is ever sent over the internet - there is no server.
+   Teachers can fill in the name and assignment with a link, like:
+     lab-hand-in.html#assignment=Lab%201.2&name=Jordan%20Lee
+   (see fillFromLink in section 10).
+   ================================================================= */
+
+// "use strict" makes the browser catch common mistakes (like typos in variable names).
+"use strict";
+
+/* -----------------------------------------------------------------
+   1. SETTINGS - limits you can change in one place
+   ----------------------------------------------------------------- */
+
+// Screenshots must be one of these picture types.
+// SECURITY: SVG is left out on purpose - SVG files can contain code.
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
+// The biggest single screenshot or file we accept (25 MB).
+const MAX_ITEM_BYTES = 25 * 1024 * 1024;
+
+// If everything together is bigger than this (40 MB), we warn the learner.
+// (Packing files into the download makes them about one-third bigger.)
+const WARN_TOTAL_BYTES = 40 * 1024 * 1024;
+
+// SECURITY: file types that run programs. We refuse these so a learner cannot
+// hand in something that could harm the instructor's computer by accident.
+const BLOCKED_EXTENSIONS = ["exe", "msi", "bat", "cmd", "com", "scr", "ps1", "vbs", "jar", "dmg", "pkg", "apk", "app"];
+
+// Should added files be attached inside the PDF?
+// true  = yes (Acrobat, Firefox, and most PDF apps show them in an "Attachments" panel)
+// false = no, the PDF just lists their names
+const EMBED_FILES = true;
+
+// Where the typed text is kept if the tab is refreshed (see section 9).
+const DRAFT_KEY = "lab-hand-in-draft";
+
+/* -----------------------------------------------------------------
+   2. STATE - the single source of truth for what the learner added
+   ----------------------------------------------------------------- */
+const state = {
+  // Each screenshot looks like: { id, file, url, caption }
+  //   file    = the picture itself
+  //   url     = a temporary local address so we can show a preview
+  //   caption = what the learner typed under it
+  images: [],
+  // Each file looks like: { id, file }
+  files: []
+};
+
+// A simple counter that gives every item its own id number.
+let nextId = 1;
+
+/* -----------------------------------------------------------------
+   3. FIND THE PARTS OF THE PAGE WE NEED
+   ----------------------------------------------------------------- */
+const nameInput     = document.getElementById("student-name");
+const titleInput    = document.getElementById("assignment");
+const writeup       = document.getElementById("writeup");
+const writeupCount  = document.getElementById("writeup-count");
+
+const shotZone      = document.getElementById("shot-zone");
+const shotButton    = document.getElementById("shot-button");
+const shotInput     = document.getElementById("shot-input");
+const shotList      = document.getElementById("shot-list");
+const shotEmpty     = document.getElementById("shot-empty");
+const shotMessage   = document.getElementById("shot-message");
+
+const fileZone      = document.getElementById("file-zone");
+const fileButton    = document.getElementById("file-button");
+const fileInput     = document.getElementById("file-input");
+const fileList      = document.getElementById("file-list");
+const fileEmpty     = document.getElementById("file-empty");
+const fileMessage   = document.getElementById("file-message");
+
+const summary        = document.getElementById("summary");
+const downloadButton = document.getElementById("download-button");
+const resetButton    = document.getElementById("reset-button");
+const finishMessage  = document.getElementById("finish-message");
+const announcer      = document.getElementById("announcer");
+
+/* -----------------------------------------------------------------
+   4. SMALL HELPER FUNCTIONS
+   ----------------------------------------------------------------- */
+
+/**
+ * SECURITY: escapeHtml() makes text safe to put inside a web page.
+ * If a learner types "<script>", we turn the < and > into harmless
+ * symbols so the browser SHOWS the text instead of RUNNING it.
+ * Every bit of learner text goes through this before it reaches a page.
+ */
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Turns a number of bytes into something readable, like "2.4 MB". */
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + " bytes";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+/** Returns the part of a file name after the last dot, in lowercase ("Notes.PDF" -> "pdf"). */
+function getExtension(fileName) {
+  const dot = fileName.lastIndexOf(".");
+  return dot === -1 ? "" : fileName.slice(dot + 1).toLowerCase();
+}
+
+/** Says something out loud to screen-reader users (and nobody else sees it). */
+function announce(text) {
+  // Clearing first makes screen readers repeat a message even if it is the same as last time.
+  announcer.textContent = "";
+  setTimeout(() => { announcer.textContent = text; }, 50);
+}
+
+/** Shows a message under a section. Pass "" to clear it. Pass isGood = true for a green message. */
+function showMessage(element, text, isGood) {
+  element.textContent = text;
+  element.classList.toggle("ok", Boolean(isGood));
+}
+
+/** Turns "Lab 1.2: My Page!" into "Lab-1-2-My-Page" so it works as a file name. */
+function toFileNamePart(text) {
+  return text
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, "-")   // anything that is not a letter or number becomes a hyphen
+    .replace(/^-+|-+$/g, "")          // no hyphens at the very start or end
+    .slice(0, 60);                    // keep it a sensible length
+}
+
+/** Adds up the size of every screenshot and file. */
+function totalBytes() {
+  let total = 0;
+  state.images.forEach(item => { total += item.file.size; });
+  state.files.forEach(item  => { total += item.file.size; });
+  return total;
+}
+
+/** True if the learner has added anything at all. */
+function hasContent() {
+  return writeup.value.trim() !== "" || state.images.length > 0 || state.files.length > 0;
+}
+
+/* -----------------------------------------------------------------
+   5. ADDING SCREENSHOTS AND FILES
+   ----------------------------------------------------------------- */
+
+/**
+ * addImages() checks each picture and adds the good ones to the list.
+ * Anything that is not allowed gets a friendly explanation instead.
+ */
+function addImages(fileArray) {
+  const problems = [];
+  let added = 0;
+
+  fileArray.forEach(file => {
+    // Pasted screenshots often have no name, so we give them one.
+    const name = file.name || "pasted-screenshot.png";
+
+    if (!IMAGE_TYPES.includes(file.type)) {
+      problems.push(`"${name}" is not a PNG, JPG, GIF, or WebP picture. You can add it under Files instead.`);
+      return;
+    }
+    if (file.size > MAX_ITEM_BYTES) {
+      problems.push(`"${name}" is larger than ${formatSize(MAX_ITEM_BYTES)}. Try a smaller screenshot.`);
+      return;
+    }
+
+    state.images.push({
+      id: nextId++,
+      file: file,
+      // URL.createObjectURL makes a temporary address that only exists on this computer.
+      url: URL.createObjectURL(file),
+      caption: ""
+    });
+    added++;
+  });
+
+  showMessage(shotMessage, problems.join(" "));
+  renderImages();
+  updateSummary();
+  if (added > 0) {
+    announce(`${added} screenshot${added === 1 ? "" : "s"} added. ${state.images.length} in total.`);
+  }
+}
+
+/** addFiles() checks each file and adds the allowed ones to the list. */
+function addFiles(fileArray) {
+  const problems = [];
+  let added = 0;
+
+  fileArray.forEach(file => {
+    if (BLOCKED_EXTENSIONS.includes(getExtension(file.name))) {
+      problems.push(`"${file.name}" is a program file, which can't be handed in for safety reasons.`);
+      return;
+    }
+    if (file.size > MAX_ITEM_BYTES) {
+      problems.push(`"${file.name}" is larger than ${formatSize(MAX_ITEM_BYTES)}. Try zipping it or uploading it to Brightspace separately.`);
+      return;
+    }
+    if (file.size === 0) {
+      problems.push(`"${file.name}" is empty, so it was skipped.`);
+      return;
+    }
+
+    state.files.push({ id: nextId++, file: file });
+    added++;
+  });
+
+  showMessage(fileMessage, problems.join(" "));
+  renderFiles();
+  updateSummary();
+  if (added > 0) {
+    announce(`${added} file${added === 1 ? "" : "s"} added. ${state.files.length} in total.`);
+  }
+}
+
+/**
+ * When something is dropped or pasted somewhere other than a drop zone,
+ * we sort it for the learner: pictures go to Screenshots, everything else to Files.
+ */
+function sortAndAdd(fileArray) {
+  const pictures = fileArray.filter(file => IMAGE_TYPES.includes(file.type));
+  const others   = fileArray.filter(file => !IMAGE_TYPES.includes(file.type));
+  if (pictures.length) addImages(pictures);
+  if (others.length)   addFiles(others);
+}
+
+/* -----------------------------------------------------------------
+   6. DRAWING THE LISTS ON THE PAGE ("rendering")
+   We build each row with createElement and textContent rather than
+   pasting HTML strings. SECURITY: textContent can never run code,
+   so a strange file name like <img onerror=...> is shown as plain text.
+   ----------------------------------------------------------------- */
+
+/** Makes a small button with visible text and a fuller label for screen readers. */
+function makeButton(visibleText, screenReaderLabel, extraClass, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "small " + (extraClass || "");
+  button.textContent = visibleText;
+  button.setAttribute("aria-label", screenReaderLabel);
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+/** Redraws the list of screenshots. focusAfter = { id, action } puts keyboard focus back after a move. */
+function renderImages(focusAfter) {
+  shotList.innerHTML = "";                       // clear the old list (we built it, so this is safe)
+  shotEmpty.hidden = state.images.length > 0;    // show "No screenshots yet" only when empty
+
+  state.images.forEach((item, index) => {
+    const number = index + 1;                    // people count from 1, not 0
+    const row = document.createElement("li");
+    row.className = "shot";
+
+    // --- the preview picture ---
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.alt = item.caption ? `Screenshot ${number}: ${item.caption}` : `Screenshot ${number}`;
+
+    // --- the right-hand side: caption box + buttons ---
+    const side = document.createElement("div");
+
+    const captionId = "caption-" + item.id;
+    const label = document.createElement("label");
+    label.htmlFor = captionId;
+    label.textContent = `Screenshot ${number} caption (optional)`;
+
+    const caption = document.createElement("input");
+    caption.type = "text";
+    caption.id = captionId;
+    caption.maxLength = 300;
+    caption.value = item.caption;
+    caption.placeholder = "What does this screenshot show?";
+    // Save the caption as the learner types. We do NOT redraw here, so typing is never interrupted.
+    caption.addEventListener("input", () => {
+      item.caption = caption.value;
+      img.alt = item.caption ? `Screenshot ${number}: ${item.caption}` : `Screenshot ${number}`;
+    });
+
+    const meta = document.createElement("p");
+    meta.className = "meta";
+    meta.textContent = `${item.file.name || "Pasted screenshot"} - ${formatSize(item.file.size)}`;
+
+    const buttons = document.createElement("div");
+    buttons.className = "button-row";
+
+    const upButton = makeButton("↑ Up", `Move screenshot ${number} up`, "", () => moveImage(index, -1, item.id, "up"));
+    upButton.dataset.action = "up";
+    upButton.disabled = index === 0;                          // the first one can't go higher
+
+    const downButton = makeButton("↓ Down", `Move screenshot ${number} down`, "", () => moveImage(index, 1, item.id, "down"));
+    downButton.dataset.action = "down";
+    downButton.disabled = index === state.images.length - 1;  // the last one can't go lower
+
+    const removeButton = makeButton("Remove", `Remove screenshot ${number}`, "danger", () => removeImage(index));
+
+    buttons.append(upButton, downButton, removeButton);
+    side.append(label, caption, meta, buttons);
+    row.append(img, side);
+    row.dataset.id = item.id;
+    shotList.append(row);
+  });
+
+  // ACCESSIBILITY: after moving a screenshot, keep focus on the same button so a keyboard
+  // user can keep pressing it. If that button is now disabled, use the other arrow.
+  if (focusAfter) {
+    const row = shotList.querySelector(`[data-id="${focusAfter.id}"]`);
+    if (row) {
+      let target = row.querySelector(`[data-action="${focusAfter.action}"]`);
+      if (target.disabled) target = row.querySelector(`[data-action="${focusAfter.action === "up" ? "down" : "up"}"]`);
+      if (target && !target.disabled) target.focus();
+    }
+  }
+}
+
+/** Moves a screenshot up (direction -1) or down (direction +1). */
+function moveImage(index, direction, id, action) {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= state.images.length) return;
+  // Swap the two items in the list.
+  [state.images[index], state.images[newIndex]] = [state.images[newIndex], state.images[index]];
+  renderImages({ id, action });
+  announce(`Moved to position ${newIndex + 1} of ${state.images.length}.`);
+}
+
+/** Removes a screenshot and frees the memory its preview was using. */
+function removeImage(index) {
+  const [removed] = state.images.splice(index, 1);
+  URL.revokeObjectURL(removed.url);
+  renderImages();
+  updateSummary();
+  announce(`Screenshot removed. ${state.images.length} left.`);
+
+  // ACCESSIBILITY: don't leave keyboard focus stranded on a button that no longer exists.
+  const rows = shotList.querySelectorAll("li");
+  const next = rows[Math.min(index, rows.length - 1)];
+  (next ? next.querySelector("input") : shotButton).focus();
+}
+
+/** Redraws the list of files. */
+function renderFiles() {
+  fileList.innerHTML = "";
+  fileEmpty.hidden = state.files.length > 0;
+
+  state.files.forEach((item, index) => {
+    const row = document.createElement("li");
+    row.className = "file-row";
+
+    const info = document.createElement("div");
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = item.file.name;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = formatSize(item.file.size);
+    info.append(name, meta);
+
+    const removeButton = makeButton("Remove", `Remove file ${item.file.name}`, "danger", () => removeFile(index));
+
+    row.append(info, removeButton);
+    fileList.append(row);
+  });
+}
+
+/** Removes a file from the list. */
+function removeFile(index) {
+  state.files.splice(index, 1);
+  renderFiles();
+  updateSummary();
+  announce(`File removed. ${state.files.length} left.`);
+
+  const buttons = fileList.querySelectorAll("button");
+  const next = buttons[Math.min(index, buttons.length - 1)];
+  (next || fileButton).focus();
+}
+
+/** Updates the word counter under the write-up box. */
+function updateWordCount() {
+  const words = writeup.value.trim() === "" ? 0 : writeup.value.trim().split(/\s+/).length;
+  writeupCount.textContent = `${words} word${words === 1 ? "" : "s"}`;
+}
+
+// The warning shown when everything together gets large.
+const SIZE_WARNING = "This is getting large. If Brightspace refuses the upload, remove a big file and upload it separately.";
+
+/** Updates the "what you're handing in" line in step 5. */
+function updateSummary() {
+  const shots = state.images.length;
+  const files = state.files.length;
+  const hasText = writeup.value.trim() !== "";
+
+  if (!hasText && shots === 0 && files === 0) {
+    summary.textContent = "Nothing added yet.";
+    return;
+  }
+
+  const parts = [];
+  parts.push(hasText ? "Write-up" : "No write-up");
+  parts.push(`${shots} screenshot${shots === 1 ? "" : "s"}`);
+  parts.push(`${files} file${files === 1 ? "" : "s"}`);
+  parts.push(formatSize(totalBytes()));
+  summary.textContent = "Ready to hand in: " + parts.join(" · ");
+
+  if (totalBytes() > WARN_TOTAL_BYTES) {
+    showMessage(finishMessage, SIZE_WARNING);
+  } else if (finishMessage.textContent === SIZE_WARNING) {
+    showMessage(finishMessage, "");   // back under the limit, so remove the old warning
+  }
+}
+
+/* -----------------------------------------------------------------
+   7. BUILDING THE PDF
+   pdf-lib (loaded at the top of the page) lets us draw text and
+   pictures onto PDF pages. Think of it like typing on paper:
+   - we remember how far down the page we are (writer.y)
+   - each line of text moves us further down
+   - when we run out of room, we start a new page
+   IMPORTANT: in a PDF, y = 0 is the BOTTOM of the page, so moving
+   "down the page" means making y SMALLER.
+   ----------------------------------------------------------------- */
+
+// Sizes are in "points": 72 points = 1 inch. US Letter paper is 8.5 x 11 inches.
+const PAGE_WIDTH    = 612;
+const PAGE_HEIGHT   = 792;
+const MARGIN        = 54;                         // 0.75 inch on every side
+const FOOTER_SPACE  = 18;                         // room kept free for the page number
+const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;    // how wide text and pictures can be
+const BOTTOM_LIMIT  = MARGIN + FOOTER_SPACE;      // never draw below this line
+// The tallest a screenshot can be (a full page, minus room for its caption).
+const MAX_IMAGE_HEIGHT = PAGE_HEIGHT - MARGIN * 2 - FOOTER_SPACE - 40;
+
+// The PDF's built-in fonts can only show "Western" characters (no emoji, for example).
+// These common characters get swapped for look-alikes instead of turning into "?".
+const FRIENDLY_SWAPS = {
+  "→": "->",  "←": "<-",  "↑": "^",   "↓": "v",   // arrows
+  "✓": "[x]", "✔": "[x]", "✗": "[ ]", "✘": "[ ]", // check marks
+  "−": "-",   "≤": "<=",  "≥": ">=",  "≠": "!=",  // math signs
+  "​": ""                                                         // invisible "zero-width" space
+};
+
+/** Turns a color like "#0046ad" into the form pdf-lib wants (red, green, blue from 0 to 1). */
+function pdfColor(hex) {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  return PDFLib.rgb(r, g, b);
+}
+
+/** Starts a fresh page and moves our "pen" back to the top. */
+function startNewPage(writer) {
+  writer.page = writer.pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  writer.y = PAGE_HEIGHT - MARGIN;
+}
+
+/**
+ * makePdfSafe() checks every character against what the font can draw.
+ * Characters the font can't draw (like emoji) become a look-alike from
+ * FRIENDLY_SWAPS, or "?" - and we count them so we can tell the learner.
+ */
+function makePdfSafe(writer, font, text) {
+  // Ask the font once for its list of drawable characters, and remember it.
+  if (!writer.characterSets.has(font)) {
+    writer.characterSets.set(font, new Set(font.getCharacterSet()));
+  }
+  const drawable = writer.characterSets.get(font);
+
+  let safe = "";
+  // Windows uses "\r\n" for new lines; we only need "\n". Tabs become 4 spaces.
+  for (const character of String(text).replace(/\r/g, "").replace(/\t/g, "    ")) {
+    if (character === "\n" || drawable.has(character.codePointAt(0))) {
+      safe += character;
+    } else if (character in FRIENDLY_SWAPS) {
+      safe += FRIENDLY_SWAPS[character];
+    } else {
+      safe += "?";
+      writer.replacedCount++;
+    }
+  }
+  return safe;
+}
+
+/**
+ * wrapLines() breaks text into lines that fit across the page.
+ * It adds words one at a time and measures the line; when the next
+ * word won't fit, that line is finished and a new one starts.
+ */
+function wrapLines(font, size, text, maxWidth) {
+  const lines = [];
+  const fits = piece => font.widthOfTextAtSize(piece, size) <= maxWidth;
+
+  text.split("\n").forEach(paragraph => {
+    let line = "";
+    paragraph.split(" ").forEach(word => {
+      // A single "word" too long for one line (like a long web address) is chopped up.
+      while (!fits(word)) {
+        let cut = word.length - 1;
+        while (cut > 1 && !fits(word.slice(0, cut))) cut--;
+        if (line !== "") { lines.push(line); line = ""; }
+        lines.push(word.slice(0, cut));
+        word = word.slice(cut);
+      }
+      const attempt = line === "" ? word : line + " " + word;
+      if (fits(attempt)) {
+        line = attempt;
+      } else {
+        lines.push(line);
+        line = word;
+      }
+    });
+    lines.push(line);   // the last line of the paragraph (may be "" for a blank line)
+  });
+  return lines;
+}
+
+/**
+ * writeText() draws text, wrapping it and starting new pages as needed.
+ * options: font, size, color, indent (space on the left), after (space below)
+ */
+function writeText(writer, text, options) {
+  const font   = options.font;
+  const size   = options.size || 11;
+  const color  = options.color || pdfColor("#111827");
+  const indent = options.indent || 0;
+  const lineHeight = size * 1.45;   // a little breathing room between lines
+
+  const safe = makePdfSafe(writer, font, text);
+  wrapLines(font, size, safe, CONTENT_WIDTH - indent).forEach(line => {
+    if (writer.y - lineHeight < BOTTOM_LIMIT) startNewPage(writer);
+    // drawText places the BASELINE (the line letters sit on), so we drop down by the font size.
+    writer.page.drawText(line, { x: MARGIN + indent, y: writer.y - size, size, font, color });
+    writer.y -= lineHeight;
+  });
+  writer.y -= (options.after === undefined ? 6 : options.after);
+}
+
+/** Draws a section heading (like "Screenshots") with a thin line under it. */
+function writeHeading(writer, text) {
+  // Don't leave a heading alone at the bottom of a page - start a new page if space is tight.
+  if (writer.y - 70 < BOTTOM_LIMIT) startNewPage(writer);
+  writer.y -= 12;
+  writeText(writer, text, { font: writer.fonts.bold, size: 14, color: pdfColor("#0046ad"), after: 2 });
+  writer.page.drawLine({
+    start: { x: MARGIN, y: writer.y },
+    end:   { x: PAGE_WIDTH - MARGIN, y: writer.y },
+    thickness: 1,
+    color: pdfColor("#d1d5db")
+  });
+  writer.y -= 10;
+}
+
+/**
+ * Redraws a picture as a PNG using a hidden <canvas>.
+ * PDFs can only hold PNG and JPG pictures, so GIF and WebP are converted.
+ * (An animated GIF keeps only its first frame.)
+ */
+async function convertToPng(file) {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  canvas.getContext("2d").drawImage(bitmap, 0, 0);
+  const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  return pngBlob.arrayBuffer();
+}
+
+/** Puts a screenshot into the PDF file so it can be drawn on a page. */
+async function embedImage(pdf, file) {
+  try {
+    const bytes = await file.arrayBuffer();
+    if (file.type === "image/png")  return await pdf.embedPng(bytes);
+    if (file.type === "image/jpeg") return await pdf.embedJpg(bytes);
+  } catch (error) {
+    // A few unusual PNG/JPG files confuse pdf-lib - redrawing them fixes that.
+  }
+  return pdf.embedPng(await convertToPng(file));
+}
+
+/** Draws one screenshot, shrunk to fit the page if needed, with its caption underneath. */
+async function drawScreenshot(writer, item, number) {
+  const image = await embedImage(writer.pdf, item.file);
+
+  // Shrink (never enlarge) so it fits both across and down the page.
+  const scale  = Math.min(1, CONTENT_WIDTH / image.width, MAX_IMAGE_HEIGHT / image.height);
+  const width  = image.width * scale;
+  const height = image.height * scale;
+
+  // Not enough room left on this page? Start a new one.
+  if (writer.y - height - 30 < BOTTOM_LIMIT) startNewPage(writer);
+
+  writer.y -= height;
+  writer.page.drawImage(image, { x: MARGIN, y: writer.y, width, height });
+  // A thin border so white screenshots don't blend into the white page.
+  writer.page.drawRectangle({
+    x: MARGIN, y: writer.y, width, height,
+    borderColor: pdfColor("#d1d5db"), borderWidth: 0.75
+  });
+  writer.y -= 8;
+
+  const caption = item.caption.trim();
+  writeText(writer, `Screenshot ${number}` + (caption ? `: ${caption}` : ""), {
+    font: writer.fonts.italic, size: 10, color: pdfColor("#4b5563"), after: 18
+  });
+}
+
+/** Adds "Assignment - Name - Page 2 of 5" to the bottom of every page. */
+function addFooters(writer, name, title) {
+  const pages = writer.pdf.getPages();
+  pages.forEach((page, index) => {
+    const text = makePdfSafe(writer, writer.fonts.regular, `${title} - ${name} - Page ${index + 1} of ${pages.length}`);
+    // If a very long title would run off the page, keep just the first line's worth.
+    const fitted = wrapLines(writer.fonts.regular, 9, text, CONTENT_WIDTH)[0];
+    page.drawText(fitted, { x: MARGIN, y: MARGIN - 20, size: 9, font: writer.fonts.regular, color: pdfColor("#4b5563") });
+  });
+}
+
+/**
+ * buildPdf() puts the whole hand-in together and returns the finished PDF.
+ * SECURITY: learner text is only ever DRAWN as text - a PDF built this way
+ * contains no scripts, links, or form fields, so it can't do anything when opened.
+ */
+async function buildPdf() {
+  const pdf = await PDFLib.PDFDocument.create();
+
+  // "writer" holds everything the drawing functions above share.
+  const writer = {
+    pdf: pdf,
+    page: null,
+    y: 0,
+    replacedCount: 0,               // how many characters became "?"
+    characterSets: new Map(),       // each font's list of drawable characters
+    fonts: {
+      regular: await pdf.embedFont(PDFLib.StandardFonts.Helvetica),
+      bold:    await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold),
+      italic:  await pdf.embedFont(PDFLib.StandardFonts.HelveticaOblique)
+    }
+  };
+  const fonts = writer.fonts;
+  const gray = pdfColor("#4b5563");
+
+  const name  = nameInput.value.trim()  || "(no name given)";
+  const title = titleInput.value.trim() || "Lab hand-in";
+  const when  = new Date().toLocaleString();
+
+  startNewPage(writer);
+
+  // --- title and byline ---
+  writeText(writer, title, { font: fonts.bold, size: 20, color: pdfColor("#0046ad"), after: 2 });
+  writeText(writer, `${name} - ${when}`, { font: fonts.regular, size: 11, color: gray, after: 4 });
+
+  // --- write-up ---
+  writeHeading(writer, "Write-up");
+  if (writeup.value.trim()) {
+    writeText(writer, writeup.value.trim(), { font: fonts.regular, size: 11 });
+  } else {
+    writeText(writer, "No write-up was added.", { font: fonts.italic, size: 11, color: gray });
+  }
+
+  // --- screenshots ---
+  writeHeading(writer, "Screenshots");
+  if (state.images.length) {
+    for (let index = 0; index < state.images.length; index++) {
+      // "await" inside a normal for loop keeps the screenshots in order.
+      await drawScreenshot(writer, state.images[index], index + 1);
+    }
+  } else {
+    writeText(writer, "No screenshots were added.", { font: fonts.italic, size: 11, color: gray });
+  }
+
+  // --- files ---
+  writeHeading(writer, "Files");
+  if (state.files.length) {
+    for (const item of state.files) {
+      writeText(writer, `• ${item.file.name} (${formatSize(item.file.size)})`, { font: fonts.regular, size: 11, indent: 8, after: 2 });
+      if (EMBED_FILES) {
+        // SECURITY: every attachment is labeled as a generic download
+        // ("application/octet-stream"), so PDF apps save it rather than open it.
+        await pdf.attach(await item.file.arrayBuffer(), item.file.name, {
+          mimeType: "application/octet-stream",
+          description: "Attached by the learner",
+          creationDate: new Date(item.file.lastModified),
+          modificationDate: new Date(item.file.lastModified)
+        });
+      }
+    }
+    writer.y -= 6;
+    writeText(writer, EMBED_FILES
+      ? "These files are attached inside this PDF (look for an Attachments panel or paperclip in your PDF app). They should also be uploaded to Brightspace alongside this PDF."
+      : "These files should be uploaded to Brightspace alongside this PDF.",
+      { font: fonts.italic, size: 10, color: gray });
+  } else {
+    writeText(writer, "No files were added.", { font: fonts.italic, size: 11, color: gray });
+  }
+
+  addFooters(writer, name, title);
+
+  // Information stored in the PDF's "properties". It helps screen readers and search.
+  pdf.setTitle(title);
+  pdf.setAuthor(name);
+  pdf.setSubject("Lab hand-in");
+  pdf.setCreator("Lab Hand-In");
+  pdf.setProducer("Lab Hand-In");
+  pdf.setLanguage("en-US");
+
+  return { bytes: await pdf.save(), replacedCount: writer.replacedCount };
+}
+
+/* -----------------------------------------------------------------
+   8. DOWNLOAD AND START OVER
+   ----------------------------------------------------------------- */
+
+/** Stops the learner from downloading an empty hand-in. Returns true if it's OK to continue. */
+function checkReady() {
+  if (!hasContent()) {
+    showMessage(finishMessage, "Add a write-up, a screenshot, or a file first.");
+    writeup.focus();
+    return false;
+  }
+  return true;
+}
+
+/** Builds the PDF and starts the download. */
+async function downloadPdf() {
+  if (!checkReady()) return;
+
+  // pdf-lib comes from the internet. If it didn't load, say so plainly.
+  if (typeof PDFLib === "undefined") {
+    showMessage(finishMessage, "The PDF maker didn't load. Check your internet connection, then refresh this page (your typing is kept).");
+    return;
+  }
+
+  downloadButton.disabled = true;
+  showMessage(finishMessage, "Making your PDF…", true);
+
+  try {
+    const result = await buildPdf();
+
+    // Build a file name like "Lab-1-2-Your-First-Page-Jordan-Lee.pdf"
+    const parts = ["Lab-Hand-In", toFileNamePart(titleInput.value), toFileNamePart(nameInput.value)].filter(Boolean);
+    const fileName = parts.join("-") + ".pdf";
+
+    // Make the file in memory, then "click" a hidden link to save it.
+    const blob = new Blob([result.bytes], { type: "application/pdf" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    // Give the browser a moment to start the download before freeing the memory.
+    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+
+    let done = `Downloaded "${fileName}" (${formatSize(blob.size)}). Open it to check it, then upload it to Brightspace.`;
+    if (state.files.length) {
+      done += " Upload your files to Brightspace too - Brightspace can't open files attached inside a PDF.";
+    }
+    if (result.replacedCount > 0) {
+      done += ` Note: ${result.replacedCount} character${result.replacedCount === 1 ? "" : "s"} (like emoji) can't go in a PDF and became "?".`;
+    }
+    showMessage(finishMessage, done, true);
+  } catch (error) {
+    showMessage(finishMessage, "Something went wrong while making your PDF. Try removing the most recent screenshot and downloading again.");
+    console.error(error);
+  } finally {
+    downloadButton.disabled = false;
+  }
+}
+
+/** Clears everything after asking first. */
+function startOver() {
+  if (hasContent() && !confirm("Clear your write-up, screenshots, and files? This can't be undone.")) return;
+
+  state.images.forEach(item => URL.revokeObjectURL(item.url));
+  state.images = [];
+  state.files = [];
+  nameInput.value = "";
+  titleInput.value = "";
+  writeup.value = "";
+  clearDraft();
+
+  [shotMessage, fileMessage, finishMessage].forEach(el => showMessage(el, ""));
+  renderImages();
+  renderFiles();
+  updateWordCount();
+  updateSummary();
+  announce("Everything cleared.");
+  nameInput.focus();
+}
+
+/* -----------------------------------------------------------------
+   9. KEEPING THE TYPED TEXT IF THE TAB IS REFRESHED
+   PRIVACY: we use sessionStorage, not localStorage. sessionStorage is
+   erased when the tab is closed, so on a shared lab computer the next
+   person never sees someone else's write-up. Only TEXT is kept here -
+   pictures and files are too big and are never stored.
+   The try/catch blocks mean the page still works if storage is turned off.
+   ----------------------------------------------------------------- */
+function saveDraft() {
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+      name: nameInput.value,
+      title: titleInput.value,
+      writeup: writeup.value
+    }));
+  } catch (error) { /* storage unavailable - that's fine */ }
+}
+
+function loadDraft() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || "null");
+    if (saved) {
+      // .value is plain text, so restoring it can never run code.
+      nameInput.value  = typeof saved.name === "string" ? saved.name : "";
+      titleInput.value = typeof saved.title === "string" ? saved.title : "";
+      writeup.value    = typeof saved.writeup === "string" ? saved.writeup : "";
+    }
+  } catch (error) { /* bad or missing draft - start fresh */ }
+}
+
+function clearDraft() {
+  try { sessionStorage.removeItem(DRAFT_KEY); } catch (error) { /* ignore */ }
+}
+
+/* -----------------------------------------------------------------
+   10. CONNECTING EVERYTHING ("event listeners")
+   ----------------------------------------------------------------- */
+
+// Typing in any text box: update counts and save the draft.
+[nameInput, titleInput, writeup].forEach(field => {
+  field.addEventListener("input", () => {
+    saveDraft();
+    updateWordCount();
+    updateSummary();
+  });
+});
+
+// The "Choose" buttons open the hidden file pickers.
+shotButton.addEventListener("click", () => shotInput.click());
+fileButton.addEventListener("click", () => fileInput.click());
+
+// When the learner picks files in a picker, add them, then reset the picker
+// so choosing the same file again still works.
+shotInput.addEventListener("change", () => { addImages(Array.from(shotInput.files)); shotInput.value = ""; });
+fileInput.addEventListener("change", () => { addFiles(Array.from(fileInput.files));  fileInput.value = ""; });
+
+/** Sets up dragging and dropping for one drop zone. */
+function setUpDropZone(zone, onFiles) {
+  zone.addEventListener("dragover", event => {
+    event.preventDefault();            // allows dropping here
+    zone.classList.add("is-dragging");
+  });
+  zone.addEventListener("dragleave", () => zone.classList.remove("is-dragging"));
+  zone.addEventListener("drop", event => {
+    event.preventDefault();            // stops the browser from opening the file
+    event.stopPropagation();           // stops the page-wide drop handler below from also running
+    zone.classList.remove("is-dragging");
+    onFiles(Array.from(event.dataTransfer.files));
+  });
+}
+setUpDropZone(shotZone, addImages);
+setUpDropZone(fileZone, addFiles);
+
+// Files dropped anywhere else on the page are sorted automatically,
+// instead of the browser opening them and losing the learner's work.
+window.addEventListener("dragover", event => event.preventDefault());
+window.addEventListener("drop", event => {
+  event.preventDefault();
+  if (event.dataTransfer && event.dataTransfer.files.length) {
+    sortAndAdd(Array.from(event.dataTransfer.files));
+  }
+});
+
+// Pasting: if the clipboard holds a picture (like a fresh screenshot), add it.
+document.addEventListener("paste", event => {
+  const items = Array.from(event.clipboardData ? event.clipboardData.items : []);
+  const pastedFiles = items
+    .filter(item => item.kind === "file")
+    .map(item => item.getAsFile())
+    .filter(Boolean);
+
+  if (pastedFiles.length === 0) return;   // ordinary text paste - let the browser handle it
+
+  // If the clipboard ALSO has text and the learner is typing in a box,
+  // let the text paste happen normally and add the pictures as well.
+  const hasText = items.some(item => item.kind === "string");
+  const typingInBox = ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName);
+  if (!(hasText && typingInBox)) event.preventDefault();
+
+  sortAndAdd(pastedFiles);
+});
+
+// Download and start over.
+downloadButton.addEventListener("click", downloadPdf);
+resetButton.addEventListener("click", startOver);
+
+// Warn before leaving the page if screenshots or files would be lost.
+window.addEventListener("beforeunload", event => {
+  if (state.images.length || state.files.length) {
+    event.preventDefault();
+    event.returnValue = "";   // older browsers need this line to show the warning
+  }
+});
+
+/**
+ * fillFromLink() lets a teacher pre-fill the name and assignment with a link.
+ * Both of these forms work:
+ *   lab-hand-in.html?assignment=Lab%201.2&name=Jordan%20Lee
+ *   lab-hand-in.html#assignment=Lab%201.2&name=Jordan%20Lee
+ * PRIVACY: the second form (after a #) is better. Everything after a # stays in
+ * the browser and is never sent to the web server, so the server's logs never
+ * contain a learner's name. If both forms are used, the # values win.
+ * SECURITY: the values only ever go into the boxes as plain text (.value), cut
+ * to each box's maximum length, so a link can't sneak code into the page.
+ */
+function fillFromLink() {
+  const fromQuery = new URLSearchParams(window.location.search);
+  const fromHash  = new URLSearchParams(window.location.hash.slice(1));  // slice(1) drops the "#"
+
+  // Look in the # part first, then the ? part. Gives back null if neither has it.
+  function read(key) {
+    return fromHash.has(key) ? fromHash.get(key) : fromQuery.get(key);
+  }
+
+  const name = read("name");
+  const assignment = read("assignment");
+  if (name)       nameInput.value  = name.trim().slice(0, nameInput.maxLength);
+  if (assignment) titleInput.value = assignment.trim().slice(0, titleInput.maxLength);
+}
+
+/* -----------------------------------------------------------------
+   11. START UP
+   ----------------------------------------------------------------- */
+loadDraft();
+fillFromLink();   // after loadDraft, so a link's values win over an old draft
+renderImages();
+renderFiles();
+updateWordCount();
+updateSummary();
+</script>
+</body>
+</html>
