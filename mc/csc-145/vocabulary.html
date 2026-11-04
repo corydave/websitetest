@@ -3,7 +3,7 @@
   Reading: Vocabulary
   Chapter: Vibe Coding
 
-  GENERATED FILE - do not edit. Built 2026-10-27 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-11-04 by build/build.py from
   chapters/shared/vocabulary.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1144,7 +1144,7 @@ div.note > :last-child { margin-bottom: 0; }
 <div class="vocab-search">
   <label for="vocab-filter">Find a term</label>
   <input type="search" id="vocab-filter" placeholder="Type to filter…" autocomplete="off">
-  <span class="vocab-count" id="vocab-count" aria-live="polite">147 terms</span>
+  <span class="vocab-count" id="vocab-count" aria-live="polite">162 terms</span>
 </div>
 <nav class="letters" aria-label="Jump to a letter"><a href="#letter-%">%</a> <a href="#letter-<"><</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a> <a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-G">G</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a> <a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
 
@@ -1198,6 +1198,15 @@ div.note > :last-child { margin-bottom: 0; }
   <h3><code>index.html</code></h3>
   <p>The front door of a folder. Every app you build gets a folder, and the main page inside it is called <code>index.html</code>. The name is a convention everything agrees on: browsers and web servers open that file first, without being told to. Four folders can each hold a file with this name without any confusion, because the folder is what tells them apart.</p>
 </article>
+<article class="term" id="json-parse" data-search="json.parse json.parse">
+  <h3><code>JSON.parse</code></h3>
+  <p>The other direction: turns JSON text back into data the code can use. If the text breaks a JSON rule, it refuses the whole thing - so wrap it in try and catch whenever the text came from somewhere you do not control.</p>
+</article>
+<article class="term" id="json-stringify" data-search="json.stringify json.stringify">
+  <h3><code>JSON.stringify</code></h3>
+  <p>Turns data (a list, an object) into JSON text, so it can be saved in <code>localStorage</code>, put in a link, or written to a file.</p>
+  <pre class="sample">JSON.stringify(['tent', 'stove'])   →   '["tent","stove"]'</pre>
+</article>
 <article class="term" id="label" data-search="&lt;label&gt; label labels &lt;label&gt;">
   <h3><code>&lt;label&gt;</code></h3>
   <p>The visible text that says what a form field is for, tied to the field with <code>for</code> and the field's <code>id</code>:</p>
@@ -1248,6 +1257,10 @@ div.note > :last-child { margin-bottom: 0; }
   <h3>Animation loop</h3>
   <p>How anything moves on a screen: about sixty times a second, work out how much time has passed, move everything a little, check what touched what, wipe the canvas, and paint it all again. In a game it is called the game loop.</p>
 </article>
+<article class="term" id="application-tab" data-search="application tab application tab">
+  <h3>Application tab</h3>
+  <p>The part of Developer Tools that shows what a site has saved in your browser. Open it with right-click, Inspect, then <strong>Application</strong>, and look under Storage, Local storage. You can read every saved value there - and change it, which is the point worth remembering.</p>
+</article>
 <article class="term" id="aria" data-search="aria aria">
   <h3>ARIA</h3>
   <p>Extra attributes that tell assistive technology things plain HTML cannot express. Genuinely useful, and the most misused thing on the web, because people reach for it instead of just using the right tag.</p>
@@ -1263,6 +1276,14 @@ div.note > :last-child { margin-bottom: 0; }
   <pre class="sample">&lt;img src="photo.jpg" alt="A bowl of soup" /&gt;</pre>
 </article>
 <h2 class="letter-head" id="letter-B">B</h2>
+<article class="term" id="back-end" data-search="back end back end back-end">
+  <h3>Back end</h3>
+  <p>The part of an app that runs on a server: where shared data is kept and where secrets can safely live. Signing in to the same account on any device works because of a back end.</p>
+</article>
+<article class="term" id="backup" data-search="backup backup backups">
+  <h3>Backup</h3>
+  <p>A copy of your data kept somewhere else, so losing the original is not a disaster. Browser storage can be emptied in one click; an exported file in a safe place cannot.</p>
+</article>
 <article class="term" id="body" data-search="&lt;body&gt; … &lt;/body&gt; ">
   <h3>&lt;body&gt; … &lt;/body&gt;</h3>
   <p>Everything a visitor can see: headings, paragraphs, buttons, images, links. The <code>&lt;script&gt;</code> usually sits at the very end of the body.</p>
@@ -1399,6 +1420,10 @@ February,388,295</pre>
   <h3>Edge case</h3>
   <p>An input nobody planned for until somebody typed it: a blank option, the same thing twice, a name with a comma in it. Trying them on purpose is half of testing anything.</p>
 </article>
+<article class="term" id="editable-content" data-search="editable content editable content teacher-editable content content vs machine">
+  <h3>Editable content</h3>
+  <p>The parts of an app somebody might want to change without programming: questions, words, names, starting items. Your specification asks for them in one clearly labeled list at the top of the script, so the rest of the code only <em>reads</em> the list - and anybody can update it.</p>
+</article>
 <article class="term" id="empty-state" data-search="empty state empty state empty states">
   <h3>Empty state</h3>
   <p>What an app shows when there is nothing to show yet - an empty list, a missing name. A friendly message like <em>Add at least two options first</em> makes an app feel finished; a blank screen makes it feel broken. The AI often forgets it unless you ask.</p>
@@ -1407,6 +1432,10 @@ February,388,295</pre>
   <h3>EXIF</h3>
   <p>Hidden information stored inside a photo file: the phone or camera, the date and time, which way up to show it - and often the exact place it was taken. You cannot see it in the picture, but anybody with the file can read it.</p>
   <p>Painting a photo onto a canvas and saving a new picture leaves it all behind, because only the dots come along.</p>
+</article>
+<article class="term" id="export-import" data-search="export and import export exports exported import imports imported">
+  <h3>Export and import</h3>
+  <p><strong>Export</strong> writes an app's data out as a file the person keeps. <strong>Import</strong> reads such a file back in - after the browser was cleared, or on another device. Together they mean the data belongs to the person, not the app. A good import checks the file and asks before replacing anything.</p>
 </article>
 <h2 class="letter-head" id="letter-F">F</h2>
 <article class="term" id="file-extension" data-search="file extension file extension file extensions extension extensions filename extensions file name extensions">
@@ -1429,6 +1458,10 @@ February,388,295</pre>
 <article class="term" id="fork" data-search="fork fork forks forked">
   <h3>Fork</h3>
   <p>A copy of somebody's project that other people carry on working on separately. When a popular library stops being looked after, a fork is often how it keeps going.</p>
+</article>
+<article class="term" id="front-end" data-search="front end front end front-end">
+  <h3>Front end</h3>
+  <p>The part of an app that runs in your browser, on your device: everything you have built so far. Anybody can read front-end code with View Source or Developer Tools - so it can never keep a secret.</p>
 </article>
 <h2 class="letter-head" id="letter-G">G</h2>
 <article class="term" id="game-loop" data-search="game loop game loop the game loop">
@@ -1539,6 +1572,10 @@ February,388,295</pre>
   <p>The button that turns a folder on your computer into a working extension. Pick <strong>the folder that contains</strong> <code>manifest.json</code> - not the manifest file itself, and not the folder above it.</p>
   <p>Chrome remembers where that folder is, not what is in it. Move or rename it and the extension stops working.</p>
 </article>
+<article class="term" id="lock-in" data-search="lock-in lock-in locked in">
+  <h3>Lock-in</h3>
+  <p>When an app keeps your data where only it can see it, so leaving means losing it. Sometimes careless, often deliberate. An Export button is the cure.</p>
+</article>
 <h2 class="letter-head" id="letter-M">M</h2>
 <article class="term" id="maintained" data-search="maintained maintained unmaintained looking after it">
   <h3>Maintained</h3>
@@ -1548,6 +1585,10 @@ February,388,295</pre>
   <h3>Match pattern</h3>
   <p>The line in a manifest that says which websites a content script runs on. A single site looks like <code>https://en.wikipedia.org/*</code>, where the <code>*</code> means "any page on it". The widest possible is <code>&lt;all_urls&gt;</code>, which means every page you ever open.</p>
   <p>It is fussy about exact addresses: <code>en.wikipedia.org</code> is not <code>simple.wikipedia.org</code>.</p>
+</article>
+<article class="term" id="in-memory" data-search="memory (a page's) in memory the page's memory">
+  <h3>Memory (a page's)</h3>
+  <p>Where a page keeps what it knows while it is open: the score, the list you typed, which question you are on. Fast, and temporary - refresh or close the tab and it is gone. To remember, an app has to put things in <em>storage</em> instead.</p>
 </article>
 <article class="term" id="milliseconds" data-search="milliseconds milliseconds millisecond">
   <h3>Milliseconds</h3>
@@ -1625,6 +1666,10 @@ February,388,295</pre>
   <h3>Popup</h3>
   <p>The small panel that appears when you click an extension's icon. It is an ordinary little web page. One catch worth knowing: opening it takes the cursor out of whatever box you were typing in, so a popup that inserts text into a page needs extra work that a right-click menu does not.</p>
 </article>
+<article class="term" id="private-window" data-search="private window private window private windows incognito">
+  <h3>Private window</h3>
+  <p>A browser window that forgets everything when you close it: history, sign-ins, and anything a site saved in storage. Some refuse to let sites save at all. A well-built app keeps working anyway and says it cannot remember.</p>
+</article>
 <article class="term" id="prompt" data-search="prompt prompt prompts">
   <h3>Prompt</h3>
   <p>What you type to the AI: a description of what you want, in your own words, like you are explaining it to a friend. Say what goes in, what comes out, and what it should look like. Then paste the specification after it.</p>
@@ -1684,6 +1729,10 @@ February,388,295</pre>
   <p>Using the tag that means the thing. A <code>&lt;button&gt;</code> for a button, an <code>&lt;a&gt;</code> for a link, a <code>&lt;label&gt;</code> for a label, real headings in order.</p>
   <p>The highest-leverage thing in this chapter. A real button is focusable, works with Enter and Space, and announces itself as a button, all for free. A <code>&lt;div&gt;</code> painted to look like one does none of that until you add it back by hand, and you will miss some.</p>
 </article>
+<article class="term" id="server" data-search="server server servers">
+  <h3>Server</h3>
+  <p>A computer somewhere that is always on, which other devices talk to over the internet. Websites live on servers. So does any data that more than one device needs to share.</p>
+</article>
 <article class="term" id="service-worker" data-search="service worker service worker service workers background service worker">
   <h3>Service worker</h3>
   <p>A small file in an extension that runs in the background, outside any page. It is for jobs that are about the browser rather than about a web page: building a right-click menu, or deciding what the toolbar icon does. Often three lines long, and it has to be its own file.</p>
@@ -1709,6 +1758,10 @@ February,388,295</pre>
   <h3>Specification (the spec)</h3>
   <p>The block of rules you paste at the end of every prompt. It tells the AI how to build things for this course: one file, plain comments, works on a phone, and so on. You are not expected to understand every line yet; one line gets explained per chapter.</p>
 </article>
+<article class="term" id="storage" data-search="storage storage">
+  <h3>Storage</h3>
+  <p>Somewhere an app can keep things that survive a refresh, a closed tab and a restart. The simplest kind is <code>localStorage</code>, a small box the browser keeps for each website.</p>
+</article>
 <article class="term" id="strong-em" data-search="&lt;strong&gt; and &lt;em&gt; ">
   <h3>&lt;strong&gt; and &lt;em&gt;</h3>
   <p>Bold and emphasis (usually italic), wrapped around a few words inside a paragraph: <code>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt;.&lt;/p&gt;</code></p>
@@ -1720,6 +1773,10 @@ February,388,295</pre>
 <article class="term" id="supply-chain-attack" data-search="supply chain attack supply chain attack supply chain attacks supply chain">
   <h3>Supply chain attack</h3>
   <p>An attack that comes in through something you borrowed rather than something you built. In 2024, the address of a library called polyfill.io changed hands, and the new owner sent harmful code to visitors of more than a hundred thousand websites that had trusted it for years. None of those sites changed a thing.</p>
+</article>
+<article class="term" id="sync" data-search="sync sync synced syncing">
+  <h3>Sync</h3>
+  <p>Keeping the same data up to date in more than one place: change it on your laptop, see it on your phone. Real sync needs one place every device can reach - a server. A link or a file only hands over a <em>copy</em>, once.</p>
 </article>
 <h2 class="letter-head" id="letter-T">T</h2>
 <article class="term" id="tab-order" data-search="tab order tab order tabbing order">
@@ -1797,6 +1854,10 @@ February,388,295</pre>
 <article class="term" id="user-input" data-search="user input user input">
   <h3>User input</h3>
   <p>Anything the person using your app types, taps or chooses while it is running. The Decision Maker's options are user input. The Magic 8-Ball's answers are not - you wrote those before anyone used it.</p>
+</article>
+<article class="term" id="utc" data-search="utc utc">
+  <h3>UTC</h3>
+  <p>The worldwide standard time computers use under the hood. Your <em>today</em> and UTC's today are different dates for part of every day, which is why an app that works out dates in UTC can put your evening's tick on tomorrow.</p>
 </article>
 <h2 class="letter-head" id="letter-V">V</h2>
 <article class="term" id="value" data-search="value a value">

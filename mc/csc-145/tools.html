@@ -3,7 +3,7 @@
   Reading: Tools
   Chapter: Vibe Coding
 
-  GENERATED FILE - do not edit. Built 2026-10-27 by build/build.py from
+  GENERATED FILE - do not edit. Built 2026-11-04 by build/build.py from
   chapters/shared/tools.html. Edit the source, or shared/lab.css and shared/lab.js,
   and rebuild. Anything changed here is overwritten on the next build.
 
@@ -1161,13 +1161,14 @@ open every week, and the two prompts that are worth having by heart.</p>
 
 * Everything in one single HTML file - HTML, CSS, and JavaScript together
 * No build tools - no React, Vue, or anything requiring npm
-* CDN libraries are fine if they help
+* Libraries are welcome - load each one from its official source or a major CDN (cdnjs or jsDelivr), pinned to an exact version number, and list every library in a comment at the top of the file: its name, version, where it comes from, and what it does
 * Use vanilla JavaScript only
 * Fully responsive - works on phone, tablet, and desktop
 * Fully accessible - semantic HTML, ARIA labels, keyboard navigation
 * No data sent to any server - everything runs in the browser only
 * Versioning in comments (e.g., // v1.0 - initial build)
-* Very descriptive JavaScript comments explaining each code block in plain language</pre>
+* Very descriptive JavaScript comments explaining each code block in plain language
+* If the app has teacher-editable content (words, questions, names, data), store it in a clearly labeled array or object at the very top of the JavaScript - not scattered through the code - so it is easy to find and update without touching anything else</pre>
 </div>
 </section>
 
