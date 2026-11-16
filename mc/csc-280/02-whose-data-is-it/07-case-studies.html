@@ -1,0 +1,3396 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<!-- data-theme="light" on purpose: see the note in
+     01-it-worked-in-the-demo/01-what-actually-happened.html. -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Studies</title>
+<!--
+  CSC 280 - Module 2, page 7: CASE STUDIES. Done or not done. LAYOUT ONLY.
+  Every word a learner reads is in
+      courses/csc-280/02-whose-data-is-it/07-case-studies.md
+  Edit the words there, then run
+      python3 csc-280/build/assemble.py
+
+  Version 1.0 (2026-11-15) - first version.
+
+  WHAT THE PAGE DOES:
+    The preface (Strava, Venmo) and "how this works", then the ten cases as
+    tabs 1 to 10. Each case is built by the script from its hidden block:
+      - the case text, which the learner highlights
+      - two ways to highlight: select words (mouse or touch) and press
+        "Highlight what I selected", or pick a sentence from a list and
+        press "Highlight this sentence" (keyboard and screen readers)
+      - one comment box per highlight, numbered in reading order
+      - a verdict: clear problem, gray area, or no real problem
+      - the answer key, which unlocks once a verdict is chosen
+    Then a name box and "Download my PDF".
+
+  HOW A HIGHLIGHT IS STORED: { p: paragraph number, s: start, e: end, c:
+  comment }, where s and e count characters into that paragraph's text.
+  The highlighted words themselves are always read back out of the case
+  text, never stored, so the PDF can never show words the case doesn't have.
+  Highlights stay inside one paragraph, snap to whole words, and may not
+  overlap.
+
+  THE PDF is drawn by CSC 240's pdf-lite.js (inlined by the build): letter
+  size, Helvetica, yellow boxes behind highlighted words, [1] after each
+  highlight, and the comments listed under each case. No library, no CDN.
+
+  Saved in this browser under csc280.cases7.v1. Nothing is sent anywhere.
+
+  Assembled 2026-11-16 17:53
+-->
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* ============================================================================
+   FLCC AI Specialist Microcredential - core.css
+   Shared by every page in every course.
+
+   Load order matters: core.css first, then the genre sheet, then the course
+   theme. Nothing here sets a color except through a token.
+   ========================================================================= */
+:root {
+  /* Neutrals - very slightly warm, so they sit under orange, blue and olive
+     without any of the three reading as a clash. */
+  /* The page ground is white, and so are the cards on it. That is deliberate
+     and it is the reason --shadow-1 below carries a hairline ring: with a warm
+     grey ground the cards were defined by the contrast between #f7f6f4 and
+     white, and taking the grey away removes exactly that. Readers said the
+     grey read as busy rather than calm, which is fair - but a card has to be
+     bounded by something, so the boundary moved from the ground to the edge. */
+  --ground:      #ffffff;
+  --surface:     #ffffff;
+  --surface-2:   #f0eeea;   /* inset wells, quiet fills */
+  --surface-3:   #e7e4df;   /* pressed / track */
+  --line:        #e3dfd9;
+  --line-strong: #cfc9c1;
+
+  --ink:   #1c1a18;
+  --ink-2: #57524c;
+  --ink-3: #8b837a;
+
+  /* Semantic - independent of the course accent */
+  --good:      #1f7a4d;
+  --good-soft: #e6f2eb;
+  --warn:      #9a5b00;
+  --warn-soft: #f8eede;
+  --bad:       #b3261e;
+  --bad-soft:  #fbe9e7;
+
+  /* Elevation */
+  /* Both of these open with a 1px spread ring, which draws a hairline on every
+     card without touching layout the way a real border would - no box-sizing
+     surprise, no rule to add to a dozen separate card selectors. It is also
+     the crisper of the two ways to bound a white card on white: a blur alone
+     goes muddy at this contrast, and the feedback asked for crisp.
+     The dark palette redefines these further down and gets no ring, because
+     there the surface is already lighter than the ground. */
+  --shadow-1: 0 0 0 1px #e6e2dc, 0 1px 2px rgba(28,26,24,.04), 0 2px 6px rgba(28,26,24,.04);
+  --shadow-2: 0 0 0 1px #e0dbd4, 0 2px 4px rgba(28,26,24,.05), 0 10px 24px rgba(28,26,24,.07);
+  --shadow-3: 0 4px 8px rgba(28,26,24,.06), 0 24px 56px rgba(28,26,24,.14);
+  --shadow-accent: 0 2px 6px rgba(28,26,24,.10), 0 10px 24px var(--accent-glow);
+
+  /* Geometry */
+  --r:    15px;
+  --r-sm: 10px;
+  --r-xs: 7px;
+  --r-pill: 999px;
+
+  /* Type */
+  --display: "Comfortaa", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --measure: 66ch;
+
+  /* Rhythm */
+  --gap-xs: .4rem;
+  --gap-s:  .75rem;
+  --gap-m:  1.25rem;
+  --gap-l:  2rem;
+  --gap-xl: 3.5rem;
+
+  /* Default accent (overridden per course below) */
+  --accent:      #f45922;
+  --accent-text: #c4400f;
+  --accent-fill: #c4400f;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(244, 89, 34, .09);
+  --accent-glow: rgba(244, 89, 34, .18);
+}
+
+:root[data-theme="dark"] {
+  --ground:      #121110;
+  --surface:     #1d1b19;
+  --surface-2:   #262320;
+  --surface-3:   #322e2a;
+  --line:        #332f2b;
+  --line-strong: #4a443e;
+
+  --ink:   #ece8e2;
+  --ink-2: #a9a29a;
+  --ink-3: #7e766d;
+
+  --good:      #6ec294;
+  --good-soft: #1a2b22;
+  --warn:      #e0a75a;
+  --warn-soft: #2c241a;
+  --bad:       #f2938b;
+  --bad-soft:  #2e1c1a;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.42);
+  --shadow-3: 0 4px 8px rgba(0,0,0,.45), 0 24px 56px rgba(0,0,0,.55);
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.lesson {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+p { margin: 0; }
+p + p { margin-top: .9em; }
+
+a { color: var(--accent-text); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+
+/* ==text== in the markdown. The browser default for <mark> is a flat yellow
+   that fights every surface on this site, so it is restyled to the same accent
+   wash the Brightspace converter at md.flccarcade.com uses - one highlight,
+   the same one, whether a sentence is read on a lesson page or in Brightspace.
+   Colour comes from the theme, so each course gets its own. */
+mark { background: var(--accent-wash); color: var(--accent-text);
+       padding: .05em .25em; border-radius: 4px; }
+
+/* The hand-in card on a checkpoint. Ships hidden; the LMS supplies the link.
+   [hidden] is respected explicitly because this element is display:flex, and a
+   display rule beats the browser's default hidden{display:none} every time -
+   which is how a card meant to be invisible shows up with a dead link in it. */
+.handin { display: flex; gap: .9rem; align-items: center; margin: 1.5rem 0 0;
+          padding: 1.1rem 1.3rem; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 15px; }
+.handin[hidden] { display: none; }
+
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+::selection { background: var(--accent); color: var(--accent-on); }.wrap {
+  width: min(100% - 2.5rem, 50rem);
+  margin-inline: auto;
+}
+
+.lesson__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-xl) 5rem;
+}
+
+/* A block = one beat of the lesson template. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1em; }
+
+/* Reading-width helper for anything that should not run full bleed */
+.narrow { max-width: var(--measure); }.railtrack {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: transparent;
+  z-index: 60;
+}
+.railtrack__fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width .15s linear;
+}.masthead {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding-block: 1.6rem 1.9rem;
+}
+
+.masthead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-bottom: 1.1rem;
+}
+
+/* The `hidden` attribute only sets `display: none` in the UA sheet, so any
+   author `display` rule beats it - and a component with `display: grid` then
+   stays visible while its own JS believes it is hidden. This has been patched
+   three times in this codebase already (.term, .vgroup, .panel). Once, here,
+   instead. `hidden` is semantic: it should always win. */
+[hidden] { display: none !important; }
+
+.coursemark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .04em;
+  padding: .4rem .8rem;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.lessonno {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-size: clamp(1.85rem, 1.2rem + 2.4vw, 2.9rem);
+  max-width: 18ch;
+}
+
+.standfirst {
+  margin-top: .9rem;
+  max-width: var(--measure);
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.metarow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: .875rem;
+}
+.metarow > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.blockhead {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.blockhead h2 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+.blockhead p {
+  color: var(--ink-2);
+  max-width: var(--measure);
+}.i {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -.125em;
+}
+.i--lg { width: 1.35em; height: 1.35em; }
+
+.icontile {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  flex: none;
+}
+.icontile .i { width: 1.2rem; height: 1.2rem; }
+.icontile--quiet { background: var(--surface-2); color: var(--ink-2); }.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.6rem;
+}
+.card--flush { padding: 0; overflow: hidden; }
+.card--quiet { box-shadow: var(--shadow-1); }
+
+.well {
+  background: var(--surface-2);
+  border-radius: var(--r);
+  padding: 1.25rem;
+}.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .3rem .65rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip--accent { background: var(--accent-wash); color: var(--accent-text); }
+.chip--good   { background: var(--good-soft);  color: var(--good); }
+.chip--warn   { background: var(--warn-soft);  color: var(--warn); }
+.chip--outline{ background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink-3); }
+
+.chiprow { display: flex; flex-wrap: wrap; gap: .4rem; }.btn {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  box-shadow: var(--shadow-accent);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.btn--ghost:hover { background: var(--accent-wash); color: var(--accent-text); }
+
+.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.field label {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.field textarea {
+  font: inherit;
+  font-size: .95rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .8rem .9rem;
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.field textarea::placeholder { color: var(--ink-3); }
+
+.hint { font-size: .82rem; color: var(--ink-3); }.recall {
+  display: grid;
+  gap: var(--gap-s);
+}
+.recallcard {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: box-shadow .25s ease;
+}
+.recallcard.is-open { box-shadow: var(--shadow-2); }
+
+.provenance {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.provenance .i { width: .9rem; height: .9rem; }
+.provenance em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.recallcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+/* One per row, full width. Sized-to-content wrapping made the options look
+   grouped when they were not - four choices would land 1 / 1 / 2 purely on
+   where the text happened to wrap. It also matches the prediction gate at the
+   top of the lesson, so "pick one of these" has one shape on the page instead
+   of two. text-align is explicit because a full-width button centres its
+   label by default. */
+.answers { display: flex; flex-direction: column; gap: .5rem; }
+.answer {
+  font: inherit;
+  font-size: .92rem;
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: .55rem .95rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+.answer:hover:not([disabled]) { background: var(--accent-wash); }
+.answer[disabled] { cursor: default; }
+.answer.is-right { background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 1.5px var(--good); }
+.answer.is-wrong { background: var(--bad-soft);  color: var(--bad);  box-shadow: inset 0 0 0 1.5px var(--bad); }
+.answer.is-dim   { opacity: .45; }
+
+.feedback {
+  display: none;
+  gap: .7rem;
+  align-items: flex-start;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: .85rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-2);
+}
+.feedback.is-shown { display: flex; }
+.feedback .i { margin-top: .25rem; color: var(--accent-text); }
+.feedback strong { color: var(--ink); }.deck { display: flex; flex-direction: column; gap: 1rem; max-width: 36rem; }
+
+.deck__stack {
+  display: grid;
+  touch-action: pan-y;
+  perspective: 1200px;
+  position: relative;
+  /* reserve room for the fanned + rotated cards behind the top one */
+  padding-bottom: 2.6rem;
+  transition: height .3s ease;
+}
+
+.fcard {
+  grid-area: 1 / 1;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  transform-origin: 50% 130%;
+  transition: transform .45s cubic-bezier(.2,.8,.3,1),
+              opacity .3s ease,
+              box-shadow .3s ease;
+  will-change: transform;
+  user-select: none;
+}
+
+.fcard[data-pos="0"] { z-index: 4; transform: rotate(-1.1deg);                          box-shadow: var(--shadow-3); cursor: grab; }
+.fcard[data-pos="1"] { z-index: 3; transform: rotate(2.6deg)  translateY(13px) scale(.968); box-shadow: var(--shadow-2); }
+.fcard[data-pos="2"] { z-index: 2; transform: rotate(-3.4deg) translateY(24px) scale(.936); box-shadow: var(--shadow-1); }
+.fcard[data-pos="3"] { z-index: 1; transform: rotate(1.8deg)  translateY(33px) scale(.91);  opacity: 0; }
+
+.fcard:not([data-pos="0"]) { pointer-events: none; }
+.fcard[data-pos="0"].is-dragging { transition: none; cursor: grabbing; }
+/* A card that has left the deck is taken out of grid sizing, so the stack
+   collapses back to the height of the cards that remain. */
+.fcard.is-leaving { z-index: 9; }
+.fcard.is-gone {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.fcard__q {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.4;
+}
+.fcard__grip {
+  display: flex;
+  gap: 3px;
+  opacity: .5;
+  flex: none;
+}
+.fcard__grip span {
+  width: 3px; height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--line-strong);
+}
+
+.answer--pass {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  color: var(--ink-3);
+}
+
+/* Bottom bar: dots, counter, advance */
+.deck__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  flex-wrap: wrap;
+}
+.deck__left { display: flex; align-items: center; gap: .7rem; }
+.deck__dots { display: flex; gap: .3rem; }
+.deck__dot {
+  width: 7px; height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  transition: background-color .25s ease, transform .25s ease;
+}
+.deck__dot.is-done   { background: var(--accent); opacity: .4; }
+.deck__dot.is-active { background: var(--accent); transform: scale(1.5); }
+.deck__count { font-size: .82rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.deck__hint {
+  font-size: .82rem;
+  color: var(--ink-3);
+  transition: color .2s ease;
+}
+.deck__hint.is-nudging { color: var(--accent-text); font-weight: 700; }
+
+.deck__done {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+}
+.deck.is-finished .deck__stack,
+.deck.is-finished .deck__bar { display: none; }
+.deck.is-finished .deck__done { display: flex; }
+.deck__done strong { font-family: var(--display); font-size: 1.05rem; }
+.deck__done p { color: var(--ink-2); font-size: .93rem; max-width: 38ch; }
+
+/* The askew stack rotates up to 3.4deg, and a rotated rectangle is wider than
+   an upright one. On a wide page the deck's max-width absorbs that; on a phone
+   the corners push past the viewport and the whole page scrolls sideways, which
+   is the one thing an LMS embed must never do. Inset the stack so the rotation
+   has somewhere to go. */
+@media (max-width: 32rem) {
+  .deck__stack { margin-inline: .5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard[data-pos="0"],
+  .fcard[data-pos="1"],
+  .fcard[data-pos="2"],
+  .fcard[data-pos="3"] { transform: none; }
+  .fcard:not([data-pos="0"]) { opacity: 0; }
+}
+
+/* Callouts: a card with an icon tile. No colored left rail, no tinted body. */
+.callout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.15rem 1.3rem;
+}
+.callout__body { display: flex; flex-direction: column; gap: .3rem; }
+.callout__label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.callout__body p { font-size: .97rem; color: var(--ink-2); }
+.callout__body p strong { color: var(--ink); }
+.callout--warn .icontile { background: var(--warn); color: var(--surface); }
+.callout--good .icontile { background: var(--good); color: var(--surface); }
+
+/* Interactive demo shells */
+.demo {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+.demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.demo__title .i { color: var(--accent-text); }
+.demo__body { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; }
+.demo__foot {
+  padding: .9rem 1.25rem;
+  background: var(--surface-2);
+  font-size: .88rem;
+  color: var(--ink-2);
+  min-height: 3.1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.demo__foot > .i { margin-top: .35rem; flex: none; }details.disclosure {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+details.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: .85rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+details.disclosure > summary::-webkit-details-marker { display: none; }
+details.disclosure > summary .i { transition: transform .2s ease; color: var(--ink-3); }
+details.disclosure[open] > summary .i { transform: rotate(180deg); }
+.disclosure__body { padding: 0 1.1rem 1.1rem; font-size: .95rem; color: var(--ink-2); }
+
+.lessonfoot {
+  border-top: 1px solid var(--line);
+  padding-block: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-s);
+  color: var(--ink-3);
+  font-size: .85rem;
+}.stepblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+}
+.stepblock__head { display: flex; gap: .9rem; align-items: flex-start; }
+.stepblock__n {
+  display: grid;
+  place-items: center;
+  width: 2rem; height: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--accent-fill);
+  color: var(--accent-on);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: none;
+}
+.stepblock__head h2 { font-size: 1.35rem; }
+.stepblock__head p { color: var(--ink-2); margin-top: .35rem; max-width: var(--measure); }
+
+/* Confidence sliders ------------------------------------------------------ */
+
+.slrow {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.1rem 1.35rem;
+  border-bottom: 1px solid var(--line);
+}
+.slrow:last-child { border-bottom: 0; }
+.slrow__q { font-weight: 700; font-size: .97rem; }
+.slrow__q span { display: block; font-weight: 400; font-size: .82rem; color: var(--ink-3); margin-top: .15rem; }
+.slrow__val {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--accent-text);
+  min-height: 1.2em;
+}
+
+input[type="range"].sl {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"].sl::-webkit-slider-runnable-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-moz-range-track {
+  height: 8px; border-radius: var(--r-pill); background: var(--surface-3);
+}
+input[type="range"].sl::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; margin-top: -7px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+input[type="range"].sl::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: var(--shadow-1);
+  border: 3px solid var(--surface);
+}
+.slticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--ink-3);
+}
+
+/* Multi-select chips ------------------------------------------------------ */
+
+.chipset { display: flex; flex-wrap: wrap; gap: .5rem; }
+.togchip {
+  font: inherit;
+  font-size: .9rem;
+  padding: .5rem .95rem;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background-color .16s ease, color .16s ease;
+}
+.togchip:hover { background: var(--accent-wash); color: var(--accent-text); }
+.togchip[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.togchip .i { width: .85rem; height: .85rem; opacity: 0; }
+.togchip[aria-pressed="true"] .i { opacity: 1; }
+
+.copybox {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* vocabulary -------------------------------------------------------------- */
+.searchrow { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.search {
+  flex: 1 1 14rem;
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--surface); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1); padding: .55rem 1rem;
+}
+.search .i { color: var(--ink-3); flex: none; }
+.search input {
+  font: inherit; font-size: .95rem; border: 0; background: transparent;
+  color: var(--ink); width: 100%; outline: none;
+}
+.search input::placeholder { color: var(--ink-3); }
+
+.termlist { display: flex; flex-direction: column; gap: .55rem; }
+.term {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  padding: 1rem 1.15rem;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.term[hidden] { display: none; }
+.term.is-locked { opacity: .55; }
+.term__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.term__name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+.term__from { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.term.is-unlocked .term__from { color: var(--accent-text); }
+.term__def { font-size: .95rem; color: var(--ink-2); }
+.term__why { font-size: .88rem; color: var(--ink-3); font-style: italic; }
+
+.emptystate {
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-1);
+  padding: 2.25rem 1.5rem; text-align: center; color: var(--ink-2); font-size: .95rem;
+}
+
+.linkcard {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: 1.3rem 1.5rem; text-decoration: none; color: inherit;
+  transition: transform .14s ease, box-shadow .2s ease;
+}
+.linkcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.linkcard__t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.linkcard__d { font-size: .9rem; color: var(--ink-2); margin-top: .15rem; }
+.linkcard__go { margin-left: auto; color: var(--accent-text); flex: none; }.statrow { display: flex; flex-wrap: wrap; gap: 1.75rem; }
+.stat { display: flex; flex-direction: column; }
+.stat b {
+  font-family: var(--display); font-weight: 700; font-size: 1.7rem; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.stat--accent b { color: var(--accent-text); }.stack   { display: flex; flex-direction: column; gap: var(--gap-s); }
+.row     { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-s); }
+.muted   { color: var(--ink-2); }
+.small   { font-size: .88rem; }
+.scrollx { overflow-x: auto; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (max-width: 34rem) {
+  .card, .gate, .apply { padding: 1.2rem; }
+  .token { grid-template-columns: minmax(5rem, auto) 1fr 3rem; gap: .55rem; }
+}
+/* -------------------------------------------- shared with the curriculum docs
+   Small label, filter pill, and plain list - first written for the course
+   map, then wanted by learner pages too. They live here so neither side
+   has to load the other's sheet.
+   ------------------------------------------------------------------------ */
+
+.fbtn { font:inherit; font-family:var(--display); font-weight:700; font-size:.82rem; cursor:pointer;
+  border:0; background:var(--surface-2); color:var(--ink-2); padding:.45rem .85rem;
+  border-radius:var(--r-pill); transition:background-color .18s ease,color .18s ease; }
+.fbtn:hover { background:var(--accent-wash); color:var(--accent-text); }
+.fbtn[aria-pressed="true"] { background:var(--accent-fill); color:var(--accent-on); }
+.beatlabel { display:block; font-family:var(--display); font-weight:700; font-size:.7rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:.3rem; }
+
+ul.plain, ul.lolist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.4rem; }
+ul.plain li { font-size:.95rem; color:var(--ink-2); padding-left:1rem; position:relative; }
+ul.plain li::before { content:""; position:absolute; left:0; top:.65em; width:5px; height:5px;
+  border-radius:50%; background:var(--line-strong); }
+ul.lolist li { display:flex; gap:.6rem; font-size:.95rem; color:var(--ink-2); align-items:flex-start; }
+.actbox__top .beatlabel { margin:0; color:var(--accent-text); }
+/* Whitespace and newline markers. Written for the Tokenizer, then wanted by
+   the Lesson 1 token demo - any page that shows text as discrete pieces
+   needs a way to make a space visible. */
+.tok__ws { color: var(--ink-3); opacity: .45; }
+.tok__nl {
+  color: var(--accent-text); font-weight: 700; opacity: .8;
+}
+
+/* -------------------------------------------------------------- 21. EMBEDS
+   Responsive 16:9 video frame. The rounded corners live on the WRAPPER with
+   overflow:hidden, not on the iframe - an iframe will not reliably clip its own
+   content to a border-radius, so styling the iframe alone leaves square corners
+   showing through in several browsers.
+   ------------------------------------------------------------------------ */
+
+.embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-2);
+}
+.embed iframe,
+.embed video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.embed--flat { box-shadow: none; }
+
+/* Optional caption underneath, matching the video block used in lessons. */
+.embed-cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  margin-top: .7rem; font-size: .85rem; color: var(--ink-3);
+}
+.embed-cap b {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+
+/* --- Two-click facade -----------------------------------------------------
+   Nothing reaches Google until the learner asks for the video. The frame you
+   see before the click is ours: our markup, our styles, and either a poster
+   image served from this site or no image at all. The iframe is created on
+   click and not a moment before.
+
+   A poster pulled from i.ytimg.com would still hand Google the visitor's IP on
+   page load, which is most of what the facade exists to prevent - so the
+   default is a self-hosted poster, and the fallback when there is none is a
+   designed placeholder rather than a third-party request.
+   ------------------------------------------------------------------------ */
+
+.embed--facade { position: relative; }
+
+.facade {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  padding: 0; border: 0; cursor: pointer;
+  background: var(--surface-3);
+  font: inherit; color: var(--ink);
+  overflow: hidden;
+}
+.facade__poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.facade__scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.55) 100%);
+}
+.facade--noposter { background: var(--surface-2); }
+.facade--noposter .facade__scrim { background: linear-gradient(150deg, var(--accent-wash), transparent 60%); }
+
+.facade__play {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  border-radius: var(--r-pill);
+  background: var(--accent-fill); color: var(--accent-on);
+  box-shadow: var(--shadow-3);
+  transition: transform .18s ease;
+}
+.facade__play .i { width: 1.7rem; height: 1.7rem; fill: currentColor; stroke: none; margin-left: .18rem; }
+.facade:hover .facade__play, .facade:focus-visible .facade__play { transform: scale(1.07); }
+
+.facade__meta {
+  position: absolute; left: 1.1rem; right: 1.1rem; bottom: .95rem; z-index: 1;
+  display: flex; flex-direction: column; gap: .15rem; text-align: left;
+}
+.facade__title {
+  font-family: var(--display); font-weight: 700; font-size: 1rem; line-height: 1.3;
+  color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.facade--noposter .facade__title { color: var(--ink); text-shadow: none; }
+.facade__sub { font-size: .8rem; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.facade--noposter .facade__sub { color: var(--ink-3); text-shadow: none; }
+
+.embed-privacy {
+  display: flex; align-items: flex-start; gap: .45rem;
+  margin-top: .55rem; font-size: .8rem; color: var(--ink-3);
+}
+.embed-privacy .i { margin-top: .2rem; flex: none; }
+
+/* ── Inline vocabulary ──────────────────────────────────────────────────────
+   A term in the prose is bold + italic, per Dave's spec, with a dotted rule
+   under it so it reads as pressable rather than merely emphasised. The panel
+   is a child of the term so it needs no positioning library and no scroll
+   listener; the only correction it needs is a nudge off the right edge. */
+.vt {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--accent-text);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px dotted var(--accent);
+  border-radius: 2px;
+}
+.vt > i { font-style: italic; }
+.vt:hover { background: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.vt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vt[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.vt-demo { font-weight: 700; color: var(--accent-text); border-bottom: 1px dotted var(--accent); }
+
+.vpop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + .5rem);
+  left: 0;
+  width: min(23rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem .8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--ink);
+  text-align: left;
+  cursor: auto;
+  white-space: normal;
+}
+.vpop__top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.vpop__name { font-family: var(--display); font-size: .98rem; }
+.vpop__from { font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.vpop__def { font-size: .9rem; color: var(--ink-2); line-height: 1.5; }
+.vpop__why { font-size: .84rem; color: var(--ink-3); font-style: italic; line-height: 1.5; }
+.vpop__eg {
+  font-size: .84rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: .5rem .65rem;
+}
+.vpop__foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .15rem; }
+.vpop__more { font-size: .8rem; font-weight: 700; color: var(--accent-text); text-decoration: none; display: inline-flex; align-items: center; gap: .3rem; }
+.vpop__more:hover { text-decoration: underline; }
+.vpop__more .i { width: .85rem; height: .85rem; }
+.vpop__x { background: none; border: 0; padding: .2rem; color: var(--ink-3); cursor: pointer; display: inline-flex; border-radius: 6px; }
+.vpop__x:hover { color: var(--ink); background: var(--surface-2); }
+.vpop__x .i { width: 1rem; height: 1rem; }
+
+/* ── The standalone vocabulary page ─────────────────────────────────────── */
+.vsearch { display: grid; gap: .35rem; margin: 1.5rem 0 1.1rem; }
+.vsearch__lab { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.vsearch__in {
+  font: inherit;
+  padding: .7rem .9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--ink);
+}
+.vsearch__in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.vsearch__count { margin: 0; }
+
+.vlist { display: flex; flex-direction: column; gap: .7rem; }
+.vgroup {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin: 1.4rem 0 .1rem;
+}
+.vgroup[hidden], .ventry[hidden] { display: none; }
+.ventry {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-1);
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: .4rem;
+  scroll-margin-top: 1.5rem;
+}
+.ventry.is-target { box-shadow: 0 0 0 2px var(--accent), var(--shadow-2); }
+.ventry__top { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; flex-wrap: wrap; }
+.ventry__name { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+.ventry__from { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ventry__def { font-size: .96rem; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.ventry__why { font-size: .88rem; color: var(--ink-3); font-style: italic; margin: 0; line-height: 1.5; }
+.ventry__eg { margin: .25rem 0 0; padding: .6rem .8rem .6rem 1.9rem; background: var(--surface-2); border-radius: 10px; display: grid; gap: .35rem; }
+.ventry__eg li { font-size: .89rem; color: var(--ink-2); line-height: 1.5; }
+.ventry__dia { margin-top: .5rem; padding: .8rem; background: var(--surface-2); border-radius: 10px; color: var(--ink-2); }
+.ventry__dia .dia { display: block; width: 100%; max-width: 22rem; height: auto; margin: 0 auto; }
+
+/* -- Vocabulary: the A-Z index -------------------------------------------- */
+/* A second view of the same terms. Both views are in the DOM and one is always
+   hidden, so nothing here can be reached while the lesson-order list shows. */
+.vviews { margin: 0 0 1.1rem; }
+
+.vaz { display: flex; flex-direction: column; gap: .3rem; }
+.vaz__intro { margin: 0 0 .6rem; }
+.vaz__block { display: block; }
+.vaz__letter {
+  font-family: var(--display);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent-text);
+  margin: .9rem 0 .35rem;
+  padding-bottom: .25rem;
+  border-bottom: 1px solid var(--line);
+}
+.vaz__block:first-of-type .vaz__letter { margin-top: 0; }
+
+/* Multi-column so 68 words fit on a screen, which is the entire point of this
+   view. Columns rather than a grid: a word and its module tag must not be
+   split across a column break. */
+.vaz__list {
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: var(--gap-m);
+}
+@media (min-width: 900px) { .vaz__list { columns: 3; } }
+@media (max-width: 520px) { .vaz__list { columns: 1; } }
+
+.vaz__item {
+  break-inside: avoid;
+  display: flex; align-items: baseline; gap: .5rem;
+  padding: .2rem 0;
+  font-size: .94rem;
+  line-height: 1.45;
+}
+.vaz__link { color: var(--ink); text-decoration-color: var(--line-strong); }
+.vaz__link:hover { color: var(--accent-text); text-decoration-color: currentColor; }
+/* The tag follows the word directly rather than being flushed to the column
+   edge. Flushed right, it aligned neatly and left a canyon between a short word
+   and its module - and the whole job of this tag is to be read as part of the
+   word it belongs to. Proximity beats alignment here. */
+.vaz__mod {
+  flex: none;
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--ink-3); white-space: nowrap;
+}
+.vaz__none { margin: .6rem 0 0; }
+
+/* The reset does not cover flex and grid children, the same reason .ventry
+   needed this. Without it a hidden item still takes a row. */
+.vaz[hidden], .vlist[hidden], .vaz__block[hidden], .vaz__item[hidden],
+.vaz__none[hidden], .vlistnone[hidden], .vdraftnote[hidden] { display: none; }
+.vlistnone, .vaz__none { margin: .8rem 0 0; }
+
+/* -- Vocabulary: the course filter ---------------------------------------- */
+.vchips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .9rem; }
+.vchip {
+  font: inherit; font-size: .8rem; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.vchip:hover { border-color: var(--accent); color: var(--ink); }
+.vchip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vchip.is-on {
+  background: var(--accent-fill); border-color: var(--accent-fill);
+  color: var(--accent-on); font-weight: 700;
+}
+.vchip__n { font-variant-numeric: tabular-nums; opacity: .75; }
+/* Dashed, the same language the draft entries use, so "provisional" reads the
+   same way wherever it appears on this page. */
+.vchip--draft { border-style: dashed; }
+.vchip--draft.is-on { border-style: solid; }
+/* The draft marker rides on the chip so the count is never read as a finished
+   glossary. It is the same word the group heading and every entry carry. */
+.vchip__tag {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--warn);
+}
+.vchip.is-on .vchip__tag { color: var(--accent-on); opacity: .85; }
+
+/* -- Vocabulary: draft entries -------------------------------------------- */
+.vgroup--draft { color: var(--warn); }
+.vdraftnote {
+  margin: 0 0 .3rem; padding: .75rem .85rem;
+  background: var(--warn-soft); border-radius: var(--r-sm);
+  line-height: 1.55;
+}
+/* A dashed edge, not a colored fill: these are real entries to read, they are
+   just not finished. The border says provisional without shouting. */
+.ventry--draft {
+  box-shadow: none;
+  border: 1px dashed var(--line-strong);
+}
+.ventry--draft .ventry__from { color: var(--warn); }
+.vaz__mod--draft { color: var(--warn); }
+
+/* Embedded in an LMS that already shows the page title above the frame.
+   Hide ONLY the duplicated heading. The first version hid the whole masthead,
+   which also threw away the standfirst and the metarow - how long the lesson
+   takes, whether it has a video, whether it has a deliverable. None of that is
+   duplicated by the LMS, and losing it reads to the learner as the top of the
+   page being missing. It was.
+
+   The module and lesson number stay too: Brightspace shows the topic title but
+   not where it sits in the course. */
+/* The page version in the footer. Present but recessive - a student should be
+   able to read it out over the phone without it competing for attention. */
+.lessonfoot .ver { opacity: .65; font-variant-numeric: tabular-nums; cursor: help; }
+
+:root[data-host-chrome="1"] .masthead > .wrap > h1 { display: none; }
+:root[data-host-chrome="1"] .masthead { padding-top: 1.1rem; }
+:root[data-host-chrome="1"] .masthead .standfirst { margin-top: .5rem; }
+:root[data-embedded] .lessonfoot { border-top: 1px solid var(--line); }
+
+/* LMS mode. Set by ?lmsembed=true, or automatically when the host identifies
+   itself in the handshake. One rule does the hiding; frame.js decides what
+   carries the attribute, so adding an element later is a one-line change there
+   or a data-lms-hide in the markup, never a change here. */
+:root[data-lms="1"] [data-lms-hide] { display: none !important; }
+
+/* With the forward link gone the footer is a single line, so it should not keep
+   the spacing of a two-column row. */
+:root[data-lms="1"] .lessonfoot { justify-content: flex-start; }
+
+/* -- Authoring notes ------------------------------------------------------
+   Hazard stripes, so a note addressed to whoever is building the course can
+   never be mistaken for something addressed to a student. publish.py refuses
+   to build publish/ while one is still visible.
+
+   This lived in onboarding.css until Module 2's uncaptured panels needed it on
+   a lesson page. Third genre to reach for it, so it moves here - the same call
+   the step block and the callout got. */
+.authoring {
+  background: repeating-linear-gradient(45deg, var(--warn-soft), var(--warn-soft) 10px, transparent 10px, transparent 20px);
+  border-radius: var(--r-sm);
+  padding: 1rem 1.15rem;
+  font-size: .9rem;
+  color: var(--warn);
+}
+.authoring strong { font-family: var(--display); }
+
+/* -- Preset chips ---------------------------------------------------------
+   Small pill buttons that pick one of a fixed set of inputs. Written for the
+   tokenizer, then borrowed by Lesson 5's Cutoff Wall, which builds its six
+   question buttons with className = "preset" - so on a lesson page they were
+   rendering as bare unstyled <button>s. check_sheets.py could not see it until
+   it learned to read className assignments as well as class attributes.
+   Second genre to want it, so it lives here now. */
+.preset {
+  font: inherit; font-size: .85rem;
+  background: var(--surface); box-shadow: var(--shadow-1);
+  color: var(--ink-2); border: 0; border-radius: var(--r-pill);
+  padding: .4rem .85rem; cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.preset:hover { color: var(--accent-text); background: var(--accent-wash); }
+.preset[aria-pressed="true"] { background: var(--accent-fill); color: var(--accent-on); }
+
+
+/* ==========================================================================
+   Tokenizer panel
+   Written for the standing tool, embedded verbatim in Lesson 2's first content
+   segment. Both pages build it from the fragments in build/tokenizer.py and
+   drive it with build/tok_js.js, so these rules have to be reachable from a
+   lesson page as well as a tool page - hence core rather than tool.css.
+   ========================================================================== */
+
+.tokout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  min-height: 7rem;
+  align-content: flex-start;
+}
+.tokout--empty { display: grid; place-items: center; color: var(--ink-3); font-size: .95rem; }
+
+.tok {
+  white-space: pre;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .18rem .2rem;
+  border-radius: var(--r-xs);
+  color: var(--ink);
+  position: relative;
+  cursor: default;
+}
+.tok:nth-child(odd)  { background: var(--surface-2); }
+.tok:nth-child(even) { background: var(--accent-wash); }
+.tok:hover { box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+.tok__id {
+  display: block;
+  font-family: var(--body);
+  font-size: .6rem;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: .1rem;
+  font-variant-numeric: tabular-nums;
+}
+.tok__n {
+  position: absolute;
+  top: -.35rem; right: -.35rem;
+  background: var(--accent-fill); color: var(--accent-on);
+  font-family: var(--body); font-weight: 700; font-size: .58rem;
+  border-radius: var(--r-pill);
+  padding: .05rem .28rem;
+  box-shadow: var(--shadow-1);
+}
+
+.presetrow { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+
+.obs { display: flex; flex-direction: column; gap: .55rem; }
+.obsitem {
+  display: flex; gap: .75rem; align-items: flex-start;
+  font-size: .95rem; color: var(--ink-2);
+}
+.obsitem .i { margin-top: .3rem; color: var(--accent-text); flex: none; }
+.obsitem strong { color: var(--ink); }
+
+.tokinput {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  padding: 1.1rem 1.25rem;
+}
+.tokinput::placeholder { color: var(--ink-3); }
+
+/* Fact table for the "what is a token, actually" explainer ---------------- */
+
+.facts { display: flex; flex-direction: column; gap: 1.4rem; }
+.factgroup { display: flex; flex-direction: column; gap: .5rem; }
+.factgroup__t {
+  font-family: var(--display); font-weight: 700; font-size: .72rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text);
+}
+.factgroup__d { font-size: .9rem; color: var(--ink-2); max-width: var(--measure); }
+.factlist { display: flex; flex-direction: column; gap: .35rem; }
+
+.factrow {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3.2rem;
+  gap: .9rem;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.factrow__ex {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .92rem;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.factrow__ex .tok__ws, .bit .tok__ws { color: var(--ink-3); opacity: .5; }
+.factrow__ex .tok__nl, .bit .tok__nl { color: var(--accent-text); font-weight: 700; }
+.factrow__bits { display: flex; flex-wrap: wrap; gap: 3px; }
+.bit {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .78rem;
+  white-space: pre;
+  padding: .1rem .3rem;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.bit:nth-child(even) { background: var(--accent-wash); color: var(--accent-text); }
+.factrow__n {
+  font-family: var(--display); font-weight: 700; font-size: .9rem;
+  color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums;
+}
+.factrow--one .factrow__n { color: var(--good); }
+
+@media (max-width: 40rem) {
+  .factrow { grid-template-columns: 1fr auto; }
+  .factrow__bits { grid-column: 1 / -1; }
+}
+
+/* -- The panel wrapper and its "which tokenizer is this" note -------------- */
+.tokpanel { display: flex; flex-direction: column; gap: 1rem; }
+.tokpanel .blockhead { margin-top: .4rem; }
+
+.toknote {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: 0; font-size: .85rem; color: var(--ink-3);
+}
+.tokwhy {
+  flex: none; width: 1.35rem; height: 1.35rem; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  font: 700 .8rem/1 var(--display); color: var(--accent-on);
+  background: var(--accent-fill); border: 0; border-radius: var(--r-pill);
+}
+.tokwhy:hover { filter: brightness(1.08); }
+.tokwhy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Native <dialog>, so Escape and the focus trap are the browser's job. */
+.tokmodal {
+  max-width: 34rem; width: calc(100% - 2rem); padding: 1.5rem 1.6rem 1.6rem;
+  border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow-3);
+}
+.tokmodal::backdrop { background: rgba(28, 26, 24, .45); }
+.tokmodal h3 { font-family: var(--display); font-size: 1.15rem; margin: 0 0 .6rem; }
+.tokmodal p { font-size: .92rem; line-height: 1.6; margin: 0 0 .7rem; max-width: none; }
+.tokmodal p:last-child { margin-bottom: 0; }
+.tokmodal__x { display: flex; justify-content: flex-end; margin: -.6rem -.6rem 0 0; }
+.tokmodal__x .btn { padding: .3rem .5rem; }
+
+
+/* ---------------------------------------------------------------------------
+   26. SIDE TRIP - an optional resource that lives outside the lesson
+   ---------------------------------------------------------------------------
+   Deliberately the loudest block in the course, and the only one that is a
+   solid field of colour. That is the whole job: a .callout explains something
+   in place and belongs to the page, a .sidetrip is a door out of it. Making it
+   look like a quieter cousin of the callout would defeat the point, because a
+   learner scrolling a lesson has to be able to tell "read this" from "go and
+   play with this" without reading either.
+
+   Why the deep orange rather than the brand accent: white on --accent
+   (#f45922) is 3.3:1, which is fine for a heading and not fine for the body
+   line or the chips. #a6350b is 6.7:1 against white and 4.7:1 behind the
+   translucent chips, so everything in here passes without resorting to
+   grey-on-orange, which looked muddy anyway.
+
+   No opacity on any text. Hierarchy is size, weight and letterspacing; the
+   translucent whites are backgrounds only.  */
+.sidetrip {
+  --st-ground: #a6350b;
+  display: flex;
+  gap: 1.15rem;
+  align-items: flex-start;
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--r);
+  color: #fff;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.16), transparent 60%),
+    linear-gradient(160deg, #b33a0d 0%, var(--st-ground) 55%, #932e09 100%);
+  box-shadow: 0 2px 6px rgba(28,26,24,.12), 0 12px 28px rgba(166,53,11,.22);
+}
+.sidetrip__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.sidetrip__tile .i { width: 1.45rem; height: 1.45rem; color: #fff; }
+.sidetrip__body { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.sidetrip__tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.sidetrip__chip {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+.sidetrip__chip--open { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+.sidetrip__name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #fff;
+}
+.sidetrip__blurb { font-size: .97rem; line-height: 1.55; margin: 0; color: #fff; }
+.sidetrip__go {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .5rem .75rem; margin: .35rem 0 0;
+}
+.sidetrip__btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem .95rem;
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--st-ground);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(28,26,24,.2);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.sidetrip__btn .i { width: 1rem; height: 1rem; }
+.sidetrip__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,26,24,.28); }
+.sidetrip__btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.sidetrip__host { font-size: .82rem; color: #fff; }
+@media (max-width: 30rem) {
+  .sidetrip { flex-direction: column; gap: .9rem; }
+  .sidetrip__btn { width: 100%; justify-content: center; }
+  .sidetrip__go { flex-direction: column; align-items: stretch; text-align: center; }
+  /* The two chips fit on one line on a phone only just, and only if they stop
+     paying for letterspacing they do not need at this size. */
+  .sidetrip__chip { font-size: .63rem; letter-spacing: .06em; padding: .2rem .42rem; }
+  .sidetrip__tags { gap: .3rem; }
+}
+
+/* On a dark ground a full-strength orange field glares, so the same panel is
+   dropped a couple of steps. White stays above 7:1 on this.
+
+   Keyed to [data-theme="dark"] ONLY, deliberately, and not to
+   prefers-color-scheme as the accent tokens in course_color.py are. The
+   difference matters: core.css defines its dark palette solely under
+   :root[data-theme="dark"], with no prefers-color-scheme counterpart, so an
+   OS-dark viewer who has not touched the toggle gets a LIGHT ground. A panel
+   that darkened itself off the OS setting would then be the one dark object on
+   a light page. Caught in a screenshot doing exactly that.
+
+   Rule of thumb: this panel follows the ground it sits on, and the ground is
+   toggle-driven. */
+html[data-theme="dark"] .sidetrip {
+  --st-ground: #8f2c08;
+  background:
+    radial-gradient(120% 140% at 88% -20%, rgba(255,255,255,.12), transparent 60%),
+    linear-gradient(160deg, #9c3009 0%, var(--st-ground) 55%, #6e2206 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.35);
+}
+
+
+/* ── borrowed across genres ───────────────────────────────────────────────
+   These were in lesson.css until the Discussions and Labs became built pages
+   and needed them too. Same call the design record records for .stepblock and
+   the callout: a component two genres use belongs in core, not duplicated.
+
+   check_sheets.py found this the moment the task pages were added to its list -
+   and had said "no gaps" for as long as they were not, which is the failure
+   mode of any guard with a hand-written list of what to guard. */
+
+.steps { display: flex; flex-direction: column; gap: .8rem; counter-reset: step; }
+.step { display: flex; gap: .9rem; align-items: flex-start; }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: .82rem;
+  display: grid;
+  place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: var(--r-xs);
+  background: var(--accent-wash);
+  color: var(--accent-text);
+  flex: none;
+  margin-top: .12rem;
+}
+
+.atable { width: 100%; border-collapse: collapse; margin: .5rem 0 .9rem; }
+.atable td { padding: .4rem .2rem; border-bottom: 1px solid var(--line); font-size: .92rem; }
+.atable td:last-child { text-align: right; font-weight: 700; color: var(--accent-text); }
+/* A three-column comparison table is a different shape from the two-column
+   result tables .atable was written for: it has a header row, and its last
+   column is just another column rather than an answer. --head opts out of the
+   right-aligned accent treatment on the last cell. */
+.atable--head td:last-child { text-align: left; font-weight: 400; color: inherit; }
+.atable--head th {
+  padding: .45rem .2rem; border-bottom: 2px solid var(--line);
+  text-align: left; font-family: var(--display); font-weight: 700;
+  font-size: .88rem; color: var(--accent-text);
+}
+.atable--head td:first-child { color: var(--ink-3); font-size: .88rem; }
+/* Wide content scrolls in its own box - the page body never scrolls sideways. */
+.atable-wrap { overflow-x: auto; }
+.atable-wrap .atable { min-width: 34rem; }
+
+/* The prompt-to-run block. In core because it appears on a Discussion or Lab
+   page (instrument) AND lifted into a lesson's Apply beat (lesson) - the same
+   control in two genres, which is the rule for moving one here. */
+/* The prompt to run verbatim. Monospaced and in a box because the exercise
+   turns on it being copied rather than retyped - a retyped prompt is an
+   improved prompt, which is the one thing the task asks nobody to do. */
+.taskprompt { background: var(--surface); border-radius: var(--r);
+              box-shadow: var(--shadow-2); margin: 0 0 1.4rem; overflow: hidden; }
+.taskprompt__head { display: flex; align-items: center; gap: .5rem;
+                    padding: .7rem 1rem; border-bottom: 1px solid var(--line);
+                    font-size: .78rem; font-weight: 700; letter-spacing: .04em;
+                    text-transform: uppercase; color: var(--accent-text); }
+.taskprompt__head .btn { margin-left: auto; }
+.taskprompt__body { margin: 0; padding: 1.1rem 1.2rem; white-space: pre-wrap;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                    font-size: .92rem; line-height: 1.6; color: var(--ink); }
+
+/* ── moved out of faculty.css when map.css was split off ──────────────────────
+   The only two rules the course map and the marking view ever shared, and
+   neither is specific to either: a horizontally scrolling table wrapper, and
+   tabular numerals for a figure that must not reflow. Generic enough that a
+   third page wanting one should not have to load a whole genre sheet. */
+.tblwrap { background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow-1);
+  padding:.4rem 1.1rem; overflow-x:auto; }
+.mono { font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+/* The base table, which followed .tblwrap out of faculty.css once a second
+   genre wanted one. */
+.tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th { text-align:left; font-family:var(--display); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); padding:.75rem .55rem; border-bottom:1.5px solid var(--line-strong); white-space:nowrap; }
+.tbl td { padding:.6rem .55rem; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+.tbl tbody tr:last-child td { border-bottom:0; }
+.tbl tr.is-dimmed { opacity:.25; }
+.tbl a { font-weight:700; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
+
+/* ============================================================================
+   Course theme - CSC 280
+   Brand color: #305305
+
+   Derived, not hand-picked. Regenerate with:
+       python3 build/course_color.py 280 "#305305" --write
+
+   Contrast (WCAG AA needs 4.5:1 for body text):
+     brand on white ............. 8.88:1  PASS
+     --accent-text on white ..... 8.88:1  PASS
+     --accent on dark surface ... 4.55:1  PASS
+     --accent-on over the fill .. 4.54:1  PASS
+   ========================================================================= */
+
+[data-course="280"] {
+  --accent:      #305305;
+  --accent-text: #305305;
+  --accent-fill: #305305;
+  --accent-on:   #ffffff;
+  --accent-wash: rgba(48, 83, 5, .09);
+  --accent-glow: rgba(48, 83, 5, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-course="280"],
+  :root:not([data-theme="light"]) [data-course="280"] {
+    --accent:      #659022;
+    --accent-text: #76a928;
+    --accent-fill: #659022;
+    --accent-on:   #131f03;
+    --accent-wash: rgba(101, 144, 34, .13);
+    --accent-glow: rgba(101, 144, 34, .16);
+  }
+}
+
+:root[data-theme="dark"][data-course="280"],
+:root[data-theme="dark"] [data-course="280"] {
+  --accent:      #659022;
+  --accent-text: #76a928;
+  --accent-fill: #659022;
+  --accent-on:   #131f03;
+  --accent-wash: rgba(101, 144, 34, .13);
+  --accent-glow: rgba(101, 144, 34, .16);
+}
+
+/* ============================================================================
+   CSC 280 - what every page shares
+   Version 1.0 (2026-11-09)
+
+   Inlined into every CSC 280 page by csc-280/build/assemble.py, as
+   the PAGE_CSS placeholder, right after the shared design system (core.css) and the
+   CSC 280 theme. CSC 240 repeats most of these rules in each page's own
+   <style>; 280 keeps them here once, so a fix lands on every page.
+
+   Everything uses the design system's tokens (--accent, --ink-2, --r ...),
+   so the course color comes from shared/css/themes/csc-280.css alone.
+   ========================================================================= */
+
+/* The hidden attribute must always win, even over a class that sets display. */
+[hidden] { display: none !important; }
+a.btn { text-decoration: none; }
+
+/* ---- Reading text -------------------------------------------------------- */
+.prose > * + * { margin-top: .8rem; }
+.prose p, .prose li { max-width: var(--measure); color: var(--ink-2); }
+.prose strong { color: var(--ink); }
+.prose ul, .prose ol { padding-left: 1.3rem; }
+.prose li + li { margin-top: .35rem; }
+.prose h3 { font: 700 1.1rem/1.3 var(--display); color: var(--ink); }
+.prose code { font: .85em ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--surface-2);
+              padding: .1em .35em; border-radius: 5px; color: var(--ink); }
+.prose a { color: var(--accent-text); font-weight: 700; }
+.small { font-size: .85rem; }
+.muted { color: var(--ink-3); }
+
+/* ---- Tables from the markdown ------------------------------------------- */
+.tbl { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tbl th, .tbl td { text-align: left; vertical-align: top; padding: .55rem .6rem; border-bottom: 1px solid var(--line); }
+.tbl th { font: 700 .74rem/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.tbl td { color: var(--ink-2); }
+.tbl td strong { color: var(--ink); }
+.tblwrap { overflow-x: auto; }
+.card .tblwrap { box-shadow: none; padding: 0; background: none; border-radius: 0; }
+
+/* ---- Cards with steps in them ------------------------------------------- */
+.stepcard > * + * { margin-top: .8rem; }
+.stepcard h3 { font: 700 1.1rem/1.3 var(--display); color: var(--ink); }
+/* A fieldset that IS the form row (class="q") has its browser border taken
+   off here - the shared field styles only reset a fieldset INSIDE a .q. */
+fieldset.q { border: 0; margin: 0; padding: 0; min-width: 0; }
+
+/* ---- Closed until opened: sample answers and "What happened" ------------- */
+.sample > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: .55rem;
+                    font: 700 1rem/1.3 var(--display); color: var(--accent-text); }
+.sample > summary::-webkit-details-marker { display: none; }
+.sample > summary::before { content: ""; width: .55rem; height: .55rem; border-right: 2px solid currentColor;
+                            border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s; flex: none; }
+.sample[open] > summary::before { transform: rotate(45deg); }
+.sample > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.sample__body { margin-top: 1rem; }
+@media (prefers-reduced-motion: reduce) { .sample > summary::before { transition: none; } }
+
+/* ---- Tabs (same look as CSC 240's) --------------------------------------
+   Every panel sits in the same grid cell, so the box is as tall as the
+   tallest panel and nothing below jumps when a tab changes. A hidden panel
+   is also made inert by the script, so Tab never lands inside it. */
+.ttabs { display: flex; flex-wrap: wrap; gap: .45rem; }
+.ttab { font: 700 .9rem/1.2 var(--display); padding: .65rem 1rem; border: 0; border-radius: var(--r-sm); cursor: pointer;
+        background: transparent; color: var(--ink-2); box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.ttab:hover { background: var(--accent-wash); color: var(--accent-text); }
+.ttab[aria-selected="true"] { background: var(--accent-fill); color: var(--accent-on); box-shadow: var(--shadow-accent); }
+.ttab:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.tstack { display: grid; margin-top: 1rem; }
+.tstack > .tpanel { grid-area: 1 / 1; min-width: 0; }
+.tstack > .tpanel:not(.is-active) { visibility: hidden; }
+
+/* ---- Copy boxes: a name, a Copy button, then the text -------------------- */
+.cbox { border-radius: var(--r-sm); background: var(--surface-2); overflow: hidden; }
+.cbox__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem;
+             padding: .5rem .6rem .5rem .9rem; border-bottom: 1px solid var(--line); }
+.cbox__name { font: 700 .82rem/1.2 var(--display); color: var(--ink); }
+.cbox__bar .btn { padding: .4rem .7rem; font-size: .8rem; }
+.cbox pre { margin: 0; padding: .9rem 1rem; white-space: pre-wrap; overflow-wrap: anywhere;
+            font: .84rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--ink); }
+
+/* ---- Choices laid out in a row (radio buttons) --------------------------- */
+.choices { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; margin-top: .35rem; font-size: .95rem; }
+.choices label { display: inline-flex; align-items: center; gap: .4rem; cursor: pointer; color: var(--ink); }
+.choices input { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; margin: 0; }
+.choices input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Inside a .q the shared field styles make every label bold and a block of
+   its own - right for a box's label, wrong for one choice among several.
+   Two classes deep, so it wins without !important. */
+.q .choices label { display: inline-flex; font: inherit; font-size: .95rem; margin: 0; color: var(--ink); }
+
+/* ---- Rows a learner adds and removes (one card each) --------------------- */
+.rows { list-style: none; margin: .8rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+.rows > li { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: .7rem .85rem; }
+.rows .rowhead { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
+.rows .rowhead span { font: 700 .82rem/1.2 var(--display); color: var(--ink-3); }
+.rows .fieldrow { gap: .7rem; }
+.rowtools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .6rem; }
+.rowcount { font-size: .85rem; color: var(--ink-3); }
+
+/* ---- A file being built, shown live --------------------------------------- */
+.liveview { border: 1px solid var(--line); border-radius: var(--r); background: var(--ground);
+            padding: .7rem .85rem; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere;
+            font-size: .82rem; line-height: 1.5; min-height: 7rem; max-height: 26rem; overflow: auto; }
+.liveview:focus-visible { outline: 3px solid var(--accent-text); outline-offset: 2px; }
+
+/* ---- A verdict line after a check: words first, color second ------------- */
+.verdict { margin-top: .5rem; font-size: .9rem; color: var(--ink-2); }
+.verdict b { font-family: var(--display); }
+.verdict.is-right b { color: var(--good); }
+.verdict.is-wrong b { color: var(--warn); }
+
+/* ---- Hand-in: download buttons and a short status line -------------------- */
+.handstatus { min-height: 1.4em; font-size: .88rem; color: var(--ink-3); }
+.gaps { margin: .5rem 0 0; font-size: .88rem; color: var(--ink-2); }
+
+/* ---- What's next ----------------------------------------------------------- */
+.nextup { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-m); flex-wrap: wrap; }
+.nextup h3 { font-family: var(--display); font-size: 1.15rem; }
+.nextup p { color: var(--ink-2); margin-top: .3rem; max-width: 52ch; }
+
+.btn:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* ===== Form fields: from shared/css/themes/csc-240.css ===== */
+/* ===========================================================================
+   Form fields, course-wide
+   ===========================================================================
+   These used to be copied into pages 7, 9 and 10 one at a time, and pages 12
+   and 13 used the same markup with none of the styles - so their boxes fell
+   back to browser defaults, with the label stranded beside a tiny field.
+   One definition, here, so every page gets the same field.
+
+   Markup it expects:
+       <div class="q"><label for="x">Label</label><textarea id="x"></textarea></div>
+   =========================================================================== */
+.q label,
+.q legend {
+  display: block;
+  font: 700 .9rem/1.3 var(--display);
+  color: var(--ink);
+  margin-bottom: .4rem;
+}
+.q input[type="text"],
+.q textarea,
+.q select {
+  width: 100%;
+  box-sizing: border-box;          /* padding must not push it past its column */
+  font: inherit;
+  font-size: .95rem;
+  line-height: 1.5;
+  padding: .7rem .85rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  /* A hairline at rest so an empty field still reads as a field on a card. */
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition: box-shadow .15s ease, background-color .15s ease;
+}
+.q input[type="text"]::placeholder,
+.q textarea::placeholder { color: var(--ink-3); }
+
+.q textarea {
+  min-height: 6rem;
+  resize: vertical;
+  /* Grows with what is typed, in browsers that support it. Everywhere else
+     it is an ordinary resizable box, which is why min-height is still set. */
+  field-sizing: content;
+}
+
+.q input[type="text"]:hover,
+.q textarea:hover,
+.q select:hover { box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+
+.q input[type="text"]:focus,
+.q textarea:focus,
+.q select:focus {
+  outline: none;                   /* replaced by the ring below, not removed */
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.q fieldset { border: 0; margin: 0; padding: 0; }
+.q + .q { margin-top: 1rem; }
+/* A field that follows a paragraph needs air, or the label crowds the prose
+   and reads as part of it. */
+.prose + .q,
+.stepcard .prose + .q { margin-top: .9rem; }
+
+/* Fields laid out SIDE BY SIDE, in a container that handles its own gaps.
+   Without this the stacking margin above still fires on the second field -
+   they are adjacent siblings even in a grid - and it sits a line lower than
+   the first, so two fields meant to be a pair look misaligned. */
+.fieldrow { display: flex; flex-wrap: wrap; gap: 1rem; }
+.fieldrow > .q { flex: 1 1 14rem; min-width: 0; }
+.fieldrow .q + .q { margin-top: 0; }
+
+/* Pass / Fail as a segmented control rather than two loose radio dots.
+   The real radio is still there - hidden, focusable, and announced - so
+   arrow keys and screen readers behave exactly as they always did. */
+.pf {
+  display: inline-flex;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  overflow: hidden;
+}
+.pf label { position: relative; cursor: pointer; }
+.pf input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pf span {
+  display: inline-block;
+  padding: .4rem .85rem;
+  font: 700 .8rem/1 var(--display);
+  color: var(--ink-2);
+  transition: background-color .15s ease, color .15s ease;
+}
+.pf label:hover span { background: var(--accent-wash); color: var(--accent-text); }
+.pf input[value="Pass"]:checked + span { background: var(--accent-fill); color: var(--accent-on); }
+.pf input[value="Fail"]:checked + span { background: var(--surface-2); color: var(--ink);
+                                         text-decoration: underline; text-decoration-thickness: 2px; }
+/* The focus ring has to live on the visible half, since the input is hidden. */
+.pf input:focus-visible + span { box-shadow: inset 0 0 0 2px var(--accent); }
+
+
+/* ---- this page only ------------------------------------------------------ */
+/* The ten case tabs: small numbered buttons. A finished case gets a check
+   mark AND the words "call made" for screen readers - never color alone. */
+.casetabs { display: flex; flex-wrap: wrap; gap: .4rem; }
+.casetab { min-width: 2.75rem; padding: .55rem .7rem; font: 700 .9rem/1 var(--display); border: 0; border-radius: var(--r-sm);
+           cursor: pointer; background: transparent; color: var(--ink-2); box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.casetab:hover { background: var(--accent-wash); color: var(--accent-text); }
+.casetab[aria-selected="true"] { background: var(--accent-fill); color: var(--accent-on); }
+.casetab:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.casetab .tick { margin-left: .25rem; }
+.progress { font: 700 .9rem/1.3 var(--display); color: var(--ink-2); }
+
+.casepanel > * + * { margin-top: 1rem; }
+.casepanel h3 { font: 700 1.25rem/1.3 var(--display); color: var(--ink); }
+.casepanel .org { font: 700 .74rem/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+
+/* The case text: the part learners highlight. Larger, for reading. */
+.casetext { border-radius: var(--r-sm); background: var(--surface-2); padding: 1rem 1.15rem; }
+.casetext p { margin: 0; color: var(--ink); font-size: 1.02rem; line-height: 1.7; max-width: var(--measure); }
+.casetext p + p { margin-top: .8rem; }
+/* A highlight: a soft yellow behind dark text, plus its number. The number
+   is drawn by CSS, so it is never part of the text a learner selects. */
+.casetext mark { background: #fff1a8; color: var(--ink); border-radius: 3px; padding: 0 .1em; cursor: pointer;
+                 box-shadow: inset 0 -2px 0 #e0c341; }
+.casetext mark::after { content: attr(data-n); font: 700 .68rem/1 var(--display); color: var(--accent-text);
+                        vertical-align: super; margin-left: .15em; }
+
+.hltools { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: flex-end; }
+.hltools .q { flex: 1 1 18rem; margin: 0; }
+.pending { font-size: .88rem; color: var(--ink-3); min-height: 1.3em; margin: .3rem 0 0; }
+
+/* The comments: one card per highlight, in reading order. */
+.notes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .6rem; }
+.notes > li { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: .7rem .85rem; }
+.notes .notehead { display: flex; gap: .6rem; align-items: flex-start; justify-content: space-between; margin-bottom: .4rem; }
+.notes .quote { margin: 0; color: var(--ink); font-size: .92rem; }
+.notes .quote b { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; border-radius: 50%; margin-right: .4rem;
+                  background: #fff1a8; color: var(--ink); font: 700 .78rem/1 var(--display); box-shadow: inset 0 0 0 1.5px #e0c341; }
+.notes .q { margin: 0; }
+.notes textarea { min-height: 3.5rem; }
+.emptynote { font-size: .9rem; color: var(--ink-3); margin: 0; }
+
+/* The answer key, once unlocked. */
+.keybox { border-radius: var(--r-sm); background: var(--accent-wash); padding: 1rem 1.15rem; }
+.keybox .ourcall { font: 700 1.05rem/1.3 var(--display); color: var(--accent-text); margin: 0; }
+.keybox .yourcall { font-size: .9rem; color: var(--ink-2); margin: .2rem 0 .7rem; }
+.keylock { font-size: .88rem; color: var(--ink-3); }
+
+.casenav { display: flex; justify-content: space-between; gap: .6rem; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+  <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><path d="M12 3v12"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.4 5.6a1 1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.9 2.9a.5.5 0 0 0 .6.6l2.9-.9a2 2 0 0 0 .9-.5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-message-square" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+  <symbol id="i-highlighter" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></symbol>
+  <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></symbol>
+</svg>
+
+<div class="lesson" data-course="280" data-page="07-case-studies.html">
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">Module 2 &middot; Whose Data Is It? &middot; Page 7 &middot; Case Studies</span>
+    <h1>Case Studies</h1>
+    <p class="standfirst">Ten short cases about organizations and their data. Some are clear problems, some are fine, and some are hard to call. You&rsquo;ll highlight any issues, identify why they are issues, make a call on each one, and download a PDF of your work. About 45 to 60 minutes.</p>
+  </div>
+</header>
+
+<main class="wrap lesson__body">
+
+  <div id="storageNote" hidden><div class="callout callout--warn"><span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span><div class="callout__body"><span class="callout__label">If your work is not saving</span><p>This page keeps your highlights in your browser. If you are in a private window, or your browser blocks site storage, they will be gone if you leave. Finish in one sitting, and download the PDF before you close the page.</p></div></div></div>
+
+  <!-- ==================== Two that really happened ==================== -->
+  <section class="block">
+    <div class="blockhead">
+      <svg class="i"><use href="#i-map-pin"/></svg>
+      <h2>Two that really happened</h2>
+    </div>
+    <div class="prose"><p>Neither of these involved AI. Both are about what a system does with people&rsquo;s data when nobody changes the settings.</p>
+<h3>Strava&rsquo;s heatmap</h3>
+<p>Strava is a fitness app that records where people run and ride. In 2017 it published a global &ldquo;heatmap&rdquo;: a picture of every route its users had logged, all over the world. In early 2018, an Australian student named Nathan Ruser noticed something in the empty places. In remote parts of Afghanistan, Iraq, Somalia and Syria, there were bright little loops where there should have been nothing. They were soldiers jogging laps around their bases. The map showed where the bases were, and even the routes people walked inside them.</p>
+<p>Users had been opted in through settings that were confusing to find. Most of those soldiers never chose to share anything.</p>
+<h3>Venmo&rsquo;s public payments</h3>
+<p>Venmo, the payment app, made every payment public by default for years: who paid whom, and the note they typed with it. Researchers later looked at 389 million of those public payments and found that about one in ten revealed something sensitive, including drug use, health conditions, phone numbers and even passwords. In 2018, PayPal, which owns Venmo, settled with the Federal Trade Commission over claims that Venmo misled people about how private their payments were.</p></div>
+    <div class="prose"><div class="callout callout--warn"><span class="icontile"><svg class="i"><use href="#i-alert"/></svg></span><div class="callout__body"><span class="callout__label">The pattern</span><p>In both cases the data wasn&rsquo;t stolen. The system shared it, because sharing was the default and most people never changed it. The opposite approach is called <b class="vt" data-v="privacy-by-default"><i>privacy by default</i></b>: start private, and let people choose to share. Watch for the same pattern in the cases below, especially when AI is the thing doing the sharing.</p></div></div></div>
+  </section>
+
+  <section class="block">
+    <div class="blockhead"><h2>How this works</h2></div>
+    <div class="prose"><p>For each case:</p>
+<ol><li><strong>Read it</strong>, and look for data: what kind it is, whose it is, where it goes, and who can see it.</li><li><strong>Highlight what matters.</strong> Select some words, then press <strong>Highlight what I selected</strong>. Or pick a sentence from the list and press <strong>Highlight this sentence</strong>. That way works with a keyboard, too.</li><li><strong>Say why</strong> in the box that appears for each highlight. One sentence is plenty. Use the words from this week: the sensitivity level, the blast radius, and which of the 4Ds it is.</li><li><strong>Make your call:</strong> clear problem, gray area, or no real problem. A gray area isn&rsquo;t a cop-out. Say what would tip it one way or the other.</li><li><strong>Open the answer key</strong> and compare. It unlocks once you&rsquo;ve made your call.</li></ol>
+<p>Not every case has a problem. If you find yourself highlighting everything, slow down: sometimes the right answer is &ldquo;this is fine.&rdquo;</p>
+<p>When you&rsquo;re done, put your name in and press <strong>Download my PDF</strong>. Hand in the PDF.</p></div>
+  </section>
+
+  <!-- ==================== The ten cases ====================
+       The script builds one panel per case from the hidden blocks below. -->
+  <section class="block" aria-labelledby="casesHead">
+    <div class="blockhead">
+      <svg class="i"><use href="#i-highlighter"/></svg>
+      <h2 id="casesHead">The cases</h2>
+    </div>
+    <p class="progress" id="progress" aria-live="polite"></p>
+    <div class="casetabs" role="tablist" aria-label="Case studies" id="caseTabs"></div>
+    <div id="casePanels"></div>
+    <noscript><p class="small muted">The cases need JavaScript to highlight and comment.</p></noscript>
+
+    <pre hidden id="case-1-data">title | Reminders That Know Too Much
+org | Riverside Family Dental
+verdict | problem
+---
+Jo runs the front desk at Riverside Family Dental, a practice with three dentists. Every afternoon she texts patients to remind them about the next day's appointments, and it eats up an hour.
+
+She found a free AI chat app on her phone that writes friendly reminder texts. To save time, she photographs the next day's patient intake forms, all of them, and uploads the photos. The forms list each patient's full name, date of birth, home address, insurance member number, current medications, and the reason for the visit.
+
+The app writes great reminders, like: &quot;Hi Dennis! Just a reminder about your root canal follow-up tomorrow at 9:30.&quot; Jo copies each one into the office texting system. Nobody else at the practice knows she's using it, and she has never looked at the app's settings.</pre>
+    <pre hidden id="case-2-data">title | The Menu Posts
+org | Hearth &amp; Crumb Bakery
+verdict | fine
+---
+Lena, from the bakery in Week 1's Case Files, learned her lesson. She still uses a free AI chat to write her weekly social media posts, but now she only pastes in the public product sheet: item names, descriptions and prices that are already on the website and in the window.
+
+Her instructions now include a &quot;never say&quot; list: no allergen claims, no health claims, and no prices that aren't on the sheet. She reads every post out loud before it goes up, and she has caught two small mistakes that way.
+
+She also turned off the app's chat history, though she admits she only did it because a friend told her to.</pre>
+    <pre hidden id="case-3-data">title | The Roster Notes
+org | Valley United Youth Soccer
+verdict | gray
+---
+Andre volunteers as registrar for Valley United, a youth soccer league with 300 kids. Every season he has to split each age group into balanced teams, and every season it takes him a whole weekend.
+
+This year he exports the registration spreadsheet and pastes it into the AI tool his employer provides for his day job. It's a business plan that promises not to train on what he types. He asks it to make balanced teams by age and skill rating.
+
+The spreadsheet has each child's name, age, birthday, school, last season's skill rating, and a &quot;notes&quot; column that parents filled in. Some notes say things like &quot;carpools with the Okafors.&quot; Others mention a child's ADHD medication, a custody arrangement, or &quot;dad is not allowed to pick up.&quot;
+
+The teams it makes are well balanced, and Andre is home by lunch.</pre>
+    <pre hidden id="case-4-data">title | The Upsell Engine
+org | Lakeview Credit Union
+verdict | problem
+---
+Lakeview Credit Union's marketing team wanted to send members more personal offers. A vendor sold them an AI assistant that connects to the credit union's new data lake: every account balance, every transaction, every loan application, and every call-center note from the last ten years.
+
+The team asked it to &quot;find members who would benefit from our debt consolidation loan&quot; and draft an email to each one. It picked members with frequent overdrafts, payments to payday lenders, and charges at gambling sites, and wrote emails that mentioned them: &quot;We noticed you've had a tough few months...&quot;
+
+The emails went out automatically to 2,300 members the same afternoon. Nobody on the marketing team read them first. Several members called to ask how the marketing department knew what they spent their money on.</pre>
+    <pre hidden id="case-5-data">title | Minutes in Plain English
+org | City of Ashford Parks and Recreation
+verdict | fine
+---
+The Ashford Parks and Recreation department posts its board meeting minutes on the city's website, as the law requires. Hardly anyone reads them: they're long, formal, and full of motions and seconds.
+
+Devon, the department's communications assistant, uses the city's approved AI tool to turn each set of published minutes into a short, plain-language summary for the monthly newsletter: what was decided, what's coming up, and how residents can weigh in.
+
+Devon checks every summary against the minutes before it goes out, especially anything about money, dates, or what was actually voted on. The newsletter always links to the full minutes.</pre>
+    <pre hidden id="case-6-data">title | Anonymous Exit Interviews
+org | Kessler Manufacturing
+verdict | gray
+---
+Kessler Manufacturing has 40 employees. When someone leaves, HR holds an exit interview and types up notes. After a rough year with eight departures, the owner asked HR to look for patterns.
+
+Renee in HR uses the company's approved AI tool, which the company pays for and which doesn't train on its data. Before pasting the notes in, she deletes every name and replaces it with &quot;Employee 1,&quot; &quot;Employee 2,&quot; and so on.
+
+The notes still say things like &quot;second-shift welder, 22 years here, left after a dispute with the shift supervisor over overtime&quot; and &quot;only woman on the maintenance crew; said she was tired of the comments.&quot; The AI's summary uses those details as examples under each pattern, and Renee sends it to the owner and all four department heads.</pre>
+    <pre hidden id="case-7-data">title | The Helpful Pickup Bot
+org | Northside Food Pantry
+verdict | problem
+---
+The Northside Food Pantry gets the same phone question all day: &quot;When's my next pickup?&quot; A volunteer who is good with computers built a chatbot for the pantry's website over a weekend to answer it.
+
+To make it work, he gave the bot the pantry's sign-in spreadsheet: every household's name, address, household size, pickup dates, and whether they receive SNAP benefits. Anyone who visits the website can chat with it. There's no login.
+
+It works. A client types her name and gets her pickup date. So does her neighbor, when he types her name. So does anyone who asks, &quot;Who picked up food last week?&quot;</pre>
+    <pre hidden id="case-8-data">title | Listing Photos
+org | Fieldstone Realty
+verdict | gray
+---
+Nate, a real estate agent at Fieldstone Realty, uses an AI tool his brokerage approved to write listing descriptions. He uploads the photos of each house and gets back a warm, detailed description in seconds.
+
+The photos are the same ones that go on the public listing. In one house, they show the children's names painted on their bedroom doors, a weekly schedule on the fridge with soccer practice and pickup times, mail on the kitchen counter, and the keypad for the home's security system by the front door.
+
+The description is lovely and doesn't mention any of that. Nate posts the listing with all 32 photos.</pre>
+    <pre hidden id="case-9-data">title | The Real Spreadsheet
+org | Bright Line Heating &amp; Cooling
+verdict | gray
+---
+Tasha, from the heating company in Week 1's Case Files, needed another formula: this one adds a late fee once an invoice is 30 days overdue. This time she was in a hurry.
+
+Instead of making three made-up rows like last time, she uploaded the real invoice spreadsheet to a free AI chat on her personal account: 640 customers' names, addresses, phone numbers, and how much each one owes.
+
+The formula it gave back was perfect. She tested it on rows due yesterday, today and tomorrow, like she learned to. Then she deleted the chat.</pre>
+    <pre hidden id="case-10-data">title | The Firm's Own Tool
+org | Morrow &amp; Lee
+verdict | fine
+---
+Morrow &amp; Lee is a law firm with 12 lawyers. Last year, after months of review, the firm signed a contract with an AI vendor for a legal research and drafting tool. The contract says the vendor can't train on the firm's data, must delete it on request, and must keep it in the United States. The firm's IT person set it up so only staff can log in, and every use is logged.
+
+Ana, a paralegal, uses it to summarize a 300-page deposition transcript for an upcoming case, a job that used to take her two days. The transcript is full of the client's medical history and finances.
+
+The summary goes to the supervising attorney, who checks it against the transcript before anything is used in the case. Ana never uses any other AI tool for client work.</pre>
+    <!-- The answer keys: moved into each case by the script, and shown
+         only after the learner has made a call on that case. -->
+    <div hidden id="case-1-key"><p><strong>What matters.</strong> The intake forms are restricted data: health information, insurance numbers and dates of birth. They went into a free app on a personal phone that nobody at the practice approved, and nobody knows what it keeps. In the U.S., dental offices are generally covered by HIPAA, the federal health privacy law. The reminder only needed a first name and a time. Everything else was extra, and the extra is the dangerous part.</p>
+<p><strong>Minor error, big issue.</strong> The reminder text itself says &ldquo;root canal.&rdquo; Anyone who glances at Dennis&rsquo;s phone now knows why he&rsquo;s going to the dentist.</p>
+<p><strong>What would fix it.</strong> The task is fine; the data isn&rsquo;t. Send only a first name and a time, through the office&rsquo;s own texting system, which can probably send reminders without any AI at all. And never photograph patient forms on a personal phone.</p></div>
+    <div hidden id="case-2-key"><p><strong>What matters.</strong> Everything Lena pastes in is public. For public data, any tool is fine, including a free one. Her never-say list and her read-aloud check are exactly the controls from Case Files, and they&rsquo;re working: two caught mistakes.</p>
+<p><strong>This is Delegate done right.</strong> The AI drafts, and a person with eyes on every word decides what goes out.</p>
+<p><strong>The red herring.</strong> Turning off chat history is a nice habit, but it doesn&rsquo;t matter much here, because there&rsquo;s nothing private to keep. If you marked this a problem because the app is free, look at the level first: the level decides the rule.</p></div>
+    <div hidden id="case-3-key"><p><strong>What&rsquo;s good.</strong> A business tool that doesn&rsquo;t train on his data, and a reasonable job for AI. Balancing teams is tedious, and nothing bad happens if a team is a little uneven.</p>
+<p><strong>What tips it gray.</strong> The notes column holds restricted information about children: health, custody, and a safety warning. The AI needed none of it to balance teams. And Andre used his employer&rsquo;s tool for something that isn&rsquo;t his employer&rsquo;s work. That may break his workplace&rsquo;s rules, and it puts 300 children&rsquo;s details into his employer&rsquo;s account, where its administrators could see them.</p>
+<p><strong>What would fix it.</strong> Before pasting, delete the notes, school and birthday columns, and use first names or initials. Ask the league whether it has its own tool. And &ldquo;dad is not allowed to pick up&rdquo; is a real safety need. It belongs with the coaches, not in an AI chat.</p></div>
+    <div hidden id="case-4-key"><p><strong>What matters.</strong> The blast radius was the whole data lake. Marketing could reach ten years of every member&rsquo;s transactions, which marketing never needed. Members gave the credit union that data to run their accounts, not to be sold to. And the emails turned it into something worse: guesses about money trouble and gambling, said out loud.</p>
+<p><strong>The 4D mistake.</strong> This was treated as Deputize, with no human reading anything, when it should have been Delegate at most. It went out under the credit union&rsquo;s name, to 2,300 people, and it can&rsquo;t be taken back.</p>
+<p><strong>What would fix it.</strong> Data governance first: marketing gets only what it needs, like which members are eligible, not the transactions behind it. Never mention spending in a marketing message. And a person reads before anything is sent.</p></div>
+    <div hidden id="case-5-key"><p><strong>What matters.</strong> The minutes are already public, by law. The tool is the one the city approved. This is Delegate: the AI drafts, and Devon checks every decision, number and date against the source. It&rsquo;s the same control the credit union newsletter needed in Case Files.</p>
+<p><strong>A nice extra.</strong> Linking to the full minutes means anyone can check the summary themselves.</p>
+<p><strong>If you flagged the names in the minutes:</strong> board members and the people who speak at public meetings are part of a public record. That&rsquo;s not the same as private data.</p></div>
+    <div hidden id="case-6-key"><p><strong>What&rsquo;s good.</strong> An approved tool, a fair question, and Renee really did try: she removed the names.</p>
+<p><strong>What tips it gray.</strong> Remember Sweeney: taking the names out is not the same as making data anonymous. In a 40-person company, &ldquo;the only woman on the maintenance crew&rdquo; <em>is</em> a name, and so is &ldquo;second-shift welder, 22 years here.&rdquo; The summary went to all four department heads, possibly including the supervisor in that dispute. And &ldquo;tired of the comments&rdquo; may be a harassment concern that needs HR to act, not just a line in a pattern.</p>
+<p><strong>What would fix it.</strong> Strip roles, shifts and years of service too, not only names. Report patterns without examples that point at a person. Send it only to the people who need it. Take the harassment concern out of the AI exercise and handle it properly.</p></div>
+    <div hidden id="case-7-key"><p><strong>What matters.</strong> This is Strava and Venmo again: public by default. Who uses a food pantry, where they live, and who receives SNAP is sensitive, and some of it is protected. Now anyone on the internet can ask for it. The blast radius is every client the pantry has, and it can&rsquo;t be undone.</p>
+<p><strong>The 4D call.</strong> Don&rsquo;t, at least for this design. The volunteer meant well, and the question is a good one to automate. The data just never belonged in a public bot.</p>
+<p><strong>What would fix it.</strong> Answer the question without anyone&rsquo;s data. &ldquo;Households with last names A to M pick up in the first week of the month&rdquo; needs no names at all. Or send each household its own reminder by text, so the answer only goes to the person it belongs to.</p></div>
+    <div hidden id="case-8-key"><p><strong>The surprise.</strong> The AI is the one step that handled this well. It&rsquo;s an approved tool, it&rsquo;s Delegate (Nate reads the description), and the description leaves the family&rsquo;s details out.</p>
+<p><strong>What tips it gray.</strong> The real exposure is the public listing itself. Thirty-two photos now tell anyone online the children&rsquo;s names, when the house is empty, and where the security keypad is. Data problems aren&rsquo;t always AI problems, and a good data map covers every step, not just the AI one.</p>
+<p><strong>What would fix it.</strong> A photo checklist before anything goes public: names, schedules, mail and security systems out of the shot, or blurred.</p></div>
+    <div hidden id="case-9-key"><p><strong>What tips it toward a problem.</strong> Customer contact details and what each one owes are confidential, and they went into an unapproved free tool on a personal account. Deleting the chat may not delete the data; that&rsquo;s the retention question from the lesson. And the formula didn&rsquo;t need a single real row. It needed the column names.</p>
+<p><strong>What keeps it gray.</strong> No restricted data (no card or bank numbers), a smaller blast radius than the credit union&rsquo;s, and her testing habit is exactly right.</p>
+<p><strong>What would fix it.</strong> Two minutes of made-up rows, or just the column headers. The AI needed the shape of the data, not the data.</p></div>
+    <div hidden id="case-10-key"><p><strong>What matters.</strong> This is restricted data, and it&rsquo;s still fine, because this is the exception from the lesson: &ldquo;Don&rsquo;t, unless the organization set up a tool for exactly this.&rdquo; Morrow &amp; Lee did. A contract with no training, deletion on request and a known location, logins for staff only, a log of every use, and an attorney who checks the work. That&rsquo;s data governance doing its job.</p>
+<p><strong>The 4D call.</strong> Delegate: the AI drafts, and a professional with eyes on it decides.</p>
+<p><strong>If you called it a problem because the data is restricted:</strong> the level decides the rule, and the rule here was built for this data. Restricted doesn&rsquo;t mean never. It means not without the right setup, and this is the right setup.</p></div>
+  </section>
+
+  <!-- ==================== Download and hand in ==================== -->
+  <section class="block">
+    <div class="blockhead"><h2>Download and hand in</h2>
+<p>Your PDF has every case you made a call on, with your highlights, your comments and your verdicts. Cases you haven&rsquo;t touched are listed at the end. It&rsquo;s done or not done, so a complete honest file is the whole job.</p></div>
+    <div class="card stepcard">
+      <div class="q"><label for="fName">Your name (it goes at the top of the PDF)</label>
+        <input type="text" id="fName" maxlength="80" autocomplete="name"></div>
+      <div class="btnrow">
+        <button class="btn btn--primary" type="button" id="pdfDownload"><svg class="i"><use href="#i-download"/></svg> Download my PDF</button>
+      </div>
+      <p class="handstatus" id="pdfStatus" aria-live="polite"></p>
+      <p class="gaps" id="gaps" aria-live="polite"></p>
+    </div>
+
+    <!-- The wrapper ships with data-submit="" - paste the Case Studies
+         dropbox link in (https only) and this card appears. THE ANCHOR IS
+         LOAD-BEARING: see claude/handin-card-anchor.md. -->
+    <div class="handin" id="handin" hidden>
+      <div class="icontile"><svg class="i"><use href="#i-upload"/></svg></div>
+      <div style="display:grid;gap:.4rem;justify-items:start">
+        <span class="eyebrow">When you are ready</span>
+        <a class="btn btn--primary" href="#" target="_blank" rel="noopener">Hand in your case studies here.</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="card nextup">
+      <div><h3>That&rsquo;s the week</h3>
+<p>Next week: where it runs, and what it really costs. You&rsquo;ll decide whether your solution belongs in a hosted tool, on your organization&rsquo;s own hardware, or nowhere near AI at all.</p></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- The PDF maker. Inlined by assemble.py from csc-240/build/pdf-lite.js. -->
+<script>
+/* ==========================================================================
+   pdf-lite.js - a tiny PDF maker for the certificate   (one copy, inlined by
+   assemble.py, through its PDF_JS slot, into any page that needs it)
+   --------------------------------------------------------------------------
+   WHY NOT A LIBRARY. jsPDF would work, but it is 360KB from a CDN, and if
+   the CDN is blocked or changes, the one thing students MUST produce - the
+   certificate - silently fails. A certificate only needs text, lines and
+   colored boxes, and a PDF that does only that is small enough to write by
+   hand. It uses the fonts every PDF reader already has (Helvetica,
+   Helvetica-Bold and Courier), so nothing is embedded or downloaded.
+
+   HOW A PDF IS PUT TOGETHER, in one paragraph. A PDF is a list of numbered
+   "objects" (the catalog, the page list, each page, each font, and each
+   page's drawing instructions), followed by a table saying exactly how many
+   bytes into the file each object starts. Drawing instructions are short
+   commands: "BT /F1 12 Tf 72 700 Td (Hello) Tj ET" means begin text, use
+   font F1 at 12 points, move to (72, 700), show "Hello", end text.
+   Coordinates are in points (72 to an inch) measured from the BOTTOM left.
+
+   USE
+     var doc = PdfLite.create();
+     var page = doc.page(792, 612);            // width, height in points
+     page.text("Hello", 72, 500, { size: 24, font: "bold", color: [0, .27, .68] });
+     page.textCentered("Middle", 306, { size: 12 });
+     page.rect(30, 30, 732, 552, { stroke: [0, .27, .68], width: 3 });
+     var bytes = doc.bytes();                   // a Uint8Array, ready to download
+
+   CHARACTERS. Text is written in the Windows-1252 character set, which
+   covers English and most Western European names (Jose with an accent, Zoe
+   with dots). Anything outside it - for example Chinese characters or
+   emoji - is shown as "?" rather than breaking the file.
+   ========================================================================== */
+var PdfLite = (function () {
+  "use strict";
+
+  // Character widths for Helvetica and Helvetica-Bold, from the standard
+  // Adobe font metrics, for character codes 32 to 255, in 1/1000ths of the
+  // font size. Used to center text. Courier is always 600 per character.
+  var W_REG  = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,350,556,350,222,556,333,1000,556,556,333,1000,667,333,1000,350,611,350,350,222,222,333,333,350,556,1000,333,1000,500,333,944,350,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500];
+  var W_BOLD = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,350,556,350,278,556,500,1000,556,556,333,1000,667,333,1000,350,611,350,350,278,278,500,500,350,556,1000,333,1000,556,333,944,350,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+
+  // Windows-1252 has 27 characters in the range 128-159 that are not where
+  // Unicode puts them (curly quotes, the euro sign, long dashes...).
+  var CP1252 = { 0x20AC:128, 0x201A:130, 0x0192:131, 0x201E:132, 0x2026:133, 0x2020:134, 0x2021:135,
+    0x02C6:136, 0x2030:137, 0x0160:138, 0x2039:139, 0x0152:140, 0x017D:142, 0x2018:145, 0x2019:146,
+    0x201C:147, 0x201D:148, 0x2022:149, 0x2013:150, 0x2014:151, 0x02DC:152, 0x2122:153, 0x0161:154,
+    0x203A:155, 0x0153:156, 0x017E:158, 0x0178:159 };
+
+  // Turn ordinary text into a string of single-byte character codes.
+  function encode(text) {
+    var out = "";
+    for (var i = 0; i < text.length; i++) {
+      var c = text.charCodeAt(i);
+      if (c === 9) c = 32;                                    // a tab becomes a space
+      if (c >= 32 && c <= 126) out += String.fromCharCode(c);
+      else if (c >= 160 && c <= 255) out += String.fromCharCode(c);
+      else if (CP1252[c]) out += String.fromCharCode(CP1252[c]);
+      else out += "?";                                        // not in the font
+    }
+    return out;
+  }
+
+  // Inside a PDF string, ( ) and \ are special and must be escaped.
+  function pdfString(encoded) {
+    return "(" + encoded.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)") + ")";
+  }
+
+  var FONTS = { regular: "F1", bold: "F2", mono: "F3" };
+
+  function widthOf(text, size, font) {
+    var s = encode(text), total = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      if (font === "mono") total += 600;
+      else total += ((font === "bold" ? W_BOLD : W_REG)[c - 32] || 556);
+    }
+    return total * size / 1000;
+  }
+
+  function rgb(c) { return c[0].toFixed(3) + " " + c[1].toFixed(3) + " " + c[2].toFixed(3); }
+
+  function create() {
+    var pages = [];
+
+    function page(width, height) {
+      var ops = [];
+      var p = {
+        width: width, height: height, ops: ops,
+        // Draw text with its left edge at x and its baseline at y.
+        text: function (text, x, y, o) {
+          o = o || {};
+          ops.push("BT /" + FONTS[o.font || "regular"] + " " + (o.size || 12) + " Tf " +
+                   rgb(o.color || [0, 0, 0]) + " rg " + x.toFixed(2) + " " + y.toFixed(2) + " Td " +
+                   pdfString(encode(text)) + " Tj ET");
+        },
+        // Draw text centered on the page, at baseline y.
+        textCentered: function (text, y, o) {
+          o = o || {};
+          var w = widthOf(text, o.size || 12, o.font || "regular");
+          p.text(text, (width - w) / 2, y, o);
+        },
+        // A rectangle: outlined (stroke), filled (fill), or both.
+        rect: function (x, y, w, h, o) {
+          o = o || {};
+          if (o.fill) ops.push(rgb(o.fill) + " rg " + [x, y, w, h].map(function (n) { return n.toFixed(2); }).join(" ") + " re f");
+          if (o.stroke) ops.push(rgb(o.stroke) + " RG " + (o.width || 1) + " w " + [x, y, w, h].map(function (n) { return n.toFixed(2); }).join(" ") + " re S");
+        },
+        // A straight line.
+        line: function (x1, y1, x2, y2, o) {
+          o = o || {};
+          ops.push(rgb(o.color || [0, 0, 0]) + " RG " + (o.width || 1) + " w " + x1 + " " + y1 + " m " + x2 + " " + y2 + " l S");
+        }
+      };
+      pages.push(p);
+      return p;
+    }
+
+    // Assemble every object, then the table of where each one starts.
+    function bytes() {
+      var objects = [];
+      objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+      var kids = [];
+      objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+      objects[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+      objects[5] = "<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>";
+      var next = 6;
+      pages.forEach(function (p) {
+        var pageNum = next++, contentNum = next++;
+        var stream = p.ops.join("\n");
+        objects[contentNum] = "<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream";
+        objects[pageNum] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + p.width + " " + p.height + "] " +
+                           "/Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents " + contentNum + " 0 R >>";
+        kids.push(pageNum + " 0 R");
+      });
+      objects[2] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + kids.length + " >>";
+
+      var out = "%PDF-1.4\n%âãÏÓ\n";   // the second line marks the file as binary
+      var offsets = [];
+      for (var n = 1; n < objects.length; n++) {
+        offsets[n] = out.length;                            // every character is one byte
+        out += n + " 0 obj\n" + objects[n] + "\nendobj\n";
+      }
+      var xref = out.length;
+      out += "xref\n0 " + objects.length + "\n0000000000 65535 f \n";
+      for (n = 1; n < objects.length; n++) out += ("0000000000" + offsets[n]).slice(-10) + " 00000 n \n";
+      out += "trailer\n<< /Size " + objects.length + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n";
+
+      var arr = new Uint8Array(out.length);
+      for (var k = 0; k < out.length; k++) arr[k] = out.charCodeAt(k) & 255;
+      return arr;
+    }
+
+    return { page: page, bytes: bytes };
+  }
+
+  return { create: create, widthOf: widthOf };
+})();
+
+</script>
+
+<script>
+/* ==========================================================================
+   This page's own code:
+     1. reading the ten cases out of their hidden blocks
+     2. drawing a case: its tab, text, highlight tools, comments, verdict, key
+     3. highlighting: from a selection, or from the sentence list
+     4. saving
+     5. the PDF
+   Everything typed goes on the page with textContent or .value only.
+   Saved in this browser only. Nothing is sent anywhere.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var STORE = "csc280.cases7.v1";   // this page's work, in this browser
+  var NOTES_MAX = 12;               // highlights per case
+  // The three calls a learner can make, and how each is written on the page.
+  var CALLS = [["problem", "Clear problem"], ["gray", "Gray area"], ["fine", "No real problem"]];
+
+  /* ---- small helpers ------------------------------------------------------ */
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  // The hidden blocks are not curled by the build. Curl them for showing.
+  function curly(s) {
+    return String(s).replace(/([A-Za-z0-9.,!?])"/g, "$1”").replace(/"/g, "“")
+                    .replace(/([A-Za-z])'/g, "$1’");
+  }
+  function callName(key) { for (var i = 0; i < CALLS.length; i++) if (CALLS[i][0] === key) return CALLS[i][1]; return ""; }
+  function str(v, max) { return typeof v === "string" ? v.slice(0, max) : ""; }
+
+  var storageWorks = true;
+  try { localStorage.setItem("csc280.test", "1"); localStorage.removeItem("csc280.test"); }
+  catch (e) { storageWorks = false; $("storageNote").hidden = false; }
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { saved = {}; }
+  if (typeof saved !== "object" || saved === null) saved = {};
+
+  /* ---- 1. the cases --------------------------------------------------------
+     Each hidden block: "title | ...", "org | ...", "verdict | ...", a line of
+     ---, then paragraphs separated by blank lines (format checked by the
+     build). */
+  var CASES = [];
+  for (var n = 1; $("case-" + n + "-data"); n++) {
+    var raw = $("case-" + n + "-data").textContent.replace(/\r\n/g, "\n");
+    var cut = raw.indexOf("\n---\n");
+    var meta = {};
+    raw.slice(0, cut).split("\n").forEach(function (l) {
+      var i = l.indexOf("|");
+      if (i > 0) meta[l.slice(0, i).trim()] = l.slice(i + 1).trim();
+    });
+    var paras = raw.slice(cut + 5).split(/\n\s*\n/).map(function (p) { return curly(p.replace(/\s+/g, " ").trim()); })
+      .filter(Boolean);
+    CASES.push({ n: n, title: curly(meta.title || ""), org: curly(meta.org || ""), verdict: meta.verdict || "",
+                 paras: paras, key: $("case-" + n + "-key") });
+  }
+
+  // Saved work, cleaned: { verdicts: {"1": "gray"}, notes: {"1": [{p, s, e, c}]}, tab, name }
+  var verdicts = {}, notes = {};
+  CASES.forEach(function (c) {
+    var k = String(c.n);
+    var v = saved.verdicts && saved.verdicts[k];
+    verdicts[k] = callName(v) ? v : "";
+    var list = (saved.notes && Array.isArray(saved.notes[k])) ? saved.notes[k] : [];
+    notes[k] = list.filter(function (x) {
+      return x && typeof x === "object" && c.paras[x.p] !== undefined &&
+             x.s >= 0 && x.e > x.s && x.e <= c.paras[x.p].length;
+    }).slice(0, NOTES_MAX).map(function (x) { return { p: x.p, s: x.s, e: x.e, c: str(x.c, 800) }; });
+  });
+  $("fName").value = str(saved.name, 80);
+
+  function save() {
+    if (!storageWorks) return;
+    try { localStorage.setItem(STORE, JSON.stringify({ verdicts: verdicts, notes: notes, tab: current, name: $("fName").value })); }
+    catch (e) { /* storage blocked */ }
+  }
+
+  // A case's highlights in reading order: paragraph, then position.
+  function ordered(k) {
+    return notes[k].slice().sort(function (a, b) { return a.p - b.p || a.s - b.s; });
+  }
+
+  /* ---- 2. drawing a case --------------------------------------------------- */
+  var tabs = [], panels = [], current = 0;
+  CASES.forEach(function (c, i) {
+    var k = String(c.n);
+
+    // The tab.
+    var tab = el("button", "casetab");
+    tab.type = "button"; tab.id = "ct" + c.n;
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-controls", "cp" + c.n);
+    $("caseTabs").appendChild(tab);
+    tabs.push(tab);
+
+    // The panel.
+    var panel = el("div", "card stepcard casepanel");
+    panel.id = "cp" + c.n;
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", "ct" + c.n);
+    panel.hidden = true;
+    panel.appendChild(el("p", "org", c.org));
+    panel.appendChild(el("h3", null, "Case " + c.n + ": " + c.title));
+
+    // The text learners highlight.
+    var text = el("div", "casetext");
+    text.setAttribute("data-case", k);
+    c.paras.forEach(function (p, pi) {
+      var para = el("p");
+      para.setAttribute("data-p", pi);
+      text.appendChild(para);
+    });
+    panel.appendChild(text);
+
+    // Highlight tools: from a selection, or from the sentence list.
+    // Two rows, one per way of highlighting, so they never run together.
+    var tools = el("div");
+    var rowSel = el("div", "btnrow");
+    var selBtn = el("button", "btn btn--primary", "Highlight what I selected");
+    selBtn.type = "button";
+    rowSel.appendChild(selBtn);
+    tools.appendChild(rowSel);
+    var row = el("div", "hltools");
+    row.style.marginTop = ".8rem";
+    var q = el("div", "q");
+    var lab = el("label", null, "Or pick a sentence");
+    var pick = document.createElement("select");
+    pick.id = "pick" + c.n;
+    lab.setAttribute("for", pick.id);
+    q.appendChild(lab); q.appendChild(pick);
+    row.appendChild(q);
+    var senBtn = el("button", "btn btn--ghost", "Highlight this sentence");
+    senBtn.type = "button";
+    row.appendChild(senBtn);
+    tools.appendChild(row);
+    var status = el("p", "pending");
+    status.setAttribute("aria-live", "polite");
+    tools.appendChild(status);
+    panel.appendChild(tools);
+
+    // The sentence list: every sentence, with where it sits in its paragraph.
+    var sentences = [];
+    c.paras.forEach(function (p, pi) {
+      var re = /[^.!?]+[.!?]+["”’)]*\s*|[^.!?]+$/g, m;
+      while ((m = re.exec(p))) {
+        var s = m.index, e = m.index + m[0].replace(/\s+$/, "").length;
+        while (s < e && /\s/.test(p.charAt(s))) s++;
+        if (e > s) sentences.push({ p: pi, s: s, e: e });
+      }
+    });
+    var first = el("option", null, "Choose a sentence...");
+    first.value = "";
+    pick.appendChild(first);
+    sentences.forEach(function (x, si) {
+      var t = c.paras[x.p].slice(x.s, x.e);
+      var o = el("option", null, "P" + (x.p + 1) + ": " + (t.length > 70 ? t.slice(0, 67) + "..." : t));
+      o.value = si;
+      pick.appendChild(o);
+    });
+
+    // The comments.
+    panel.appendChild(el("h4", "org", "Your highlights and comments"));
+    var list = el("ol", "notes");
+    list.setAttribute("aria-label", "Highlights and comments for case " + c.n);
+    panel.appendChild(list);
+
+    // The verdict.
+    var fs = el("fieldset", "q");
+    fs.appendChild(el("legend", null, "Your call on this case"));
+    var choices = el("div", "choices");
+    CALLS.forEach(function (call) {
+      var l = el("label");
+      var r = document.createElement("input");
+      r.type = "radio"; r.name = "verdict" + c.n; r.value = call[0];
+      r.checked = verdicts[k] === call[0];
+      r.addEventListener("change", function () { verdicts[k] = call[0]; paintKey(); paintTabs(); save(); });
+      l.appendChild(r);
+      l.appendChild(document.createTextNode(" " + call[1]));
+      choices.appendChild(l);
+    });
+    fs.appendChild(choices);
+    panel.appendChild(fs);
+
+    // The answer key: locked until a call is made, then one button opens it.
+    var keyArea = el("div");
+    var keyBtn = el("button", "btn btn--ghost");
+    keyBtn.type = "button";
+    keyBtn.setAttribute("aria-expanded", "false");
+    keyBtn.setAttribute("aria-controls", "kb" + c.n);
+    var keyLock = el("p", "keylock", "Make your call to unlock the answer key.");
+    var keyBox = el("div", "keybox prose");
+    keyBox.id = "kb" + c.n;
+    keyBox.hidden = true;
+    var ourCall = el("p", "ourcall", "Our call: " + callName(c.verdict));
+    var yourCall = el("p", "yourcall");
+    keyBox.appendChild(ourCall);
+    keyBox.appendChild(yourCall);
+    if (c.key) { c.key.hidden = false; keyBox.appendChild(c.key); }
+    keyArea.appendChild(keyBtn);
+    keyArea.appendChild(keyLock);
+    keyArea.appendChild(keyBox);
+    panel.appendChild(keyArea);
+    function paintKey() {
+      var made = !!verdicts[k];
+      keyBtn.disabled = !made;
+      keyLock.hidden = made;
+      if (!made) { keyBox.hidden = true; keyBtn.setAttribute("aria-expanded", "false"); }
+      keyBtn.textContent = keyBox.hidden ? "Show the answer key" : "Hide the answer key";
+      yourCall.textContent = "You said: " + (callName(verdicts[k]) || "nothing yet") + ".";
+    }
+    keyBtn.addEventListener("click", function () {
+      keyBox.hidden = !keyBox.hidden;
+      keyBtn.setAttribute("aria-expanded", keyBox.hidden ? "false" : "true");
+      paintKey();
+    });
+
+    // Previous and next.
+    var nav = el("div", "casenav");
+    var prev = el("button", "btn btn--ghost", "Previous case");
+    prev.type = "button"; prev.disabled = i === 0;
+    var next = el("button", "btn btn--ghost", i === CASES.length - 1 ? "Done: go to download" : "Next case");
+    next.type = "button";
+    prev.addEventListener("click", function () { show(i - 1, true); });
+    next.addEventListener("click", function () {
+      if (i === CASES.length - 1) { $("fName").focus(); return; }
+      show(i + 1, true);
+    });
+    nav.appendChild(prev); nav.appendChild(next);
+    panel.appendChild(nav);
+    $("casePanels").appendChild(panel);
+    panels.push(panel);
+
+    /* Draw the text with its highlights, and the comment list. Called after
+       every change. The marks are rebuilt from scratch each time, from the
+       case text and the saved offsets. */
+    function paintNotes(focusNote) {
+      var all = ordered(k);
+      Array.prototype.forEach.call(text.querySelectorAll("p"), function (para) {
+        var pi = +para.getAttribute("data-p"), src = c.paras[pi], at = 0;
+        para.textContent = "";
+        all.forEach(function (x, xi) {
+          if (x.p !== pi) return;
+          if (x.s > at) para.appendChild(document.createTextNode(src.slice(at, x.s)));
+          var mark = el("mark", null, src.slice(x.s, x.e));
+          mark.setAttribute("data-n", xi + 1);
+          mark.setAttribute("data-i", notes[k].indexOf(x));
+          para.appendChild(mark);
+          at = x.e;
+        });
+        if (at < src.length) para.appendChild(document.createTextNode(src.slice(at)));
+      });
+
+      list.textContent = "";
+      if (!all.length) {
+        var li0 = el("li", "emptynote", "No highlights yet. Not every case needs one, but most do.");
+        li0.style.border = "0"; li0.style.padding = "0"; li0.style.background = "none";
+        list.appendChild(li0);
+      }
+      all.forEach(function (x, xi) {
+        var li = el("li");
+        var head = el("div", "notehead");
+        var quote = el("p", "quote");
+        quote.appendChild(el("b", null, String(xi + 1)));
+        quote.appendChild(document.createTextNode("“" + c.paras[x.p].slice(x.s, x.e) + "”"));
+        head.appendChild(quote);
+        var rm = el("button", "btn btn--ghost", "Remove");
+        rm.type = "button";
+        rm.setAttribute("aria-label", "Remove highlight " + (xi + 1));
+        rm.addEventListener("click", function () {
+          notes[k].splice(notes[k].indexOf(x), 1);
+          paintNotes(); paintTabs(); save();
+          status.textContent = "Highlight removed.";
+          selBtn.focus();
+        });
+        head.appendChild(rm);
+        li.appendChild(head);
+        var qq = el("div", "q");
+        var l = el("label", null, "Why it matters (comment " + (xi + 1) + ")");
+        var t = document.createElement("textarea");
+        t.id = "nc" + c.n + "-" + xi; t.maxLength = 800; t.value = x.c;
+        l.setAttribute("for", t.id);
+        t.addEventListener("input", function () { x.c = t.value; save(); });
+        qq.appendChild(l); qq.appendChild(t);
+        li.appendChild(qq);
+        list.appendChild(li);
+        if (focusNote === x) t.focus();
+      });
+    }
+
+    /* ---- 3. adding a highlight -------------------------------------------- */
+    function add(p, s, e) {
+      var src = c.paras[p];
+      // Snap to whole words: back to the start of the first word, on to the
+      // end of the last, and no spaces at either edge.
+      while (s > 0 && /\S/.test(src.charAt(s - 1)) && /\S/.test(src.charAt(s))) s--;
+      while (e < src.length && /\S/.test(src.charAt(e)) && /\S/.test(src.charAt(e - 1))) e++;
+      while (s < e && /\s/.test(src.charAt(s))) s++;
+      while (e > s && /\s/.test(src.charAt(e - 1))) e--;
+      if (e <= s) { status.textContent = "Select some words first."; return; }
+      if (notes[k].length >= NOTES_MAX) { status.textContent = "That's " + NOTES_MAX + " highlights on this case - remove one to add another."; return; }
+      var clash = notes[k].some(function (x) { return x.p === p && s < x.e && e > x.s; });
+      if (clash) { status.textContent = "That overlaps a highlight you already have. Remove that one first, or pick different words."; return; }
+      var note = { p: p, s: s, e: e, c: "" };
+      notes[k].push(note);
+      paintNotes(note); paintTabs(); save();
+      status.textContent = "Highlighted. Now say why it matters.";
+    }
+
+    // From a selection. The last good selection inside this case is kept, so
+    // a tap on the button (which can clear the selection on a phone) still
+    // knows what was selected.
+    var pending = null;
+    c.capture = function (sel) {
+      if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+      var r = sel.getRangeAt(0);
+      var pa = closestPara(r.startContainer), pb = closestPara(r.endContainer);
+      if (!pa && !pb) return;                                   // not in this case at all
+      if (pa !== pb || !pa) { pending = null; status.textContent = "Select words inside one paragraph at a time."; return; }
+      var pr = document.createRange();
+      pr.selectNodeContents(pa);
+      pr.setEnd(r.startContainer, r.startOffset);
+      var s = pr.toString().length;
+      var e = s + r.toString().length;
+      pending = { p: +pa.getAttribute("data-p"), s: s, e: e };
+      var t = r.toString().replace(/\s+/g, " ").trim();
+      status.textContent = "Ready to highlight: “" + (t.length > 60 ? t.slice(0, 57) + "..." : t) + "”";
+    };
+    function closestPara(node) {
+      while (node && node !== text) {
+        if (node.nodeType === 1 && node.tagName === "P" && node.parentNode === text) return node;
+        node = node.parentNode;
+      }
+      return null;
+    }
+    selBtn.addEventListener("mousedown", function (ev) { ev.preventDefault(); });   // keep the selection on desktop
+    selBtn.addEventListener("click", function () {
+      c.capture(window.getSelection());
+      if (!pending) { if (!/paragraph/.test(status.textContent)) status.textContent = "Select some words in the case first, then press this."; return; }
+      var p = pending; pending = null;
+      try { window.getSelection().removeAllRanges(); } catch (e) { /* nothing selected */ }
+      add(p.p, p.s, p.e);
+    });
+    senBtn.addEventListener("click", function () {
+      if (pick.value === "") { status.textContent = "Pick a sentence from the list first."; pick.focus(); return; }
+      var x = sentences[+pick.value];
+      add(x.p, x.s, x.e);
+      pick.value = "";
+    });
+    // Clicking a highlight jumps to its comment.
+    text.addEventListener("click", function (ev) {
+      var m = ev.target.closest ? ev.target.closest("mark") : null;
+      if (!m) return;
+      var t = $("nc" + c.n + "-" + (+m.getAttribute("data-n") - 1));
+      if (t) t.focus();
+    });
+
+    c.paint = function () { paintNotes(); paintKey(); };
+    c.paint();
+  });
+
+  // One listener for the whole page: whichever case the selection is in
+  // keeps it.
+  document.addEventListener("selectionchange", function () {
+    var sel = window.getSelection();
+    CASES.forEach(function (c) { c.capture(sel); });
+  });
+
+  /* ---- tabs and progress ---------------------------------------------------- */
+  function paintTabs() {
+    var made = 0;
+    CASES.forEach(function (c, i) {
+      var k = String(c.n), done = !!verdicts[k];
+      if (done) made++;
+      var tab = tabs[i];
+      tab.textContent = String(c.n);
+      if (done) {
+        var tick = el("span", "tick", "✓");
+        tick.setAttribute("aria-hidden", "true");
+        tab.appendChild(tick);
+      }
+      tab.setAttribute("aria-label", "Case " + c.n + ": " + c.title + (done ? ", call made" : ""));
+    });
+    $("progress").textContent = made + " of " + CASES.length + " cases with a call made";
+  }
+  function show(i, moveFocus) {
+    current = i;
+    tabs.forEach(function (t, j) {
+      var on = j === i;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.setAttribute("tabindex", on ? "0" : "-1");
+      panels[j].hidden = !on;
+    });
+    if (moveFocus) tabs[i].focus();
+    save();
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { show(i, false); });
+    tab.addEventListener("keydown", function (e) {
+      var j = null;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") j = (i + 1) % tabs.length;
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === "Home") j = 0;
+      else if (e.key === "End") j = tabs.length - 1;
+      if (j !== null) { e.preventDefault(); show(j, true); }
+    });
+  });
+  paintTabs();
+  show(saved.tab >= 0 && saved.tab < CASES.length ? saved.tab : 0, false);
+  $("fName").addEventListener("input", save);
+
+  /* ---- 5. the PDF --------------------------------------------------------------
+     Letter size (612 x 792 points), one-inch-ish margins, Helvetica. Each
+     case the learner made a call on, or highlighted: its title, their call,
+     the case text with a yellow box behind each highlighted word and [n]
+     after each highlight, then their comments. Untouched cases are listed
+     at the end. */
+  var PW = 612, PH = 792, M = 54, BODY = 10.5, LEAD = 15;
+  var YELLOW = [1, 0.945, 0.66], INK = [0.1, 0.1, 0.09], GREY = [0.42, 0.40, 0.38], GREEN = [0.19, 0.325, 0.02];
+
+  function makePdf() {
+    var doc = PdfLite.create();
+    var page = doc.page(PW, PH), y = PH - M;
+    function room(h) { if (y - h < M) { page = doc.page(PW, PH); y = PH - M; } }
+    function width(t, size, font) { return PdfLite.widthOf(t, size, font); }
+
+    // Plain wrapped text, for headings and comments.
+    function wrapped(t, size, font, color, indent) {
+      var x0 = M + (indent || 0), maxW = PW - M - x0, line = "";
+      String(t).split(/\s+/).filter(Boolean).forEach(function (w) {
+        var tryLine = line ? line + " " + w : w;
+        if (width(tryLine, size, font) > maxW && line) {
+          room(size + 4); page.text(line, x0, y, { size: size, font: font, color: color }); y -= size + 4.5;
+          line = w;
+        } else { line = tryLine; }
+      });
+      if (line) { room(size + 4); page.text(line, x0, y, { size: size, font: font, color: color }); y -= size + 4.5; }
+    }
+
+    // A paragraph of case text with its highlights.
+    function highlighted(src, marks) {
+      // Split into words, remembering where each one sits in the paragraph.
+      var words = [], re = /\S+/g, m;
+      while ((m = re.exec(src))) {
+        var w = { t: m[0], s: m.index, e: m.index + m[0].length, n: 0, endsMark: false };
+        marks.forEach(function (mk) {
+          if (w.s < mk.e && w.e > mk.s) { w.n = mk.n; if (w.e >= mk.e) w.endsMark = true; }
+        });
+        words.push(w);
+      }
+      // Lay the words out in lines, then draw each line: boxes first, so
+      // the text sits on top of them.
+      var maxW = PW - 2 * M, space = width(" ", BODY, "regular"), line = [], lineW = 0;
+      function flush() {
+        if (!line.length) return;
+        room(LEAD);
+        var x = M, placed = [];
+        line.forEach(function (w, i) {
+          placed.push({ w: w, x: x });
+          x += w.width + (i < line.length - 1 ? space : 0);
+        });
+        placed.forEach(function (pw, i) {
+          if (!pw.w.n) return;
+          var nextSame = placed[i + 1] && placed[i + 1].w.n === pw.w.n && !pw.w.endsMark;
+          var wBox = pw.w.textW + (nextSame ? space : 0);
+          page.rect(pw.x - 1, y - 3.2, wBox + 2, BODY + 4.2, { fill: YELLOW });
+        });
+        placed.forEach(function (pw) {
+          page.text(pw.w.t, pw.x, y, { size: BODY, color: INK });
+          if (pw.w.endsMark) page.text("[" + pw.w.n + "]", pw.x + pw.w.textW + 1.5, y + 3, { size: 7, font: "bold", color: GREEN });
+        });
+        y -= LEAD; line = []; lineW = 0;
+      }
+      words.forEach(function (w) {
+        w.textW = width(w.t, BODY, "regular");
+        w.width = w.textW + (w.endsMark ? width("[" + w.n + "]", 7, "bold") + 2 : 0);
+        var add = (line.length ? space : 0) + w.width;
+        if (lineW + add > maxW && line.length) flush();
+        line.push(w); lineW += (line.length > 1 ? space : 0) + w.width;
+      });
+      flush();
+      y -= 5;
+    }
+
+    // The header.
+    page.text("Case Studies", M, y, { size: 20, font: "bold", color: INK }); y -= 22;
+    page.text("CSC 280 · Module 2 · Whose Data Is It?", M, y, { size: 10, color: GREY }); y -= 16;
+    var name = $("fName").value.trim() || "(no name entered)";
+    page.text("Name: " + name, M, y, { size: 11, font: "bold", color: INK }); y -= 15;
+    var made = CASES.filter(function (c) { return verdicts[String(c.n)]; }).length;
+    page.text("Calls made: " + made + " of " + CASES.length + "   ·   Made " + new Date().toLocaleDateString(), M, y, { size: 10, color: GREY });
+    y -= 12;
+    page.line(M, y, PW - M, y, { color: [0.85, 0.83, 0.8], width: 0.75 }); y -= 22;
+
+    var untouched = [];
+    CASES.forEach(function (c) {
+      var k = String(c.n), all = ordered(k);
+      if (!verdicts[k] && !all.length) { untouched.push(c.n); return; }
+      room(60);
+      page.text(c.org.toUpperCase(), M, y, { size: 8, font: "bold", color: GREEN }); y -= 14;
+      wrapped("Case " + c.n + ": " + c.title, 13, "bold", INK);
+      page.text("My call: " + (callName(verdicts[k]) || "not made yet"), M, y, { size: 10, font: "bold", color: GREY }); y -= 18;
+      c.paras.forEach(function (src, pi) {
+        var marks = [];
+        all.forEach(function (x, xi) { if (x.p === pi) marks.push({ s: x.s, e: x.e, n: xi + 1 }); });
+        highlighted(src, marks);
+      });
+      if (all.length) {
+        room(20);
+        page.text("My comments", M, y, { size: 10, font: "bold", color: INK }); y -= 15;
+        all.forEach(function (x, xi) {
+          wrapped("[" + (xi + 1) + "] “" + c.paras[x.p].slice(x.s, x.e) + "”", 9.5, "bold", INK, 0);
+          wrapped(x.c.trim() || "(no comment written)", 10, "regular", x.c.trim() ? INK : GREY, 14);
+          y -= 4;
+        });
+      }
+      y -= 10;
+      room(14);
+      page.line(M, y + 6, PW - M, y + 6, { color: [0.9, 0.88, 0.85], width: 0.5 }); y -= 12;
+    });
+    if (untouched.length) {
+      room(30);
+      wrapped("Not started: case" + (untouched.length === 1 ? " " : "s ") + untouched.join(", ") + ".", 10, "bold", GREY);
+    }
+    return doc.bytes();
+  }
+
+  function gaps() {
+    var g = [];
+    var left = CASES.filter(function (c) { return !verdicts[String(c.n)]; }).map(function (c) { return c.n; });
+    if (left.length) g.push("make a call on case" + (left.length === 1 ? " " : "s ") + left.join(", "));
+    var bare = CASES.filter(function (c) { return notes[String(c.n)].some(function (x) { return !x.c.trim(); }); }).map(function (c) { return c.n; });
+    if (bare.length) g.push("write a comment for every highlight (case" + (bare.length === 1 ? " " : "s ") + bare.join(", ") + ")");
+    if (!$("fName").value.trim()) g.push("put your name in");
+    return g;
+  }
+
+  $("pdfDownload").addEventListener("click", function () {
+    var g = gaps();
+    $("gaps").textContent = g.length ? "Still to do: " + g.join("; ") + "." : "";
+    var url = URL.createObjectURL(new Blob([makePdf()], { type: "application/pdf" }));
+    var a = document.createElement("a");
+    a.href = url; a.download = "case-studies.pdf";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    $("pdfStatus").textContent = "Downloaded case-studies.pdf. Open it to check, then upload it to Brightspace.";
+  });
+}());
+</script>
+
+<script>
+/* ===== Brightspace frame sizing (shared; inlined by the assembler) ======== */
+/* Talks to a host page when this lesson is embedded in one.
+
+   The point is to kill the double scrollbar: the page reports how tall it
+   actually is, the host resizes the iframe to match, and the inner scrollbar
+   never appears. Everything scrolls once, in the outer page, the way a reader
+   expects.
+
+   Loaded on every page. When the page is not in a frame, the whole thing is a
+   no-op - there is nobody to talk to. */
+/* ---- LMS mode -------------------------------------------------------------
+   Two ways in, on purpose:
+
+     ?lmsembed=true   forced. Lets Dave open any page and see exactly what a
+                      student in Brightspace sees, without an LMS.
+     the handshake    automatic. The host says it is an LMS, so nothing has to
+                      be added to a URL and there is nothing to mistype.
+
+   What it hides is a list of ids, below. Anything carrying data-lms-hide is
+   hidden too, so a new element can opt in where it is authored rather than by
+   editing this file. */
+(function () {
+  "use strict";
+
+  /* Elements that make sense on a standalone page and get in the way inside an
+     LMS. Add ids here, or put data-lms-hide on the element itself.
+
+     lessonNext - the "next lesson" link. In Brightspace the learner should use
+     the LMS's own navigation: it records progress, and it does not leave them
+     staring at blank space when the next lesson is shorter than this one and
+     the frame has not shrunk yet. */
+  /* scaffoldBtn is the Template view toggle: an authoring aid, meaningless to a
+     student, and doubly wrong in a frame - it is position:fixed, which inside an
+     iframe sized to its full content anchors it to the bottom of the whole
+     document rather than the visible area, so it floats in the middle of the
+     page. Hidden in the LMS, kept when a page is opened directly. */
+  var LMS_HIDE = ["lessonNext", "scaffoldBtn"];
+
+  function applyLmsMode() {
+    var r = document.documentElement;
+    if (r.getAttribute("data-lms") === "1") return;
+    r.setAttribute("data-lms", "1");
+    LMS_HIDE.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("data-lms-hide", "");
+    });
+  }
+  window.applyLmsMode = applyLmsMode;
+
+  if (/[?&]lmsembed=true\b/i.test(location.search)) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyLmsMode);
+    } else { applyLmsMode(); }
+  }
+
+  /* ---- the hand-in link --------------------------------------------------
+
+     A dropbox URL belongs to one section of one course in one term. Hard-coding
+     it in a hosted page would put it in a public repository that other
+     instructors may teach from, and would go stale every semester. So the page
+     ships the card hidden and the LMS hands the link in - the mirror of the
+     height going out.
+
+     Two ways in, because the two Brightspace surfaces behave differently:
+
+       * ?submit=<encoded url> on the frame's own src. Needs no script at all
+         on the host side, which is what a Description field gives you.
+       * a submit field on the host handshake, put there by lms-listener.js
+         from the iframe's data-submit attribute. The HTML-page path.
+
+     Only https is accepted, and the message path additionally requires the
+     sender to be the parent window. A page opened directly on the public site
+     gets no card, which is correct: there is nothing for a stranger to hand in.
+
+     This sits ABOVE the not-embedded return on purpose. The query-string path
+     has to work on a page that is not in a frame - that is what the noscript
+     fallback link lands you on, and it is also the only way to test the card
+     without standing up an LMS. It was below the return at first, which meant
+     it never ran at all and looked exactly like a broken selector. */
+  function showSubmit(u) {
+    var card = document.getElementById("handin");
+    if (!card || typeof u !== "string" || !/^https:\/\//i.test(u)) return;
+    var a = card.querySelector("a");
+    if (!a) return;
+    a.href = u;
+    card.hidden = false;
+    if (typeof send === "function") send();   /* the page just got taller */
+  }
+
+  try {
+    showSubmit(new URL(window.location.href).searchParams.get("submit"));
+  } catch (e) {}
+
+  if (window.parent === window) return;          /* not embedded; nothing more */
+
+  var TAG = "csc150";
+  var last = 0;
+  var host = null;                 /* what the embedding page told us about itself */
+
+  /* Measure the content wrapper, not the document.
+
+     Both documentElement and body stretch to fill the iframe's viewport, so
+     once the host has made the frame tall neither of them can report a smaller
+     number - the frame ratchets upward and never comes back down. Measured on
+     the vocabulary page: filter 67 terms to 1 and the content is 679px while
+     html and body both still report 13,469. scrollHeight has this problem and
+     so does getBoundingClientRect; it is not a difference between them.
+
+     The wrapper is content-sized, so it tells the truth in both directions. */
+  function contentEl() {
+    return document.querySelector(".lesson") ||
+           document.querySelector("main.wrap") ||
+           document.body;
+  }
+
+  function height() {
+    var el = contentEl();
+    var h = Math.ceil(el.getBoundingClientRect().height);
+    /* Margins on the wrapper's children can escape its box; add whatever sits
+       below it so the last line is never clipped. */
+    var cs = window.getComputedStyle(el);
+    return h + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0) + 8;
+  }
+
+  function send() {
+    var h = height();
+    if (Math.abs(h - last) < 2) return;          /* sub-pixel churn is not news */
+    last = h;
+    /* Target the host's origin once the handshake has told us what it is.
+       Before that it is unknown, so "*" is the only option - and height is not
+       sensitive, which is why sending it before the handshake is acceptable. */
+    window.parent.postMessage({ tag: TAG, type: "height", height: h },
+                              (host && host.origin) || "*");
+  }
+
+  /* ---- handshake ---------------------------------------------------------
+     The page announces itself; a host that understands the protocol answers
+     with what it knows about the surrounding context. Everything in that reply
+     is untrusted - it arrives from a window we did not write - so it is used
+     only for cosmetics and for ids that are sanitised before use. */
+  window.addEventListener("message", function (e) {
+    if (e.source !== window.parent) return;
+    var d = e.data;
+    if (!d || d.tag !== TAG || d.type !== "host") return;
+    host = {
+      name: String(d.host || "").slice(0, 32).replace(/[^a-z0-9-]/gi, ""),
+      course: String(d.course || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      topic: String(d.topic || "").slice(0, 32).replace(/[^0-9]/g, ""),
+      chrome: !!d.chrome,
+      origin: e.origin && e.origin !== "null" ? e.origin : null
+    };
+    var r = document.documentElement;
+    r.setAttribute("data-embedded", host.name || "1");
+    /* The host already shows a title above this frame, so showing ours too
+       gives the learner the same heading twice. */
+    if (host.chrome) r.setAttribute("data-host-chrome", "1");
+    if (host.course) r.setAttribute("data-course-id", host.course);
+    applyLmsMode();
+    if (d.submit) showSubmit(d.submit);
+    if (d.hash && /^[a-z0-9#_-]{0,64}$/i.test(d.hash)) {
+      var el = document.getElementById(String(d.hash).replace(/^#/, ""));
+      if (el) el.scrollIntoView({ block: "start" });
+    }
+    send();
+  });
+
+  /* Announce, then a few more times, then stop. The host's listener may be a
+     separate file that has not finished loading when this runs, and a single
+     announcement that arrives before anyone is listening is simply lost. The
+     host also greets on first contact, so this is the belt to that braces. */
+  (function announce(n) {
+    if (host) return;                       /* greeted; nothing more to say */
+    window.parent.postMessage({ tag: TAG, type: "ready" }, "*");
+    if (n > 0) setTimeout(function () { announce(n - 1); }, 250);
+  })(8);
+
+  /* The interactives change height constantly - the gate unlocks, a deck card
+     leaves, a candidate list redraws - so polling on load is not enough. */
+  if (window.ResizeObserver) {
+    /* Observing documentElement is useless for the same reason measuring it is:
+       it does not change when the content shrinks inside a tall frame. */
+    new ResizeObserver(send).observe(contentEl());
+  } else {
+    setInterval(send, 400);
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  document.addEventListener("DOMContentLoaded", send);
+
+  /* A full-height iframe has nothing to scroll, so scrollIntoView inside it
+     does nothing - the element the page wanted to show is still off-screen,
+     because the *frame* is off-screen. Redirect those calls to the host, which
+     is the only window that can actually move.
+
+     Patching a DOM prototype is worth a wince. It is done here rather than at
+     the call sites because the call sites are spread across generated pages and
+     will keep being added, and because this is precisely the boundary where
+     the meaning of "scroll" changes. It is scoped to the embedded case only. */
+  /* Only forward a scroll once the learner has actually done something. A page
+     that moves the host window while it is still loading takes the reader
+     somewhere they did not ask to go - and the LMS header and the lesson's own
+     title scroll out of view, which looks like the top of the page vanishing.
+     Anything a page does to itself on load stays inside the frame. */
+  var touched = false;
+  ["pointerdown", "keydown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, function () { touched = true; }, true);
+  });
+
+  /* Forward only when this window genuinely cannot scroll itself.
+
+     That used to be a safe assumption: the host always grew the frame to fit
+     the whole page, so there was never anything to scroll in here. It is not
+     safe any more - phones and tablets now get a screen-height frame and
+     scroll the lesson inside it, precisely so a tall cross-origin frame does
+     not go white while a finger is moving. In that arrangement this window CAN
+     scroll, and asking the host to move instead would scroll the wrong thing.
+
+     Tested as a capability rather than sniffed as a device, because the thing
+     that matters is whether there is anywhere to scroll to - which is also
+     true of a short lesson in a tall desktop frame, and stays correct if the
+     host resizes for any reason we did not predict. */
+  function selfScrolls() {
+    var d = document.documentElement;
+    return d.scrollHeight > (window.innerHeight || 0) + 2;
+  }
+
+  var native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (arg) {
+    if (!touched || selfScrolls()) return native.apply(this, arguments);
+    try {
+      var r = this.getBoundingClientRect();
+      var top = r.top + (window.scrollY || 0);
+      var block = (arg && typeof arg === "object" && arg.block) || "start";
+      /* Already in view: leave the host alone. Scrolling to something the
+         reader can see is pure disruption. */
+      if (r.top >= 0 && r.bottom <= (window.innerHeight || 0)) return;
+      window.parent.postMessage({
+        tag: TAG, type: "scroll", top: top, height: r.height, block: block,
+        smooth: !(arg && arg.behavior === "auto")
+      }, "*");
+    } catch (e) {
+      native.apply(this, arguments);
+    }
+  };
+})();
+
+</script>
+<script>
+/* ===== Vocabulary: this page's terms, from courses/csc-280/glossary.md ===== */
+var VOCAB240 = {"privacy-by-default": {"d": "Designing a system so the most private setting is where everyone starts, and people choose what to share.", "p": 7, "s": "privacy-by-default", "t": "Privacy by default", "w": "Strava and Venmo did the opposite. Most people never change a default, so the default decides what happens to their data."}};
+var VOCAB240_PAGE = "../vocabulary.html";
+/* ==========================================================================
+   Vocabulary pop-ups
+   Version 1.0 (2026-10-06)
+
+   WHAT IT DOES. A vocabulary word on a page is written in the markdown as
+   [[Workflow]], and the build turns it into
+       <b class="vt" data-v="workflow"><i>workflow</i></b>
+   This script makes every one of those a button. Click it (or press Enter or
+   Space on it) and a small panel opens right under the word with the
+   definition, why it matters, the page that teaches it, and a link to the
+   full Vocabulary page. Click anywhere else, press Escape, or press the X to
+   close it.
+
+   WHERE THE WORDS COME FROM. courses/csc-240/glossary.md. The build puts only
+   the terms THIS page uses into a small table called VOCAB240, just above
+   this script - nothing is fetched, so it works inside Brightspace, offline,
+   and from a file on your own computer.
+
+   Same behavior as CSC 150's pop-ups, and it uses the same styles (.vt and
+   .vpop, in shared/css/core.css), but it is CSC 240's own copy, reading
+   CSC 240's own words.
+
+   Inlined by csc-240/build/assemble.py into every page that has a term.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (typeof VOCAB240 === "undefined" || window.__vocab240Ready) return;
+  window.__vocab240Ready = true;
+
+  // Where the full Vocabulary page is, from a page inside a module folder.
+  // The build sets VOCAB240_PAGE; this is only the fallback.
+  var PAGE = (typeof VOCAB240_PAGE === "string") ? VOCAB240_PAGE : "../vocabulary.html";
+
+  var open = null;   // the panel that is open now: { btn, pop } - or null
+
+  /* ---- closing the open panel ------------------------------------------ */
+  function close() {
+    if (!open) return;
+    open.btn.setAttribute("aria-expanded", "false");
+    if (open.pop.parentNode) open.pop.parentNode.removeChild(open.pop);
+    open = null;
+  }
+
+  /* ---- building a panel --------------------------------------------------
+     The definition and "why" were written in glossary.md and made safe by the
+     build (anything typed was escaped there), so they are inserted as HTML;
+     the term's name is set as plain text. */
+  function build(rec) {
+    var pop = document.createElement("span");
+    pop.className = "vpop";
+    pop.setAttribute("role", "dialog");
+    pop.setAttribute("aria-label", rec.t);
+
+    var top = document.createElement("span");
+    top.className = "vpop__top";
+    var name = document.createElement("b");
+    name.className = "vpop__name";
+    name.textContent = rec.t;
+    var from = document.createElement("span");
+    from.className = "vpop__from";
+    from.textContent = "Page " + (rec.p < 10 ? "0" : "") + rec.p;
+    top.appendChild(name);
+    top.appendChild(from);
+
+    var def = document.createElement("span");
+    def.className = "vpop__def";
+    def.innerHTML = rec.d;
+    var why = document.createElement("span");
+    why.className = "vpop__why";
+    why.innerHTML = rec.w;
+
+    // The link opens in a NEW tab, always. Inside Brightspace a normal link
+    // would replace the page in the frame, and coming back would reload it.
+    // rel="noopener" stops the new tab being able to reach back into this one.
+    var foot = document.createElement("span");
+    foot.className = "vpop__foot";
+    foot.innerHTML =
+      '<a class="vpop__more" target="_blank" rel="noopener" href="' + PAGE + "#" + rec.s + '">' +
+      'All the course vocabulary <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg>' +
+      '<span class="visually-hidden">(opens in a new tab)</span></a>' +
+      '<button class="vpop__x" type="button" aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>';
+
+    pop.appendChild(top);
+    pop.appendChild(def);
+    pop.appendChild(why);
+    pop.appendChild(foot);
+
+    // Clicks inside the panel stay inside it, except the X, which closes it
+    // and puts the keyboard back on the word.
+    pop.addEventListener("click", function (e) {
+      if (e.target.closest(".vpop__x")) {
+        var btn = open && open.btn;
+        close();
+        if (btn) btn.focus();
+      }
+      e.stopPropagation();
+    });
+    // Enter or Space inside the panel must not reach the word's own key
+    // handler (which would close and reopen it).
+    pop.addEventListener("keydown", function (e) { e.stopPropagation(); });
+    return pop;
+  }
+
+  /* Keep the panel on the screen. It hangs from the word, so the only way it
+     can go wrong is off the right-hand edge of a narrow screen; nudge it left. */
+  function place(pop) {
+    pop.style.left = "0px";
+    var r = pop.getBoundingClientRect();
+    var over = r.right - (document.documentElement.clientWidth - 12);
+    if (over > 0) pop.style.left = -Math.min(over, r.left - 12) + "px";
+  }
+
+  /* ---- opening and closing by mouse ------------------------------------- */
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".vt");
+    if (!btn) { close(); return; }
+    var rec = VOCAB240[btn.getAttribute("data-v")];
+    if (!rec) return;                       // not in the table: leave it as text
+    var wasOpen = open && open.btn === btn;
+    close();
+    if (wasOpen) return;                    // a second click on the word closes it
+    var pop = build(rec);
+    btn.appendChild(pop);
+    btn.setAttribute("aria-expanded", "true");
+    open = { btn: btn, pop: pop };
+    place(pop);
+  });
+
+  /* ---- Escape closes, and gives the keyboard back to the word ----------- */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && open) {
+      var b = open.btn;
+      close();
+      b.focus();
+    }
+  });
+
+  /* ---- make every word a proper button for the keyboard ------------------
+     Done here, so the markdown only has to say [[Workflow]]. */
+  function arm() {
+    var all = document.querySelectorAll(".vt");
+    for (var i = 0; i < all.length; i++) {
+      var b = all[i];
+      if (b.hasAttribute("data-armed")) continue;
+      b.setAttribute("data-armed", "1");
+      b.setAttribute("role", "button");
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("aria-expanded", "false");
+      var rec = VOCAB240[b.getAttribute("data-v")];
+      if (rec) b.setAttribute("aria-label", rec.t + " - definition");
+      b.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+      });
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arm);
+  else arm();
+})();
+
+</script>
+</body>
+</html>
